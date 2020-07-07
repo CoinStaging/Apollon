@@ -209,11 +209,11 @@ uint32_t CMPSPInfo::putSP(uint8_t ecosystem, const Entry& info)
         std::string strError = strprintf("writing SP %d to DB, when a different SP already exists for that identifier", propertyId);
         PrintToLog("%s() ERROR: %s\n", __func__, strError);
     } else if (!pdb->Get(readoptions, slTxIndexKey, &existingEntry).IsNotFound() && slTxValue.compare(existingEntry) != 0) {
-        std::string strError = strprintf("writing index txid %s : SP %d is overwriting a different value", info.txid.ToString(), propertyId);
+        std::string strError = strprintf("writing apollon txid %s : SP %d is overwriting a different value", info.txid.ToString(), propertyId);
         PrintToLog("%s() ERROR: %s\n", __func__, strError);
     }
 
-    // atomically write both the the SP and the index to the database
+    // atomically write both the the SP and the apollon to the database
     leveldb::WriteBatch batch;
     batch.Put(slSpKey, slSpValue);
     batch.Put(slTxIndexKey, slTxValue);
@@ -338,7 +338,7 @@ int64_t CMPSPInfo::popBlock(const uint256& block_hash)
 
             // need to roll this SP back
             if (info.update_block == info.creation_block) {
-                // this is the block that created this SP, so delete the SP and the tx index entry
+                // this is the block that created this SP, so delete the SP and the tx apollon entry
                 CDataStream ssTxIndexKey(SER_DISK, CLIENT_VERSION);
                 ssTxIndexKey << std::make_pair('t', info.txid);
                 leveldb::Slice slTxIndexKey(&ssTxIndexKey[0], ssTxIndexKey.size());
@@ -500,10 +500,10 @@ int CMPSPInfo::getDenominationRemainingConfirmation(
 void CMPSPInfo::printAll() const
 {
     // print off the hard coded MSC and TMSC entries
-    for (uint32_t idx = ELYSIUM_PROPERTY_ELYSIUM; idx <= ELYSIUM_PROPERTY_TELYSIUM; idx++) {
+    for (uint32_t xap = ELYSIUM_PROPERTY_ELYSIUM; xap <= ELYSIUM_PROPERTY_TELYSIUM; xap++) {
         Entry info;
-        PrintToLog("%10d => ", idx);
-        if (getSP(idx, info)) {
+        PrintToLog("%10d => ", xap);
+        if (getSP(xap, info)) {
             info.print();
         } else {
             PrintToLog("<Internal Error on implicit SP>\n");

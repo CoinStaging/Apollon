@@ -110,16 +110,16 @@
         <translation>Recibiendo direcciones</translation>
     </message>
     <message>
-        <source>Send coins to a Index address</source>
-        <translation>Enviar monedas a una dirección Index</translation>
+        <source>Send coins to a Apollon address</source>
+        <translation>Enviar monedas a una dirección Apollon</translation>
     </message>
     <message>
         <source>Change the passphrase used for wallet encryption</source>
         <translation>Cambie la clave utilizada para el cifrado del monedero</translation>
     </message>
     <message>
-        <source>Index</source>
-        <translation>Index</translation>
+        <source>Apollon</source>
+        <translation>Apollon</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -439,7 +439,7 @@
     <name>WalletView</name>
     </context>
 <context>
-    <name>index-core</name>
+    <name>apollon-core</name>
     <message>
         <source>Options:</source>
         <translation>Opciones:</translation>

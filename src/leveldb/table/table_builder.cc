@@ -30,17 +30,17 @@ struct TableBuilder::Rep {
   bool closed;          // Either Finish() or Abandon() has been called.
   FilterBlockBuilder* filter_block;
 
-  // We do not emit the index entry for a block until we have seen the
+  // We do not emit the apollon entry for a block until we have seen the
   // first key for the next data block.  This allows us to use shorter
-  // keys in the index block.  For example, consider a block boundary
+  // keys in the apollon block.  For example, consider a block boundary
   // between the keys "the quick brown fox" and "the who".  We can use
-  // "the r" as the key for the index block entry since it is >= all
+  // "the r" as the key for the apollon block entry since it is >= all
   // entries in the first block and < all entries in subsequent
   // blocks.
   //
   // Invariant: r->pending_index_entry is true only if data_block is empty.
   bool pending_index_entry;
-  BlockHandle pending_handle;  // Handle to add to index block
+  BlockHandle pending_handle;  // Handle to add to apollon block
 
   std::string compressed_output;
 
@@ -226,7 +226,7 @@ Status TableBuilder::Finish() {
     WriteBlock(&meta_index_block, &metaindex_block_handle);
   }
 
-  // Write index block
+  // Write apollon block
   if (ok()) {
     if (r->pending_index_entry) {
       r->options.comparator->FindShortSuccessor(&r->last_key);

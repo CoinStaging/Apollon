@@ -37,7 +37,7 @@ class RemintSigmaTest(BitcoinTestFramework):
 
         index_mint = self.nodes[0].listunspentmintzerocoins()
 
-        assert len(index_mint) == 10, 'Should be 10 index mints after index mint, but was: {}' \
+        assert len(index_mint) == 10, 'Should be 10 apollon mints after apollon mint, but was: {}' \
                 .format(len(index_mint))
         
         for denom in index_denoms:

@@ -120,7 +120,7 @@ static int openssl_bug_7712_is_present = 0;
 #define CIPHERS_UNRESTRICTED 3
 /** @} */
 
-/** The ex_data index in which we store a pointer to an SSL object's
+/** The ex_data apollon in which we store a pointer to an SSL object's
  * corresponding tor_tls_t object. */
 STATIC int tor_tls_object_ex_data_index = -1;
 

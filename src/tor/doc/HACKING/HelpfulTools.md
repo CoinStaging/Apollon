@@ -87,7 +87,7 @@ To generate such a report:
     ./configure --enable-coverage
     make
     make coverage-html
-    $BROWSER ./coverage_html/index.html
+    $BROWSER ./coverage_html/apollon.html
 
 This will run the tor unit test suite `./src/test/test` and generate the HTML
 coverage code report under the directory `./coverage_html/`. To change the

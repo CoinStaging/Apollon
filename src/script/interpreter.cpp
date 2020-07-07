@@ -103,7 +103,7 @@ bool static IsCompressedPubKey(const valtype &vchPubKey) {
  * excessively padded (do not start with a 0 byte, unless an otherwise negative number follows,
  * in which case a single 0 byte is necessary and even required).
  * 
- * See https://bitcointalk.org/index.php?topic=8392.msg127623#msg127623
+ * See https://bitcointalk.org/apollon.php?topic=8392.msg127623#msg127623
  *
  * This function is consensus-critical since BIP66.
  */
@@ -1055,7 +1055,7 @@ class CTransactionSignatureSerializer {
 private:
     const CTransaction& txTo;  //!< reference to the spending transaction (the one being serialized)
     const CScript& scriptCode; //!< output script being consumed
-    const unsigned int nIn;    //!< input index of txTo being signed
+    const unsigned int nIn;    //!< input apollon of txTo being signed
     const bool fAnyoneCanPay;  //!< whether the hashtype has the SIGHASH_ANYONECANPAY flag set
     const bool fHashSingle;    //!< whether the hashtype is SIGHASH_SINGLE
     const bool fHashNone;      //!< whether the hashtype is SIGHASH_NONE

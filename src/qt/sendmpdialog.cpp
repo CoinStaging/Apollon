@@ -171,7 +171,7 @@ void SendMPDialog::updateFrom()
         if (CheckFee(currentSetFromAddress, 16)) {
             ui->feeWarningLabel->setVisible(false);
         } else {
-            ui->feeWarningLabel->setText("WARNING: The sending address is low on IDX for transaction fees. Please topup the IDX balance for the sending address to send Elysium transactions.");
+            ui->feeWarningLabel->setText("WARNING: The sending address is low on XAP for transaction fees. Please topup the XAP balance for the sending address to send Elysium transactions.");
             ui->feeWarningLabel->setVisible(true);
         }
     }
@@ -347,12 +347,12 @@ void SendMPDialog::sendMPTransaction()
     clearFields();
 }
 
-void SendMPDialog::sendFromComboBoxChanged(int idx)
+void SendMPDialog::sendFromComboBoxChanged(int xap)
 {
     updateFrom();
 }
 
-void SendMPDialog::propertyComboBoxChanged(int idx)
+void SendMPDialog::propertyComboBoxChanged(int xap)
 {
     updateProperty();
     updateFrom();

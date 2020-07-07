@@ -1249,7 +1249,7 @@ Changes in version 0.3.5.7 - 2019-01-07
       bug 27237; bugfix on 0.2.6.2-alpha.
 
   o Minor bugfixes (C correctness):
-    - Avoid casting smartlist index to int implicitly, as it may trigger
+    - Avoid casting smartlist apollon to int implicitly, as it may trigger
       a warning (-Wshorten-64-to-32). Fixes bug 26282; bugfix on
       0.2.3.13-alpha, 0.2.7.1-alpha and 0.2.1.1-alpha.
     - Use time_t for all values in
@@ -2525,7 +2525,7 @@ Changes in version 0.3.4.8 - 2018-09-10
     - Recompute some consensus information after detecting a clock jump,
       or after transitioning from a non-live consensus to a live
       consensus. We do this to avoid having an outdated state, and
-      miscalculating the index for next-generation onion services. Fixes
+      miscalculating the apollon for next-generation onion services. Fixes
       bug 24977; bugfix on 0.3.2.1-alpha.
 
   o Minor bugfixes (portability):
@@ -7542,7 +7542,7 @@ Changes in version 0.3.0.6 - 2017-04-26
       switch statement instead. Closes part of ticket 20077.
     - Refactor the hashing API to return negative values for errors, as
       is done as throughout the codebase. Closes ticket 20717.
-    - Remove data structures that were used to index or_connection
+    - Remove data structures that were used to apollon or_connection
       objects by their RSA identity digests. These structures are fully
       redundant with the similar structures used in the
       channel abstraction.
@@ -21689,7 +21689,7 @@ Changes in version 0.0.6.1 - 2004-05-06
 Changes in version 0.0.6 - 2004-05-02
   o Features:
     - Hidden services and rendezvous points are implemented. Go to
-      http://6sxoyfb3h2nvok2d.onion/ for an index of currently available
+      http://6sxoyfb3h2nvok2d.onion/ for an apollon of currently available
       hidden services. (This only works via a socks4a proxy such as
       Privoxy, and currently it's quite slow.)
     - We now rotate link (tls context) keys and onion keys.

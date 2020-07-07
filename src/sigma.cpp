@@ -253,7 +253,7 @@ bool CheckSigmaSpendTransaction(
                     "CheckSigmaSpendTransaction: Error: no coins were minted with such parameters");
 
         bool passVerify = false;
-        CBlockIndex *index = coinGroup.lastBlock;
+        CBlockIndex *apollon = coinGroup.lastBlock;
         pair<sigma::CoinDenomination, int> denominationAndId = std::make_pair(
             targetDenominations[vinIndex], coinGroupId);
 
@@ -265,9 +265,9 @@ bool CheckSigmaSpendTransaction(
             accumulatorBlockHash,
             txHashForMetadata);
 
-        // find index for block with hash of accumulatorBlockHash or set index to the coinGroup.firstBlock if not found
-        while (index != coinGroup.firstBlock && index->GetBlockHash() != accumulatorBlockHash)
-            index = index->pprev;
+        // find apollon for block with hash of accumulatorBlockHash or set apollon to the coinGroup.firstBlock if not found
+        while (apollon != coinGroup.firstBlock && apollon->GetBlockHash() != accumulatorBlockHash)
+            apollon = apollon->pprev;
 
         // Build a vector with all the public coins with given denomination and accumulator id before
         // the block on which the spend occured.
@@ -275,12 +275,12 @@ bool CheckSigmaSpendTransaction(
         std::vector<sigma::PublicCoin> anonymity_set;
         while(true) {
             BOOST_FOREACH(const sigma::PublicCoin& pubCoinValue,
-                    index->sigmaMintedPubCoins[denominationAndId]) {
+                    apollon->sigmaMintedPubCoins[denominationAndId]) {
                 anonymity_set.push_back(pubCoinValue);
             }
-            if (index == coinGroup.firstBlock)
+            if (apollon == coinGroup.firstBlock)
                 break;
-            index = index->pprev;
+            apollon = apollon->pprev;
         }
 
         bool fPadding = spend->getVersion() >= ZEROCOIN_TX_VERSION_3_1;
@@ -311,7 +311,7 @@ bool CheckSigmaSpendTransaction(
 
             if(!isVerifyDB && !isCheckWallet) {
                 if (sigmaTxInfo && !sigmaTxInfo->fInfoIsComplete) {
-                    // add spend information to the index
+                    // add spend information to the apollon
                     sigmaTxInfo->spentSerials.insert(std::make_pair(
                                 serial, CSpendCoinInfo::make(spend->getDenomination(), coinGroupId)));
                 }
@@ -595,7 +595,7 @@ bool ConnectBlockSigma(
         CBlockIndex *pindexNew,
         const CBlock *pblock,
         bool fJustCheck) {
-    // Add zerocoin transaction information to index
+    // Add zerocoin transaction information to apollon
     if (pblock && pblock->sigmaTxInfo) {
         if (!fJustCheck) {
             pindexNew->sigmaMintedPubCoins.clear();
@@ -836,7 +836,7 @@ CSigmaState::CSigmaState()
 {}
 
 void CSigmaState::AddMintsToStateAndBlockIndex(
-        CBlockIndex *index,
+        CBlockIndex *apollon,
         const CBlock* pblock) {
 
     std::unordered_map<sigma::CoinDenomination, std::vector<sigma::PublicCoin>> blockDenomMints;
@@ -861,28 +861,28 @@ void CSigmaState::AddMintsToStateAndBlockIndex(
                 assert(coinGroup.firstBlock == nullptr);
                 assert(coinGroup.lastBlock == nullptr);
 
-                coinGroup.firstBlock = coinGroup.lastBlock = index;
+                coinGroup.firstBlock = coinGroup.lastBlock = apollon;
             } else {
                 assert(coinGroup.firstBlock != nullptr);
                 assert(coinGroup.lastBlock != nullptr);
-                assert(coinGroup.lastBlock->nHeight <= index->nHeight);
+                assert(coinGroup.lastBlock->nHeight <= apollon->nHeight);
 
-                coinGroup.lastBlock = index;
+                coinGroup.lastBlock = apollon;
             }
             coinGroup.nCoins += mintsWithThisDenom.size();
         }
         else {
             latestCoinIds[denomination] = ++mintCoinGroupId;
             SigmaCoinGroupInfo& newCoinGroup = coinGroups[std::make_pair(denomination, mintCoinGroupId)];
-            newCoinGroup.firstBlock = newCoinGroup.lastBlock = index;
+            newCoinGroup.firstBlock = newCoinGroup.lastBlock = apollon;
             newCoinGroup.nCoins = mintsWithThisDenom.size();
         }
 
         for (const auto& mint : mintsWithThisDenom) {
-            containers.AddMint(mint, CMintedCoinInfo::make(denomination, mintCoinGroupId, index->nHeight));
+            containers.AddMint(mint, CMintedCoinInfo::make(denomination, mintCoinGroupId, apollon->nHeight));
 
             LogPrintf("AddMintsToStateAndBlockIndex: mint added denomination=%d, id=%d\n", denomination, mintCoinGroupId);
-            index->sigmaMintedPubCoins[{denomination, mintCoinGroupId}].push_back(mint);
+            apollon->sigmaMintedPubCoins[{denomination, mintCoinGroupId}].push_back(mint);
         }
     }
 }
@@ -891,35 +891,35 @@ void CSigmaState::AddSpend(const Scalar &serial, CoinDenomination denom, int coi
     containers.AddSpend(serial, CSpendCoinInfo::make(denom, coinGroupId));
 }
 
-void CSigmaState::AddBlock(CBlockIndex *index) {
+void CSigmaState::AddBlock(CBlockIndex *apollon) {
     BOOST_FOREACH(
         const PAIRTYPE(PAIRTYPE(sigma::CoinDenomination, int), vector<sigma::PublicCoin>) &pubCoins,
-            index->sigmaMintedPubCoins) {
+            apollon->sigmaMintedPubCoins) {
         if (!pubCoins.second.empty()) {
             SigmaCoinGroupInfo& coinGroup = coinGroups[pubCoins.first];
 
             if (coinGroup.firstBlock == NULL)
-                coinGroup.firstBlock = index;
-            coinGroup.lastBlock = index;
+                coinGroup.firstBlock = apollon;
+            coinGroup.lastBlock = apollon;
             coinGroup.nCoins += pubCoins.second.size();
         }
 
         latestCoinIds[pubCoins.first.first] = pubCoins.first.second;
         BOOST_FOREACH(const sigma::PublicCoin &coin, pubCoins.second) {
-            containers.AddMint(coin, CMintedCoinInfo::make(pubCoins.first.first, pubCoins.first.second, index->nHeight));
+            containers.AddMint(coin, CMintedCoinInfo::make(pubCoins.first.first, pubCoins.first.second, apollon->nHeight));
         }
     }
 
-    BOOST_FOREACH(const spend_info_container::value_type &serial, index->sigmaSpentSerials) {
+    BOOST_FOREACH(const spend_info_container::value_type &serial, apollon->sigmaSpentSerials) {
         AddSpend(serial.first, serial.second.denomination, serial.second.coinGroupId);
     }
 }
 
-void CSigmaState::RemoveBlock(CBlockIndex *index) {
+void CSigmaState::RemoveBlock(CBlockIndex *apollon) {
     // roll back accumulator updates
     BOOST_FOREACH(
         const PAIRTYPE(PAIRTYPE(sigma::CoinDenomination, int),vector<sigma::PublicCoin>) &coin,
-        index->sigmaMintedPubCoins)
+        apollon->sigmaMintedPubCoins)
     {
         SigmaCoinGroupInfo   &coinGroup = coinGroups[coin.first];
         int  nMintsToForget = coin.second.size();
@@ -937,7 +937,7 @@ void CSigmaState::RemoveBlock(CBlockIndex *index) {
         }
         else {
             // roll back lastBlock to previous position
-            assert(coinGroup.lastBlock == index);
+            assert(coinGroup.lastBlock == apollon);
 
             do {
                 assert(coinGroup.lastBlock != coinGroup.firstBlock);
@@ -948,7 +948,7 @@ void CSigmaState::RemoveBlock(CBlockIndex *index) {
 
     // roll back mints
     BOOST_FOREACH(const PAIRTYPE(PAIRTYPE(sigma::CoinDenomination, int),vector<sigma::PublicCoin>) &pubCoins,
-                  index->sigmaMintedPubCoins) {
+                  apollon->sigmaMintedPubCoins) {
         BOOST_FOREACH(const sigma::PublicCoin &coin, pubCoins.second) {
             auto coins = containers.GetMints().equal_range(coin);
             auto coinIt = find_if(
@@ -963,7 +963,7 @@ void CSigmaState::RemoveBlock(CBlockIndex *index) {
     }
 
     // roll back spends
-    BOOST_FOREACH(const spend_info_container::value_type &serial, index->sigmaSpentSerials) {
+    BOOST_FOREACH(const spend_info_container::value_type &serial, apollon->sigmaSpentSerials) {
         containers.RemoveSpend(serial.first);
     }
 }

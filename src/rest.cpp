@@ -523,7 +523,7 @@ static bool rest_getutxos(HTTPRequest* req, const std::string& strURIPart)
                 mempool.pruneSpent(hash, coins);
                 if (coins.IsAvailable(vOutPoints[i].n)) {
                     hits[i] = true;
-                    // Safe to index into vout here because IsAvailable checked if it's off the end of the array, or if
+                    // Safe to apollon into vout here because IsAvailable checked if it's off the end of the array, or if
                     // n is valid but points to an already spent output (IsNull).
                     CCoin coin;
                     coin.nTxVer = coins.nVersion;

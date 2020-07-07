@@ -260,9 +260,9 @@
     <name>WalletView</name>
     </context>
 <context>
-    <name>index-core</name>
+    <name>apollon-core</name>
     <message>
-        <source>Index Core</source>
+        <source>Apollon Core</source>
         <translation>Биткойн ядро</translation>
     </message>
     </context>

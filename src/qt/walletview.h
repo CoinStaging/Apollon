@@ -136,7 +136,7 @@ public Q_SLOTS:
     /** Switch specifically to bitcoin tx history tab */
     void gotoBitcoinHistoryTab();
     /** Switch to bitcoin tx history tab and focus on specific transaction */
-    void focusBitcoinHistoryTab(const QModelIndex &idx);
+    void focusBitcoinHistoryTab(const QModelIndex &xap);
     /** Switch to indexnode page */
     void gotoIndexnodePage();
     /** Switch to receive coins page */

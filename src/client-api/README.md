@@ -1,5 +1,5 @@
 # Overview
-API for interaction with the new `index-client` application. This project closely resembles the `rpc` layout, however it instead uses ZeroMQ as a transport mechanism, the code for which is contained within `src/zmqserver`. 
+API for interaction with the new `apollon-client` application. This project closely resembles the `rpc` layout, however it instead uses ZeroMQ as a transport mechanism, the code for which is contained within `src/zmqserver`. 
 
 # Request
 A request to be passed contains three elements: `type`, `collection`, and `data`.
@@ -1212,7 +1212,7 @@ OPTIONAL: not a necessary parameter to pass.
                 isMine: BOOL,
                 outpoint: {
                     txid: STRING,
-                    index: INT
+                    apollon: INT
                 },
                 authority: {
                     ip: STRING,
@@ -1225,7 +1225,7 @@ OPTIONAL: not a necessary parameter to pass.
                 isMine: BOOL,
                 outpoint: {
                     txid: STRING,
-                    index: INT
+                    apollon: INT
                 },
                 authority: {
                     ip: STRING,
@@ -1244,7 +1244,7 @@ OPTIONAL: not a necessary parameter to pass.
             rank: INT,
             outpoint: {
                 txid: STRING,
-                index: STRING
+                apollon: STRING
             },
             status: STRING,
             protocolVersion: INT,
@@ -1279,7 +1279,7 @@ OPTIONAL: not a necessary parameter to pass.
             rank: INT,
             outpoint: {
                 txid: STRING,
-                index: STRING
+                apollon: STRING
             },
             status: STRING,
             protocolVersion: INT,
@@ -1343,14 +1343,14 @@ Methods specific to the publisher.
 ```
 {
     "data": {
-        STRING: (txid + index) {
+        STRING: (txid + apollon) {
             txid: STRING,
-            index: STRING,
+            apollon: STRING,
             available: BOOL
         },
-        STRING: (txid + index) {
+        STRING: (txid + apollon) {
             txid: STRING,
-            index: STRING,
+            apollon: STRING,
             available: BOOL
         },
         ...
@@ -1552,11 +1552,11 @@ Methods specific to the publisher.
 ```
 {
     "data": {
-        STRING: (txid + index) {
+        STRING: (txid + apollon) {
             rank: INT,
             outpoint: {
                 txid: STRING,
-                index: STRING
+                apollon: STRING
             },
             status: STRING,
             protocolVersion: INT,

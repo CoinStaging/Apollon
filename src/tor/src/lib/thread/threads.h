@@ -65,7 +65,7 @@ void tor_cond_signal_all(tor_cond_t *cond);
 
 typedef struct tor_threadlocal_s {
 #ifdef _WIN32
-  DWORD index;
+  DWORD apollon;
 #else
   pthread_key_t key;
 #endif

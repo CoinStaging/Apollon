@@ -26,7 +26,7 @@ CCriticalSection cs_mapIndexnodePaymentVotes;
 *   Determine if coinbase outgoing created money is the correct value
 *
 *   Why is this needed?
-*   - In Index some blocks are superblocks, which output much higher amounts of coins
+*   - In Apollon some blocks are superblocks, which output much higher amounts of coins
 *   - Otherblocks are 10% lower in outgoing value, so in total, no extra coins are created
 *   - When non-superblocks are detected, the normal schedule should be maintained
 */
@@ -272,7 +272,7 @@ void CIndexnodePayments::ProcessMessage(CNode *pfrom, std::string &strCommand, C
     // Ignore any payments messages until indexnode list is synced
     if (!indexnodeSync.IsIndexnodeListSynced()) return;
 
-    if (fLiteMode) return; // disable all Index specific functionality
+    if (fLiteMode) return; // disable all Apollon specific functionality
 
     bool fTestNet = (Params().NetworkIDString() == CBaseChainParams::TESTNET);
 
@@ -550,7 +550,7 @@ bool CIndexnodeBlockPayees::IsTransactionValid(const CTransaction &txNew, bool f
         }
     }
 
-    LogPrintf("CIndexnodeBlockPayees::IsTransactionValid -- ERROR: Missing required payment, possible payees: '%s', amount: %f IDX\n", strPayeesPossible, (float) nIndexnodePayment / COIN);
+    LogPrintf("CIndexnodeBlockPayees::IsTransactionValid -- ERROR: Missing required payment, possible payees: '%s', amount: %f XAP\n", strPayeesPossible, (float) nIndexnodePayment / COIN);
     return false;
 }
 

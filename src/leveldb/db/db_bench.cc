@@ -291,9 +291,9 @@ struct ThreadState {
   Stats stats;
   SharedState* shared;
 
-  ThreadState(int index)
-      : tid(index),
-        rand(1000 + index) {
+  ThreadState(int apollon)
+      : tid(apollon),
+        rand(1000 + apollon) {
   }
 };
 

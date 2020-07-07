@@ -46,7 +46,7 @@ BOOST_AUTO_TEST_CASE(proof_serialize)
     int N = 16384;
     int n = params->get_n();
     int m = params->get_m();
-    int index = 0;
+    int apollon = 0;
 
     secp_primitives::GroupElement g;
     g.randomize();
@@ -61,7 +61,7 @@ BOOST_AUTO_TEST_CASE(proof_serialize)
 
     std::vector<secp_primitives::GroupElement> commits;
     for(int i = 0; i < N; ++i){
-        if(i == index){
+        if(i == apollon){
             secp_primitives::GroupElement c;
             secp_primitives::Scalar zero(uint64_t(0));
             c = sigma::SigmaPrimitives<secp_primitives::Scalar,secp_primitives::GroupElement>::commit(g, zero, h_gens[0], r);
@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_CASE(proof_serialize)
 
     sigma::SigmaPlusProof<secp_primitives::Scalar,secp_primitives::GroupElement> initial_proof(n, m);
 
-    prover.proof(commits, index, r, true, initial_proof);
+    prover.proof(commits, apollon, r, true, initial_proof);
 
     unsigned char buffer [initial_proof.memoryRequired()];
     initial_proof.serialize(buffer);

@@ -44,11 +44,11 @@ public:
             while (indexes.size() < indexes_size) {
                 indexes.resize(std::min((uint64_t)(1000 + indexes.size()), indexes_size));
                 for (; i < indexes.size(); i++) {
-                    uint64_t index = 0;
-                    READWRITE(COMPACTSIZE(index));
-                    if (index > std::numeric_limits<uint16_t>::max())
-                        throw std::ios_base::failure("index overflowed 16 bits");
-                    indexes[i] = index;
+                    uint64_t apollon = 0;
+                    READWRITE(COMPACTSIZE(apollon));
+                    if (apollon > std::numeric_limits<uint16_t>::max())
+                        throw std::ios_base::failure("apollon overflowed 16 bits");
+                    indexes[i] = apollon;
                 }
             }
 
@@ -61,8 +61,8 @@ public:
             }
         } else {
             for (size_t i = 0; i < indexes.size(); i++) {
-                uint64_t index = indexes[i] - (i == 0 ? 0 : (indexes[i - 1] + 1));
-                READWRITE(COMPACTSIZE(index));
+                uint64_t apollon = indexes[i] - (i == 0 ? 0 : (indexes[i - 1] + 1));
+                READWRITE(COMPACTSIZE(apollon));
             }
         }
     }
@@ -102,19 +102,19 @@ public:
 // Dumb serialization/storage-helper for CBlockHeaderAndShortTxIDs and PartiallyDownlaodedBlock
 struct PrefilledTransaction {
     // Used as an offset since last prefilled tx in CBlockHeaderAndShortTxIDs,
-    // as a proper transaction-in-block-index in PartiallyDownloadedBlock
-    uint16_t index;
+    // as a proper transaction-in-block-apollon in PartiallyDownloadedBlock
+    uint16_t apollon;
     CTransaction tx;
 
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
     inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
-        uint64_t idx = index;
-        READWRITE(COMPACTSIZE(idx));
-        if (idx > std::numeric_limits<uint16_t>::max())
-            throw std::ios_base::failure("index overflowed 16-bits");
-        index = idx;
+        uint64_t xap = apollon;
+        READWRITE(COMPACTSIZE(xap));
+        if (xap > std::numeric_limits<uint16_t>::max())
+            throw std::ios_base::failure("apollon overflowed 16-bits");
+        apollon = xap;
         READWRITE(REF(TransactionCompressor(tx)));
     }
 };
@@ -201,7 +201,7 @@ public:
     PartiallyDownloadedBlock(CTxMemPool* poolIn) : pool(poolIn) {}
 
     ReadStatus InitData(const CBlockHeaderAndShortTxIDs& cmpctblock);
-    bool IsTxAvailable(size_t index) const;
+    bool IsTxAvailable(size_t apollon) const;
     ReadStatus FillBlock(CBlock& block, const std::vector<CTransaction>& vtx_missing) const;
 };
 

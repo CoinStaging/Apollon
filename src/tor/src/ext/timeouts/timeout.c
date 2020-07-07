@@ -106,7 +106,7 @@
  * inputs are:
  *
  *   WHEEL_BIT - The number of value bits mapped in each wheel. The
- *               lowest-order WHEEL_BIT bits index the lowest-order (highest
+ *               lowest-order WHEEL_BIT bits apollon the lowest-order (highest
  *               resolution) wheel, the next group of WHEEL_BIT bits the
  *               higher wheel, etc.
  *

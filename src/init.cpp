@@ -437,18 +437,18 @@ std::string HelpMessage(HelpMessageMode mode) {
                       "(default: 0 = disable pruning blocks, >%u = target size in MiB to use for block files)"),
             MIN_DISK_SPACE_FOR_BLOCK_FILES / 1024 / 1024));
     strUsage += HelpMessageOpt("-reindex-chainstate", _("Rebuild chain state from the currently indexed blocks"));
-    strUsage += HelpMessageOpt("-reindex", _("Rebuild chain state and block index from the blk*.dat files on disk"));
+    strUsage += HelpMessageOpt("-reindex", _("Rebuild chain state and block apollon from the blk*.dat files on disk"));
     strUsage += HelpMessageOpt("-resync", _("Delete blockchain folders and resync from scratch") + " " + _("on startup"));
 #ifndef WIN32
     strUsage += HelpMessageOpt("-sysperms",
                                _("Create new files with system default permissions, instead of umask 077 (only effective with disabled wallet functionality)"));
 #endif
     strUsage += HelpMessageOpt("-txindex", strprintf(
-            _("Maintain a full transaction index, used by the getrawtransaction rpc call (default: %u)"),
+            _("Maintain a full transaction apollon, used by the getrawtransaction rpc call (default: %u)"),
             DEFAULT_TXINDEX));
-    strUsage += HelpMessageOpt("-addressindex", strprintf(_("Maintain a full address index, used to query for the balance, txids and unspent outputs for addresses (default: %u)"), DEFAULT_ADDRESSINDEX));
-    strUsage += HelpMessageOpt("-timestampindex", strprintf(_("Maintain a timestamp index for block hashes, used to query blocks hashes by a range of timestamps (default: %u)"), DEFAULT_TIMESTAMPINDEX));
-    strUsage += HelpMessageOpt("-spentindex", strprintf(_("Maintain a full spent index, used to query the spending txid and input index for an outpoint (default: %u)"), DEFAULT_SPENTINDEX));
+    strUsage += HelpMessageOpt("-addressindex", strprintf(_("Maintain a full address apollon, used to query for the balance, txids and unspent outputs for addresses (default: %u)"), DEFAULT_ADDRESSINDEX));
+    strUsage += HelpMessageOpt("-timestampindex", strprintf(_("Maintain a timestamp apollon for block hashes, used to query blocks hashes by a range of timestamps (default: %u)"), DEFAULT_TIMESTAMPINDEX));
+    strUsage += HelpMessageOpt("-spentindex", strprintf(_("Maintain a full spent apollon, used to query the spending txid and input apollon for an outpoint (default: %u)"), DEFAULT_SPENTINDEX));
 
     strUsage += HelpMessageGroup(_("Connection options:"));
     strUsage += HelpMessageOpt("-addnode=<ip>", _("Add a node to connect to and attempt to keep the connection open"));
@@ -693,7 +693,7 @@ std::string HelpMessage(HelpMessageMode mode) {
                                          DEFAULT_HTTP_THREADS));
     strUsage += HelpMessageOpt("-blockspamfilter=<n>", strprintf(_("Use block spam filter (default: %u)"), DEFAULT_BLOCK_SPAM_FILTER));
     strUsage += HelpMessageOpt("-blockspamfiltermaxsize=<n>", strprintf(_("Maximum size of the list of indexes in the block spam filter (default: %u)"), DEFAULT_BLOCK_SPAM_FILTER_MAX_SIZE));
-    strUsage += HelpMessageOpt("-blockspamfiltermaxavg=<n>", strprintf(_("Maximum average size of an index occurrence in the block spam filter (default: %u)"), DEFAULT_BLOCK_SPAM_FILTER_MAX_AVG));
+    strUsage += HelpMessageOpt("-blockspamfiltermaxavg=<n>", strprintf(_("Maximum average size of an apollon occurrence in the block spam filter (default: %u)"), DEFAULT_BLOCK_SPAM_FILTER_MAX_AVG));
 
     if (showDebug) {
         strUsage += HelpMessageOpt("-rpcworkqueue=<n>",
@@ -726,7 +726,7 @@ std::string HelpMessage(HelpMessageMode mode) {
 }
 
 std::string LicenseInfo() {
-    const std::string URL_SOURCE_CODE = "<https://github.com/IndexChain/Index>";
+    const std::string URL_SOURCE_CODE = "<https://github.com/IndexChain/Apollon>";
     const std::string URL_WEBSITE = "<https://indexchain.org/>";
     // todo: remove urls from translations on next change
     return CopyrightHolders(strprintf(_("Copyright (C) %i-%i"), 2009, COPYRIGHT_YEAR) + " ") + "\n" +
@@ -796,7 +796,7 @@ void CleanupBlockRevFiles() {
 
     // Glob all blk?????.dat and rev?????.dat files from the blocks directory.
     // Remove the rev files immediately and insert the blk file paths into an
-    // ordered map keyed by block file index.
+    // ordered map keyed by block file apollon.
     LogPrintf("Removing unusable blk?????.dat and rev?????.dat files for -reindex with -prune\n");
     path blocksdir = GetDataDir() / "blocks";
     for (directory_iterator it(blocksdir); it != directory_iterator(); it++) {
@@ -1146,7 +1146,7 @@ void InitLogging() {
     fLogIPs = GetBoolArg("-logips", DEFAULT_LOGIPS);
 
     LogPrintf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
-    LogPrintf("Index version %s\n", FormatFullVersion());
+    LogPrintf("Apollon version %s\n", FormatFullVersion());
 }
 
 /** Initialize bitcoin.
@@ -1770,7 +1770,7 @@ bool AppInit2(boost::thread_group &threadGroup, CScheduler &scheduler) {
 //    nCoinCacheUsage = nTotalCache; // the rest goes to in-memory cache
     nCoinCacheUsage = nTotalCache / 300;
     LogPrintf("Cache configuration:\n");
-    LogPrintf("* Using %.1fMiB for block index database\n", nBlockTreeDBCache * (1.0 / 1024 / 1024));
+    LogPrintf("* Using %.1fMiB for block apollon database\n", nBlockTreeDBCache * (1.0 / 1024 / 1024));
     LogPrintf("* Using %.1fMiB for chain state database\n", nCoinDBCache * (1.0 / 1024 / 1024));
     LogPrintf("* Using %.1fMiB for in-memory UTXO set\n", nCoinCacheUsage * (1.0 / 1024 / 1024));
 
@@ -1778,8 +1778,8 @@ bool AppInit2(boost::thread_group &threadGroup, CScheduler &scheduler) {
     while (!fLoaded) {
         bool fReset = fReindex;
         std::string strLoadError;
-        LogPrintf("Loading block index...\n");
-        uiInterface.InitMessage(_("Loading block index..."));
+        LogPrintf("Loading block apollon...\n");
+        uiInterface.InitMessage(_("Loading block apollon..."));
 
         nStart = GetTimeMillis();
         do {
@@ -1794,9 +1794,9 @@ bool AppInit2(boost::thread_group &threadGroup, CScheduler &scheduler) {
                 pblocktree = new CBlockTreeDB(nBlockTreeDBCache, false, fReindex);
 
                 if (!fReindex) {
-                    // Check existing block index database version, reindex if needed
+                    // Check existing block apollon database version, reindex if needed
                     if (pblocktree->GetBlockIndexVersion() < ZC_ADVANCED_INDEX_VERSION) {
-                        LogPrintf("Upgrade to new version of block index required, reindex forced\n");
+                        LogPrintf("Upgrade to new version of block apollon required, reindex forced\n");
                         delete pblocktree;
                         fReindex = fReset = true;
                         pblocktree = new CBlockTreeDB(nBlockTreeDBCache, false, fReindex);
@@ -1827,7 +1827,7 @@ bool AppInit2(boost::thread_group &threadGroup, CScheduler &scheduler) {
                         const uint256* phash = tip->phashBlock;
                         if (pblocktree->GetBlockIndexVersion(*phash) < SIGMA_PROTOCOL_ENABLEMENT_VERSION) {
                             strLoadError = _(
-                                    "Block index is outdated, reindex required\n");
+                                    "Block apollon is outdated, reindex required\n");
                             break;
                         }
                     }
@@ -1842,7 +1842,7 @@ bool AppInit2(boost::thread_group &threadGroup, CScheduler &scheduler) {
                     return InitError(_("Incorrect or no genesis block found. Wrong datadir for network?"));
                 }
 
-                // Initialize the block index (no-op if non-empty database was already loaded)
+                // Initialize the block apollon (no-op if non-empty database was already loaded)
                 if (!InitBlockIndex(chainparams)) {
                     strLoadError = _("Error initializing block database");
                     break;
@@ -1929,7 +1929,7 @@ bool AppInit2(boost::thread_group &threadGroup, CScheduler &scheduler) {
         LogPrintf("Shutdown requested. Exiting.\n");
         return false;
     }
-    LogPrintf(" block index %15dms\n", GetTimeMillis() - nStart);
+    LogPrintf(" block apollon %15dms\n", GetTimeMillis() - nStart);
 
     fs::path est_path = GetDataDir() / FEE_ESTIMATES_FILENAME;
     CAutoFile est_filein(fsbridge::fopen(est_path, "rb"), SER_DISK, CLIENT_VERSION);
@@ -1962,8 +1962,8 @@ bool AppInit2(boost::thread_group &threadGroup, CScheduler &scheduler) {
     if (isElysiumEnabled()) {
         if (!fTxIndex) {
             // ask the user if they would like us to modify their config file for them
-            std::string msg = _("Disabled transaction index detected.\n\n"
-                                "Elysium requires an enabled transaction index. To enable "
+            std::string msg = _("Disabled transaction apollon detected.\n\n"
+                                "Elysium requires an enabled transaction apollon. To enable "
                                 "transaction indexing, please use the \"-txindex\" option as "
                                 "command line argument or add \"txindex=1\" to your client "
                                 "configuration file within your data directory.\n\n"
@@ -2208,7 +2208,7 @@ bool AppInit2(boost::thread_group &threadGroup, CScheduler &scheduler) {
     //     LogPrint"Failed to load fulfilled requests cache from netfulfilled.dat");
     // }
 
-    // ********************************************************* Step 11c: update block tip in Index modules
+    // ********************************************************* Step 11c: update block tip in Apollon modules
 
     // force UpdatedBlockTip to initialize pCurrentBlockIndex for DS, MN payments and budgets
     // but don't call it directly to prevent triggering of other listeners like zmq etc.

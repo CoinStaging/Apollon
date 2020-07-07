@@ -27,7 +27,7 @@ void dircollator_collate(dircollator_t *dc, int consensus_method);
 
 int dircollator_n_routers(dircollator_t *dc);
 vote_routerstatus_t **dircollator_get_votes_for_router(dircollator_t *dc,
-                                                       int idx);
+                                                       int xap);
 
 #ifdef DIRCOLLATE_PRIVATE
 struct ddmap_entry_s;
@@ -42,7 +42,7 @@ struct dircollator_s {
   /** The total number of authorities we acknowledge. */
   int n_authorities;
 
-  /** The index which the next vote to be added to this collator should
+  /** The apollon which the next vote to be added to this collator should
    * receive. */
   int next_vote_num;
   /** Map from RSA-SHA1 identity digest to an array of <b>n_votes</b>

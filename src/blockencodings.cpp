@@ -62,11 +62,11 @@ ReadStatus PartiallyDownloadedBlock::InitData(const CBlockHeaderAndShortTxIDs& c
         if (cmpctblock.prefilledtxn[i].tx.IsNull())
             return READ_STATUS_INVALID;
 
-        lastprefilledindex += cmpctblock.prefilledtxn[i].index + 1; //index is a uint16_t, so cant overflow here
+        lastprefilledindex += cmpctblock.prefilledtxn[i].apollon + 1; //apollon is a uint16_t, so cant overflow here
         if (lastprefilledindex > std::numeric_limits<uint16_t>::max())
             return READ_STATUS_INVALID;
         if ((uint32_t)lastprefilledindex > cmpctblock.shorttxids.size() + i) {
-            // If we are inserting a tx at an index greater than our full list of shorttxids
+            // If we are inserting a tx at an apollon greater than our full list of shorttxids
             // plus the number of prefilled txn we've inserted, then we have txn for which we
             // have neither a prefilled txn or a shorttxid!
             return READ_STATUS_INVALID;
@@ -136,10 +136,10 @@ ReadStatus PartiallyDownloadedBlock::InitData(const CBlockHeaderAndShortTxIDs& c
     return READ_STATUS_OK;
 }
 
-bool PartiallyDownloadedBlock::IsTxAvailable(size_t index) const {
+bool PartiallyDownloadedBlock::IsTxAvailable(size_t apollon) const {
     assert(!header.IsNull());
-    assert(index < txn_available.size());
-    return txn_available[index] ? true : false;
+    assert(apollon < txn_available.size());
+    return txn_available[apollon] ? true : false;
 }
 
 ReadStatus PartiallyDownloadedBlock::FillBlock(CBlock& block, const std::vector<CTransaction>& vtx_missing) const {

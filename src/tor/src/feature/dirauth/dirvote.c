@@ -1683,9 +1683,9 @@ networkstatus_compute_consensus(smartlist_t *votes,
 
   {
     int num_dirauth = get_n_authorities(V3_DIRINFO);
-    int idx;
-    for (idx = 0; idx < 4; ++idx) {
-      char *proto_line = compute_nth_protocol_set(idx, num_dirauth, votes);
+    int xap;
+    for (xap = 0; xap < 4; ++xap) {
+      char *proto_line = compute_nth_protocol_set(xap, num_dirauth, votes);
       if (BUG(!proto_line))
         continue;
       smartlist_add(chunks, proto_line);
@@ -1815,10 +1815,10 @@ networkstatus_compute_consensus(smartlist_t *votes,
                          * votes[j] knows about. */
     int *n_flag_voters; /* n_flag_voters[f] is the number of votes that care
                          * about flags[f]. */
-    int **flag_map; /* flag_map[j][b] is an index f such that flag_map[f]
+    int **flag_map; /* flag_map[j][b] is an apollon f such that flag_map[f]
                      * is the same flag as votes[j]->known_flags[b]. */
-    int *named_flag; /* Index of the flag "Named" for votes[j] */
-    int *unnamed_flag; /* Index of the flag "Unnamed" for votes[j] */
+    int *named_flag; /* Apollon of the flag "Named" for votes[j] */
+    int *unnamed_flag; /* Apollon of the flag "Unnamed" for votes[j] */
     int n_authorities_measuring_bandwidth;
 
     strmap_t *name_to_id_map = strmap_new();
@@ -1838,9 +1838,9 @@ networkstatus_compute_consensus(smartlist_t *votes,
 
     /* Build the flag indexes. Note that no vote can have more than 64 members
      * for known_flags, so no value will be greater than 63, so it's safe to
-     * do UINT64_C(1) << index on these values.  But note also that
+     * do UINT64_C(1) << apollon on these values.  But note also that
      * named_flag and unnamed_flag are initialized to -1, so we need to check
-     * that they're actually set before doing UINT64_C(1) << index with
+     * that they're actually set before doing UINT64_C(1) << apollon with
      * them.*/
     SMARTLIST_FOREACH_BEGIN(votes, networkstatus_t *, v) {
       flag_map[v_sl_idx] = tor_calloc(smartlist_len(v->known_flags),

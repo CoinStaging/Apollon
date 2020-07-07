@@ -255,11 +255,11 @@ UniValue stop(const UniValue& params, bool fHelp)
     if (fHelp || params.size() > 1)
         throw runtime_error(
             "stop\n"
-            "\nStop Index server.");
+            "\nStop Apollon server.");
     // Event loop will exit after current HTTP requests have been handled, so
     // this reply will get back to the client.
     StartShutdown();
-    return "Index server stopping";
+    return "Apollon server stopping";
 }
 
 /**
@@ -271,20 +271,20 @@ static const CRPCCommand vRPCCommands[] =
     /* Overall control/query calls */
     { "control",            "help",                   &help,                   true  },
     { "control",            "stop",                   &stop,                   true  },
-        /* Address index */
+        /* Address apollon */
     { "addressindex",       "getaddressmempool",      &getaddressmempool,      true  },
     { "addressindex",       "getaddressutxos",        &getaddressutxos,        false },
     { "addressindex",       "getaddressdeltas",       &getaddressdeltas,       false },
     { "addressindex",       "getaddresstxids",        &getaddresstxids,        false },
     { "addressindex",       "getaddressbalance",      &getaddressbalance,      false },
-        /* Index features */
-    { "index",               "indexnode",                 &indexnode,                  true  },
-    { "index",               "insync",                &insync,                 true  },
-    { "index",               "indexnodelist",             &indexnodelist,              true  },
-    { "index",               "indexnodebroadcast",        &indexnodebroadcast,         true  },
-    { "index",               "spork",                 &spork,                  true  },
-    { "index" ,              "createsporkkeypair",    &createsporkkeypair,     true  },
-    { "index",               "getpoolinfo",           &getpoolinfo,            true  },
+        /* Apollon features */
+    { "apollon",               "indexnode",                 &indexnode,                  true  },
+    { "apollon",               "insync",                &insync,                 true  },
+    { "apollon",               "indexnodelist",             &indexnodelist,              true  },
+    { "apollon",               "indexnodebroadcast",        &indexnodebroadcast,         true  },
+    { "apollon",               "spork",                 &spork,                  true  },
+    { "apollon" ,              "createsporkkeypair",    &createsporkkeypair,     true  },
+    { "apollon",               "getpoolinfo",           &getpoolinfo,            true  },
 };
 
 CRPCTable::CRPCTable()
@@ -480,7 +480,7 @@ std::vector<std::string> CRPCTable::listCommands() const
 
 std::string HelpExampleCli(const std::string& methodname, const std::string& args)
 {
-    return "> index-cli " + methodname + " " + args + "\n";
+    return "> apollon-cli " + methodname + " " + args + "\n";
 }
 
 std::string HelpExampleRpc(const std::string& methodname, const std::string& args)

@@ -53,7 +53,7 @@ private:
     const GroupElement& g_;
     const std::vector<GroupElement>& h_;
 
-    // n*m values of a matrix describing index l of the coin being spent.
+    // n*m values of a matrix describing apollon l of the coin being spent.
     // Each value in this vector is a bit, I.E. 0 or 1.
     std::vector<Exponent> b_;
     

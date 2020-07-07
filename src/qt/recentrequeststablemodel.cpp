@@ -50,16 +50,16 @@ int RecentRequestsTableModel::columnCount(const QModelIndex &parent) const
     return columns.length();
 }
 
-QVariant RecentRequestsTableModel::data(const QModelIndex &index, int role) const
+QVariant RecentRequestsTableModel::data(const QModelIndex &apollon, int role) const
 {
-    if(!index.isValid() || index.row() >= list.length())
+    if(!apollon.isValid() || apollon.row() >= list.length())
         return QVariant();
 
-    const RecentRequestEntry *rec = &list[index.row()];
+    const RecentRequestEntry *rec = &list[apollon.row()];
 
     if(role == Qt::DisplayRole || role == Qt::EditRole)
     {
-        switch(index.column())
+        switch(apollon.column())
         {
         case Date:
             return GUIUtil::dateTimeStr(rec->date);
@@ -92,13 +92,13 @@ QVariant RecentRequestsTableModel::data(const QModelIndex &index, int role) cons
     }
     else if (role == Qt::TextAlignmentRole)
     {
-        if (index.column() == Amount)
+        if (apollon.column() == Amount)
             return (int)(Qt::AlignRight|Qt::AlignVCenter);
     }
     return QVariant();
 }
 
-bool RecentRequestsTableModel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool RecentRequestsTableModel::setData(const QModelIndex &apollon, const QVariant &value, int role)
 {
     return true;
 }
@@ -128,7 +128,7 @@ QString RecentRequestsTableModel::getAmountTitle()
     return (this->walletModel->getOptionsModel() != NULL) ? tr("Requested") + " ("+BitcoinUnits::name(this->walletModel->getOptionsModel()->getDisplayUnit()) + ")" : "";
 }
 
-QModelIndex RecentRequestsTableModel::index(int row, int column, const QModelIndex &parent) const
+QModelIndex RecentRequestsTableModel::apollon(int row, int column, const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
 
@@ -158,7 +158,7 @@ bool RecentRequestsTableModel::removeRows(int row, int count, const QModelIndex 
     }
 }
 
-Qt::ItemFlags RecentRequestsTableModel::flags(const QModelIndex &index) const
+Qt::ItemFlags RecentRequestsTableModel::flags(const QModelIndex &apollon) const
 {
     return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 }
@@ -209,7 +209,7 @@ void RecentRequestsTableModel::addNewRequest(RecentRequestEntry &recipient)
 void RecentRequestsTableModel::sort(int column, Qt::SortOrder order)
 {
     qSort(list.begin(), list.end(), RecentRequestEntryLessThan(column, order));
-    Q_EMIT dataChanged(index(0, 0, QModelIndex()), index(list.size() - 1, NUMBER_OF_COLUMNS - 1, QModelIndex()));
+    Q_EMIT dataChanged(apollon(0, 0, QModelIndex()), apollon(list.size() - 1, NUMBER_OF_COLUMNS - 1, QModelIndex()));
 }
 
 void RecentRequestsTableModel::updateDisplayUnit()

@@ -49,7 +49,7 @@ Downgrading warnings
 The 'chainstate' for this release is not always compatible with previous
 releases, so if you run 0.9 and then decide to switch back to a
 0.8.x release you might get a blockchain validation error when starting the
-old release (due to 'pruned outputs' being omitted from the index of
+old release (due to 'pruned outputs' being omitted from the apollon of
 unspent transaction outputs).
 
 Running the old release with the -reindex option will rebuild the chainstate
@@ -289,7 +289,7 @@ GUI:
 - Allow user to choose data directory on first start, when data directory is
   missing, or when the -choosedatadir option is passed
 - Save and restore window positions
-- Add vout index to transaction id in transactions details dialog
+- Add vout apollon to transaction id in transactions details dialog
 - Add network traffic graph in debug window
 - Add open URI dialog
 - Add Coin Control Features

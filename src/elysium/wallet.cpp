@@ -182,7 +182,7 @@ boost::optional<SigmaMint> Wallet::GetSpendableSigmaMint(PropertyId property, Si
         [](const SigmaMint& a, const SigmaMint& b) -> bool {
 
             if (a.chainState.group == b.chainState.group) {
-                return a.chainState.index < b.chainState.index;
+                return a.chainState.apollon < b.chainState.apollon;
             }
 
             return a.chainState.group < b.chainState.group;
@@ -300,7 +300,7 @@ void Wallet::OnMintAdded(
     PropertyId property,
     SigmaDenomination denomination,
     SigmaMintGroup group,
-    SigmaMintIndex idx,
+    SigmaMintIndex xap,
     const SigmaPublicKey& pubKey,
     int block)
 {
@@ -309,11 +309,11 @@ void Wallet::OnMintAdded(
     if (HasSigmaMint(id)) {
 
         // 1. is in wallet then update state
-        SetSigmaMintChainState(id, SigmaMintChainState(block, group, idx));
+        SetSigmaMintChainState(id, SigmaMintChainState(block, group, xap));
     } else {
 
         // 2. try to recover new mint
-        SigmaMintChainState chainState(block, group, idx);
+        SigmaMintChainState chainState(block, group, xap);
 
         if (mintWalletV1.TryRecoverMint(id, chainState)) {
             LogPrintf("%s : Found new mint when try to recover\n", __func__);

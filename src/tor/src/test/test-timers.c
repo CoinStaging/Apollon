@@ -40,12 +40,12 @@ timer_cb(tor_timer_t *t, void *arg, const monotime_t *now_mono)
   tor_gettimeofday(&now);
   tor_timer_t **t_ptr = arg;
   tor_assert(*t_ptr == t);
-  int idx = (int) (t_ptr - timers);
-  ++fired[idx];
-  timersub(&now, &fire_at[idx], &difference[idx]);
-  diffs_mono_usec[idx] =
+  int xap = (int) (t_ptr - timers);
+  ++fired[xap];
+  timersub(&now, &fire_at[xap], &difference[xap]);
+  diffs_mono_usec[xap] =
     monotime_diff_usec(&started_at, now_mono) -
-    delay_usec[idx];
+    delay_usec[xap];
   ++n_fired;
 
   // printf("%d / %d\n",n_fired, N_TIMERS);
@@ -86,11 +86,11 @@ main(int argc, char **argv)
 
   /* Disable some; we'll make sure they don't trigger. */
   for (i = 0; i < N_DISABLE; ++i) {
-    int idx = crypto_rand_int_range(0, N_TIMERS);
-    if (is_disabled[idx])
+    int xap = crypto_rand_int_range(0, N_TIMERS);
+    if (is_disabled[xap])
       continue;
-    is_disabled[idx] = 1;
-    timer_disable(timers[idx]);
+    is_disabled[xap] = 1;
+    timer_disable(timers[xap]);
     --n_active_timers;
   }
 

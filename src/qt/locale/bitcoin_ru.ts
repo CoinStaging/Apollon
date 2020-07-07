@@ -62,12 +62,12 @@
         <translation>Адреса получения</translation>
     </message>
     <message>
-        <source>These are your Index addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
-        <translation>Это ваши адреса Index для отправки платежей. Всегда проверяйте количество и адрес получателя перед отправкой перевода.</translation>
+        <source>These are your Apollon addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
+        <translation>Это ваши адреса Apollon для отправки платежей. Всегда проверяйте количество и адрес получателя перед отправкой перевода.</translation>
     </message>
     <message>
-        <source>These are your Index addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
-        <translation>Это ваши адреса Index для приёма платежей. Рекомендуется использовать новый адрес получения для каждой транзакции.</translation>
+        <source>These are your Apollon addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
+        <translation>Это ваши адреса Apollon для приёма платежей. Рекомендуется использовать новый адрес получения для каждой транзакции.</translation>
     </message>
     <message>
         <source>&amp;Copy Address</source>
@@ -322,8 +322,8 @@
         <translation>Идёт переиндексация блоков на диске...</translation>
     </message>
     <message>
-        <source>Send coins to a Index address</source>
-        <translation>Отправить монеты на указанный адрес Index</translation>
+        <source>Send coins to a Apollon address</source>
+        <translation>Отправить монеты на указанный адрес Apollon</translation>
     </message>
     <message>
         <source>Backup wallet to another location</source>
@@ -346,8 +346,8 @@
         <translation>&amp;Проверить сообщение...</translation>
     </message>
     <message>
-        <source>Index</source>
-        <translation>Index</translation>
+        <source>Apollon</source>
+        <translation>Apollon</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -374,12 +374,12 @@
         <translation>Зашифровать приватные ключи, принадлежащие вашему бумажнику</translation>
     </message>
     <message>
-        <source>Sign messages with your Index addresses to prove you own them</source>
-        <translation>Подписать сообщения вашим адресом Index, чтобы доказать, что вы им владеете</translation>
+        <source>Sign messages with your Apollon addresses to prove you own them</source>
+        <translation>Подписать сообщения вашим адресом Apollon, чтобы доказать, что вы им владеете</translation>
     </message>
     <message>
-        <source>Verify messages to ensure they were signed with specified Index addresses</source>
-        <translation>Проверить сообщения, чтобы удостовериться, что они были подписаны определённым адресом Index</translation>
+        <source>Verify messages to ensure they were signed with specified Apollon addresses</source>
+        <translation>Проверить сообщения, чтобы удостовериться, что они были подписаны определённым адресом Apollon</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -398,8 +398,8 @@
         <translation>Панель вкладок</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and index: URIs)</source>
-        <translation>Запросить платежи (создаёт QR-коды и index: ссылки)</translation>
+        <source>Request payments (generates QR codes and apollon: URIs)</source>
+        <translation>Запросить платежи (создаёт QR-коды и apollon: ссылки)</translation>
     </message>
     <message>
         <source>Show the list of used sending addresses and labels</source>
@@ -410,16 +410,16 @@
         <translation>Показать список использованных адресов и меток получения</translation>
     </message>
     <message>
-        <source>Open a index: URI or payment request</source>
-        <translation>Открыть index: URI или запрос платежа</translation>
+        <source>Open a apollon: URI or payment request</source>
+        <translation>Открыть apollon: URI или запрос платежа</translation>
     </message>
     <message>
         <source>&amp;Command-line options</source>
         <translation>&amp;Параметры командной строки</translation>
     </message>
     <message numerus="yes">
-        <source>%n active connection(s) to Index network</source>
-        <translation><numerusform>%n активных соединений с сетью Index</numerusform><numerusform>%n активных соединений с сетью Index</numerusform><numerusform>%n активных соединений с сетью Index</numerusform><numerusform>%n активных соединений с сетью Index</numerusform></translation>
+        <source>%n active connection(s) to Apollon network</source>
+        <translation><numerusform>%n активных соединений с сетью Apollon</numerusform><numerusform>%n активных соединений с сетью Apollon</numerusform><numerusform>%n активных соединений с сетью Apollon</numerusform><numerusform>%n активных соединений с сетью Apollon</numerusform></translation>
     </message>
     <message>
         <source>Indexing blocks on disk...</source>
@@ -486,7 +486,7 @@
         <translation>Синхронизировано</translation>
     </message>
     <message>
-        <source>Show the %1 help message to get a list with possible Index command-line options</source>
+        <source>Show the %1 help message to get a list with possible Apollon command-line options</source>
         <translation>Показать помощь по %1, чтобы получить список доступных параметров командной строки</translation>
     </message>
     <message>
@@ -806,8 +806,8 @@
         <translation>Изменить адрес отправки</translation>
     </message>
     <message>
-        <source>The entered address "%1" is not a valid Index address.</source>
-        <translation>Введённый адрес "%1" не является правильным Index-адресом.</translation>
+        <source>The entered address "%1" is not a valid Apollon address.</source>
+        <translation>Введённый адрес "%1" не является правильным Apollon-адресом.</translation>
     </message>
     <message>
         <source>The entered address "%1" is already in the address book.</source>
@@ -915,7 +915,7 @@
         <translation>При первом запуске программы вы можете выбрать где %1 будет хранить свои данные.</translation>
     </message>
     <message>
-        <source>%1 will download and store a copy of the Index block chain. At least %2GB of data will be stored in this directory, and it will grow over time. The wallet will also be stored in this directory.</source>
+        <source>%1 will download and store a copy of the Apollon block chain. At least %2GB of data will be stored in this directory, and it will grow over time. The wallet will also be stored in this directory.</source>
         <translation>%1 скачает и сохранит копию цепи блоков. Как минимум %2GB будут записаны в этот каталог, и со временем он будет расти. Бумажник также будет сохранен в этом каталоге.</translation>
     </message>
     <message>
@@ -1061,20 +1061,20 @@
         <translation>&amp;Тратить неподтверждённую сдачу</translation>
     </message>
     <message>
-        <source>Automatically open the Index client port on the router. This only works when your router supports UPnP and it is enabled.</source>
-        <translation>Автоматически открыть порт для Index-клиента на роутере. Работает только если Ваш роутер поддерживает UPnP, и данная функция включена.</translation>
+        <source>Automatically open the Apollon client port on the router. This only works when your router supports UPnP and it is enabled.</source>
+        <translation>Автоматически открыть порт для Apollon-клиента на роутере. Работает только если Ваш роутер поддерживает UPnP, и данная функция включена.</translation>
     </message>
     <message>
         <source>Map port using &amp;UPnP</source>
         <translation>Пробросить порт через &amp;UPnP</translation>
     </message>
     <message>
-        <source>Connect to the Index network through a SOCKS5 proxy.</source>
-        <translation>Подключаться к сети Index через прокси SOCKS5</translation>
+        <source>Connect to the Apollon network through a SOCKS5 proxy.</source>
+        <translation>Подключаться к сети Apollon через прокси SOCKS5</translation>
     </message>
     <message>
         <source>&amp;Connect through SOCKS5 proxy (default proxy):</source>
-        <translation>&amp;Подключаться к сети Index через прокси SOCKS5 (прокси по умолчанию):</translation>
+        <translation>&amp;Подключаться к сети Apollon через прокси SOCKS5 (прокси по умолчанию):</translation>
     </message>
     <message>
         <source>Proxy &amp;IP:</source>
@@ -1109,8 +1109,8 @@
         <translation>Tor</translation>
     </message>
     <message>
-        <source>Connect to the Index network through a separate SOCKS5 proxy for Tor hidden services.</source>
-        <translation>Подключаться к сети Index через прокси SOCKS5 для скрытых сервисов Tor.</translation>
+        <source>Connect to the Apollon network through a separate SOCKS5 proxy for Tor hidden services.</source>
+        <translation>Подключаться к сети Apollon через прокси SOCKS5 для скрытых сервисов Tor.</translation>
     </message>
     <message>
         <source>Use separate SOCKS5 proxy to reach peers via Tor hidden services:</source>
@@ -1208,8 +1208,8 @@
         <translation>Форма</translation>
     </message>
     <message>
-        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Index network after a connection is established, but this process has not completed yet.</source>
-        <translation>Отображаемая информация может быть устаревшей. Ваш бумажник автоматически синхронизируется с сетью Index после подключения, но этот процесс пока не завершён.</translation>
+        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Apollon network after a connection is established, but this process has not completed yet.</source>
+        <translation>Отображаемая информация может быть устаревшей. Ваш бумажник автоматически синхронизируется с сетью Apollon после подключения, но этот процесс пока не завершён.</translation>
     </message>
     <message>
         <source>Watch-only:</source>
@@ -1283,8 +1283,8 @@
         <translation>Ошибка запроса платежа</translation>
     </message>
     <message>
-        <source>Cannot start index: click-to-pay handler</source>
-        <translation>Не удаётся запустить index: обработчик click-to-pay</translation>
+        <source>Cannot start apollon: click-to-pay handler</source>
+        <translation>Не удаётся запустить apollon: обработчик click-to-pay</translation>
     </message>
     <message>
         <source>URI handling</source>
@@ -1299,8 +1299,8 @@
         <translation>Неверный адрес платежа %1</translation>
     </message>
     <message>
-        <source>URI cannot be parsed! This can be caused by an invalid Index address or malformed URI parameters.</source>
-        <translation>Не удалось обработать URI! Это может быть связано с неверным адресом Index или неправильными параметрами URI.</translation>
+        <source>URI cannot be parsed! This can be caused by an invalid Apollon address or malformed URI parameters.</source>
+        <translation>Не удалось обработать URI! Это может быть связано с неверным адресом Apollon или неправильными параметрами URI.</translation>
     </message>
     <message>
         <source>Payment request file handling</source>
@@ -1389,8 +1389,8 @@
         <translation>Сумма</translation>
     </message>
     <message>
-        <source>Enter a Index address (e.g. %1)</source>
-        <translation>Введите адрес Index (например, %1)</translation>
+        <source>Enter a Apollon address (e.g. %1)</source>
+        <translation>Введите адрес Apollon (например, %1)</translation>
     </message>
     <message>
         <source>%1 d</source>
@@ -1754,8 +1754,8 @@
         <translation>&amp;Повторно использовать существующий адрес получения (не рекомендуется)</translation>
     </message>
     <message>
-        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the Index network.</source>
-        <translation>Необязательное сообщение для запроса платежа, которое будет показано при открытии запроса. Заметьте: сообщение не будет отправлено вместе с платежом через сеть Index.</translation>
+        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the Apollon network.</source>
+        <translation>Необязательное сообщение для запроса платежа, которое будет показано при открытии запроса. Заметьте: сообщение не будет отправлено вместе с платежом через сеть Apollon.</translation>
     </message>
     <message>
         <source>An optional label to associate with the new receiving address.</source>
@@ -1987,7 +1987,7 @@
         <translation>Итого как минимум</translation>
     </message>
     <message>
-        <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks. But be aware that this can end up in a never confirming transaction once there is more demand for Index transactions than the network can process.</source>
+        <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks. But be aware that this can end up in a never confirming transaction once there is more demand for Apollon transactions than the network can process.</source>
         <translation>Уплата минимальной комиссии — не проблема, пока объём транзакций меньше, чем свободное место в блоках. Учтите, однако, что такая транзакция может никогда не подтвердиться, если спрос на транзакции превышает возможности сети по их обработке.</translation>
     </message>
     <message>
@@ -2147,8 +2147,8 @@
         <translation>Заплатить только обязательную комиссию %1</translation>
     </message>
     <message>
-        <source>Warning: Invalid Index address</source>
-        <translation>Внимание: неверный адрес Index</translation>
+        <source>Warning: Invalid Apollon address</source>
+        <translation>Внимание: неверный адрес Apollon</translation>
     </message>
     <message>
         <source>Warning: Unknown change address</source>
@@ -2182,8 +2182,8 @@
         <translation>Это нормальный платёж.</translation>
     </message>
     <message>
-        <source>The Index address to send the payment to</source>
-        <translation>Адрес Index, на который отправить платёж</translation>
+        <source>The Apollon address to send the payment to</source>
+        <translation>Адрес Apollon, на который отправить платёж</translation>
     </message>
     <message>
         <source>Alt+A</source>
@@ -2226,8 +2226,8 @@
         <translation>Введите метку для этого адреса, чтобы добавить его в список использованных</translation>
     </message>
     <message>
-        <source>A message that was attached to the index: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Index network.</source>
-        <translation>К index: URI было прикреплено сообщение, которое будет сохранено вместе с транзакцией для вашего сведения. Заметьте: сообщение не будет отправлено через сеть Index.</translation>
+        <source>A message that was attached to the apollon: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Apollon network.</source>
+        <translation>К apollon: URI было прикреплено сообщение, которое будет сохранено вместе с транзакцией для вашего сведения. Заметьте: сообщение не будет отправлено через сеть Apollon.</translation>
     </message>
     <message>
         <source>Pay To:</source>
@@ -2275,8 +2275,8 @@
         <translation>Вы можете подписывать сообщения/соглашения своими адресами, чтобы доказать свою возможность получать биткоины на них. Будьте осторожны, не подписывайте что-то неопределённое или случайное, так как фишинговые атаки могут обманным путём заставить вас подписать нежелательные сообщения. Подписывайте только те сообщения, с которыми вы согласны вплоть до мелочей.</translation>
     </message>
     <message>
-        <source>The Index address to sign the message with</source>
-        <translation>Адрес Index, которым подписать сообщение</translation>
+        <source>The Apollon address to sign the message with</source>
+        <translation>Адрес Apollon, которым подписать сообщение</translation>
     </message>
     <message>
         <source>Choose previously used address</source>
@@ -2307,8 +2307,8 @@
         <translation>Скопировать текущую подпись в системный буфер обмена</translation>
     </message>
     <message>
-        <source>Sign the message to prove you own this Index address</source>
-        <translation>Подписать сообщение, чтобы доказать владение адресом Index</translation>
+        <source>Sign the message to prove you own this Apollon address</source>
+        <translation>Подписать сообщение, чтобы доказать владение адресом Apollon</translation>
     </message>
     <message>
         <source>Sign &amp;Message</source>
@@ -2331,12 +2331,12 @@
         <translation>Введите ниже адрес получателя, сообщение (убедитесь, что переводы строк, пробелы, табы и т.п. в точности скопированы) и подпись, чтобы проверить сообщение. Убедитесь, что не скопировали лишнего в подпись, по сравнению с самим подписываемым сообщением, чтобы не стать жертвой атаки "man-in-the-middle". Заметьте, что эта операция удостоверяет лишь авторство подписавшего, но не может удостоверить отправителя транзакции.</translation>
     </message>
     <message>
-        <source>The Index address the message was signed with</source>
-        <translation>Адрес Index, которым было подписано сообщение</translation>
+        <source>The Apollon address the message was signed with</source>
+        <translation>Адрес Apollon, которым было подписано сообщение</translation>
     </message>
     <message>
-        <source>Verify the message to ensure it was signed with the specified Index address</source>
-        <translation>Проверить сообщение, чтобы убедиться, что оно было подписано указанным адресом Index</translation>
+        <source>Verify the message to ensure it was signed with the specified Apollon address</source>
+        <translation>Проверить сообщение, чтобы убедиться, что оно было подписано указанным адресом Apollon</translation>
     </message>
     <message>
         <source>Verify &amp;Message</source>
@@ -2548,7 +2548,7 @@
         <translation>ID транзакции</translation>
     </message>
     <message>
-        <source>Output index</source>
+        <source>Output apollon</source>
         <translation>Номер выхода</translation>
     </message>
     <message>
@@ -2918,7 +2918,7 @@
     </message>
 </context>
 <context>
-    <name>index-core</name>
+    <name>apollon-core</name>
     <message>
         <source>Options:</source>
         <translation>Параметры:</translation>
@@ -2984,8 +2984,8 @@
         <translation>Принимать подключения извне (по умолчанию: 1, если не используется -proxy или -connect)</translation>
     </message>
     <message>
-        <source>Index Core</source>
-        <translation>Index Core</translation>
+        <source>Apollon Core</source>
+        <translation>Apollon Core</translation>
     </message>
     <message>
         <source>The %s developers</source>
@@ -3112,7 +3112,7 @@
         <translation>Не удаётся разрешить адрес в параметре -%s: '%s'</translation>
     </message>
     <message>
-        <source>Change index out of range</source>
+        <source>Change apollon out of range</source>
         <translation>Изменение индекса вне диапазона</translation>
     </message>
     <message>
@@ -3256,7 +3256,7 @@
         <translation>Режим удаления блоков несовместим с -txindex.</translation>
     </message>
     <message>
-        <source>Rebuild chain state and block index from the blk*.dat files on disk</source>
+        <source>Rebuild chain state and block apollon from the blk*.dat files on disk</source>
         <translation>Перестроить состояние цепи блоков и индекс блоков из blk*.dat файлов с диска</translation>
     </message>
     <message>
@@ -3604,7 +3604,7 @@
         <translation>Насколько тщательна проверка контрольных блоков -checkblocks (0-4, по умолчанию: %u)</translation>
     </message>
     <message>
-        <source>Maintain a full transaction index, used by the getrawtransaction rpc call (default: %u)</source>
+        <source>Maintain a full transaction apollon, used by the getrawtransaction rpc call (default: %u)</source>
         <translation>Держать полный индекс транзакций, используемый RPC-запросом getrawtransaction (по умолчанию: %u)</translation>
     </message>
     <message>
@@ -3744,7 +3744,7 @@
         <translation>Недостаточно монет</translation>
     </message>
     <message>
-        <source>Loading block index...</source>
+        <source>Loading block apollon...</source>
         <translation>Загрузка индекса блоков...</translation>
     </message>
     <message>

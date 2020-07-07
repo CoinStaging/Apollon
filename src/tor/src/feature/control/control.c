@@ -656,7 +656,7 @@ decode_escaped_string(const char *start, size_t in_len_max,
   if (len<0)
     return NULL;
 
-  end = start+len-1; /* Index of last quote. */
+  end = start+len-1; /* Apollon of last quote. */
   tor_assert(*end == '\"');
   outp = *out = tor_malloc(len+1);
   *out_len = n_chars;
@@ -3589,7 +3589,7 @@ getargs_helper(const char *command, control_connection_t *conn,
   return NULL;
 }
 
-/** Helper.  Return the first element of <b>sl</b> at index <b>start_at</b> or
+/** Helper.  Return the first element of <b>sl</b> at apollon <b>start_at</b> or
  * higher that starts with <b>prefix</b>, case-insensitive.  Return NULL if no
  * such element exists. */
 static const char *
@@ -5212,10 +5212,10 @@ handle_control_del_onion(control_connection_t *conn,
     detached_onion_services
   };
   smartlist_t *onion_services = NULL;
-  int idx = -1;
+  int xap = -1;
   for (size_t i = 0; i < ARRAY_LENGTH(services); i++) {
-    idx = smartlist_string_pos(services[i], service_id);
-    if (idx != -1) {
+    xap = smartlist_string_pos(services[i], service_id);
+    if (xap != -1) {
       onion_services = services[i];
       break;
     }
@@ -5246,8 +5246,8 @@ handle_control_del_onion(control_connection_t *conn,
     }
 
     /* Remove/scrub the service_id from the appropriate list. */
-    char *cp = smartlist_get(onion_services, idx);
-    smartlist_del(onion_services, idx);
+    char *cp = smartlist_get(onion_services, xap);
+    smartlist_del(onion_services, xap);
     memwipe(cp, 0, strlen(cp));
     tor_free(cp);
 
@@ -6318,7 +6318,7 @@ control_event_circuit_cell_stats(void)
 
 /* about 5 minutes worth. */
 #define N_BW_EVENTS_TO_CACHE 300
-/* Index into cached_bw_events to next write. */
+/* Apollon into cached_bw_events to next write. */
 static int next_measurement_idx = 0;
 /* number of entries set in n_measurements */
 static int n_measurements = 0;
@@ -6353,21 +6353,21 @@ STATIC char *
 get_bw_samples(void)
 {
   int i;
-  int idx = (next_measurement_idx + N_BW_EVENTS_TO_CACHE - n_measurements)
+  int xap = (next_measurement_idx + N_BW_EVENTS_TO_CACHE - n_measurements)
     % N_BW_EVENTS_TO_CACHE;
-  tor_assert(0 <= idx && idx < N_BW_EVENTS_TO_CACHE);
+  tor_assert(0 <= xap && xap < N_BW_EVENTS_TO_CACHE);
 
   smartlist_t *elements = smartlist_new();
 
   for (i = 0; i < n_measurements; ++i) {
-    tor_assert(0 <= idx && idx < N_BW_EVENTS_TO_CACHE);
-    const struct cached_bw_event_s *bwe = &cached_bw_events[idx];
+    tor_assert(0 <= xap && xap < N_BW_EVENTS_TO_CACHE);
+    const struct cached_bw_event_s *bwe = &cached_bw_events[xap];
 
     smartlist_add_asprintf(elements, "%u,%u",
                            (unsigned)bwe->n_read,
                            (unsigned)bwe->n_written);
 
-    idx = (idx + 1) % N_BW_EVENTS_TO_CACHE;
+    xap = (xap + 1) % N_BW_EVENTS_TO_CACHE;
   }
 
   char *result = smartlist_join_strings(elements, " ", 0, NULL);
@@ -7137,7 +7137,7 @@ rend_hsaddress_str_or_unknown(const char *onion_address)
  * <b>rend_query</b> is used to fetch requested onion address and auth type.
  * <b>hs_dir</b> is the description of contacting hs directory.
  * <b>desc_id_base32</b> is the ID of requested hs descriptor.
- * <b>hsdir_index</b> is the HSDir fetch index value for v3, an hex string.
+ * <b>hsdir_index</b> is the HSDir fetch apollon value for v3, an hex string.
  */
 void
 control_event_hs_descriptor_requested(const char *onion_address,

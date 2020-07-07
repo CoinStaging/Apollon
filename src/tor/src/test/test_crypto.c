@@ -1468,7 +1468,7 @@ static void
 test_crypto_formats(void *arg)
 {
   char *data1 = NULL, *data2 = NULL, *data3 = NULL;
-  int i, j, idx;
+  int i, j, xap;
 
   (void)arg;
   data1 = tor_malloc(1024);
@@ -1478,21 +1478,21 @@ test_crypto_formats(void *arg)
 
   /* Base64 tests */
   memset(data1, 6, 1024);
-  for (idx = 0; idx < 10; ++idx) {
-    i = base64_encode(data2, 1024, data1, idx, 0);
+  for (xap = 0; xap < 10; ++xap) {
+    i = base64_encode(data2, 1024, data1, xap, 0);
     tt_int_op(i, OP_GE, 0);
     tt_int_op(i, OP_EQ, strlen(data2));
     j = base64_decode(data3, 1024, data2, i);
-    tt_int_op(j,OP_EQ, idx);
-    tt_mem_op(data3,OP_EQ, data1, idx);
+    tt_int_op(j,OP_EQ, xap);
+    tt_mem_op(data3,OP_EQ, data1, xap);
 
-    i = base64_encode_nopad(data2, 1024, (uint8_t*)data1, idx);
+    i = base64_encode_nopad(data2, 1024, (uint8_t*)data1, xap);
     tt_int_op(i, OP_GE, 0);
     tt_int_op(i, OP_EQ, strlen(data2));
     tt_assert(! strchr(data2, '='));
     j = base64_decode(data3, 1024, data2, i);
-    tt_int_op(j, OP_EQ, idx);
-    tt_mem_op(data3,OP_EQ, data1, idx);
+    tt_int_op(j, OP_EQ, xap);
+    tt_mem_op(data3,OP_EQ, data1, xap);
   }
 
   strlcpy(data1, "Test string that contains 35 chars.", 1024);

@@ -32,7 +32,7 @@ received, really), which makes it incompatible with some tools or
 other programs. Reindexing using earlier versions will also not work
 anymore as a result of this.
 
-* The block index database will now hold headers for which no block is
+* The block apollon database will now hold headers for which no block is
 stored on disk, which earlier versions won't support.
 
 If you want to be able to downgrade smoothly, make a backup of your entire data
@@ -63,7 +63,7 @@ RPC:
 Block (database) and transaction handling:
 - `1d2cdd2` Fix InvalidateBlock to add chainActive.Tip to setBlockIndexCandidates
 - `c91c660` fix InvalidateBlock to repopulate setBlockIndexCandidates
-- `002c8a2` fix possible block db breakage during re-index
+- `002c8a2` fix possible block db breakage during re-apollon
 - `a1f425b` Add (optional) consistency check for the block chain data structures
 - `1c62e84` Keep mempool consistent during block-reorgs
 - `57d1f46` Fix CheckBlockIndex for reindex

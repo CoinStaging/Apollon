@@ -33,7 +33,7 @@ received, really), which makes it incompatible with some tools or
 other programs. Reindexing using earlier versions will also not work
 anymore as a result of this.
 
-* The block index database will now hold headers for which no block is
+* The block apollon database will now hold headers for which no block is
 stored on disk, which earlier versions won't support.
 
 If you want to be able to downgrade smoothly, make a backup of your entire data

@@ -168,7 +168,7 @@ struct circuit_t {
   /** Unique ID for measuring tunneled network status requests. */
   uint64_t dirreq_id;
 
-  /** Index in smartlist of all circuits (global_circuitlist). */
+  /** Apollon in smartlist of all circuits (global_circuitlist). */
   int global_circuitlist_idx;
 
   /** Various statistics about cells being added to or removed from this

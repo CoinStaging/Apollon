@@ -37,14 +37,14 @@ struct CMempoolAddressDeltaKey
     AddressType type;
     uint160 addressBytes;
     uint256 txhash;
-    unsigned int index;
+    unsigned int apollon;
     int spending;
 
     CMempoolAddressDeltaKey(AddressType addressType, uint160 addressHash, uint256 hash, unsigned int i, int s) {
         type = addressType;
         addressBytes = addressHash;
         txhash = hash;
-        index = i;
+        apollon = i;
         spending = s;
     }
 
@@ -52,7 +52,7 @@ struct CMempoolAddressDeltaKey
         type = addressType;
         addressBytes = addressHash;
         txhash.SetNull();
-        index = 0;
+        apollon = 0;
         spending = 0;
     }
 };
@@ -63,10 +63,10 @@ struct CMempoolAddressDeltaKeyCompare
         if (a.type == b.type) {
             if (a.addressBytes == b.addressBytes) {
                 if (a.txhash == b.txhash) {
-                    if (a.index == b.index) {
+                    if (a.apollon == b.apollon) {
                         return a.spending < b.spending;
                     } else {
-                        return a.index < b.index;
+                        return a.apollon < b.apollon;
                     }
                 } else {
                     return a.txhash < b.txhash;

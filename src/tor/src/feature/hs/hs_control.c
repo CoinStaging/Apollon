@@ -39,7 +39,7 @@ hs_control_desc_event_requested(const ed25519_public_key_t *onion_pk,
 
   hs_build_address(onion_pk, HS_VERSION_THREE, onion_address);
 
-  /* Get the node from the routerstatus object to get the HSDir index used for
+  /* Get the node from the routerstatus object to get the HSDir apollon used for
    * this request. We can't have a routerstatus entry without a node and we
    * can't pick a node without an hsdir_index. */
   hsdir_node = node_get_by_id(hsdir_rs->identity_digest);
@@ -135,7 +135,7 @@ hs_control_desc_event_created(const char *onion_address,
  *
  * Using the onion address of the descriptor's service, the HSDir identity
  * digest, the blinded public key of the descriptor as a descriptor ID and the
- * HSDir index for this particular request. None can be NULL. */
+ * HSDir apollon for this particular request. None can be NULL. */
 void
 hs_control_desc_event_upload(const char *onion_address,
                              const char *hsdir_id_digest,
@@ -242,7 +242,7 @@ hs_control_hspost_command(const char *body, const char *onion_address,
     hs_get_responsible_hsdirs(&plaintext.blinded_pubkey,
                               hs_get_time_period_num(0),
                               0, /* Always the current descriptor which uses
-                                  * the first hsdir index. */
+                                  * the first hsdir apollon. */
                               0, /* It is for storing on a directory. */
                               hsdirs);
     hsdirs_rs = hsdirs;

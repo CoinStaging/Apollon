@@ -486,11 +486,11 @@ test_circuit_timeout(void *arg)
     tt_assert(!circuit_build_times_network_check_live(&estimate));
     tt_assert(!circuit_build_times_network_check_live(&final));
 
-    log_info(LD_CIRC, "idx: %d %d, tot: %d %d",
+    log_info(LD_CIRC, "xap: %d %d, tot: %d %d",
              build_times_idx, estimate.build_times_idx,
              total_build_times, estimate.total_build_times);
 
-    /* Check rollback index. Should match top of loop. */
+    /* Check rollback apollon. Should match top of loop. */
     tt_assert(build_times_idx == estimate.build_times_idx);
     // This can fail if estimate.total_build_times == 1000, because
     // in that case, rewind actually causes us to lose timeouts

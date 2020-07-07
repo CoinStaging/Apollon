@@ -42,8 +42,8 @@ void parseHelpString(UniValue& result, std::string helpString)
         std::string categoryKey = categoryVec[0];
         categoryKey.erase(boost::remove_if(categoryKey, boost::is_any_of("= ")), categoryKey.end());
 
-        for(unsigned index=1; index<categoryVec.size(); index++){
-           categoryArr.push_back(categoryVec[index]);
+        for(unsigned apollon=1; apollon<categoryVec.size(); apollon++){
+           categoryArr.push_back(categoryVec[apollon]);
         }
         result.push_back(Pair(categoryKey,categoryArr));
     }

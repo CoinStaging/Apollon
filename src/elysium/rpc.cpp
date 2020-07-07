@@ -99,7 +99,7 @@ UniValue SigmaMintToJson(const SigmaMint& mint, bool verbose)
     if (verbose && mint.chainState.block >= 0) {
         json.push_back(Pair("block", mint.chainState.block));
         json.push_back(Pair("group", static_cast<uint64_t>(mint.chainState.group)));
-        json.push_back(Pair("index", mint.chainState.index));
+        json.push_back(Pair("apollon", mint.chainState.apollon));
     }
 
     return json;
@@ -1399,7 +1399,7 @@ UniValue elysium_getorderbook(const UniValue& params, bool fHelp)
             "    \"amountdesired\" : \"n.nnnnnnnn\",                (string) the amount of tokens initially desired\n"
             "    \"amounttofill\" : \"n.nnnnnnnn\",                 (string) the amount of tokens still needed to fill the offer completely\n"
             "    \"action\" : n,                                  (number) the action of the transaction: (1) \"trade\", (2) \"cancel-price\", (3) \"cancel-pair\", (4) \"cancel-ecosystem\"\n"
-            "    \"block\" : nnnnnn,                              (number) the index of the block that contains the transaction\n"
+            "    \"block\" : nnnnnn,                              (number) the apollon of the block that contains the transaction\n"
             "    \"blocktime\" : nnnnnnnnnn                       (number) the timestamp of the block that contains the transaction\n"
             "  },\n"
             "  ...\n"
@@ -1479,7 +1479,7 @@ UniValue elysium_gettradehistoryforaddress(const UniValue& params, bool fHelp)
             "    \"matches\": [                                   (array of JSON objects) a list of matched orders and executed trades\n"
             "      {\n"
             "        \"txid\" : \"hash\",                               (string) the hash of the transaction that was matched against\n"
-            "        \"block\" : nnnnnn,                              (number) the index of the block that contains this transaction\n"
+            "        \"block\" : nnnnnn,                              (number) the apollon of the block that contains this transaction\n"
             "        \"address\" : \"address\",                         (string) the Zcoin address of the other trader\n"
             "        \"amountsold\" : \"n.nnnnnnnn\",                   (string) the number of tokens sold in this trade\n"
             "        \"amountreceived\" : \"n.nnnnnnnn\"                (string) the number of tokens traded in exchange\n"
@@ -1541,7 +1541,7 @@ UniValue elysium_gettradehistoryforpair(const UniValue& params, bool fHelp)
             "\nResult:\n"
             "[                                      (array of JSON objects)\n"
             "  {\n"
-            "    \"block\" : nnnnnn,                      (number) the index of the block that contains the trade match\n"
+            "    \"block\" : nnnnnn,                      (number) the apollon of the block that contains the trade match\n"
             "    \"unitprice\" : \"n.nnnnnnnnnnn...\" ,     (string) the unit price used to execute this trade (received/sold)\n"
             "    \"inverseprice\" : \"n.nnnnnnnnnnn...\",   (string) the inverse unit price (sold/received)\n"
             "    \"sellertxid\" : \"hash\",                 (string) the hash of the transaction of the seller\n"
@@ -1598,7 +1598,7 @@ UniValue elysium_getactivedexsells(const UniValue& params, bool fHelp)
             "    \"accepts\": [                        (array of JSON objects) a list of pending \"accept\" orders\n"
             "      {\n"
             "        \"buyer\" : \"address\",                (string) the Zcoin address of the buyer\n"
-            "        \"block\" : nnnnnn,                   (number) the index of the block that contains the \"accept\" order\n"
+            "        \"block\" : nnnnnn,                   (number) the apollon of the block that contains the \"accept\" order\n"
             "        \"blocksleft\" : nn,                  (number) the number of blocks left to pay\n"
             "        \"amount\" : \"n.nnnnnnnn\"             (string) the amount of tokens accepted and reserved\n"
             "        \"amounttopay\" : \"n.nnnnnnnn\"        (string) the amount in zcoins needed finalize the trade\n"
@@ -1702,10 +1702,10 @@ UniValue elysium_listblocktransactions(const UniValue& params, bool fHelp)
 {
     if (fHelp || params.size() != 1)
         throw runtime_error(
-            "elysium_listblocktransactions index\n"
+            "elysium_listblocktransactions apollon\n"
             "\nLists all Elysium transactions in a block.\n"
             "\nArguments:\n"
-            "1. index                (number, required) the block height or block index\n"
+            "1. apollon                (number, required) the block height or block apollon\n"
             "\nResult:\n"
             "[                       (array of string)\n"
             "  \"hash\",                 (string) the hash of the transaction\n"
@@ -1888,7 +1888,7 @@ UniValue elysium_listmints(const UniValue& params, bool fHelp)
             "    \"value\" : \"n.nnnnnnnn\" (string) value of the mint\n"
             "    \"block\" : n              (number) the block number that mint got mined (if verbose enabled)\n"
             "    \"group\" : n              (number) group identifier that mint belonged to (if verbose enabled)\n"
-            "    \"index\" : n              (number) index of the mint in the group (if verbose enabled)\n"
+            "    \"apollon\" : n              (number) apollon of the mint in the group (if verbose enabled)\n"
             "  },\n"
             "  ...\n"
             "]\n"
@@ -2036,7 +2036,7 @@ UniValue elysium_getinfo(const UniValue& params, bool fHelp)
             "  \"elysiumversion_int\" : xxxxxxx,      (number) client version as integer\n"
             "  \"elysiumversion\" : \"x.x.x.x-xxx\",    (string) client version\n"
             "  \"zcoincoreversion\" : \"x.x.x\",        (string) Zcoin Core version\n"
-            "  \"block\" : nnnnnn,                      (number) index of the last processed block\n"
+            "  \"block\" : nnnnnn,                      (number) apollon of the last processed block\n"
             "  \"blocktime\" : nnnnnnnnnn,              (number) timestamp of the last processed block\n"
             "  \"blocktransactions\" : nnnn,            (number) Elysium transactions found in the last processed block\n"
             "  \"totaltransactions\" : nnnnnnnn,        (number) Elysium transactions processed in total\n"
@@ -2252,7 +2252,7 @@ UniValue elysium_gettrade(const UniValue& params, bool fHelp)
             "  \"matches\": [                                   (array of JSON objects) a list of matched orders and executed trades\n"
             "    {\n"
             "      \"txid\" : \"hash\",                               (string) the hash of the transaction that was matched against\n"
-            "      \"block\" : nnnnnn,                              (number) the index of the block that contains this transaction\n"
+            "      \"block\" : nnnnnn,                              (number) the apollon of the block that contains this transaction\n"
             "      \"address\" : \"address\",                         (string) the Zcoin address of the other trader\n"
             "      \"amountsold\" : \"n.nnnnnnnn\",                   (string) the number of tokens sold in this trade\n"
             "      \"amountreceived\" : \"n.nnnnnnnn\"                (string) the number of tokens traded in exchange\n"
@@ -2284,7 +2284,7 @@ UniValue elysium_getcurrentconsensushash(const UniValue& params, bool fHelp)
             "\nReturns the consensus hash for all balances for the current block.\n"
             "\nResult:\n"
             "{\n"
-            "  \"block\" : nnnnnn,          (number) the index of the block this consensus hash applies to\n"
+            "  \"block\" : nnnnnn,          (number) the apollon of the block this consensus hash applies to\n"
             "  \"blockhash\" : \"hash\",      (string) the hash of the corresponding block\n"
             "  \"consensushash\" : \"hash\"   (string) the consensus hash for the block\n"
             "}\n"
@@ -2321,7 +2321,7 @@ UniValue elysium_getmetadexhash(const UniValue& params, bool fHelp)
             "1. propertyid                  (number, optional) hash orderbook (only trades selling propertyid)\n"
             "\nResult:\n"
             "{\n"
-            "  \"block\" : nnnnnn,          (number) the index of the block this hash applies to\n"
+            "  \"block\" : nnnnnn,          (number) the apollon of the block this hash applies to\n"
             "  \"blockhash\" : \"hash\",    (string) the hash of the corresponding block\n"
             "  \"propertyid\" : nnnnnn,     (number) the market this hash applies to (or 0 for all markets)\n"
             "  \"metadexhash\" : \"hash\"   (string) the hash for the state of the MetaDEx/orderbook\n"
@@ -2365,7 +2365,7 @@ UniValue elysium_getbalanceshash(const UniValue& params, bool fHelp)
             "1. propertyid                  (number, required) the property to hash balances for\n"
             "\nResult:\n"
             "{\n"
-            "  \"block\" : nnnnnn,          (number) the index of the block this hash applies to\n"
+            "  \"block\" : nnnnnn,          (number) the apollon of the block this hash applies to\n"
             "  \"blockhash\" : \"hash\",    (string) the hash of the corresponding block\n"
             "  \"propertyid\" : nnnnnn,     (number) the property id of the hashed balances\n"
             "  \"balanceshash\" : \"hash\"  (string) the hash for the balances\n"

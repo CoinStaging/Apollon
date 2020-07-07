@@ -59,7 +59,7 @@ protected:
 
 private Q_SLOTS:
     void on_lineEdit_returnPressed();
-    void on_tabWidget_currentChanged(int index);
+    void on_tabWidget_currentChanged(int apollon);
     /** open the debug.log from the current datadir */
     void on_openDebugLogfileButton_clicked();
     /** change the time range of the network traffic graph */

@@ -154,8 +154,8 @@
         <translation>正在為磁碟區塊重建索引...</translation>
     </message>
     <message>
-        <source>Send coins to a Index address</source>
-        <translation>付款至一個 Index 位址</translation>
+        <source>Send coins to a Apollon address</source>
+        <translation>付款至一個 Apollon 位址</translation>
     </message>
     <message>
         <source>Backup wallet to another location</source>
@@ -178,8 +178,8 @@
         <translation>驗證訊息... &amp;V</translation>
     </message>
     <message>
-        <source>Index</source>
-        <translation>Index</translation>
+        <source>Apollon</source>
+        <translation>Apollon</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -296,6 +296,6 @@
     <name>WalletView</name>
     </context>
 <context>
-    <name>index-core</name>
+    <name>apollon-core</name>
     </context>
 </TS>

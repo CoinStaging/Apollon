@@ -14,7 +14,7 @@ BOOST_AUTO_TEST_CASE(one_out_of_n)
     int N = 16384;
     int n = params->get_n();
     int m = params->get_m();
-    int index = 0;
+    int apollon = 0;
 
     secp_primitives::GroupElement g;
     g.randomize();
@@ -29,7 +29,7 @@ BOOST_AUTO_TEST_CASE(one_out_of_n)
 
     std::vector<secp_primitives::GroupElement> commits;
     for(int i = 0; i < N; ++i){
-        if(i == index){
+        if(i == apollon){
             secp_primitives::GroupElement c;
             secp_primitives::Scalar zero(uint64_t(0));
             c = sigma::SigmaPrimitives<secp_primitives::Scalar,secp_primitives::GroupElement>::commit(g, zero, h_gens[0], r);
@@ -43,7 +43,7 @@ BOOST_AUTO_TEST_CASE(one_out_of_n)
     }
     sigma::SigmaPlusProof<secp_primitives::Scalar,secp_primitives::GroupElement> proof(n, m);
 
-    prover.proof(commits, index, r, true, proof);
+    prover.proof(commits, apollon, r, true, proof);
 
     sigma::SigmaPlusVerifier<secp_primitives::Scalar,secp_primitives::GroupElement> verifier(g, h_gens, n, m);
 
@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE(one_out_of_n_padding)
     int N = 10000;
     int n = params->get_n();
     int m = params->get_m();
-    int index = 9999;
+    int apollon = 9999;
 
     secp_primitives::GroupElement g;
     g.randomize();
@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE(one_out_of_n_padding)
 
     std::vector<secp_primitives::GroupElement> commits;
     for(int i = 0; i < N; ++i){
-        if(i == index){
+        if(i == apollon){
             secp_primitives::GroupElement c;
             secp_primitives::Scalar zero(uint64_t(0));
             c = sigma::SigmaPrimitives<secp_primitives::Scalar,secp_primitives::GroupElement>::commit(g, zero, h_gens[0], r);
@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE(one_out_of_n_padding)
     }
     sigma::SigmaPlusProof<secp_primitives::Scalar,secp_primitives::GroupElement> proof(n, m);
 
-    prover.proof(commits, index, r, true, proof);
+    prover.proof(commits, apollon, r, true, proof);
 
     sigma::SigmaPlusVerifier<secp_primitives::Scalar,secp_primitives::GroupElement> verifier(g, h_gens, n, m);
 
@@ -102,7 +102,7 @@ BOOST_AUTO_TEST_CASE(prove_and_verify_in_different_set)
     int N = 16384;
     int n = params->get_n();
     int m = params->get_m();
-    int index = 0;
+    int apollon = 0;
 
     secp_primitives::GroupElement g;
     g.randomize();
@@ -117,7 +117,7 @@ BOOST_AUTO_TEST_CASE(prove_and_verify_in_different_set)
 
     std::vector<secp_primitives::GroupElement> commits;
     for(int i = 0; i < N; ++i){
-        if(i == index){
+        if(i == apollon){
             secp_primitives::GroupElement c;
             secp_primitives::Scalar zero(uint64_t(0));
             c = sigma::SigmaPrimitives<secp_primitives::Scalar,secp_primitives::GroupElement>::commit(g, zero, h_gens[0], r);
@@ -132,7 +132,7 @@ BOOST_AUTO_TEST_CASE(prove_and_verify_in_different_set)
 
     sigma::SigmaPlusProof<secp_primitives::Scalar,secp_primitives::GroupElement> proof(n, m);
 
-    prover.proof(commits, index, r, true, proof);
+    prover.proof(commits, apollon, r, true, proof);
 
     sigma::SigmaPlusVerifier<secp_primitives::Scalar,secp_primitives::GroupElement> verifier(g, h_gens, n, m);
 
@@ -183,7 +183,7 @@ BOOST_AUTO_TEST_CASE(prove_coin_not_in_set)
     int N = 16384;
     int n = params->get_n();
     int m = params->get_m();
-    int index = 0;
+    int apollon = 0;
     secp_primitives::GroupElement g;
     g.randomize();
     std::vector<secp_primitives::GroupElement> h_gens;
@@ -203,7 +203,7 @@ BOOST_AUTO_TEST_CASE(prove_coin_not_in_set)
 
     sigma::SigmaPlusProof<secp_primitives::Scalar,secp_primitives::GroupElement> proof(n, m);
 
-    prover.proof(commits, index, r, true, proof);
+    prover.proof(commits, apollon, r, true, proof);
 
     sigma::SigmaPlusVerifier<secp_primitives::Scalar,secp_primitives::GroupElement> verifier(g, h_gens, n, m);
     BOOST_CHECK(!verifier.verify(commits, proof, true));

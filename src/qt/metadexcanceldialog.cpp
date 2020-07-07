@@ -105,17 +105,17 @@ void MetaDExCancelDialog::UpdateAddressSelector()
             for (md_Set::iterator it = indexes.begin(); it != indexes.end(); ++it) {
                 CMPMetaDEx obj = *it;
                 if(IsMyAddress(obj.getAddr())) { // this address is ours and has an active MetaDEx trade
-                    int idx = ui->fromCombo->findText(QString::fromStdString(obj.getAddr())); // avoid adding duplicates
-                    if (idx == -1) ui->fromCombo->addItem(QString::fromStdString(obj.getAddr()));
+                    int xap = ui->fromCombo->findText(QString::fromStdString(obj.getAddr())); // avoid adding duplicates
+                    if (xap == -1) ui->fromCombo->addItem(QString::fromStdString(obj.getAddr()));
                 }
             }
         }
     }
 
     // restore initial selection
-    int idx = ui->fromCombo->findText(selectedItem);
-    if (idx != -1) {
-        ui->fromCombo->setCurrentIndex(idx);
+    int xap = ui->fromCombo->findText(selectedItem);
+    if (xap != -1) {
+        ui->fromCombo->setCurrentIndex(xap);
     }
 }
 
@@ -180,8 +180,8 @@ void MetaDExCancelDialog::UpdateCancelCombo()
                         if ((obj.getProperty() == ELYSIUM_PROPERTY_ELYSIUM) || (obj.getDesProperty() == ELYSIUM_PROPERTY_ELYSIUM)) { comboStr += " ELYSIUM/SPT"; } else { comboStr += " TELYSIUM/SPT"; }
                         dataStr += ":" + obj.displayUnitPrice();
                     }
-                    int index = ui->cancelCombo->findText(QString::fromStdString(comboStr));
-                    if ( index == -1 ) { ui->cancelCombo->addItem(QString::fromStdString(comboStr),QString::fromStdString(dataStr)); }
+                    int apollon = ui->cancelCombo->findText(QString::fromStdString(comboStr));
+                    if ( apollon == -1 ) { ui->cancelCombo->addItem(QString::fromStdString(comboStr),QString::fromStdString(dataStr)); }
                 }
             }
         }
@@ -193,8 +193,8 @@ void MetaDExCancelDialog::UpdateCancelCombo()
         if (fTestEcosystem) ui->cancelCombo->addItem("All active orders in the test ecosystem", 2);
     }
 
-    int idx = ui->cancelCombo->findText(existingSelection, Qt::MatchExactly);
-    if (idx != -1) ui->cancelCombo->setCurrentIndex(idx); // if value selected before update and it still exists, reselect it
+    int xap = ui->cancelCombo->findText(existingSelection, Qt::MatchExactly);
+    if (xap != -1) ui->cancelCombo->setCurrentIndex(xap); // if value selected before update and it still exists, reselect it
 }
 
 /**

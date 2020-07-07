@@ -49,9 +49,9 @@ static const int MAX_URI_LENGTH = 255;
 /* Number of frames in spinner animation */
 #define SPINNER_FRAMES 36
 
-#define QAPP_ORG_NAME "Index"
+#define QAPP_ORG_NAME "Apollon"
 #define QAPP_ORG_DOMAIN "indexchain.org"
-#define QAPP_APP_NAME_DEFAULT "Index-Qt"
-#define QAPP_APP_NAME_TESTNET "Index-Qt-testnet"
+#define QAPP_APP_NAME_DEFAULT "Apollon-Qt"
+#define QAPP_APP_NAME_TESTNET "Apollon-Qt-testnet"
 
 #endif // BITCOIN_QT_GUICONSTANTS_H

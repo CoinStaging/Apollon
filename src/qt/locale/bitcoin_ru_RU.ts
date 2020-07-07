@@ -58,8 +58,8 @@
 <context>
     <name>ZcoinGUI</name>
     <message>
-        <source>Index</source>
-        <translation>Index Core</translation>
+        <source>Apollon</source>
+        <translation>Apollon Core</translation>
     </message>
     <message>
         <source>&amp;Command-line options</source>
@@ -216,14 +216,14 @@
     <name>WalletView</name>
     </context>
 <context>
-    <name>index-core</name>
+    <name>apollon-core</name>
     <message>
-        <source>Index Core</source>
-        <translation>Index Core</translation>
+        <source>Apollon Core</source>
+        <translation>Apollon Core</translation>
     </message>
     <message>
         <source>Whitelisted peers cannot be DoS banned and their transactions are always relayed, even if they are already in the mempool, useful e.g. for a gateway</source>
-        <translation>index-core</translation>
+        <translation>apollon-core</translation>
     </message>
     <message>
         <source>Information</source>

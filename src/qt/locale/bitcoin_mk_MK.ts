@@ -138,7 +138,7 @@
         <translation>Повторно индексирање на блокови од дискот...</translation>
     </message>
     <message>
-        <source>Send coins to a Index address</source>
+        <source>Send coins to a Apollon address</source>
         <translation>Испрати биткоини на Биткоин адреса</translation>
     </message>
     <message>
@@ -146,7 +146,7 @@
         <translation>&amp;Потврди порака...</translation>
     </message>
     <message>
-        <source>Index</source>
+        <source>Apollon</source>
         <translation>Биткоин</translation>
     </message>
     <message>
@@ -594,13 +594,13 @@
     <name>WalletView</name>
     </context>
 <context>
-    <name>index-core</name>
+    <name>apollon-core</name>
     <message>
         <source>Options:</source>
         <translation>Опции:</translation>
     </message>
     <message>
-        <source>Index Core</source>
+        <source>Apollon Core</source>
         <translation>Биткоин Core</translation>
     </message>
     <message>

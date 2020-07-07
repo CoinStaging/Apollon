@@ -155,7 +155,7 @@ void absorbBlockBlake2Safe(uint64_t *state, const uint64_t *in) {
 
 /**
  * Performs a reduced squeeze operation for a single row, from the highest to
- * the lowest index, using the reduced-round Blake2b's G function as the
+ * the lowest apollon, using the reduced-round Blake2b's G function as the
  * internal permutation
  *
  * @param state     The current state of the sponge
@@ -189,7 +189,7 @@ void reducedSqueezeRow0(uint64_t* state, uint64_t* rowOut, uint64_t nCols) {
 
 /**
  * Performs a reduced duplex operation for a single row, from the highest to
- * the lowest index, using the reduced-round Blake2b's G function as the
+ * the lowest apollon, using the reduced-round Blake2b's G function as the
  * internal permutation
  *
  * @param state		The current state of the sponge

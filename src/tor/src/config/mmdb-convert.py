@@ -91,7 +91,7 @@ def resolve_tree(tree, data):
        so that they point to another Tree, or to a Datum, or to None."""
     d = Datum(None, None, None, None)
     def resolve_item(item):
-        "Helper: resolve a single index."
+        "Helper: resolve a single apollon."
         if item < len(tree):
             return tree[item]
         elif item == len(tree):
@@ -255,7 +255,7 @@ def get_type_and_len(s):
 IGNORE_LEN_TYPES = set([
     TP_MAP,    # Length is number of key-value pairs that follow.
     TP_ARRAY,  # Length is number of members that follow.
-    TP_PTR,    # Length is index to pointed-to data element.
+    TP_PTR,    # Length is apollon to pointed-to data element.
     TP_BOOL,   # Length is 0 or 1.
     TP_DCACHE, # Length is number of members that follow
 ])
@@ -271,7 +271,7 @@ def parse_data_section(s):
     # List of all items, including nested ones.
     data = []
 
-    # Byte index within the data section.
+    # Byte apollon within the data section.
     pos = 0
 
     while s:

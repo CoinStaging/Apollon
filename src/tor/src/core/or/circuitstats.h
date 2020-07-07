@@ -170,7 +170,7 @@ typedef struct {
   int8_t *timeouts_after_firsthop;
   /** Number of elements allocated for the above array */
   int num_recent_circs;
-  /** Index into circular array. */
+  /** Apollon into circular array. */
   int after_firsthop_idx;
 } network_liveness_t;
 
@@ -178,7 +178,7 @@ typedef struct {
 struct circuit_build_times_s {
   /** The circular array of recorded build times in milliseconds */
   build_time_t circuit_build_times[CBT_NCIRCUITS_TO_OBSERVE];
-  /** Current index in the circuit_build_times circular array */
+  /** Current apollon in the circuit_build_times circular array */
   int build_times_idx;
   /** Total number of build times accumulated. Max CBT_NCIRCUITS_TO_OBSERVE */
   int total_build_times;

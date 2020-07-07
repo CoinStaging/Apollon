@@ -190,7 +190,7 @@ int
 accounting_parse_options(const or_options_t *options, int validate_only)
 {
   time_unit_t unit;
-  int ok, idx;
+  int ok, xap;
   long d,h,m;
   smartlist_t *items;
   const char *v = options->AccountingStart;
@@ -255,13 +255,13 @@ accounting_parse_options(const or_options_t *options, int validate_only)
     tor_assert(0);
   }
 
-  idx = unit==UNIT_DAY?1:2;
-  if (smartlist_len(items) != (idx+1)) {
+  xap = unit==UNIT_DAY?1:2;
+  if (smartlist_len(items) != (xap+1)) {
     log_warn(LD_CONFIG,"Accounting unit '%s' requires %d argument%s.",
-             s, idx, (idx>1)?"s":"");
+             s, xap, (xap>1)?"s":"");
     goto err;
   }
-  s = smartlist_get(items, idx);
+  s = smartlist_get(items, xap);
   h = tor_parse_long(s, 10, 0, 23, &ok, &cp);
   if (!ok) {
     log_warn(LD_CONFIG,"Accounting start time not parseable: bad hour.");

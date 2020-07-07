@@ -80,12 +80,12 @@
     </message>
     <message>
         <location line="+7"/>
-        <source>These are your Index addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
+        <source>These are your Apollon addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
-        <source>These are your Index addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
+        <source>These are your Apollon addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -211,7 +211,7 @@
     </message>
     <message>
         <location line="+1"/>
-        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR IDX Coins&lt;/b&gt;!</source>
+        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR XAP Coins&lt;/b&gt;!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -410,8 +410,8 @@
     </message>
     <message>
         <location line="-463"/>
-        <source>Send coins to a Index address</source>
-        <translation>Send coins to a Index address</translation>
+        <source>Send coins to a Apollon address</source>
+        <translation>Send coins to a Apollon address</translation>
     </message>
     <message>
         <location line="+67"/>
@@ -440,8 +440,8 @@
     </message>
     <message>
         <location line="+487"/>
-        <source>Index</source>
-        <translation>Index</translation>
+        <source>Apollon</source>
+        <translation>Apollon</translation>
     </message>
     <message>
         <location line="-699"/>
@@ -475,13 +475,13 @@
     </message>
     <message>
         <location line="+7"/>
-        <source>Sign messages with your Index addresses to prove you own them</source>
-        <translation>Sign messages with your Index addresses to prove you own them</translation>
+        <source>Sign messages with your Apollon addresses to prove you own them</source>
+        <translation>Sign messages with your Apollon addresses to prove you own them</translation>
     </message>
     <message>
         <location line="+2"/>
-        <source>Verify messages to ensure they were signed with specified Index addresses</source>
-        <translation>Verify messages to ensure they were signed with specified Index addresses</translation>
+        <source>Verify messages to ensure they were signed with specified Apollon addresses</source>
+        <translation>Verify messages to ensure they were signed with specified Apollon addresses</translation>
     </message>
     <message>
         <location line="+58"/>
@@ -505,7 +505,7 @@
     </message>
     <message>
         <location line="-158"/>
-        <source>Request payments (generates QR codes and index: URIs)</source>
+        <source>Request payments (generates QR codes and apollon: URIs)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -520,7 +520,7 @@
     </message>
     <message>
         <location line="+3"/>
-        <source>Open a index: URI or payment request</source>
+        <source>Open a apollon: URI or payment request</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -530,10 +530,10 @@
     </message>
     <message numerus="yes">
         <location line="+347"/>
-        <source>%n active connection(s) to Index network</source>
+        <source>%n active connection(s) to Apollon network</source>
         <translation>
-            <numerusform>%n active connection to Index network</numerusform>
-            <numerusform>%n active connections to Index network</numerusform>
+            <numerusform>%n active connection to Apollon network</numerusform>
+            <numerusform>%n active connections to Apollon network</numerusform>
         </translation>
     </message>
     <message>
@@ -634,7 +634,7 @@
     </message>
     <message>
         <location line="-394"/>
-        <source>Show the %1 help message to get a list with possible Index command-line options</source>
+        <source>Show the %1 help message to get a list with possible Apollon command-line options</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1028,7 +1028,7 @@
     </message>
     <message>
         <location line="+71"/>
-        <source>The entered address &quot;%1&quot; is not a valid Index address.</source>
+        <source>The entered address &quot;%1&quot; is not a valid Apollon address.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1163,7 +1163,7 @@
     </message>
     <message>
         <location line="+10"/>
-        <source>%1 will download and store a copy of the Index block chain. At least %2GB of data will be stored in this directory, and it will grow over time. The wallet will also be stored in this directory.</source>
+        <source>%1 will download and store a copy of the Apollon block chain. At least %2GB of data will be stored in this directory, and it will grow over time. The wallet will also be stored in this directory.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1352,8 +1352,8 @@
     </message>
     <message>
         <location line="+30"/>
-        <source>Automatically open the Index client port on the router. This only works when your router supports UPnP and it is enabled.</source>
-        <translation>Automatically open the Index client port on the router. This only works when your router supports UPnP and it is enabled.</translation>
+        <source>Automatically open the Apollon client port on the router. This only works when your router supports UPnP and it is enabled.</source>
+        <translation>Automatically open the Apollon client port on the router. This only works when your router supports UPnP and it is enabled.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1362,7 +1362,7 @@
     </message>
     <message>
         <location line="+17"/>
-        <source>Connect to the Index network through a SOCKS5 proxy.</source>
+        <source>Connect to the Apollon network through a SOCKS5 proxy.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1417,7 +1417,7 @@
     </message>
     <message>
         <location line="+25"/>
-        <source>Connect to the Index network through a separate SOCKS5 proxy for Tor hidden services.</source>
+        <source>Connect to the Apollon network through a separate SOCKS5 proxy for Tor hidden services.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1542,8 +1542,8 @@
     <message>
         <location line="+62"/>
         <location line="+386"/>
-        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Index network after a connection is established, but this process has not completed yet.</source>
-        <translation>The displayed information may be out of date. Your wallet automatically synchronizes with the Index network after a connection is established, but this process has not completed yet.</translation>
+        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Apollon network after a connection is established, but this process has not completed yet.</source>
+        <translation>The displayed information may be out of date. Your wallet automatically synchronizes with the Apollon network after a connection is established, but this process has not completed yet.</translation>
     </message>
     <message>
         <location line="-139"/>
@@ -1640,7 +1640,7 @@
     </message>
     <message>
         <location line="-402"/>
-        <source>Cannot start Index: click-to-pay handler</source>
+        <source>Cannot start Apollon: click-to-pay handler</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1662,7 +1662,7 @@
     </message>
     <message>
         <location line="+8"/>
-        <source>URI cannot be parsed! This can be caused by an invalid Index address or malformed URI parameters.</source>
+        <source>URI cannot be parsed! This can be caused by an invalid Apollon address or malformed URI parameters.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1779,7 +1779,7 @@
     </message>
     <message>
         <location filename="../guiutil.cpp" line="+135"/>
-        <source>Enter a Index address (e.g. %1)</source>
+        <source>Enter a Apollon address (e.g. %1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2272,7 +2272,7 @@
     <message>
         <location line="+14"/>
         <location line="+23"/>
-        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the Index network.</source>
+        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the Apollon network.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2566,7 +2566,7 @@
     <message>
         <location line="+30"/>
         <location line="+13"/>
-        <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks. But be aware that this can end up in a never confirming transaction once there is more demand for Index transactions than the network can process.</source>
+        <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks. But be aware that this can end up in a never confirming transaction once there is more demand for Apollon transactions than the network can process.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2777,7 +2777,7 @@
     </message>
     <message>
         <location line="+106"/>
-        <source>Warning: Invalid Index address</source>
+        <source>Warning: Invalid Apollon address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2822,7 +2822,7 @@
     </message>
     <message>
         <location line="+39"/>
-        <source>The Index address to send the payment to</source>
+        <source>The Apollon address to send the payment to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2879,7 +2879,7 @@
     </message>
     <message>
         <location line="+47"/>
-        <source>A message that was attached to the index: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Index network.</source>
+        <source>A message that was attached to the apollon: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Apollon network.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2941,7 +2941,7 @@
     </message>
     <message>
         <location line="+18"/>
-        <source>The Index address to sign the message with</source>
+        <source>The Apollon address to sign the message with</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2983,8 +2983,8 @@
     </message>
     <message>
         <location line="+21"/>
-        <source>Sign the message to prove you own this Index address</source>
-        <translation>Sign the message to prove you own this Index address</translation>
+        <source>Sign the message to prove you own this Apollon address</source>
+        <translation>Sign the message to prove you own this Apollon address</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3014,13 +3014,13 @@
     </message>
     <message>
         <location line="+21"/>
-        <source>The Index address the message was signed with</source>
+        <source>The Apollon address the message was signed with</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+37"/>
-        <source>Verify the message to ensure it was signed with the specified Index address</source>
-        <translation>Verify the message to ensure it was signed with the specified Index address</translation>
+        <source>Verify the message to ensure it was signed with the specified Apollon address</source>
+        <translation>Verify the message to ensure it was signed with the specified Apollon address</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3310,7 +3310,7 @@
     </message>
     <message>
         <location line="+1"/>
-        <source>Output index</source>
+        <source>Output apollon</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3777,7 +3777,7 @@
     </message>
 </context>
 <context>
-    <name>Index-core</name>
+    <name>Apollon-core</name>
     <message>
         <location filename="../bitcoinstrings.cpp" line="+297"/>
         <source>Options:</source>
@@ -3860,8 +3860,8 @@
     </message>
     <message>
         <location line="-211"/>
-        <source>Index Core</source>
-        <translation type="unfinished">Index Core</translation>
+        <source>Apollon Core</source>
+        <translation type="unfinished">Apollon Core</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4020,7 +4020,7 @@
     </message>
     <message>
         <location line="+2"/>
-        <source>Change index out of range</source>
+        <source>Change apollon out of range</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4215,7 +4215,7 @@
     </message>
     <message>
         <location line="+3"/>
-        <source>Rebuild chain state and block index from the blk*.dat files on disk</source>
+        <source>Rebuild chain state and block apollon from the blk*.dat files on disk</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4660,7 +4660,7 @@
     </message>
     <message>
         <location line="+11"/>
-        <source>Maintain a full transaction index, used by the getrawtransaction rpc call (default: %u)</source>
+        <source>Maintain a full transaction apollon, used by the getrawtransaction rpc call (default: %u)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4835,8 +4835,8 @@
     </message>
     <message>
         <location line="+14"/>
-        <source>Loading block index...</source>
-        <translation>Loading block index...</translation>
+        <source>Loading block apollon...</source>
+        <translation>Loading block apollon...</translation>
     </message>
     <message>
         <location line="-61"/>

@@ -142,8 +142,8 @@
         <translation>Deschide &amp;URI...</translation>
     </message>
     <message>
-        <source>Send coins to a Index address</source>
-        <translation>Trimite monedele către o adresă Index</translation>
+        <source>Send coins to a Apollon address</source>
+        <translation>Trimite monedele către o adresă Apollon</translation>
     </message>
     <message>
         <source>Backup wallet to another location</source>
@@ -166,8 +166,8 @@
         <translation>&amp;Verifică mesajul...</translation>
     </message>
     <message>
-        <source>Index</source>
-        <translation>Index</translation>
+        <source>Apollon</source>
+        <translation>Apollon</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -194,12 +194,12 @@
         <translation>Criptează cheile private care aparțin portofelului tău.</translation>
     </message>
     <message>
-        <source>Sign messages with your Index addresses to prove you own them</source>
-        <translation>Semnează mesajele cu adresa ta de Index pentru a face dovada că îți aparțin.</translation>
+        <source>Sign messages with your Apollon addresses to prove you own them</source>
+        <translation>Semnează mesajele cu adresa ta de Apollon pentru a face dovada că îți aparțin.</translation>
     </message>
     <message>
-        <source>Verify messages to ensure they were signed with specified Index addresses</source>
-        <translation>Verifică mesajele cu scopul de a asigura faptul că au fost semnate cu adresa de Index specificată.</translation>
+        <source>Verify messages to ensure they were signed with specified Apollon addresses</source>
+        <translation>Verifică mesajele cu scopul de a asigura faptul că au fost semnate cu adresa de Apollon specificată.</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -214,12 +214,12 @@
         <translation>&amp;Ajutor</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and index: URIs)</source>
-        <translation>Cerere plată (generează coduri QR și index: URIs)</translation>
+        <source>Request payments (generates QR codes and apollon: URIs)</source>
+        <translation>Cerere plată (generează coduri QR și apollon: URIs)</translation>
     </message>
     <message>
-        <source>Open a index: URI or payment request</source>
-        <translation>Deschide un index: URI sau cerere de plată</translation>
+        <source>Open a apollon: URI or payment request</source>
+        <translation>Deschide un apollon: URI sau cerere de plată</translation>
     </message>
     <message>
         <source>%1 and %2</source>
@@ -744,10 +744,10 @@
     <name>WalletView</name>
     </context>
 <context>
-    <name>index-core</name>
+    <name>apollon-core</name>
     <message>
-        <source>Index Core</source>
-        <translation>Index Core</translation>
+        <source>Apollon Core</source>
+        <translation>Apollon Core</translation>
     </message>
     <message>
         <source>Information</source>

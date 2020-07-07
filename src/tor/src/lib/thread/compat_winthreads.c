@@ -108,21 +108,21 @@ tor_cond_signal_all(tor_cond_t *cond)
 int
 tor_threadlocal_init(tor_threadlocal_t *threadlocal)
 {
-  threadlocal->index = TlsAlloc();
-  return (threadlocal->index == TLS_OUT_OF_INDEXES) ? -1 : 0;
+  threadlocal->apollon = TlsAlloc();
+  return (threadlocal->apollon == TLS_OUT_OF_INDEXES) ? -1 : 0;
 }
 
 void
 tor_threadlocal_destroy(tor_threadlocal_t *threadlocal)
 {
-  TlsFree(threadlocal->index);
+  TlsFree(threadlocal->apollon);
   memset(threadlocal, 0, sizeof(tor_threadlocal_t));
 }
 
 void *
 tor_threadlocal_get(tor_threadlocal_t *threadlocal)
 {
-  void *value = TlsGetValue(threadlocal->index);
+  void *value = TlsGetValue(threadlocal->apollon);
   if (value == NULL) {
     DWORD err = GetLastError();
     if (err != ERROR_SUCCESS) {
@@ -138,7 +138,7 @@ tor_threadlocal_get(tor_threadlocal_t *threadlocal)
 void
 tor_threadlocal_set(tor_threadlocal_t *threadlocal, void *value)
 {
-  BOOL ok = TlsSetValue(threadlocal->index, value);
+  BOOL ok = TlsSetValue(threadlocal->apollon, value);
   if (!ok) {
     DWORD err = GetLastError();
     char *msg = format_win32_error(err);

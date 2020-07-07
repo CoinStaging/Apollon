@@ -117,14 +117,14 @@ int TxProcessor::ProcessSimpleMint(const CMPTransaction& tx)
 
     for (auto &mint : tx.getMints()) {
         SigmaMintGroup group;
-        SigmaMintIndex index;
+        SigmaMintIndex apollon;
 
         auto denom = mint.first;
         auto& pubkey = mint.second;
 
-        std::tie(group, index) = sigmaDb->RecordMint(property, denom, pubkey, block);
+        std::tie(group, apollon) = sigmaDb->RecordMint(property, denom, pubkey, block);
 
-        SimpleMintProcessed(property, denom, group, index, pubkey);
+        SimpleMintProcessed(property, denom, group, apollon, pubkey);
     }
 
     return 0;

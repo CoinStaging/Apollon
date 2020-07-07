@@ -661,7 +661,7 @@ test_access_service(void *arg)
   hs_free_all();
 }
 
-/** Test that we can create intro point objects, index them and find them */
+/** Test that we can create intro point objects, apollon them and find them */
 static void
 test_service_intro_point(void *arg)
 {

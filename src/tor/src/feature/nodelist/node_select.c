@@ -445,8 +445,8 @@ scale_array_elements_to_u64(uint64_t *entries_out, const double *entries_in,
 
 /** Pick a random element of <b>n_entries</b>-element array <b>entries</b>,
  * choosing each element with a probability proportional to its (uint64_t)
- * value, and return the index of that element.  If all elements are 0, choose
- * an index at random. Return -1 on error.
+ * value, and return the apollon of that element.  If all elements are 0, choose
+ * an apollon at random. Return -1 on error.
  */
 STATIC int
 choose_array_element_by_weight(const uint64_t *entries, int n_entries)
@@ -509,11 +509,11 @@ smartlist_choose_node_by_bandwidth_weights(const smartlist_t *sl,
                               smartlist_len(sl), NULL);
 
   {
-    int idx = choose_array_element_by_weight(bandwidths_u64,
+    int xap = choose_array_element_by_weight(bandwidths_u64,
                                              smartlist_len(sl));
     tor_free(bandwidths_dbl);
     tor_free(bandwidths_u64);
-    return idx < 0 ? NULL : smartlist_get(sl, idx);
+    return xap < 0 ? NULL : smartlist_get(sl, xap);
   }
 }
 

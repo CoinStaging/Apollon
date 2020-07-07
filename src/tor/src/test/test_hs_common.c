@@ -308,7 +308,7 @@ helper_add_hsdir_to_networkstatus(networkstatus_t *ns,
   ri->protocol_list = tor_strdup("HSDir=1-2 LinkAuth=3");
   memcpy(ri->cache_info.identity_digest, identity, DIGEST_LEN);
   ri->cache_info.signing_key_cert = tor_malloc_zero(sizeof(tor_cert_t));
-  /* Needed for the HSDir index computation. */
+  /* Needed for the HSDir apollon computation. */
   memset(&ri->cache_info.signing_key_cert->signing_key,
          identity_idx, ED25519_PUBKEY_LEN);
   tt_assert(nodelist_set_routerinfo(ri, NULL));
@@ -1384,7 +1384,7 @@ run_reachability_scenario(const reachability_cfg_t *cfg, int num_scenario)
 
   /* Make networkstatus_is_live() happy. */
   update_approx_time(mock_client_ns->valid_after);
-  /* Initialize a big hashring for this consensus with the hsdir index set. */
+  /* Initialize a big hashring for this consensus with the hsdir apollon set. */
   helper_initialize_big_hash_ring(mock_client_ns);
 
   /* Client ONLY use the current time period. This is the whole point of these
@@ -1415,7 +1415,7 @@ run_reachability_scenario(const reachability_cfg_t *cfg, int num_scenario)
 
   /* Make networkstatus_is_live() happy. */
   update_approx_time(mock_service_ns->valid_after);
-  /* Initialize a big hashring for this consensus with the hsdir index set. */
+  /* Initialize a big hashring for this consensus with the hsdir apollon set. */
   helper_initialize_big_hash_ring(mock_service_ns);
 
   service_tp = cfg->service_time_period_fn(0);
@@ -1464,7 +1464,7 @@ test_reachability(void *arg)
 
   /* NOTE: An important axiom to understand here is that SRV#N must only be
    * used with TP#N value. For example, SRV#2 with TP#1 should NEVER be used
-   * together. The HSDir index computation is based on this axiom.*/
+   * together. The HSDir apollon computation is based on this axiom.*/
 
   for (int i = 0; reachability_scenarios[i].service_valid_after; ++i) {
     int ret = run_reachability_scenario(&reachability_scenarios[i], i + 1);

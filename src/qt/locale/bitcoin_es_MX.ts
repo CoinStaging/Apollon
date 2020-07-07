@@ -150,8 +150,8 @@
         <translation>Reindexando bloques en el disco...</translation>
     </message>
     <message>
-        <source>Send coins to a Index address</source>
-        <translation>Enviar monedas a una dirección Index</translation>
+        <source>Send coins to a Apollon address</source>
+        <translation>Enviar monedas a una dirección Apollon</translation>
     </message>
     <message>
         <source>Backup wallet to another location</source>
@@ -174,8 +174,8 @@
         <translation>&amp;Verificar mensaje...</translation>
     </message>
     <message>
-        <source>Index</source>
-        <translation>Index</translation>
+        <source>Apollon</source>
+        <translation>Apollon</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -416,8 +416,8 @@
         <translation>Mensaje:</translation>
     </message>
     <message>
-        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the Index network.</source>
-        <translation>Mensaje opcional para agregar a la solicitud de pago, el cual será mostrado cuando la solicitud este abierta. Nota: El mensaje no se manda con el pago a travéz de la red de Index.</translation>
+        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the Apollon network.</source>
+        <translation>Mensaje opcional para agregar a la solicitud de pago, el cual será mostrado cuando la solicitud este abierta. Nota: El mensaje no se manda con el pago a travéz de la red de Apollon.</translation>
     </message>
     <message>
         <source>Use this form to request payments. All fields are &lt;b&gt;optional&lt;/b&gt;.</source>
@@ -596,14 +596,14 @@
     <name>WalletView</name>
     </context>
 <context>
-    <name>index-core</name>
+    <name>apollon-core</name>
     <message>
         <source>Options:</source>
         <translation>Opciones:</translation>
     </message>
     <message>
-        <source>Index Core</source>
-        <translation>nucleo Index</translation>
+        <source>Apollon Core</source>
+        <translation>nucleo Apollon</translation>
     </message>
     <message>
         <source>&lt;category&gt; can be:</source>
@@ -634,7 +634,7 @@
         <translation>Cargando direcciones...</translation>
     </message>
     <message>
-        <source>Loading block index...</source>
+        <source>Loading block apollon...</source>
         <translation>Cargando indice de bloques... </translation>
     </message>
     <message>

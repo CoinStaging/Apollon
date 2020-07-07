@@ -65,7 +65,7 @@ ope_val_from_le(ope_val_t x)
  * Return a new AES256-CTR stream cipher object for <b>ope</b>, ready to yield
  * bytes from the stream at position <b>initial_idx</b>.
  *
- * Note that because the index is converted directly to an IV, it must be a
+ * Note that because the apollon is converted directly to an IV, it must be a
  * multiple of the AES block size (16).
  */
 STATIC crypto_cipher_t *

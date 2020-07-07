@@ -1627,7 +1627,7 @@
         </rect>
        </property>
        <property name="text">
-        <string>Rebuild index</string>
+        <string>Rebuild apollon</string>
        </property>
       </widget>
       <widget class="QLabel" name="label_repair_reindex">
@@ -1640,7 +1640,7 @@
         </rect>
        </property>
        <property name="text">
-        <string>-reindex: Rebuild block chain index from current blk000??.dat files.</string>
+        <string>-reindex: Rebuild block chain apollon from current blk000??.dat files.</string>
        </property>
       </widget>
       <widget class="QPushButton" name="btn_resync">

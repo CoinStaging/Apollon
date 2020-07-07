@@ -159,7 +159,7 @@ CPubKey CWallet::GetKeyFromKeypath(uint32_t nChange, uint32_t nChild) {
     CKey key;                      //master key seed (256bit)
     CExtKey masterKey;             //hd master key
     CExtKey purposeKey;            //key at m/44'
-    CExtKey coinTypeKey;           //key at m/44'/<1/136>' (Testnet or Index Coin Type respectively, according to SLIP-0044)
+    CExtKey coinTypeKey;           //key at m/44'/<1/136>' (Testnet or Apollon Coin Type respectively, according to SLIP-0044)
     CExtKey accountKey;            //key at m/44'/<1/136>'/0'
     CExtKey externalChainChildKey; //key at m/44'/<1/136>'/0'/<c> (Standard: 0/1, Mints: 2)
     CExtKey childKey;              //key at m/44'/<1/136>'/0'/<c>/<n>
@@ -224,7 +224,7 @@ CPubKey CWallet::GenerateNewKey(uint32_t nChange) {
         CKey key;                      //master key seed (256bit)
         CExtKey masterKey;             //hd master key
         CExtKey purposeKey;            //key at m/44'
-        CExtKey coinTypeKey;           //key at m/44'/<1/136>' (Testnet or Index Coin Type respectively, according to SLIP-0044)
+        CExtKey coinTypeKey;           //key at m/44'/<1/136>' (Testnet or Apollon Coin Type respectively, according to SLIP-0044)
         CExtKey accountKey;            //key at m/44'/<1/136>'/0'
         CExtKey externalChainChildKey; //key at m/44'/<1/136>'/0'/<c> (Standard: 0/1, Mints: 2)
         CExtKey childKey;              //key at m/44'/<1/136>'/0'/<c>/<n>
@@ -254,13 +254,13 @@ CPubKey CWallet::GenerateNewKey(uint32_t nChange) {
         // derive m/44'/136'/0'/<c>
         accountKey.Derive(externalChainChildKey, nChange);
 
-        // derive child key at next index, skip keys already known to the wallet
+        // derive child key at next apollon, skip keys already known to the wallet
         do {
             externalChainChildKey.Derive(childKey, hdChain.nExternalChainCounters[nChange]);
             metadata.hdKeypath = "m/44'/" + std::to_string(nIndex) + "'/0'/" + std::to_string(nChange) + "/" + std::to_string(hdChain.nExternalChainCounters[nChange]);
             metadata.hdMasterKeyID = hdChain.masterKeyID;
             metadata.nChild = Component(hdChain.nExternalChainCounters[nChange], false);
-            // increment childkey index
+            // increment childkey apollon
             hdChain.nExternalChainCounters[nChange]++;
         } while (HaveKey(childKey.key.GetPubKey().GetID()));
         secret = childKey.key;
@@ -1258,7 +1258,7 @@ bool CWallet::AddToWallet(const CWalletTx &wtxIn, bool fFromLoadWallet, CWalletD
                     int64_t blocktime = mapBlockIndex[wtxIn.hashBlock]->GetBlockTime();
                     wtx.nTimeSmart = std::max(latestEntry, std::min(blocktime, latestNow));
                 } else
-                    LogPrintf("AddToWallet(): found %s in block %s not in index\n",
+                    LogPrintf("AddToWallet(): found %s in block %s not in apollon\n",
                               wtxIn.GetHash().ToString(),
                               wtxIn.hashBlock.ToString());
             }
@@ -1824,7 +1824,7 @@ bool CWallet::SetHDMasterKey(const CPubKey &pubkey, const int cHDChainVersion) {
     SetMinVersion(FEATURE_HD);
 
     // store the keyid (hash160) together with
-    // the child index counter in the database
+    // the child apollon counter in the database
     // as a hdchain object
     CHDChain newHdChain;
     newHdChain.nVersion = cHDChainVersion;
@@ -2418,7 +2418,7 @@ bool CWalletTx::IsTrusted() const {
 
 bool CWalletTx::IsChange(uint32_t out) const {
     if (out >= vout.size()) {
-        throw std::invalid_argument("The specified output index is not valid");
+        throw std::invalid_argument("The specified output apollon is not valid");
     }
 
     if (changes.count(out)) {
@@ -2947,7 +2947,7 @@ bool CWallet::GetCoinsToSpend(
         }
     }
 
-    int index = val;
+    int apollon = val;
     uint64_t best_spend_val = 0;
 
     // If coinControl, want to use all inputs
@@ -2964,14 +2964,14 @@ bool CWallet::GetCoinsToSpend(
     if(!coinControlUsed) {
         best_spend_val = val;
         int minimum = INT_MAX - 1;
-        while(index >= roundedRequired) {
-            int temp_min = next_row[index] + GetRequiredCoinCountForAmount(
-                (index - roundedRequired) * zeros, denominations);
-            if (minimum > temp_min && next_row[index] != (INT_MAX - 1) / 2 && next_row[index] <= coinsToSpendLimit) {
-                best_spend_val = index;
+        while(apollon >= roundedRequired) {
+            int temp_min = next_row[apollon] + GetRequiredCoinCountForAmount(
+                (apollon - roundedRequired) * zeros, denominations);
+            if (minimum > temp_min && next_row[apollon] != (INT_MAX - 1) / 2 && next_row[apollon] <= coinsToSpendLimit) {
+                best_spend_val = apollon;
                 minimum = temp_min;
             }
-            --index;
+            --apollon;
         }
         best_spend_val *= zeros;
 
@@ -4212,9 +4212,9 @@ bool CWallet::CreateTransaction(const vector <CRecipient> &vecSend, CWalletTx &w
                 CAmount nValueIn = 0;
                 if (!SelectCoins(vAvailableCoins, nValueToSelect, setCoins, nValueIn, coinControl)) {
                     if (nCoinType == ONLY_NOT1000IFMN) {
-                        strFailReason = _("Unable to locate enough funds for this transaction that are not equal 1000 IDX.");
+                        strFailReason = _("Unable to locate enough funds for this transaction that are not equal 1000 XAP.");
                     } else if (nCoinType == ONLY_NONDENOMINATED_NOT1000IFMN) {
-                        strFailReason = _("Unable to locate enough PrivateSend non-denominated funds for this transaction that are not equal 1000 IDX.");
+                        strFailReason = _("Unable to locate enough PrivateSend non-denominated funds for this transaction that are not equal 1000 XAP.");
                     } else if (nCoinType == ONLY_DENOMINATED) {
                         strFailReason = _("Unable to locate enough PrivateSend denominated funds for this transaction.");
                         strFailReason += _("PrivateSend uses exact denominated amounts to send funds, you might simply need to anonymize some more coins.");
@@ -4312,7 +4312,7 @@ bool CWallet::CreateTransaction(const vector <CRecipient> &vecSend, CWalletTx &w
                                 // Insert change txn at random position:
                                 nChangePosInOut = GetRandInt(txNew.vout.size() + 1);
                             } else if ((unsigned int) nChangePosInOut > txNew.vout.size()) {
-                                strFailReason = _("Change index out of range");
+                                strFailReason = _("Change apollon out of range");
                                 return false;
                             }
 
@@ -4992,7 +4992,7 @@ int CWallet::GetNumberOfUnspentMintsForDenomination(int version, libzerocoin::Co
             int coinVersion = coin.IsCorrectV2Mint() ? ZEROCOIN_TX_VERSION_2 : ZEROCOIN_TX_VERSION_1;
 
             if (coinVersion == version) {
-                // Find minted coin in the index
+                // Find minted coin in the apollon
                 int mintId = -1, mintHeight = -1;
 
                 // group is the same in both v1 and v2 params
@@ -5625,7 +5625,7 @@ bool CWallet::CreateZerocoinMintTransaction(const vector <CRecipient> &vecSend, 
                             // Insert change txn at random position:
                             nChangePosInOut = GetRandInt(txNew.vout.size() + 1);
                         } else if ((unsigned int) nChangePosInOut > txNew.vout.size()) {
-                            strFailReason = _("Change index out of range");
+                            strFailReason = _("Change apollon out of range");
                             return false;
                         }
 
@@ -5712,7 +5712,7 @@ bool CWallet::CreateZerocoinMintTransaction(const vector <CRecipient> &vecSend, 
 //                }
                 } else{
                     int64_t nPayFee = payTxFee.GetFeePerK() * (1 + (int64_t) GetTransactionWeight(txNew) / 1000);
-                    //                bool fAllowFree = false;                                 // No free TXs in IDX
+                    //                bool fAllowFree = false;                                 // No free TXs in XAP
                     int64_t nMinFee = wtxNew.GetMinFee(1, false, GMF_SEND);
                     nFeeNeeded = nPayFee;
                     if (nFeeNeeded < nMinFee) {
@@ -5805,10 +5805,10 @@ bool CWallet::CreateZerocoinSpendTransaction(std::string &thirdPartyaddress, int
 
                 CBitcoinAddress address(thirdPartyaddress);
                 if (!address.IsValid()){
-                    strFailReason = _("Invalid Index address");
+                    strFailReason = _("Invalid Apollon address");
                     return false;
                 }
-                // Parse Index address
+                // Parse Apollon address
                 scriptChange = GetScriptForDestination(CBitcoinAddress(thirdPartyaddress).Get());
             }
 
@@ -5884,7 +5884,7 @@ bool CWallet::CreateZerocoinSpendTransaction(std::string &thirdPartyaddress, int
                 return false;
             }
 
-            // 4. Get witness from the index
+            // 4. Get witness from the apollon
             libzerocoin::AccumulatorWitness witness =
                     zerocoinState->GetWitnessForSpend(&chainActive,
                                                       chainActive.Height()-(ZC_MINT_CONFIRMATIONS-1),
@@ -6054,10 +6054,10 @@ bool CWallet::CreateSigmaSpendTransaction(
             } else {
                 CBitcoinAddress address(thirdPartyaddress);
                 if (!address.IsValid()){
-                    strFailReason = _("Invalid Index address");
+                    strFailReason = _("Invalid Apollon address");
                     return false;
                 }
-                // Parse Index address
+                // Parse Apollon address
                 scriptChange = GetScriptForDestination(CBitcoinAddress(thirdPartyaddress).Get());
             }
 
@@ -6342,10 +6342,10 @@ bool CWallet::CreateMultipleZerocoinSpendTransaction(std::string &thirdPartyaddr
             }else{
                  CBitcoinAddress address(thirdPartyaddress);
                 if (!address.IsValid()){
-                    strFailReason = _("Invalid Index address");
+                    strFailReason = _("Invalid Apollon address");
                     return false;
                 }
-                // Parse Index address
+                // Parse Apollon address
                 scriptChange = GetScriptForDestination(CBitcoinAddress(thirdPartyaddress).Get());
             }
 
@@ -6526,9 +6526,9 @@ bool CWallet::CreateMultipleZerocoinSpendTransaction(std::string &thirdPartyaddr
 
             for (std::vector<std::pair<int64_t, libzerocoin::CoinDenomination>>::const_iterator it = denominations.begin(); it != denominations.end(); it++)
             {
-                unsigned index = it - denominations.begin();
+                unsigned apollon = it - denominations.begin();
 
-                TempStorage tempStorage = tempStorages.at(index);
+                TempStorage tempStorage = tempStorages.at(apollon);
                 libzerocoin::SpendMetaData metaData(tempStorage.serializedId, txHashForMetadata);
                 CZerocoinEntry coinToUse = tempStorage.coinToUse;
 
@@ -6562,7 +6562,7 @@ bool CWallet::CreateMultipleZerocoinSpendTransaction(std::string &thirdPartyaddr
                 // Insert the spend script into the tx object
                 CScript tmp = CScript() << OP_ZEROCOINSPEND << serializedCoinSpend.size();
                 tmp.insert(tmp.end(), serializedCoinSpend.begin(), serializedCoinSpend.end());
-                txNew.vin[index].scriptSig.assign(tmp.begin(), tmp.end());
+                txNew.vin[apollon].scriptSig.assign(tmp.begin(), tmp.end());
 
                 // Try to find this coin in the list of spent coin serials.
                 // If found, notify that a coin that was previously thought to be available is actually used, and fail.
@@ -6606,8 +6606,8 @@ bool CWallet::CreateMultipleZerocoinSpendTransaction(std::string &thirdPartyaddr
             // After transaction creation and verification, this last loop is to notify the wallet of changes to zerocoin spend info.
             for (std::vector<std::pair<int64_t, libzerocoin::CoinDenomination>>::const_iterator it = denominations.begin(); it != denominations.end(); it++)
             {
-                unsigned index = it - denominations.begin();
-                TempStorage tempStorage = tempStorages.at(index);
+                unsigned apollon = it - denominations.begin();
+                TempStorage tempStorage = tempStorages.at(apollon);
                 CZerocoinEntry coinToUse = tempStorage.coinToUse;
 
                 // Update the wallet with info on this zerocoin spend
@@ -6615,7 +6615,7 @@ bool CWallet::CreateMultipleZerocoinSpendTransaction(std::string &thirdPartyaddr
                 zcSelectedValues.push_back(coinToUse.value);
 
                 CZerocoinSpendEntry entry;
-                entry.coinSerial = coinSerials[index];
+                entry.coinSerial = coinSerials[apollon];
                 entry.hashTx = txHash;
                 entry.pubCoin = coinToUse.value;
                 entry.id = tempStorage.serializedId;
@@ -6668,10 +6668,10 @@ bool CWallet::CreateMultipleSigmaSpendTransaction(
             }else{
                 CBitcoinAddress address(thirdPartyaddress);
                 if (!address.IsValid()) {
-                    strFailReason = _("Invalid Index address");
+                    strFailReason = _("Invalid Apollon address");
                     return false;
                 }
-                // Parse Index address
+                // Parse Apollon address
                 scriptChange = GetScriptForDestination(CBitcoinAddress(thirdPartyaddress).Get());
             }
 
@@ -6737,9 +6737,9 @@ bool CWallet::CreateMultipleSigmaSpendTransaction(
                 int coinGroupID;
 
                 // Cycle through metadata, looking for suitable coin
-                int index = -1;
+                int apollon = -1;
                 for (const CMintMeta& mint : listMints) {
-                    index++;
+                    apollon++;
                     if (denomination == mint.denom
                         && ((mint.isUsed == false && !forceUsed) || (mint.isUsed == true && forceUsed))) {
 
@@ -6770,7 +6770,7 @@ bool CWallet::CreateMultipleSigmaSpendTransaction(
                                 anonimity_set) > 1 ) {
                             coinId = coinGroupID;
                             tempCoinsToUse.insert(coinToUse.value);
-                            listMints.erase(listMints.begin()+index);
+                            listMints.erase(listMints.begin()+apollon);
                             break;
                         }
                     }
@@ -6860,16 +6860,16 @@ bool CWallet::CreateMultipleSigmaSpendTransaction(
             // Iterator of std::vector<std::pair<int64_t, sigma::CoinDenomination>>::const_iterator
             for (auto it = denominations.begin(); it != denominations.end(); it++)
             {
-                unsigned index = it - denominations.begin();
+                unsigned apollon = it - denominations.begin();
 
                 // We use incomplete transaction hash for now as a metadata
                 sigma::SpendMetaData metaData(
-                    tempStorages[index].serializedId,
-                    tempStorages[index].blockHash,
+                    tempStorages[apollon].serializedId,
+                    tempStorages[apollon].blockHash,
                     txHashForMetadata);
 
 
-                TempStorage tempStorage = tempStorages.at(index);
+                TempStorage tempStorage = tempStorages.at(apollon);
                 CSigmaEntry coinToUse = tempStorage.coinToUse;
 
                 bool fPadding = tempStorage.txVersion >= ZEROCOIN_TX_VERSION_3_1;
@@ -6902,7 +6902,7 @@ bool CWallet::CreateMultipleSigmaSpendTransaction(
                 // NOTE(martun): "insert" is not the same as "operator<<", as operator<<
                 // also writes the vector size before the vector itself.
                 tmp.insert(tmp.end(), serializedCoinSpend.begin(), serializedCoinSpend.end());
-                txNew.vin[index].scriptSig.assign(tmp.begin(), tmp.end());
+                txNew.vin[apollon].scriptSig.assign(tmp.begin(), tmp.end());
 
                 // Try to find this coin in the list of spent coin serials.
                 // If found, notify that a coin that was previously thought to be available is actually used, and fail.
@@ -6978,8 +6978,8 @@ bool CWallet::CreateMultipleSigmaSpendTransaction(
             // After transaction creation and verification, this last loop is to notify the wallet of changes to zerocoin spend info.
             for (auto it = denominations.begin(); it != denominations.end(); it++)
             {
-                unsigned index = it - denominations.begin();
-                TempStorage tempStorage = tempStorages.at(index);
+                unsigned apollon = it - denominations.begin();
+                TempStorage tempStorage = tempStorages.at(apollon);
                 CSigmaEntry coinToUse = tempStorage.coinToUse;
 
                 // Update the wallet with info on this zerocoin spend
@@ -6987,7 +6987,7 @@ bool CWallet::CreateMultipleSigmaSpendTransaction(
                 zcSelectedValues.push_back(coinToUse.value);
 
                 CSigmaSpendEntry entry;
-                entry.coinSerial = coinSerials[index];
+                entry.coinSerial = coinSerials[apollon];
                 entry.hashTx = txHash;
                 entry.pubCoin = coinToUse.value;
                 entry.id = tempStorage.serializedId;
@@ -7542,8 +7542,8 @@ string CWallet::SpendMultipleZerocoin(std::string &thirdPartyaddress, const std:
         walletdb.ListPubCoin(listOwnCoins);
 
         for (std::vector<CBigNum>::iterator it = coinSerials.begin(); it != coinSerials.end(); it++){
-            unsigned index = it - coinSerials.begin();
-            CBigNum zcSelectedValue = zcSelectedValues[index];
+            unsigned apollon = it - coinSerials.begin();
+            CBigNum zcSelectedValue = zcSelectedValues[apollon];
             BOOST_FOREACH(const CZerocoinEntry &ownCoinItem, listOwnCoins) {
                 if (zcSelectedValue == ownCoinItem.value) {
                     pubCoinTx.id = ownCoinItem.id;
@@ -7561,7 +7561,7 @@ string CWallet::SpendMultipleZerocoin(std::string &thirdPartyaddress, const std:
                 }
             }
             CZerocoinSpendEntry entry;
-            entry.coinSerial = coinSerials[index];
+            entry.coinSerial = coinSerials[apollon];
             entry.hashTx = txHash;
             entry.pubCoin = zcSelectedValue;
             if (!CWalletDB(strWalletFile).EraseCoinSpendSerialEntry(entry)) {
@@ -7611,15 +7611,15 @@ string CWallet::SpendMultipleSigma(
 
         //reset mints
         for (std::vector<Scalar>::iterator it = coinSerials.begin(); it != coinSerials.end(); it++){
-            int index = it - coinSerials.begin();
-            GroupElement zcSelectedValue = zcSelectedValues[index];
+            int apollon = it - coinSerials.begin();
+            GroupElement zcSelectedValue = zcSelectedValues[apollon];
             uint256 hashPubcoin = primitives::GetPubCoinValueHash(zcSelectedValue);
             zwalletMain->GetTracker().SetPubcoinNotUsed(hashPubcoin);
             pwalletMain->NotifyZerocoinChanged(pwalletMain, zcSelectedValue.GetHex(), "New", CT_UPDATED);
 
             CSigmaSpendEntry entry;
 
-            entry.coinSerial = coinSerials[index];
+            entry.coinSerial = coinSerials[apollon];
             entry.hashTx = txHash;
             entry.pubCoin = zcSelectedValue;
             if (!CWalletDB(strWalletFile).EraseCoinSpendSerialEntry(entry)) {

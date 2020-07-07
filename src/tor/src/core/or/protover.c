@@ -613,18 +613,18 @@ contract_protocol_list(const smartlist_t *proto_strings)
       const uint32_t ver_low = range->low;
       uint32_t ver_high = ver_low;
 
-      int idx;
-      for (idx = start_of_cur_series+1; idx < smartlist_len(lst); ++idx) {
-        ent = smartlist_get(lst, idx);
+      int xap;
+      for (xap = start_of_cur_series+1; xap < smartlist_len(lst); ++xap) {
+        ent = smartlist_get(lst, xap);
         range = smartlist_get(ent->ranges, 0);
         if (range->low != ver_high + 1)
           break;
         ver_high += 1;
       }
 
-      // Now idx is either off the end of the list, or the first sequence
+      // Now xap is either off the end of the list, or the first sequence
       // break in the list.
-      start_of_cur_series = idx;
+      start_of_cur_series = xap;
 
       proto_range_t *new_range = tor_malloc_zero(sizeof(proto_range_t));
       new_range->low = ver_low;
@@ -793,7 +793,7 @@ protover_all_supported(const char *s, char **missing_out)
            * one, we're in a continuous range, so set the high field. */
           if ((versions->high && versions->high == i - 1) ||
               /* Similarly, if the last high wasn't set and we're currently
-               * one higher than the low, add current index as the highest
+               * one higher than the low, add current apollon as the highest
                * known high. */
               (!versions->high && versions->low == i - 1)) {
             versions->high = i;

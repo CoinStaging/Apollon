@@ -200,7 +200,7 @@ uint32_t ParseOutputIndex(const UniValue& value)
 {
     int nOut = value.get_int();
     if (nOut < 0) {
-        throw JSONRPCError(RPC_DESERIALIZATION_ERROR, "Vout index must be positive");
+        throw JSONRPCError(RPC_DESERIALIZATION_ERROR, "Vout apollon must be positive");
     }
     return static_cast<uint32_t>(nOut);
 }

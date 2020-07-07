@@ -822,7 +822,7 @@ test_uniform_interval(void *arg)
   (void) arg;
   struct {
     /* Sample from a uniform distribution with parameters 'a' and 'b', using
-     * 't' as the sampling index. */
+     * 't' as the sampling apollon. */
     double t, a, b;
   } cases[] = {
     { 0, 0, 0 },

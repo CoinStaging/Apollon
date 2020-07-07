@@ -1,5 +1,5 @@
 ---
-name: "index-dmg-signer"
+name: "apollon-dmg-signer"
 suites:
 - "bionic"
 architectures:
@@ -27,8 +27,8 @@ script: |
     chmod +x ${WRAP_DIR}/${prog}
   done
 
-  UNSIGNED=index-osx-unsigned.tar.gz
-  SIGNED=index-osx-signed.dmg
+  UNSIGNED=apollon-osx-unsigned.tar.gz
+  SIGNED=apollon-osx-signed.dmg
 
   tar -xf ${UNSIGNED}
   OSX_VOLNAME="$(cat osx_volname)"

@@ -113,7 +113,7 @@ bool fIndexNode = false;
 bool fLiteMode = false;
 int nWalletBackups = 10;
 
-const char * const BITCOIN_CONF_FILENAME = "index.conf";
+const char * const BITCOIN_CONF_FILENAME = "apollon.conf";
 const char * const BITCOIN_PID_FILENAME = "indexd.pid";
 
 map<string, string> mapArgs;
@@ -470,7 +470,7 @@ static std::string FormatException(const std::exception* pex, const char* pszThr
     char pszModule[MAX_PATH] = "";
     GetModuleFileNameA(NULL, pszModule, sizeof(pszModule));
 #else
-    const char* pszModule = "index";
+    const char* pszModule = "apollon";
 #endif
     if (pex)
         return strprintf(
@@ -735,14 +735,14 @@ void ReadConfigFile(map<string, string>& mapSettingsRet,
 {
     fsbridge::ifstream streamConfig(GetConfigFile());
     if (!streamConfig.good())
-        return; // No index.conf file is OK
+        return; // No apollon.conf file is OK
 
     set<string> setOptions;
     setOptions.insert("*");
 
     for (boost::program_options::detail::config_file_iterator it(streamConfig, setOptions), end; it != end; ++it)
     {
-        // Don't overwrite existing settings so command line settings override index.conf
+        // Don't overwrite existing settings so command line settings override apollon.conf
         string strKey = string("-") + it->string_key;
         string strValue = it->value[0];
         InterpretNegativeSetting(strKey, strValue);

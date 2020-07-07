@@ -146,7 +146,7 @@
         <translation>Пераіндэксацыя блокаў на дыску...</translation>
     </message>
     <message>
-        <source>Send coins to a Index address</source>
+        <source>Send coins to a Apollon address</source>
         <translation>Даслаць манеты на Біткойн-адрас</translation>
     </message>
     <message>
@@ -170,7 +170,7 @@
         <translation>Праверыць паведамленне...</translation>
     </message>
     <message>
-        <source>Index</source>
+        <source>Apollon</source>
         <translation>Біткойн</translation>
     </message>
     <message>
@@ -198,11 +198,11 @@
         <translation>Зашыфраваць прыватныя ключы, якия належаць вашаму гаманцу</translation>
     </message>
     <message>
-        <source>Sign messages with your Index addresses to prove you own them</source>
+        <source>Sign messages with your Apollon addresses to prove you own them</source>
         <translation>Падпісаць паведамленне з дапамогай Біткойн-адраса каб даказаць, што яно належыць вам</translation>
     </message>
     <message>
-        <source>Verify messages to ensure they were signed with specified Index addresses</source>
+        <source>Verify messages to ensure they were signed with specified Apollon addresses</source>
         <translation>Спраўдзіць паведамленне з дапамогай Біткойн-адраса каб даказаць, што яно належыць вам</translation>
     </message>
     <message>
@@ -218,7 +218,7 @@
         <translation>Дапамога</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and index: URIs)</source>
+        <source>Request payments (generates QR codes and apollon: URIs)</source>
         <translation>Запатрабаваць плацёж (генеруецца QR-код для біткойн URI)</translation>
     </message>
     <message>
@@ -230,7 +230,7 @@
         <translation>Паказаць спіс адрасоў і метак для прымання</translation>
     </message>
     <message>
-        <source>Open a index: URI or payment request</source>
+        <source>Open a apollon: URI or payment request</source>
         <translation>Адкрыць біткойн: URI ці запыт плацяжу</translation>
     </message>
     <message>
@@ -238,8 +238,8 @@
         <translation>Опцыі каманднага радка</translation>
     </message>
     <message numerus="yes">
-        <source>%n active connection(s) to Index network</source>
-        <translation><numerusform>%n актыўнае злучэнне з сецівам Index</numerusform><numerusform>%n актыўных злучэнняў з сецівам Index</numerusform><numerusform>%n актыўных злучэнняў з сецівам Index</numerusform><numerusform>%n актыўных злучэнняў з сецівам Index</numerusform></translation>
+        <source>%n active connection(s) to Apollon network</source>
+        <translation><numerusform>%n актыўнае злучэнне з сецівам Apollon</numerusform><numerusform>%n актыўных злучэнняў з сецівам Apollon</numerusform><numerusform>%n актыўных злучэнняў з сецівам Apollon</numerusform><numerusform>%n актыўных злучэнняў з сецівам Apollon</numerusform></translation>
     </message>
     <message>
         <source>No block source available...</source>
@@ -718,7 +718,7 @@
     <name>WalletView</name>
     </context>
 <context>
-    <name>index-core</name>
+    <name>apollon-core</name>
     <message>
         <source>Options:</source>
         <translation>Опцыі:</translation>
@@ -736,8 +736,8 @@
         <translation>Запусціць у фоне як дэман і прымаць каманды</translation>
     </message>
     <message>
-        <source>Index Core</source>
-        <translation>Index Core</translation>
+        <source>Apollon Core</source>
+        <translation>Apollon Core</translation>
     </message>
     <message>
         <source>Do you want to rebuild the block database now?</source>
@@ -840,7 +840,7 @@
         <translation>Недастаткова сродкаў</translation>
     </message>
     <message>
-        <source>Loading block index...</source>
+        <source>Loading block apollon...</source>
         <translation>Загружаем індэкс блокаў...</translation>
     </message>
     <message>

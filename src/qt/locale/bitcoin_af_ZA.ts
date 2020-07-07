@@ -78,8 +78,8 @@
         <translation>&amp;Opsies</translation>
     </message>
     <message>
-        <source>Index</source>
-        <translation>Index</translation>
+        <source>Apollon</source>
+        <translation>Apollon</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -316,7 +316,7 @@
     <name>WalletView</name>
     </context>
 <context>
-    <name>index-core</name>
+    <name>apollon-core</name>
     <message>
         <source>Options:</source>
         <translation>Opsies:</translation>
@@ -338,7 +338,7 @@
         <translation>Onvoldoende fondse</translation>
     </message>
     <message>
-        <source>Loading block index...</source>
+        <source>Loading block apollon...</source>
         <translation>Laai blok indeks...</translation>
     </message>
     <message>

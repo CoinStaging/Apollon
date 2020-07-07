@@ -62,12 +62,12 @@
         <translation>Mottagaradresser</translation>
     </message>
     <message>
-        <source>These are your Index addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
-        <translation>Detta är dina Index adresser för att skicka betalningar. Kolla alltid summan och den mottagande adressen innan du skickar indexs.</translation>
+        <source>These are your Apollon addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
+        <translation>Detta är dina Apollon adresser för att skicka betalningar. Kolla alltid summan och den mottagande adressen innan du skickar indexs.</translation>
     </message>
     <message>
-        <source>These are your Index addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
-        <translation>Detta är dina Index adresser för att ta emot betalningar. Det rekommenderas att använda en ny mottagningsadress för varje transaktion.</translation>
+        <source>These are your Apollon addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
+        <translation>Detta är dina Apollon adresser för att ta emot betalningar. Det rekommenderas att använda en ny mottagningsadress för varje transaktion.</translation>
     </message>
     <message>
         <source>&amp;Copy Address</source>
@@ -323,8 +323,8 @@ Var vänlig och försök igen.</translation>
         <translation>Återindexerar block på disken...</translation>
     </message>
     <message>
-        <source>Send coins to a Index address</source>
-        <translation>Skicka indexs till en Index-adress</translation>
+        <source>Send coins to a Apollon address</source>
+        <translation>Skicka indexs till en Apollon-adress</translation>
     </message>
     <message>
         <source>Backup wallet to another location</source>
@@ -347,8 +347,8 @@ Var vänlig och försök igen.</translation>
         <translation>&amp;Verifiera meddelande...</translation>
     </message>
     <message>
-        <source>Index</source>
-        <translation>Index</translation>
+        <source>Apollon</source>
+        <translation>Apollon</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -375,12 +375,12 @@ Var vänlig och försök igen.</translation>
         <translation>Kryptera de privata nycklar som tillhör din plånbok</translation>
     </message>
     <message>
-        <source>Sign messages with your Index addresses to prove you own them</source>
-        <translation>Signera meddelanden med din Index-adress för att bevisa att du äger dem</translation>
+        <source>Sign messages with your Apollon addresses to prove you own them</source>
+        <translation>Signera meddelanden med din Apollon-adress för att bevisa att du äger dem</translation>
     </message>
     <message>
-        <source>Verify messages to ensure they were signed with specified Index addresses</source>
-        <translation>Verifiera meddelanden för att vara säker på att de var signerade med specificerade Index-adresser</translation>
+        <source>Verify messages to ensure they were signed with specified Apollon addresses</source>
+        <translation>Verifiera meddelanden för att vara säker på att de var signerade med specificerade Apollon-adresser</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -399,8 +399,8 @@ Var vänlig och försök igen.</translation>
         <translation>Verktygsfält för tabbar</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and index: URIs)</source>
-        <translation>Begär betalning (genererar QR-koder och index-URI)</translation>
+        <source>Request payments (generates QR codes and apollon: URIs)</source>
+        <translation>Begär betalning (genererar QR-koder och apollon-URI)</translation>
     </message>
     <message>
         <source>Show the list of used sending addresses and labels</source>
@@ -411,16 +411,16 @@ Var vänlig och försök igen.</translation>
         <translation>Visa listan av använda mottagningsadresser och etiketter</translation>
     </message>
     <message>
-        <source>Open a index: URI or payment request</source>
-        <translation>Öppna en index: URI eller betalningsbegäran</translation>
+        <source>Open a apollon: URI or payment request</source>
+        <translation>Öppna en apollon: URI eller betalningsbegäran</translation>
     </message>
     <message>
         <source>&amp;Command-line options</source>
         <translation>&amp;Kommandoradsalternativ</translation>
     </message>
     <message numerus="yes">
-        <source>%n active connection(s) to Index network</source>
-        <translation><numerusform>%n aktiva anslutningar till Index-nätverket.</numerusform><numerusform>%n aktiva anslutningar till Index-nätverket.</numerusform></translation>
+        <source>%n active connection(s) to Apollon network</source>
+        <translation><numerusform>%n aktiva anslutningar till Apollon-nätverket.</numerusform><numerusform>%n aktiva anslutningar till Apollon-nätverket.</numerusform></translation>
     </message>
     <message>
         <source>Indexing blocks on disk...</source>
@@ -487,8 +487,8 @@ Var vänlig och försök igen.</translation>
         <translation>Uppdaterad</translation>
     </message>
     <message>
-        <source>Show the %1 help message to get a list with possible Index command-line options</source>
-        <translation>Visa %1 hjälpmeddelande för att få en lista med möjliga Index kommandoradsalternativ.</translation>
+        <source>Show the %1 help message to get a list with possible Apollon command-line options</source>
+        <translation>Visa %1 hjälpmeddelande för att få en lista med möjliga Apollon kommandoradsalternativ.</translation>
     </message>
     <message>
         <source>%1 client</source>
@@ -756,8 +756,8 @@ Var vänlig och försök igen.</translation>
         <translation>Eftersom detta är första gången programmet startas får du välja var %1 skall lagra sitt data.</translation>
     </message>
     <message>
-        <source>%1 will download and store a copy of the Index block chain. At least %2GB of data will be stored in this directory, and it will grow over time. The wallet will also be stored in this directory.</source>
-        <translation>%1 kommer att ladda ner och spara en kopia av Index blockkedjan. Åtminstone %2GB av data kommer att sparas i denna katalog, och den kommer att växa över tiden. Plånboken kommer också att sparas i denna katalog.</translation>
+        <source>%1 will download and store a copy of the Apollon block chain. At least %2GB of data will be stored in this directory, and it will grow over time. The wallet will also be stored in this directory.</source>
+        <translation>%1 kommer att ladda ner och spara en kopia av Apollon blockkedjan. Åtminstone %2GB av data kommer att sparas i denna katalog, och den kommer att växa över tiden. Plånboken kommer också att sparas i denna katalog.</translation>
     </message>
     <message>
         <source>Use the default data directory</source>
@@ -898,16 +898,16 @@ Var vänlig och försök igen.</translation>
         <translation>&amp;Spendera obekräftad växel</translation>
     </message>
     <message>
-        <source>Automatically open the Index client port on the router. This only works when your router supports UPnP and it is enabled.</source>
-        <translation>Öppna automatiskt Index-klientens port på routern. Detta fungerar endast om din router har UPnP aktiverat.</translation>
+        <source>Automatically open the Apollon client port on the router. This only works when your router supports UPnP and it is enabled.</source>
+        <translation>Öppna automatiskt Apollon-klientens port på routern. Detta fungerar endast om din router har UPnP aktiverat.</translation>
     </message>
     <message>
         <source>Map port using &amp;UPnP</source>
         <translation>Tilldela port med hjälp av &amp;UPnP</translation>
     </message>
     <message>
-        <source>Connect to the Index network through a SOCKS5 proxy.</source>
-        <translation>Anslut till Index-nätverket genom en SOCKS5-proxy.</translation>
+        <source>Connect to the Apollon network through a SOCKS5 proxy.</source>
+        <translation>Anslut till Apollon-nätverket genom en SOCKS5-proxy.</translation>
     </message>
     <message>
         <source>&amp;Connect through SOCKS5 proxy (default proxy):</source>
@@ -946,8 +946,8 @@ Var vänlig och försök igen.</translation>
         <translation>Tor</translation>
     </message>
     <message>
-        <source>Connect to the Index network through a separate SOCKS5 proxy for Tor hidden services.</source>
-        <translation>Anslut till Index-nätverket genom en separat SOCKS5-proxy för dolda tjänster i Tor.</translation>
+        <source>Connect to the Apollon network through a separate SOCKS5 proxy for Tor hidden services.</source>
+        <translation>Anslut till Apollon-nätverket genom en separat SOCKS5-proxy för dolda tjänster i Tor.</translation>
     </message>
     <message>
         <source>Use separate SOCKS5 proxy to reach peers via Tor hidden services:</source>
@@ -1045,8 +1045,8 @@ Var vänlig och försök igen.</translation>
         <translation>Formulär</translation>
     </message>
     <message>
-        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Index network after a connection is established, but this process has not completed yet.</source>
-        <translation>Den visade informationen kan vara inaktuell. Plånboken synkroniseras automatiskt med Index-nätverket efter att anslutningen är upprättad, men denna process har inte slutförts ännu.</translation>
+        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Apollon network after a connection is established, but this process has not completed yet.</source>
+        <translation>Den visade informationen kan vara inaktuell. Plånboken synkroniseras automatiskt med Apollon-nätverket efter att anslutningen är upprättad, men denna process har inte slutförts ännu.</translation>
     </message>
     <message>
         <source>Watch-only:</source>
@@ -1138,8 +1138,8 @@ Var vänlig och försök igen.</translation>
         <translation>Mängd</translation>
     </message>
     <message>
-        <source>Enter a Index address (e.g. %1)</source>
-        <translation>Ange en Index-adress (t.ex. %1)</translation>
+        <source>Enter a Apollon address (e.g. %1)</source>
+        <translation>Ange en Apollon-adress (t.ex. %1)</translation>
     </message>
     <message>
         <source>%1 d</source>
@@ -1487,7 +1487,7 @@ Var vänlig och försök igen.</translation>
         <translation>Åt&amp;eranvänd en existerande mottagningsadress (rekommenderas inte)</translation>
     </message>
     <message>
-        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the Index network.</source>
+        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the Apollon network.</source>
         <translation>Ett frivilligt meddelande att bifoga betalningsbegäran, vilket visas när begäran öppnas. NB: Meddelandet kommer inte att sändas med betalningen över Zcoinnätverket.</translation>
     </message>
     <message>
@@ -1668,8 +1668,8 @@ Var vänlig och försök igen.</translation>
         <translation>totalt minst</translation>
     </message>
     <message>
-        <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks. But be aware that this can end up in a never confirming transaction once there is more demand for Index transactions than the network can process.</source>
-        <translation>Att betala endast den minsta avgiften är bara bra så länge det är mindre transaktionsvolym än utrymme i blocken. Men tänk på att det kan hamna i en aldrig bekräftar transaktion när det finns mer efterfrågan på Index transaktioner än nätverket kan bearbeta.</translation>
+        <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks. But be aware that this can end up in a never confirming transaction once there is more demand for Apollon transactions than the network can process.</source>
+        <translation>Att betala endast den minsta avgiften är bara bra så länge det är mindre transaktionsvolym än utrymme i blocken. Men tänk på att det kan hamna i en aldrig bekräftar transaktion när det finns mer efterfrågan på Apollon transaktioner än nätverket kan bearbeta.</translation>
     </message>
     <message>
         <source>(read the tooltip)</source>
@@ -1763,7 +1763,7 @@ Var vänlig och försök igen.</translation>
         <translation>Detta är en normal betalning.</translation>
     </message>
     <message>
-        <source>The Index address to send the payment to</source>
+        <source>The Apollon address to send the payment to</source>
         <translation>Zcoinadress att sända betalning till</translation>
     </message>
     <message>
@@ -1807,8 +1807,8 @@ Var vänlig och försök igen.</translation>
         <translation>Ange en etikett för denna adress att adderas till listan över använda adresser</translation>
     </message>
     <message>
-        <source>A message that was attached to the index: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Index network.</source>
-        <translation>Ett meddelande som bifogades index-URI, vilket lagras med transaktionen som referens. NB: Meddelandet kommer inte att sändas över Zcoinnätverket.</translation>
+        <source>A message that was attached to the apollon: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Apollon network.</source>
+        <translation>Ett meddelande som bifogades apollon-URI, vilket lagras med transaktionen som referens. NB: Meddelandet kommer inte att sändas över Zcoinnätverket.</translation>
     </message>
     <message>
         <source>Pay To:</source>
@@ -1848,7 +1848,7 @@ Var vänlig och försök igen.</translation>
         <translation>Du kan underteckna meddelanden/avtal med dina adresser för att bevisa att du kan ta emot indexs som skickats till dem. Var försiktig så du inte undertecknar något oklart eller konstigt, eftersom phishing-angrepp kan försöka få dig att underteckna din identitet till dem. Underteckna endast väldetaljerade meddelanden som du godkänner.</translation>
     </message>
     <message>
-        <source>The Index address to sign the message with</source>
+        <source>The Apollon address to sign the message with</source>
         <translation>Zcoinadress att signera meddelandet med</translation>
     </message>
     <message>
@@ -1880,7 +1880,7 @@ Var vänlig och försök igen.</translation>
         <translation>Kopiera signaturen till systemets Urklipp</translation>
     </message>
     <message>
-        <source>Sign the message to prove you own this Index address</source>
+        <source>Sign the message to prove you own this Apollon address</source>
         <translation>Signera meddelandet för att bevisa att du äger denna adress</translation>
     </message>
     <message>
@@ -1904,12 +1904,12 @@ Var vänlig och försök igen.</translation>
         <translation>Ange mottagarens adress, meddelande (kopiera radbrytningar, mellanrum, flikar, etc. exakt) och signatur nedan för att verifiera meddelandet. Undvik att läsa in mera information i signaturen än vad som stod i själva undertecknade meddelandet, för att undvika ett man-in-the-middle-angrepp. Notera att detta endast bevisar att undertecknad tar emot med adressen, det bevisar inte vem som skickat transaktionen!</translation>
     </message>
     <message>
-        <source>The Index address the message was signed with</source>
+        <source>The Apollon address the message was signed with</source>
         <translation>Zcoinadressen som meddelandet signerades med</translation>
     </message>
     <message>
-        <source>Verify the message to ensure it was signed with the specified Index address</source>
-        <translation>Verifiera meddelandet för att vara säker på att den var signerad med den angivna Index-adressen</translation>
+        <source>Verify the message to ensure it was signed with the specified Apollon address</source>
+        <translation>Verifiera meddelandet för att vara säker på att den var signerad med den angivna Apollon-adressen</translation>
     </message>
     <message>
         <source>Verify &amp;Message</source>
@@ -2003,7 +2003,7 @@ Var vänlig och försök igen.</translation>
     <name>WalletView</name>
     </context>
 <context>
-    <name>index-core</name>
+    <name>apollon-core</name>
     <message>
         <source>Options:</source>
         <translation>Inställningar:</translation>
@@ -2069,8 +2069,8 @@ Var vänlig och försök igen.</translation>
         <translation>Acceptera anslutningar utifrån (förvalt: 1 om ingen -proxy eller -connect)</translation>
     </message>
     <message>
-        <source>Index Core</source>
-        <translation>Index Core</translation>
+        <source>Apollon Core</source>
+        <translation>Apollon Core</translation>
     </message>
     <message>
         <source>-fallbackfee is set very high! This is the transaction fee you may pay when fee estimates are not available.</source>
@@ -2197,7 +2197,7 @@ Var vänlig och försök igen.</translation>
         <translation>Kan inte matcha -%s adress: '%s'</translation>
     </message>
     <message>
-        <source>Change index out of range</source>
+        <source>Change apollon out of range</source>
         <translation>Förändringsindexet utom räckhåll</translation>
     </message>
     <message>
@@ -2349,8 +2349,8 @@ Var vänlig och försök igen.</translation>
         <translation>Beskärningsläge är inkompatibel med -txindex.</translation>
     </message>
     <message>
-        <source>Rebuild chain state and block index from the blk*.dat files on disk</source>
-        <translation>Återskapa blockkedjans status och index från blk*.dat filer på disken</translation>
+        <source>Rebuild chain state and block apollon from the blk*.dat files on disk</source>
+        <translation>Återskapa blockkedjans status och apollon från blk*.dat filer på disken</translation>
     </message>
     <message>
         <source>Rebuild chain state from the currently indexed blocks</source>
@@ -2689,7 +2689,7 @@ Var vänlig och försök igen.</translation>
         <translation>Hur grundlig blockverifikationen vid -checkblocks är (0-4, förvalt: %u)</translation>
     </message>
     <message>
-        <source>Maintain a full transaction index, used by the getrawtransaction rpc call (default: %u)</source>
+        <source>Maintain a full transaction apollon, used by the getrawtransaction rpc call (default: %u)</source>
         <translation>Upprätthåll ett fullständigt transaktionsindex, som används av getrawtransaction rpc-anrop (förval: %u)</translation>
     </message>
     <message>
@@ -2829,7 +2829,7 @@ Var vänlig och försök igen.</translation>
         <translation>Otillräckligt med indexs</translation>
     </message>
     <message>
-        <source>Loading block index...</source>
+        <source>Loading block apollon...</source>
         <translation>Laddar blockindex...</translation>
     </message>
     <message>

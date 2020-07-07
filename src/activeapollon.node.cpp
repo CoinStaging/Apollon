@@ -233,7 +233,7 @@ void CActiveIndexnode::ManageStateInitial() {
     }
 
     if (pwalletMain->GetBalance() < INDEXNODE_COIN_REQUIRED * COIN) {
-        LogPrintf("CActiveIndexnode::ManageStateInitial -- %s: Wallet balance is < 1000 IDX\n", GetStateString());
+        LogPrintf("CActiveIndexnode::ManageStateInitial -- %s: Wallet balance is < 1000 XAP\n", GetStateString());
         return;
     }
 

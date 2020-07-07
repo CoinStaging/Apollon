@@ -473,7 +473,7 @@ circuit_build_times_new_consensus_params(circuit_build_times_t *cbt,
                  sizeof(int8_t)*MIN(num, cbt->liveness.num_recent_circs));
         }
 
-        // Adjust the index if it needs it.
+        // Adjust the apollon if it needs it.
         if (num < cbt->liveness.num_recent_circs) {
           cbt->liveness.after_firsthop_idx = MIN(num-1,
                   cbt->liveness.after_firsthop_idx);
@@ -626,7 +626,7 @@ circuit_build_times_rewind_history(circuit_build_times_t *cbt, int n)
   }
 
   log_info(LD_CIRC,
-          "Rewound history by %d places. Current index: %d. "
+          "Rewound history by %d places. Current apollon: %d. "
           "Total: %d", n, cbt->build_times_idx, cbt->total_build_times);
 }
 #endif /* 0 */
@@ -820,7 +820,7 @@ circuit_build_times_min(circuit_build_times_t *cbt)
  * Calculate and return a histogram for the set of build times.
  *
  * Returns an allocated array of histrogram bins representing
- * the frequency of index*CBT_BIN_WIDTH millisecond
+ * the frequency of apollon*CBT_BIN_WIDTH millisecond
  * build times. Also outputs the number of bins in nbins.
  *
  * The return value must be freed by the caller.

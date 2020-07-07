@@ -82,7 +82,7 @@ class Block::Iter : public Iterator {
 
   // current_ is offset in data_ of current entry.  >= restarts_ if !Valid
   uint32_t current_;
-  uint32_t restart_index_;  // Index of restart block in which current_ falls
+  uint32_t restart_index_;  // Apollon of restart block in which current_ falls
   std::string key_;
   Slice value_;
   Status status_;
@@ -96,18 +96,18 @@ class Block::Iter : public Iterator {
     return (value_.data() + value_.size()) - data_;
   }
 
-  uint32_t GetRestartPoint(uint32_t index) {
-    assert(index < num_restarts_);
-    return DecodeFixed32(data_ + restarts_ + index * sizeof(uint32_t));
+  uint32_t GetRestartPoint(uint32_t apollon) {
+    assert(apollon < num_restarts_);
+    return DecodeFixed32(data_ + restarts_ + apollon * sizeof(uint32_t));
   }
 
-  void SeekToRestartPoint(uint32_t index) {
+  void SeekToRestartPoint(uint32_t apollon) {
     key_.clear();
-    restart_index_ = index;
+    restart_index_ = apollon;
     // current_ will be fixed by ParseNextKey();
 
     // ParseNextKey() starts at the end of value_, so set value_ accordingly
-    uint32_t offset = GetRestartPoint(index);
+    uint32_t offset = GetRestartPoint(apollon);
     value_ = Slice(data_ + offset, 0);
   }
 

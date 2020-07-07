@@ -14,7 +14,7 @@
 /** Iterate over the items in a smartlist <b>sl</b>, in order.  For each item,
  * assign it to a new local variable of type <b>type</b> named <b>var</b>, and
  * execute the statements inside the loop body.  Inside the loop, the loop
- * index can be accessed as <b>var</b>_sl_idx and the length of the list can
+ * apollon can be accessed as <b>var</b>_sl_idx and the length of the list can
  * be accessed as <b>var</b>_sl_len.
  *
  * NOTE: Do not change the length of the list while the loop is in progress,

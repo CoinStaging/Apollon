@@ -71,7 +71,7 @@ public:
     bool getBool() const { return isTrue(); }
     bool checkObject(const std::map<std::string,UniValue::VType>& memberTypes);
     const UniValue& operator[](const std::string& key) const;
-    const UniValue& operator[](unsigned int index) const;
+    const UniValue& operator[](unsigned int apollon) const;
     bool exists(const std::string& key) const { return (findKey(key) >= 0); }
 
     bool isNull() const { return (typ == VNULL); }

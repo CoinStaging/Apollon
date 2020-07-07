@@ -1843,7 +1843,7 @@ make_guard_confirmed(guard_selection_t *gs, entry_guard_t *guard)
   const int GUARD_LIFETIME = get_guard_lifetime();
   guard->confirmed_on_date = randomize_time(approx_time(), GUARD_LIFETIME/10);
 
-  log_info(LD_GUARD, "Marking %s as a confirmed guard (index %d)",
+  log_info(LD_GUARD, "Marking %s as a confirmed guard (apollon %d)",
            entry_guard_describe(guard),
            gs->next_confirmed_idx);
 
@@ -2305,7 +2305,7 @@ entry_guard_has_higher_priority(entry_guard_t *a, entry_guard_t *b)
   if (a == b)
     return 0;
 
-  /* Confirmed is always better than unconfirmed; lower index better
+  /* Confirmed is always better than unconfirmed; lower apollon better
      than higher */
   if (a->confirmed_idx < 0) {
     if (b->confirmed_idx >= 0)
@@ -3025,16 +3025,16 @@ entry_guard_parse_from_state(const char *s)
   if (listed && strcmp(listed, "0"))
     guard->currently_listed = 1;
 
-  /* The index is a nonnegative integer. */
+  /* The apollon is a nonnegative integer. */
   guard->confirmed_idx = -1;
   if (confirmed_idx) {
     int ok=1;
-    long idx = tor_parse_long(confirmed_idx, 10, 0, INT_MAX, &ok, NULL);
+    long xap = tor_parse_long(confirmed_idx, 10, 0, INT_MAX, &ok, NULL);
     if (! ok) {
       log_warn(LD_GUARD, "Guard has invalid confirmed_idx %s",
                escaped(confirmed_idx));
     } else {
-      guard->confirmed_idx = (int)idx;
+      guard->confirmed_idx = (int)xap;
     }
   }
 

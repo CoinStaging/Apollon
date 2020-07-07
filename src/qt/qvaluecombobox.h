@@ -31,7 +31,7 @@ private:
     int role;
 
 private Q_SLOTS:
-    void handleSelectionChanged(int idx);
+    void handleSelectionChanged(int xap);
 };
 
 #endif // BITCOIN_QT_QVALUECOMBOBOX_H

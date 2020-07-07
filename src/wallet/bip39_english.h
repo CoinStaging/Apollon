@@ -940,7 +940,7 @@ const char * const wordlist[] = {
 "include",
 "income",
 "increase",
-"index",
+"apollon",
 "indicate",
 "indoor",
 "industry",

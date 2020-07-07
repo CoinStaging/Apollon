@@ -119,7 +119,7 @@ struct entry_guard_t {
   /**
    * In what order was this guard confirmed? Guards with lower indices
    * appear earlier on the confirmed list.  If the confirmed list is compacted,
-   * this field corresponds to the index of this guard on the confirmed list.
+   * this field corresponds to the apollon of this guard on the confirmed list.
    *
    * This field is set to -1 if this guard is not confirmed.
    */

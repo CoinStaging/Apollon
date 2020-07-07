@@ -52,7 +52,7 @@ private:
     // How many times we failed
     int nCountFailures;
 
-    // Keep track of current block index
+    // Keep track of current block apollon
     const CBlockIndex *pCurrentBlockIndex;
 
     bool CheckNodeHeight(CNode* pnode, bool fDisconnectStuckNodes = false);

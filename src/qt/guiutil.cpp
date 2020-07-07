@@ -121,7 +121,7 @@ void setupAddressWidget(QValidatedLineEdit *widget, QWidget *parent)
 #if QT_VERSION >= 0x040700
     // We don't want translators to use own addresses in translations
     // and this is the only place, where this address is supplied.
-    widget->setPlaceholderText(QObject::tr("Enter a Index address (e.g. %1)").arg(
+    widget->setPlaceholderText(QObject::tr("Enter a Apollon address (e.g. %1)").arg(
         QString::fromStdString(DummyAddress(Params()))));
 #endif
     widget->setValidator(new BitcoinAddressEntryValidator(parent));
@@ -139,8 +139,8 @@ void setupAmountWidget(QLineEdit *widget, QWidget *parent)
 
 bool parseBitcoinURI(const QUrl &uri, SendCoinsRecipient *out)
 {
-    // return if URI is not valid or is no index: URI
-    if(!uri.isValid() || uri.scheme() != QString("index"))
+    // return if URI is not valid or is no apollon: URI
+    if(!uri.isValid() || uri.scheme() != QString("apollon"))
         return false;
 
     SendCoinsRecipient rv;
@@ -200,13 +200,13 @@ bool parseBitcoinURI(const QUrl &uri, SendCoinsRecipient *out)
 
 bool parseBitcoinURI(QString uri, SendCoinsRecipient *out)
 {
-    // Convert index:// to index:
+    // Convert apollon:// to apollon:
     //
-    //    Cannot handle this later, because index:// will cause Qt to see the part after // as host,
+    //    Cannot handle this later, because apollon:// will cause Qt to see the part after // as host,
     //    which will lower-case it (and thus invalidate the address).
-    if(uri.startsWith("index://", Qt::CaseInsensitive))
+    if(uri.startsWith("apollon://", Qt::CaseInsensitive))
     {
-        uri.replace(0, 10, "index:");
+        uri.replace(0, 10, "apollon:");
     }
     QUrl uriInstance(uri);
     return parseBitcoinURI(uriInstance, out);
@@ -214,7 +214,7 @@ bool parseBitcoinURI(QString uri, SendCoinsRecipient *out)
 
 QString formatBitcoinURI(const SendCoinsRecipient &info)
 {
-    QString ret = QString("index:%1").arg(info.address);
+    QString ret = QString("apollon:%1").arg(info.address);
     int paramCount = 0;
 
     if (info.amount)
@@ -599,10 +599,10 @@ fs::path static StartupShortcutPath()
 {
     std::string chain = ChainNameFromCommandLine();
     if (chain == CBaseChainParams::MAIN)
-        return GetSpecialFolderPath(CSIDL_STARTUP) / "Index.lnk";
+        return GetSpecialFolderPath(CSIDL_STARTUP) / "Apollon.lnk";
     if (chain == CBaseChainParams::TESTNET) // Remove this special case when CBaseChainParams::TESTNET = "testnet4"
-        return GetSpecialFolderPath(CSIDL_STARTUP) / "Index (testnet).lnk";
-    return GetSpecialFolderPath(CSIDL_STARTUP) / strprintf("Index (%s).lnk", chain);
+        return GetSpecialFolderPath(CSIDL_STARTUP) / "Apollon (testnet).lnk";
+    return GetSpecialFolderPath(CSIDL_STARTUP) / strprintf("Apollon (%s).lnk", chain);
 }
 
 bool GetStartOnSystemStartup()
@@ -685,8 +685,8 @@ fs::path static GetAutostartFilePath()
 {
     std::string chain = ChainNameFromCommandLine();
     if (chain == CBaseChainParams::MAIN)
-        return GetAutostartDir() / "index.desktop";
-    return GetAutostartDir() / strprintf("index-%s.lnk", chain);
+        return GetAutostartDir() / "apollon.desktop";
+    return GetAutostartDir() / strprintf("apollon-%s.lnk", chain);
 }
 
 bool GetStartOnSystemStartup()
@@ -725,13 +725,13 @@ bool SetStartOnSystemStartup(bool fAutoStart)
         if (!optionFile.good())
             return false;
         std::string chain = ChainNameFromCommandLine();
-        // Write a index.desktop file to the autostart directory:
+        // Write a apollon.desktop file to the autostart directory:
         optionFile << "[Desktop Entry]\n";
         optionFile << "Type=Application\n";
         if (chain == CBaseChainParams::MAIN)
-            optionFile << "Name=Index\n";
+            optionFile << "Name=Apollon\n";
         else
-            optionFile << strprintf("Name=Index (%s)\n", chain);
+            optionFile << strprintf("Name=Apollon (%s)\n", chain);
         optionFile << "Exec=" << pszExePath << strprintf(" -min -testnet=%d -regtest=%d\n", GetBoolArg("-testnet", false), GetBoolArg("-regtest", false));
         optionFile << "Terminal=false\n";
         optionFile << "Hidden=false\n";
@@ -750,7 +750,7 @@ bool SetStartOnSystemStartup(bool fAutoStart)
 LSSharedFileListItemRef findStartupItemInList(LSSharedFileListRef list, CFURLRef findUrl);
 LSSharedFileListItemRef findStartupItemInList(LSSharedFileListRef list, CFURLRef findUrl)
 {
-    // loop through the list of startup items and try to find the Index app
+    // loop through the list of startup items and try to find the Apollon app
     CFArrayRef listSnapshot = LSSharedFileListCopySnapshot(list, NULL);
     for(int i = 0; i < CFArrayGetCount(listSnapshot); i++) {
         LSSharedFileListItemRef item = (LSSharedFileListItemRef)CFArrayGetValueAtIndex(listSnapshot, i);
@@ -795,7 +795,7 @@ bool SetStartOnSystemStartup(bool fAutoStart)
     LSSharedFileListItemRef foundItem = findStartupItemInList(loginItems, bitcoinAppUrl);
 
     if(fAutoStart && !foundItem) {
-        // add Index app to startup item list
+        // add Apollon app to startup item list
         LSSharedFileListInsertItemURL(loginItems, kLSSharedFileListItemBeforeFirst, NULL, NULL, bitcoinAppUrl, NULL, NULL);
     }
     else if(!fAutoStart && foundItem) {

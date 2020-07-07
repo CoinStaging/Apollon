@@ -33,10 +33,10 @@ public:
     struct MintPoolEntry {
         SigmaPublicKey key;
         CKeyID seedId;
-        uint32_t index;
+        uint32_t apollon;
 
         MintPoolEntry();
-        MintPoolEntry(SigmaPublicKey const &key, CKeyID const &seedId, uint32_t index);
+        MintPoolEntry(SigmaPublicKey const &key, CKeyID const &seedId, uint32_t apollon);
 
         bool operator==(MintPoolEntry const &another) const;
         bool operator!=(MintPoolEntry const &another) const;
@@ -48,7 +48,7 @@ public:
         {
             READWRITE(key);
             READWRITE(seedId);
-            READWRITE(index);
+            READWRITE(apollon);
         }
     };
 
@@ -57,9 +57,9 @@ public:
         boost::multi_index::indexed_by<
             // Sequence
             boost::multi_index::ordered_unique<
-                boost::multi_index::member<MintPoolEntry, uint32_t, &MintPoolEntry::index>
+                boost::multi_index::member<MintPoolEntry, uint32_t, &MintPoolEntry::apollon>
             >,
-            // Public Key index
+            // Public Key apollon
             boost::multi_index::hashed_unique<
                 boost::multi_index::member<MintPoolEntry, SigmaPublicKey, &MintPoolEntry::key>,
                 std::hash<SigmaPublicKey>

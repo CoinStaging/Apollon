@@ -89,7 +89,7 @@ public:
     uint32_t GetLastGroupId(uint32_t propertyId, uint8_t denomination);
     size_t GetMintCount(uint32_t propertyId, uint8_t denomination, uint32_t groupId);
     uint64_t GetNextSequence();
-    SigmaPublicKey GetMint(uint32_t propertyId, uint8_t denomination, uint32_t groupId, uint16_t index);
+    SigmaPublicKey GetMint(uint32_t propertyId, uint8_t denomination, uint32_t groupId, uint16_t apollon);
     bool HasSpendSerial(
         uint32_t propertyId, uint8_t denomination, secp_primitives::Scalar const &serial, uint256 &spendTx);
 

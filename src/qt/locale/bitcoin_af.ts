@@ -158,8 +158,8 @@
         <translation>Besig met herindeksering van blokke op hardeskyf...</translation>
     </message>
     <message>
-        <source>Send coins to a Index address</source>
-        <translation>Stuur munte na 'n Index adres</translation>
+        <source>Send coins to a Apollon address</source>
+        <translation>Stuur munte na 'n Apollon adres</translation>
     </message>
     <message>
         <source>Backup wallet to another location</source>
@@ -170,8 +170,8 @@
         <translation>Verander die wagwoord wat ek vir kodifikasie van my beursie gebruik</translation>
     </message>
     <message>
-        <source>Index</source>
-        <translation>Index</translation>
+        <source>Apollon</source>
+        <translation>Apollon</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -194,12 +194,12 @@
         <translation>Kodifiseer die private sleutes wat aan jou beursie gekoppel is.</translation>
     </message>
     <message>
-        <source>Sign messages with your Index addresses to prove you own them</source>
-        <translation>Onderteken boodskappe met u Index adresse om u eienaarskap te bewys</translation>
+        <source>Sign messages with your Apollon addresses to prove you own them</source>
+        <translation>Onderteken boodskappe met u Apollon adresse om u eienaarskap te bewys</translation>
     </message>
     <message>
-        <source>Verify messages to ensure they were signed with specified Index addresses</source>
-        <translation>Verifieër boodskappe om seker te maak dat dit met die gespesifiseerde Index adresse</translation>
+        <source>Verify messages to ensure they were signed with specified Apollon addresses</source>
+        <translation>Verifieër boodskappe om seker te maak dat dit met die gespesifiseerde Apollon adresse</translation>
     </message>
     <message>
         <source>&amp;Help</source>
@@ -210,8 +210,8 @@
         <translation>Orebalk</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and index: URIs)</source>
-        <translation>Versoek betalings (genereer QR-kodes en index: URI's)</translation>
+        <source>Request payments (generates QR codes and apollon: URIs)</source>
+        <translation>Versoek betalings (genereer QR-kodes en apollon: URI's)</translation>
     </message>
     <message>
         <source>Show the list of used sending addresses and labels</source>
@@ -222,8 +222,8 @@
         <translation>Vertoon die lys van gebruikte ontvangers-adresse en etikette</translation>
     </message>
     <message>
-        <source>Open a index: URI or payment request</source>
-        <translation>Skep 'n index: URI of betalingsversoek</translation>
+        <source>Open a apollon: URI or payment request</source>
+        <translation>Skep 'n apollon: URI of betalingsversoek</translation>
     </message>
     <message>
         <source>Indexing blocks on disk...</source>
@@ -708,10 +708,10 @@
     <name>WalletView</name>
     </context>
 <context>
-    <name>index-core</name>
+    <name>apollon-core</name>
     <message>
-        <source>Index Core</source>
-        <translation>Index Kern</translation>
+        <source>Apollon Core</source>
+        <translation>Apollon Kern</translation>
     </message>
     <message>
         <source>Information</source>
@@ -730,7 +730,7 @@
         <translation>Onvoldoende fondse</translation>
     </message>
     <message>
-        <source>Loading block index...</source>
+        <source>Loading block apollon...</source>
         <translation>Blokindeks word gelaai...</translation>
     </message>
     <message>

@@ -26,12 +26,12 @@ if [ -e "$(which git 2>/dev/null)" -a "$(git rev-parse --is-inside-work-tree 2>/
     # if latest commit is tagged and not dirty, then override using the tag name
     RAWDESC=$(git describe --abbrev=0 2>/dev/null)
     if [ "$(git rev-parse HEAD)" = "$(git rev-list -1 $RAWDESC 2>/dev/null)" ]; then
-        git diff-index --quiet HEAD -- && DESC=$RAWDESC
+        git diff-apollon --quiet HEAD -- && DESC=$RAWDESC
     fi
 
     # otherwise generate suffix from git, i.e. string like "59887e8-unk"
     SUFFIX=$(git rev-parse --short HEAD)
-    git diff-index --quiet HEAD -- || SUFFIX="$SUFFIX-unk"
+    git diff-apollon --quiet HEAD -- || SUFFIX="$SUFFIX-unk"
 fi
 
 if [ -n "$DESC" ]; then

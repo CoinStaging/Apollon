@@ -57,7 +57,7 @@ uint256 static SignatureHashOld(CScript scriptCode, const CTransaction& txTo, un
     }
     else if ((nHashType & 0x1f) == SIGHASH_SINGLE)
     {
-        // Only lock-in the txout payee at same index as txin
+        // Only lock-in the txout payee at same apollon as txin
         unsigned int nOut = nIn;
         if (nOut >= txTmp.vout.size())
         {
@@ -171,8 +171,8 @@ BOOST_AUTO_TEST_CASE(sighash_from_data)
 {
     UniValue tests = read_json(std::string(json_tests::sighash, json_tests::sighash + sizeof(json_tests::sighash)));
 
-    for (unsigned int idx = 0; idx < tests.size(); idx++) {
-        UniValue test = tests[idx];
+    for (unsigned int xap = 0; xap < tests.size(); xap++) {
+        UniValue test = tests[xap];
         std::string strTest = test.write();
         if (test.size() < 1) // Allow for extra stuff (useful for comments)
         {

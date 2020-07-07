@@ -270,7 +270,7 @@ class CompactBlocksTest(BitcoinTestFramework):
         cmpct_block = P2PHeaderAndShortIDs()
         cmpct_block.header = CBlockHeader(block)
         cmpct_block.prefilled_txn_length = 1
-        # This index will be too high
+        # This apollon will be too high
         prefilled_txn = PrefilledTransaction(1, block.vtx[0])
         cmpct_block.prefilled_txn = [prefilled_txn]
         self.test_node.send_and_ping(msg_cmpctblock(cmpct_block))
@@ -342,18 +342,18 @@ class CompactBlocksTest(BitcoinTestFramework):
 
         # Make sure the prefilled_txn appears to have included the coinbase
         assert(len(header_and_shortids.prefilled_txn) >= 1)
-        assert_equal(header_and_shortids.prefilled_txn[0].index, 0)
+        assert_equal(header_and_shortids.prefilled_txn[0].apollon, 0)
 
         # Check that all prefilled_txn entries match what's in the block.
         for entry in header_and_shortids.prefilled_txn:
             entry.tx.calc_sha256()
             # This checks the non-witness parts of the tx agree
-            assert_equal(entry.tx.sha256, block.vtx[entry.index].sha256)
+            assert_equal(entry.tx.sha256, block.vtx[entry.apollon].sha256)
 
             # And this checks the witness
             wtxid = entry.tx.calc_sha256(True)
             if version == 2:
-                assert_equal(wtxid, block.vtx[entry.index].calc_sha256(True))
+                assert_equal(wtxid, block.vtx[entry.apollon].calc_sha256(True))
             else:
                 # Shouldn't have received a witness
                 assert(entry.tx.wit.is_null())
@@ -365,20 +365,20 @@ class CompactBlocksTest(BitcoinTestFramework):
         # Determine the siphash keys to use.
         [k0, k1] = header_and_shortids.get_siphash_keys()
 
-        index = 0
-        while index < len(block.vtx):
+        apollon = 0
+        while apollon < len(block.vtx):
             if (len(header_and_shortids.prefilled_txn) > 0 and
-                    header_and_shortids.prefilled_txn[0].index == index):
+                    header_and_shortids.prefilled_txn[0].apollon == apollon):
                 # Already checked prefilled transactions above
                 header_and_shortids.prefilled_txn.pop(0)
             else:
-                tx_hash = block.vtx[index].sha256
+                tx_hash = block.vtx[apollon].sha256
                 if version == 2:
-                    tx_hash = block.vtx[index].calc_sha256(True)
+                    tx_hash = block.vtx[apollon].calc_sha256(True)
                 shortid = calculate_shortid(k0, k1, tx_hash)
                 assert_equal(shortid, header_and_shortids.shortids[0])
                 header_and_shortids.shortids.pop(0)
-            index += 1
+            apollon += 1
 
     # Test that bitcoind requests compact blocks when we announce new blocks
     # via header or inv, and that responding to getblocktxn causes the block
@@ -613,16 +613,16 @@ class CompactBlocksTest(BitcoinTestFramework):
             with mininode_lock:
                 assert_equal(test_node.last_blocktxn.block_transactions.blockhash, int(block_hash, 16))
                 all_indices = msg.block_txn_request.to_absolute()
-                for index in all_indices:
+                for apollon in all_indices:
                     tx = test_node.last_blocktxn.block_transactions.transactions.pop(0)
                     tx.calc_sha256()
-                    assert_equal(tx.sha256, block.vtx[index].sha256)
+                    assert_equal(tx.sha256, block.vtx[apollon].sha256)
                     if version == 1:
                         # Witnesses should have been stripped
                         assert(tx.wit.is_null())
                     else:
                         # Check that the witness matches
-                        assert_equal(tx.calc_sha256(True), block.vtx[index].calc_sha256(True))
+                        assert_equal(tx.calc_sha256(True), block.vtx[apollon].calc_sha256(True))
                 test_node.last_blocktxn = None
             current_height -= 1
 
@@ -944,7 +944,7 @@ class CompactBlocksTest(BitcoinTestFramework):
         self.test_invalid_tx_in_compactblock(self.nodes[1], self.segwit_node, True)
         self.test_invalid_tx_in_compactblock(self.nodes[1], self.old_node, True)
 
-        print("\tTesting invalid index in cmpctblock message...")
+        print("\tTesting invalid apollon in cmpctblock message...")
         self.test_invalid_cmpctblock_message()
 
 

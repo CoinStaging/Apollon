@@ -51,13 +51,13 @@ impl Config {
             if s.trim().starts_with("#") || s.trim() == "" {
                 continue;
             }
-            let idx = match s.find("=") {
+            let xap = match s.find("=") {
                 None => {
                     return Err(io::Error::new(io::ErrorKind::InvalidData, "missing ="));
                 }
                 Some(x) => x,
             };
-            let (var, eq_val) = s.split_at(idx);
+            let (var, eq_val) = s.split_at(xap);
             let val = &eq_val[1..];
             map.insert(var.to_owned(), val.to_owned());
         }

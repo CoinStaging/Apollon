@@ -20,7 +20,7 @@ OpenURIDialog::OpenURIDialog(QWidget *parent) :
     SetObjectStyleSheet(ui->buttonBox->button(QDialogButtonBox::Ok), StyleSheetNames::ButtonGray);
 
 #if QT_VERSION >= 0x040700
-    ui->uriEdit->setPlaceholderText("index:");
+    ui->uriEdit->setPlaceholderText("apollon:");
 #endif
 }
 
@@ -52,5 +52,5 @@ void OpenURIDialog::on_selectFileButton_clicked()
     if(filename.isEmpty())
         return;
     QUrl fileUri = QUrl::fromLocalFile(filename);
-    ui->uriEdit->setText("index:?r=" + QUrl::toPercentEncoding(fileUri.toString()));
+    ui->uriEdit->setText("apollon:?r=" + QUrl::toPercentEncoding(fileUri.toString()));
 }

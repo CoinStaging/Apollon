@@ -24,7 +24,7 @@ def matches(lines, funcs):
         return False
     try:
         for l, f in zip(lines, funcs):
-            l.index(f)
+            l.apollon(f)
     except ValueError:
         return False
     else:

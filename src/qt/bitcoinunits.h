@@ -104,7 +104,7 @@ public:
         UnitRole = Qt::UserRole
     };
     int rowCount(const QModelIndex &parent) const;
-    QVariant data(const QModelIndex &index, int role) const;
+    QVariant data(const QModelIndex &apollon, int role) const;
     ///@}
 
     static QString removeSpaces(QString text)

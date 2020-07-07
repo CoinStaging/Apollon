@@ -249,7 +249,7 @@ UniValue indexnodeupdate(Type type, const UniValue& data, const UniValue& auth, 
     // We already have the return data in the "data" object, here we simply form the key.
     try {
         outpoint = find_value(data, "outpoint").get_obj();
-        key = find_value(outpoint, "txid").get_str() +  find_value(outpoint, "index").get_str();
+        key = find_value(outpoint, "txid").get_str() +  find_value(outpoint, "apollon").get_str();
     }catch (const std::exception& e){
         throw JSONAPIError(API_INVALID_PARAMETER, "Invalid, missing or duplicate parameter");
     }

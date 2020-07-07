@@ -670,11 +670,11 @@ CIndexnode* CIndexnodeMan::GetNextIndexnodeInQueueForPayment(int nBlockHeight, b
         Make a vector with all of the last paid times
     */
     int nMnCount = CountEnabled();
-    int index = 0;
+    int apollon = 0;
     BOOST_FOREACH(CIndexnode &mn, vIndexnodes)
     {
-        index += 1;
-        // LogPrintf("index=%s, mn=%s\n", index, mn.ToString());
+        apollon += 1;
+        // LogPrintf("apollon=%s, mn=%s\n", apollon, mn.ToString());
         /*if (!mn.IsValidForPayment()) {
             LogPrint("indexnodeman", "Indexnode, %s, addr(%s), not-qualified: 'not valid for payment'\n",
                      mn.vin.prevout.ToStringShort(), CBitcoinAddress(mn.pubKeyCollateralAddress.GetID()).ToString());
@@ -949,7 +949,7 @@ void CIndexnodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CDataS
 {
 
 //    LogPrint("indexnode", "CIndexnodeMan::ProcessMessage, strCommand=%s\n", strCommand);
-    if(fLiteMode) return; // disable all Index specific functionality
+    if(fLiteMode) return; // disable all Apollon specific functionality
     if(!indexnodeSync.IsBlockchainSynced()) return;
 
     if (strCommand == NetMsgType::MNANNOUNCE) { //Indexnode Broadcast
@@ -1516,7 +1516,7 @@ std::string CIndexnodeMan::ToString() const
             ", peers who asked us for Indexnode list: " << (int)mAskedUsForIndexnodeList.size() <<
             ", peers we asked for Indexnode list: " << (int)mWeAskedForIndexnodeList.size() <<
             ", entries in Indexnode list we asked for: " << (int)mWeAskedForIndexnodeListEntry.size() <<
-            ", indexnode index size: " << indexIndexnodes.GetSize() <<
+            ", indexnode apollon size: " << indexIndexnodes.GetSize() <<
             ", nDsqCount: " << (int)nDsqCount;
 
     return info.str();

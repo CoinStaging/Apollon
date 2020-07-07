@@ -164,6 +164,6 @@
     <name>WalletView</name>
     </context>
 <context>
-    <name>index-core</name>
+    <name>apollon-core</name>
     </context>
 </TS>

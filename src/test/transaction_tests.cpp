@@ -108,15 +108,15 @@ BOOST_AUTO_TEST_CASE(tx_valid)
     // Read tests from test/data/tx_valid.json
     // Format is an array of arrays
     // Inner arrays are either [ "comment" ]
-    // or [[[prevout hash, prevout index, prevout scriptPubKey], [input 2], ...],"], serializedTransaction, verifyFlags
+    // or [[[prevout hash, prevout apollon, prevout scriptPubKey], [input 2], ...],"], serializedTransaction, verifyFlags
     // ... where all scripts are stringified scripts.
     //
     // verifyFlags is a comma separated list of script verification flags to apply, or "NONE"
     UniValue tests = read_json(std::string(json_tests::tx_valid, json_tests::tx_valid + sizeof(json_tests::tx_valid)));
 
     ScriptError err;
-    for (unsigned int idx = 0; idx < tests.size(); idx++) {
-        UniValue test = tests[idx];
+    for (unsigned int xap = 0; xap < tests.size(); xap++) {
+        UniValue test = tests[xap];
         string strTest = test.write();
         if (test[0].isArray())
         {
@@ -194,15 +194,15 @@ BOOST_AUTO_TEST_CASE(tx_invalid)
     // Read tests from test/data/tx_invalid.json
     // Format is an array of arrays
     // Inner arrays are either [ "comment" ]
-    // or [[[prevout hash, prevout index, prevout scriptPubKey], [input 2], ...],"], serializedTransaction, verifyFlags
+    // or [[[prevout hash, prevout apollon, prevout scriptPubKey], [input 2], ...],"], serializedTransaction, verifyFlags
     // ... where all scripts are stringified scripts.
     //
     // verifyFlags is a comma separated list of script verification flags to apply, or "NONE"
     UniValue tests = read_json(std::string(json_tests::tx_invalid, json_tests::tx_invalid + sizeof(json_tests::tx_invalid)));
 
     ScriptError err;
-    for (unsigned int idx = 0; idx < tests.size(); idx++) {
-        UniValue test = tests[idx];
+    for (unsigned int xap = 0; xap < tests.size(); xap++) {
+        UniValue test = tests[xap];
         string strTest = test.write();
         if (test[0].isArray())
         {

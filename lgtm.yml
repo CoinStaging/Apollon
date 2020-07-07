@@ -49,6 +49,6 @@ extraction:
       command:
         - ./autogen.sh
         - ./configure --with-incompatible-bdb
-    index:
+    apollon:
       build_command:
         - make

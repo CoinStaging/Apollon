@@ -20,11 +20,11 @@ class SigmaMintChainState
 public:
     int block;
     SigmaMintGroup group;
-    SigmaMintIndex index;
+    SigmaMintIndex apollon;
 
 public:
     SigmaMintChainState() noexcept;
-    SigmaMintChainState(int block, SigmaMintGroup group, SigmaMintIndex index) noexcept;
+    SigmaMintChainState(int block, SigmaMintGroup group, SigmaMintIndex apollon) noexcept;
 
     bool operator==(const SigmaMintChainState& other) const noexcept;
     bool operator!=(const SigmaMintChainState& other) const noexcept;
@@ -41,7 +41,7 @@ private:
 
         READWRITE(block);
         READWRITE(group);
-        READWRITE(index);
+        READWRITE(apollon);
 
         this->block = block;
     }
@@ -145,7 +145,7 @@ struct hash<SigmaMintChainState>
     {
         return hash<int>()(state.block)
             ^ hash<SigmaMintGroup>()(state.group)
-            ^ hash<SigmaMintIndex>()(state.index);
+            ^ hash<SigmaMintIndex>()(state.apollon);
     }
 };
 
@@ -186,7 +186,7 @@ basic_ostream<Char, Traits>& operator<<(basic_ostream<Char, Traits>& os, const S
 template<class Char, class Traits>
 basic_ostream<Char, Traits>& operator<<(basic_ostream<Char, Traits>& os, const SigmaMintChainState& state)
 {
-    return os << "{block: " << state.block << ", group: " << state.group << ", index: " << state.index << '}';
+    return os << "{block: " << state.block << ", group: " << state.group << ", apollon: " << state.apollon << '}';
 }
 
 template<class Char, class Traits>

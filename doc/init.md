@@ -54,7 +54,7 @@ see `contrib/debian/examples/bitcoin.conf`.
 All three configurations assume several paths that might need to be adjusted.
 
 Binary:              `/usr/bin/indexd`
-Configuration file:  `/etc/index/zconf.conf`
+Configuration file:  `/etc/apollon/zconf.conf`
 Data directory:      `/var/lib/indexd`
 PID file:            `/var/run/indexd/indexd.pid` (OpenRC and Upstart) or `/var/lib/indexd/indexd.pid` (systemd)
 Lock file:           `/var/lock/subsys/indexd` (CentOS)
@@ -68,9 +68,9 @@ can then be controlled by group membership.
 3b) Mac OS X
 
 Binary:              `/usr/local/bin/indexd`
-Configuration file:  `~/Library/Application Support/index/index.conf`
-Data directory:      `~/Library/Application Support/index`
-Lock file:           `~/Library/Application Support/index/.lock`
+Configuration file:  `~/Library/Application Support/apollon/apollon.conf`
+Data directory:      `~/Library/Application Support/apollon`
+Lock file:           `~/Library/Application Support/apollon/.lock`
 
 4. Installing Service Configuration
 -----------------------------------
@@ -110,7 +110,7 @@ setting the BITCOIND and FLAGS environment variables in the file
 4e) Mac OS X
 
 Copy org.bitcoin.bitcoind.plist into ~/Library/LaunchAgents. Load the launch agent by
-running `launchctl load ~/Library/LaunchAgents/org.index.indexd.plist`.
+running `launchctl load ~/Library/LaunchAgents/org.apollon.indexd.plist`.
 
 This Launch Agent will cause bitcoind to start whenever the user logs in.
 

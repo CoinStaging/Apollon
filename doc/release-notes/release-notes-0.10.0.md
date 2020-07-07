@@ -32,7 +32,7 @@ received, really), which makes it incompatible with some tools or
 other programs. Reindexing using earlier versions will also not work
 anymore as a result of this.
 
-* The block index database will now hold headers for which no block is
+* The block apollon database will now hold headers for which no block is
 stored on disk, which earlier versions won't support.
 
 If you want to be able to downgrade smoothly, make a backup of your entire data
@@ -156,7 +156,7 @@ RPC Server "Warm-Up" Mode
 -------------------------
 
 The RPC server is started earlier now, before most of the expensive
-intialisations like loading the block index.  It is available now almost
+intialisations like loading the block apollon.  It is available now almost
 immediately after starting the process.  However, until all initialisations
 are done, it always returns an immediate error with code -28 to all calls.
 
@@ -472,7 +472,7 @@ Validation:
 - `6fd7ef2` Also switch the (unused) verification code to low-s instead of even-s
 - `584a358` Do merkle root and txid duplicates check simultaneously
 - `217a5c9` When transaction outputs exceed inputs, show the offending amounts so as to aid debugging
-- `f74fc9b` Print input index when signature validation fails, to aid debugging
+- `f74fc9b` Print input apollon when signature validation fails, to aid debugging
 - `6fd59ee` script.h: set_vch() should shift a >32 bit value
 - `d752ba8` Add SCRIPT_VERIFY_SIGPUSHONLY (BIP62 rule 2) (test only)
 - `698c6ab` Add SCRIPT_VERIFY_MINIMALDATA (BIP62 rules 3 and 4) (test only)

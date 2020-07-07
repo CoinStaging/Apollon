@@ -613,8 +613,8 @@ class Harness {
     if (keys.empty()) {
       return "foo";
     } else {
-      const int index = rnd->Uniform(keys.size());
-      std::string result = keys[index];
+      const int apollon = rnd->Uniform(keys.size());
+      std::string result = keys[apollon];
       switch (rnd->Uniform(3)) {
         case 0:
           // Return an existing key

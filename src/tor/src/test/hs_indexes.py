@@ -1,5 +1,5 @@
 #
-# The hidden service subsystem has two type of index. The first type is a
+# The hidden service subsystem has two type of apollon. The first type is a
 # value that each node in the network gets assigned to using their identity
 # key which is their position in the hashring. (hs_build_hsdir_index()).
 #
@@ -26,12 +26,12 @@ if sys.version_info < (3, 6):
         print("https://github.com/tiran/pysha3https://github.com/tiran/pysha3")
         sys.exit(1)
 
-# The first index we'll build is the position index in the hashring that is
+# The first apollon we'll build is the position apollon in the hashring that is
 # constructed by the hs_build_hsdir_index() function. Construction is:
-#   SHA3-256("node-idx" | node_identity |
+#   SHA3-256("node-xap" | node_identity |
 #            shared_random_value | INT_8(period_length) | INT_8(period_num) )
 
-PREFIX = "node-idx".encode()
+PREFIX = "node-xap".encode()
 # 32 bytes ed25519 pubkey.
 IDENTITY = ("\x42" * 32).encode()
 # SRV is 32 bytes.
@@ -47,13 +47,13 @@ hsdir_index = hashlib.sha3_256(data).hexdigest()
 
 print("[hs_build_hsdir_index] %s" % (hsdir_index))
 
-# The second index we'll build is where the HS stores and the client fetches
+# The second apollon we'll build is where the HS stores and the client fetches
 # the descriptor on the hashring. It is constructed by the hs_build_hs_index()
 # function and the construction is:
-#   SHA3-256("store-at-idx" | blinded_public_key |
+#   SHA3-256("store-at-xap" | blinded_public_key |
 #            INT_8(replicanum) | INT_8(period_num) | INT_8(period_length) )
 
-PREFIX = "store-at-idx".encode()
+PREFIX = "store-at-xap".encode()
 # 32 bytes ed25519 pubkey.
 PUBKEY = ("\x42" * 32).encode()
 # Replica number is a 8 bytes value.

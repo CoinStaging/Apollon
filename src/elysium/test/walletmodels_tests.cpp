@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE(sigma_mint_chainstate_default)
 
     BOOST_CHECK_LT(state.block, 0);
     BOOST_CHECK_EQUAL(state.group, 0);
-    BOOST_CHECK_EQUAL(state.index, 0);
+    BOOST_CHECK_EQUAL(state.apollon, 0);
 }
 
 BOOST_AUTO_TEST_CASE(sigma_mint_chainstate_init)
@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_CASE(sigma_mint_chainstate_init)
 
     BOOST_CHECK_EQUAL(state.block, 100000);
     BOOST_CHECK_EQUAL(state.group, 1);
-    BOOST_CHECK_EQUAL(state.index, 50);
+    BOOST_CHECK_EQUAL(state.apollon, 50);
 }
 
 BOOST_AUTO_TEST_CASE(sigma_mint_chainstate_equality)

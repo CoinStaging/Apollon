@@ -50,12 +50,12 @@
         <translation>Adresy odbioru</translation>
     </message>
     <message>
-        <source>These are your Index addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
-        <translation>Tutaj znajdują się adresy Index na które wysyłasz płatności. Zawsze sprawdzaj ilość i adres odbiorcy przed wysyłką monet.</translation>
+        <source>These are your Apollon addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
+        <translation>Tutaj znajdują się adresy Apollon na które wysyłasz płatności. Zawsze sprawdzaj ilość i adres odbiorcy przed wysyłką monet.</translation>
     </message>
     <message>
-        <source>These are your Index addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
-        <translation>To są twoje adresy Index do odbierania płatności. Zaleca się używanie nowych adresów odbiorczych dla każdej transakcji.</translation>
+        <source>These are your Apollon addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
+        <translation>To są twoje adresy Apollon do odbierania płatności. Zaleca się używanie nowych adresów odbiorczych dla każdej transakcji.</translation>
     </message>
     <message>
         <source>&amp;Copy Address</source>
@@ -258,7 +258,7 @@
         <translation>Ponowne indeksowanie bloków na dysku...</translation>
     </message>
     <message>
-        <source>Send coins to a Index address</source>
+        <source>Send coins to a Apollon address</source>
         <translation>Wyślij monety na adres Zcoinowy</translation>
     </message>
     <message>
@@ -282,8 +282,8 @@
         <translation>&amp;Zweryfikuj wiadomość...</translation>
     </message>
     <message>
-        <source>Index</source>
-        <translation>Index</translation>
+        <source>Apollon</source>
+        <translation>Apollon</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -310,11 +310,11 @@
         <translation>Szyfruj klucze prywatne, które są w twoim portfelu</translation>
     </message>
     <message>
-        <source>Sign messages with your Index addresses to prove you own them</source>
+        <source>Sign messages with your Apollon addresses to prove you own them</source>
         <translation>Podpisz wiadomości swoim adresem aby udowodnić jego posiadanie</translation>
     </message>
     <message>
-        <source>Verify messages to ensure they were signed with specified Index addresses</source>
+        <source>Verify messages to ensure they were signed with specified Apollon addresses</source>
         <translation>Zweryfikuj wiadomość,  aby upewnić się, że została podpisana podanym adresem Zcoinowym.</translation>
     </message>
     <message>
@@ -334,8 +334,8 @@
         <translation>Pasek zakładek</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and index: URIs)</source>
-        <translation>Żądaj płatności (generuje kod QR oraz index: URI)</translation>
+        <source>Request payments (generates QR codes and apollon: URIs)</source>
+        <translation>Żądaj płatności (generuje kod QR oraz apollon: URI)</translation>
     </message>
     <message>
         <source>Show the list of used sending addresses and labels</source>
@@ -346,16 +346,16 @@
         <translation>Pokaż listę adresów i etykiet użytych do odbierania</translation>
     </message>
     <message>
-        <source>Open a index: URI or payment request</source>
-        <translation>Otwórz URI index: lub żądanie zapłaty</translation>
+        <source>Open a apollon: URI or payment request</source>
+        <translation>Otwórz URI apollon: lub żądanie zapłaty</translation>
     </message>
     <message>
         <source>&amp;Command-line options</source>
         <translation>&amp;Opcje linii komend</translation>
     </message>
     <message numerus="yes">
-        <source>%n active connection(s) to Index network</source>
-        <translation><numerusform>%n aktywnych połączeń do sieci Index</numerusform><numerusform>%n aktywnych połączeń do sieci Index</numerusform><numerusform>%n aktywnych połączeń do sieci Index</numerusform></translation>
+        <source>%n active connection(s) to Apollon network</source>
+        <translation><numerusform>%n aktywnych połączeń do sieci Apollon</numerusform><numerusform>%n aktywnych połączeń do sieci Apollon</numerusform><numerusform>%n aktywnych połączeń do sieci Apollon</numerusform></translation>
     </message>
     <message>
         <source>Indexing blocks on disk...</source>
@@ -422,7 +422,7 @@
         <translation>Aktualny</translation>
     </message>
     <message>
-        <source>Show the %1 help message to get a list with possible Index command-line options</source>
+        <source>Show the %1 help message to get a list with possible Apollon command-line options</source>
         <translation>Pokaż pomoc %1 aby zobaczyć listę wszystkich opcji lnii poleceń.</translation>
     </message>
     <message>
@@ -755,8 +755,8 @@
         <translation>Ponieważ jest to pierwsze uruchomienie programu, możesz wybrać gdzie %1 będzie przechowywał swoje dane.</translation>
     </message>
     <message>
-        <source>%1 will download and store a copy of the Index block chain. At least %2GB of data will be stored in this directory, and it will grow over time. The wallet will also be stored in this directory.</source>
-        <translation>%1 pobierze i będzie przechowywał kopię łańcucha bloków Index. W wybranym katalogu zostanie zapisanych %2GB danych, a z czasem ta ilość będzie rosła. Portfel będzie przechowywany w tym samym katalogu.</translation>
+        <source>%1 will download and store a copy of the Apollon block chain. At least %2GB of data will be stored in this directory, and it will grow over time. The wallet will also be stored in this directory.</source>
+        <translation>%1 pobierze i będzie przechowywał kopię łańcucha bloków Apollon. W wybranym katalogu zostanie zapisanych %2GB danych, a z czasem ta ilość będzie rosła. Portfel będzie przechowywany w tym samym katalogu.</translation>
     </message>
     <message>
         <source>Use the default data directory</source>
@@ -897,16 +897,16 @@
         <translation>Wydaj niepotwierdzoną re&amp;sztę</translation>
     </message>
     <message>
-        <source>Automatically open the Index client port on the router. This only works when your router supports UPnP and it is enabled.</source>
-        <translation>Automatycznie otwiera port klienta Index na routerze. Ta opcja dzieła tylko jeśli twój router wspiera UPnP i jest ono włączone.</translation>
+        <source>Automatically open the Apollon client port on the router. This only works when your router supports UPnP and it is enabled.</source>
+        <translation>Automatycznie otwiera port klienta Apollon na routerze. Ta opcja dzieła tylko jeśli twój router wspiera UPnP i jest ono włączone.</translation>
     </message>
     <message>
         <source>Map port using &amp;UPnP</source>
         <translation>Mapuj port używając &amp;UPnP</translation>
     </message>
     <message>
-        <source>Connect to the Index network through a SOCKS5 proxy.</source>
-        <translation>Połącz się z siecią Index poprzez proxy SOCKS5.</translation>
+        <source>Connect to the Apollon network through a SOCKS5 proxy.</source>
+        <translation>Połącz się z siecią Apollon poprzez proxy SOCKS5.</translation>
     </message>
     <message>
         <source>&amp;Connect through SOCKS5 proxy (default proxy):</source>
@@ -945,8 +945,8 @@
         <translation>Tor</translation>
     </message>
     <message>
-        <source>Connect to the Index network through a separate SOCKS5 proxy for Tor hidden services.</source>
-        <translation>Połącz się z siecią Index przy pomocy oddzielnego SOCKS5 proxy dla sieci TOR</translation>
+        <source>Connect to the Apollon network through a separate SOCKS5 proxy for Tor hidden services.</source>
+        <translation>Połącz się z siecią Apollon przy pomocy oddzielnego SOCKS5 proxy dla sieci TOR</translation>
     </message>
     <message>
         <source>Use separate SOCKS5 proxy to reach peers via Tor hidden services:</source>
@@ -1044,8 +1044,8 @@
         <translation>Formularz</translation>
     </message>
     <message>
-        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Index network after a connection is established, but this process has not completed yet.</source>
-        <translation>Wyświetlana informacja może być nieaktualna. Twój portfel synchronizuje się automatycznie z siecią Index, zaraz po tym jak uzyskano połączenie, ale proces ten nie został jeszcze ukończony.</translation>
+        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Apollon network after a connection is established, but this process has not completed yet.</source>
+        <translation>Wyświetlana informacja może być nieaktualna. Twój portfel synchronizuje się automatycznie z siecią Apollon, zaraz po tym jak uzyskano połączenie, ale proces ten nie został jeszcze ukończony.</translation>
     </message>
     <message>
         <source>Watch-only:</source>
@@ -1137,7 +1137,7 @@
         <translation>Kwota</translation>
     </message>
     <message>
-        <source>Enter a Index address (e.g. %1)</source>
+        <source>Enter a Apollon address (e.g. %1)</source>
         <translation>Wprowadź adres Zcoinowy (np. %1)</translation>
     </message>
     <message>
@@ -1486,8 +1486,8 @@
         <translation>U&amp;żyj ponownie istniejącego adresu odbiorczego (niepolecane)</translation>
     </message>
     <message>
-        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the Index network.</source>
-        <translation>Opcjonalna wiadomość do dołączenia do żądania płatności, która będzie wyświetlana, gdy żądanie zostanie otwarte. Uwaga: wiadomość ta nie zostanie wysłana wraz z płatnością w sieci Index.</translation>
+        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the Apollon network.</source>
+        <translation>Opcjonalna wiadomość do dołączenia do żądania płatności, która będzie wyświetlana, gdy żądanie zostanie otwarte. Uwaga: wiadomość ta nie zostanie wysłana wraz z płatnością w sieci Apollon.</translation>
     </message>
     <message>
         <source>An optional label to associate with the new receiving address.</source>
@@ -1663,7 +1663,7 @@
         <translation>razem przynajmniej</translation>
     </message>
     <message>
-        <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks. But be aware that this can end up in a never confirming transaction once there is more demand for Index transactions than the network can process.</source>
+        <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks. But be aware that this can end up in a never confirming transaction once there is more demand for Apollon transactions than the network can process.</source>
         <translation>Zapłacenie tylko minimalnej opłaty jest nadal wystarczające, dopóki jest mniejszy wolumen transakcji niż miejsca w blokach. Należy jednak mieć świadomość, że może skończyć się to niezatwierdzeniem nigdy transakcji, gdy jest większe zapotrzebowanie na transakcje Zcoina niż sieć może przetworzyć.</translation>
     </message>
     <message>
@@ -1766,8 +1766,8 @@
         <translation>To jest standardowa płatność</translation>
     </message>
     <message>
-        <source>The Index address to send the payment to</source>
-        <translation>Adres Index gdzie wysłać płatność</translation>
+        <source>The Apollon address to send the payment to</source>
+        <translation>Adres Apollon gdzie wysłać płatność</translation>
     </message>
     <message>
         <source>Alt+A</source>
@@ -1810,8 +1810,8 @@
         <translation>Wprowadź etykietę dla tego adresu by dodać go do listy użytych adresów</translation>
     </message>
     <message>
-        <source>A message that was attached to the index: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Index network.</source>
-        <translation>Wiadomość, która została dołączona do URI index:, która będzie przechowywana wraz z transakcją w celach informacyjnych. Uwaga: Ta wiadomość nie będzie rozsyłana w sieci Index.</translation>
+        <source>A message that was attached to the apollon: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Apollon network.</source>
+        <translation>Wiadomość, która została dołączona do URI apollon:, która będzie przechowywana wraz z transakcją w celach informacyjnych. Uwaga: Ta wiadomość nie będzie rozsyłana w sieci Apollon.</translation>
     </message>
     <message>
         <source>Pay To:</source>
@@ -1851,8 +1851,8 @@
         <translation>Możesz podpisywać wiadomości swoimi adresami aby udowodnić, że jesteś ich właścicielem. Uważaj, aby nie podpisywać niczego co wzbudza Twoje podejrzenia, ponieważ ktoś może stosować phishing próbując nakłonić Cię do ich podpisania. Akceptuj i podpisuj tylko w pełni zrozumiałe komunikaty i wiadomości.</translation>
     </message>
     <message>
-        <source>The Index address to sign the message with</source>
-        <translation>Adres Index, za pomocą którego podpisać wiadomość</translation>
+        <source>The Apollon address to sign the message with</source>
+        <translation>Adres Apollon, za pomocą którego podpisać wiadomość</translation>
     </message>
     <message>
         <source>Choose previously used address</source>
@@ -1883,7 +1883,7 @@
         <translation>Kopiuje aktualny podpis do schowka systemowego</translation>
     </message>
     <message>
-        <source>Sign the message to prove you own this Index address</source>
+        <source>Sign the message to prove you own this Apollon address</source>
         <translation>Podpisz wiadomość aby dowieść, że ten adres jest twój</translation>
     </message>
     <message>
@@ -1908,12 +1908,12 @@
 Zwróć uwagę, że poprawnie zweryfikowana wiadomość potwierdza to, że nadawca posiada klucz do adresu, natomiast nie potwierdza to, że poprawne wysłanie jakiejkolwiek transakcji! </translation>
     </message>
     <message>
-        <source>The Index address the message was signed with</source>
-        <translation>Adres Index, którym została podpisana wiadomość</translation>
+        <source>The Apollon address the message was signed with</source>
+        <translation>Adres Apollon, którym została podpisana wiadomość</translation>
     </message>
     <message>
-        <source>Verify the message to ensure it was signed with the specified Index address</source>
-        <translation>Zweryfikuj wiadomość,  aby upewnić się, że została podpisana odpowiednim adresem Index.</translation>
+        <source>Verify the message to ensure it was signed with the specified Apollon address</source>
+        <translation>Zweryfikuj wiadomość,  aby upewnić się, że została podpisana odpowiednim adresem Apollon.</translation>
     </message>
     <message>
         <source>Verify &amp;Message</source>
@@ -2007,7 +2007,7 @@ Zwróć uwagę, że poprawnie zweryfikowana wiadomość potwierdza to, że nadaw
     <name>WalletView</name>
     </context>
 <context>
-    <name>index-core</name>
+    <name>apollon-core</name>
     <message>
         <source>Options:</source>
         <translation>Opcje:</translation>
@@ -2073,7 +2073,7 @@ Zwróć uwagę, że poprawnie zweryfikowana wiadomość potwierdza to, że nadaw
         <translation>Akceptuj połączenia z zewnątrz (domyślnie: 1 jeśli nie ustawiono -proxy lub -connect)</translation>
     </message>
     <message>
-        <source>Index Core</source>
+        <source>Apollon Core</source>
         <translation>Rdzeń Zcoina</translation>
     </message>
     <message>
@@ -2305,7 +2305,7 @@ Zwróć uwagę, że poprawnie zweryfikowana wiadomość potwierdza to, że nadaw
         <translation>Tryb ograniczony jest niekompatybilny z -txindex.</translation>
     </message>
     <message>
-        <source>Rebuild chain state and block index from the blk*.dat files on disk</source>
+        <source>Rebuild chain state and block apollon from the blk*.dat files on disk</source>
         <translation>Odbuduj stan lańcucha i indeks bloków z obecnych na dysku plików blk*.dat</translation>
     </message>
     <message>
@@ -2613,7 +2613,7 @@ Zwróć uwagę, że poprawnie zweryfikowana wiadomość potwierdza to, że nadaw
         <translation>Jak dokładna jest weryfikacja bloków przy -checkblocks (0-4, domyślnie: %u)</translation>
     </message>
     <message>
-        <source>Maintain a full transaction index, used by the getrawtransaction rpc call (default: %u)</source>
+        <source>Maintain a full transaction apollon, used by the getrawtransaction rpc call (default: %u)</source>
         <translation>Utrzymuj pełny indeks transakcji, używany przy wywołaniu RPC getrawtransaction (domyślnie: %u)</translation>
     </message>
     <message>
@@ -2745,7 +2745,7 @@ Zwróć uwagę, że poprawnie zweryfikowana wiadomość potwierdza to, że nadaw
         <translation>Niewystarczające środki</translation>
     </message>
     <message>
-        <source>Loading block index...</source>
+        <source>Loading block apollon...</source>
         <translation>Ładowanie indeksu bloku...</translation>
     </message>
     <message>

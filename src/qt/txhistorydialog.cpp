@@ -151,7 +151,7 @@ void TXHistoryDialog::focusTransaction(const uint256& txid)
     historyProxy.setSourceModel(historyAbstractModel);
     historyProxy.setFilterKeyColumn(0);
     historyProxy.setFilterFixedString(QString::fromStdString(txid.GetHex()));
-    QModelIndex rowIndex = historyProxy.mapToSource(historyProxy.index(0,0));
+    QModelIndex rowIndex = historyProxy.mapToSource(historyProxy.apollon(0,0));
     if(rowIndex.isValid()) {
         ui->txHistoryTable->scrollTo(rowIndex);
         ui->txHistoryTable->setCurrentIndex(rowIndex);
@@ -212,7 +212,7 @@ int TXHistoryDialog::PopulateHistoryMap()
             historyProxy.setSourceModel(historyAbstractModel);
             historyProxy.setFilterKeyColumn(0);
             historyProxy.setFilterFixedString(QString::fromStdString(txHash.GetHex()));
-            QModelIndex rowIndex = historyProxy.mapToSource(historyProxy.index(0,0)); // map to the row in the actual table
+            QModelIndex rowIndex = historyProxy.mapToSource(historyProxy.apollon(0,0)); // map to the row in the actual table
             if(rowIndex.isValid()) ui->txHistoryTable->removeRow(rowIndex.row()); // delete the pending tx row, it'll be readded as a proper confirmed transaction
             ui->txHistoryTable->setSortingEnabled(true); // re-enable sorting
         }
@@ -393,7 +393,7 @@ void TXHistoryDialog::UpdateHistory()
             historyProxy.setSourceModel(historyAbstractModel);
             historyProxy.setFilterKeyColumn(0);
             historyProxy.setFilterFixedString(QString::fromStdString(txid.GetHex()));
-            QModelIndex rowIndex = historyProxy.mapToSource(historyProxy.index(0,0));
+            QModelIndex rowIndex = historyProxy.mapToSource(historyProxy.apollon(0,0));
             if(!rowIndex.isValid()) { // this transaction doesn't exist in the history table, add it
                 HistoryTXObject htxo = it->second; // grab the tranaaction
                 int workingRow = ui->txHistoryTable->rowCount();
@@ -440,8 +440,8 @@ void TXHistoryDialog::UpdateHistory()
 
 void TXHistoryDialog::contextualMenu(const QPoint &point)
 {
-    QModelIndex index = ui->txHistoryTable->indexAt(point);
-    if(index.isValid())
+    QModelIndex apollon = ui->txHistoryTable->indexAt(point);
+    if(apollon.isValid())
     {
         contextMenu->exec(QCursor::pos());
     }

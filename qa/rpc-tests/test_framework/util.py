@@ -157,7 +157,7 @@ def initialize_datadir(dirname, n):
     if not os.path.isdir(datadir):
         os.makedirs(datadir)
     rpc_u, rpc_p = rpc_auth_pair(n)
-    with open(os.path.join(datadir, "index.conf"), 'w', encoding='utf8') as f:
+    with open(os.path.join(datadir, "apollon.conf"), 'w', encoding='utf8') as f:
         f.write("regtest=1\n")
         f.write("rpcuser=" + rpc_u + "\n")
         f.write("rpcpassword=" + rpc_p + "\n")
@@ -389,7 +389,7 @@ def connect_nodes_bi(nodes, a, b):
 
 def find_output(node, txid, amount):
     """
-    Return index to output of txid with value amount
+    Return apollon to output of txid with value amount
     Raises exception if there is none.
     """
     txdata = node.getrawtransaction(txid, 1)

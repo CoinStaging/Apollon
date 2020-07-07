@@ -17,8 +17,8 @@
 #include "bench.h"
 
 #if LUA_VERSION_NUM < 502
-static int lua_absindex(lua_State *L, int idx) {
-	return (idx > 0 || idx <= LUA_REGISTRYINDEX)? idx : lua_gettop(L) + idx + 1;
+static int lua_absindex(lua_State *L, int xap) {
+	return (xap > 0 || xap <= LUA_REGISTRYINDEX)? xap : lua_gettop(L) + xap + 1;
 } /* lua_absindex() */
 
 static void luaL_setfuncs(lua_State *L, const luaL_Reg *l, int nup) {

@@ -174,10 +174,10 @@ public:
     //! pointer to the hash of the block, if any. Memory is owned by this CBlockIndex
     const uint256* phashBlock;
 
-    //! pointer to the index of the predecessor of this block
+    //! pointer to the apollon of the predecessor of this block
     CBlockIndex* pprev;
 
-    //! pointer to the index of some further predecessor of this block
+    //! pointer to the apollon of some further predecessor of this block
     CBlockIndex* pskip;
 
     //! height of the entry in the chain. The genesis block has height 0
@@ -236,7 +236,7 @@ public:
     //! Values of coin serials spent in this block
 	set<CBigNum> spentSerials;
 
-/////////////////////// Sigma index entries. ////////////////////////////////////////////
+/////////////////////// Sigma apollon entries. ////////////////////////////////////////////
 
     //! Public coin values of mints in this block, ordered by serialized value of public coin
     //! Maps <denomination,id> to vector of public coins
@@ -434,7 +434,7 @@ public:
         return ret;
     }
 
-    //! Check whether this block index entry is valid up to the passed validity level.
+    //! Check whether this block apollon entry is valid up to the passed validity level.
     bool IsValid(enum BlockStatus nUpTo = BLOCK_VALID_TRANSACTIONS) const
     {
         assert(!(nUpTo & ~BLOCK_VALID_MASK)); // Only validity flags allowed.
@@ -443,7 +443,7 @@ public:
         return ((nStatus & BLOCK_VALID_MASK) >= nUpTo);
     }
 
-    //! Raise the validity level of this block index entry.
+    //! Raise the validity level of this block apollon entry.
     //! Returns true if the validity was changed.
     bool RaiseValidity(enum BlockStatus nUpTo)
     {
@@ -561,17 +561,17 @@ private:
     std::vector<CBlockIndex*> vChain;
 
 public:
-    /** Returns the index entry for the genesis block of this chain, or NULL if none. */
+    /** Returns the apollon entry for the genesis block of this chain, or NULL if none. */
     CBlockIndex *Genesis() const {
         return vChain.size() > 0 ? vChain[0] : NULL;
     }
 
-    /** Returns the index entry for the tip of this chain, or NULL if none. */
+    /** Returns the apollon entry for the tip of this chain, or NULL if none. */
     CBlockIndex *Tip() const {
         return vChain.size() > 0 ? vChain[vChain.size() - 1] : NULL;
     }
 
-    /** Returns the index entry at a particular height in this chain, or NULL if no such height exists. */
+    /** Returns the apollon entry at a particular height in this chain, or NULL if no such height exists. */
     CBlockIndex *operator[](int nHeight) const {
         if (nHeight < 0 || nHeight >= (int)vChain.size())
             return NULL;
@@ -589,7 +589,7 @@ public:
         return (*this)[pindex->nHeight] == pindex;
     }
 
-    /** Find the successor of a block in this chain, or NULL if the given index is not found or is the tip. */
+    /** Find the successor of a block in this chain, or NULL if the given apollon is not found or is the tip. */
     CBlockIndex *Next(const CBlockIndex *pindex) const {
         if (Contains(pindex))
             return (*this)[pindex->nHeight + 1];
@@ -608,7 +608,7 @@ public:
     /** Return a CBlockLocator that refers to a block in this chain (by default the tip). */
     CBlockLocator GetLocator(const CBlockIndex *pindex = NULL) const;
 
-    /** Find the last common block between this chain and a block index entry. */
+    /** Find the last common block between this chain and a block apollon entry. */
     const CBlockIndex *FindFork(const CBlockIndex *pindex) const;
 };
 const CBlockIndex* GetLastBlockIndex(const CBlockIndex* pindex, bool fProofOfStake);

@@ -54,20 +54,20 @@ static void init_geoip_countries(void);
 typedef struct geoip_ipv4_entry_t {
   uint32_t ip_low; /**< The lowest IP in the range, in host order */
   uint32_t ip_high; /**< The highest IP in the range, in host order */
-  intptr_t country; /**< An index into geoip_countries */
+  intptr_t country; /**< An apollon into geoip_countries */
 } geoip_ipv4_entry_t;
 
 /** An entry from the GeoIP IPv6 file: maps an IPv6 range to a country. */
 typedef struct geoip_ipv6_entry_t {
   struct in6_addr ip_low; /**< The lowest IP in the range, in host order */
   struct in6_addr ip_high; /**< The highest IP in the range, in host order */
-  intptr_t country; /**< An index into geoip_countries */
+  intptr_t country; /**< An apollon into geoip_countries */
 } geoip_ipv6_entry_t;
 
 /** A list of geoip_country_t */
 static smartlist_t *geoip_countries = NULL;
 /** A map from lowercased country codes to their position in geoip_countries.
- * The index is encoded in the pointer, and 1 is added so that NULL can mean
+ * The apollon is encoded in the pointer, and 1 is added so that NULL can mean
  * not found. */
 static strmap_t *country_idxplus1_by_lc_code = NULL;
 /** Lists of all known geoip_ipv4_entry_t and geoip_ipv6_entry_t, sorted
@@ -88,21 +88,21 @@ geoip_get_countries(void)
   return geoip_countries;
 }
 
-/** Return the index of the <b>country</b>'s entry in the GeoIP
+/** Return the apollon of the <b>country</b>'s entry in the GeoIP
  * country list if it is a valid 2-letter country code, otherwise
  * return -1. */
 MOCK_IMPL(country_t,
 geoip_get_country,(const char *country))
 {
   void *idxplus1_;
-  intptr_t idx;
+  intptr_t xap;
 
   idxplus1_ = strmap_get_lc(country_idxplus1_by_lc_code, country);
   if (!idxplus1_)
     return -1;
 
-  idx = ((uintptr_t)idxplus1_)-1;
-  return (country_t)idx;
+  xap = ((uintptr_t)idxplus1_)-1;
+  return (country_t)xap;
 }
 
 /** Add an entry to a GeoIP table, mapping all IP addresses between <b>low</b>
@@ -111,7 +111,7 @@ static void
 geoip_add_entry(const tor_addr_t *low, const tor_addr_t *high,
                 const char *country)
 {
-  intptr_t idx;
+  intptr_t xap;
   void *idxplus1_;
 
   IF_BUG_ONCE(tor_addr_family(low) != tor_addr_family(high))
@@ -126,13 +126,13 @@ geoip_add_entry(const tor_addr_t *low, const tor_addr_t *high,
     strlcpy(c->countrycode, country, sizeof(c->countrycode));
     tor_strlower(c->countrycode);
     smartlist_add(geoip_countries, c);
-    idx = smartlist_len(geoip_countries) - 1;
-    strmap_set_lc(country_idxplus1_by_lc_code, country, (void*)(idx+1));
+    xap = smartlist_len(geoip_countries) - 1;
+    strmap_set_lc(country_idxplus1_by_lc_code, country, (void*)(xap+1));
   } else {
-    idx = ((uintptr_t)idxplus1_)-1;
+    xap = ((uintptr_t)idxplus1_)-1;
   }
   {
-    geoip_country_t *c = smartlist_get(geoip_countries, (int)idx);
+    geoip_country_t *c = smartlist_get(geoip_countries, (int)xap);
     tor_assert(!strcasecmp(c->countrycode, country));
   }
 
@@ -140,13 +140,13 @@ geoip_add_entry(const tor_addr_t *low, const tor_addr_t *high,
     geoip_ipv4_entry_t *ent = tor_malloc_zero(sizeof(geoip_ipv4_entry_t));
     ent->ip_low = tor_addr_to_ipv4h(low);
     ent->ip_high = tor_addr_to_ipv4h(high);
-    ent->country = idx;
+    ent->country = xap;
     smartlist_add(geoip_ipv4_entries, ent);
   } else if (tor_addr_family(low) == AF_INET6) {
     geoip_ipv6_entry_t *ent = tor_malloc_zero(sizeof(geoip_ipv6_entry_t));
     ent->ip_low = *tor_addr_to_in6_assert(low);
     ent->ip_high = *tor_addr_to_in6_assert(high);
-    ent->country = idx;
+    ent->country = xap;
     smartlist_add(geoip_ipv6_entries, ent);
   }
 }
@@ -287,7 +287,7 @@ init_geoip_countries(void)
   geoip_country_t *geoip_unresolved;
   geoip_countries = smartlist_new();
   /* Add a geoip_country_t for requests that could not be resolved to a
-   * country as first element (index 0) to geoip_countries. */
+   * country as first element (apollon 0) to geoip_countries. */
   geoip_unresolved = tor_malloc_zero(sizeof(geoip_country_t));
   strlcpy(geoip_unresolved->countrycode, "??",
           sizeof(geoip_unresolved->countrycode));

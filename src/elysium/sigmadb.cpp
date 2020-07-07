@@ -82,15 +82,15 @@ std::array<uint8_t, S> CreateKey(KeyType type, T ...args)
 }
 
 // array size represent size of key
-// <1 byte of type><4 bytes of property Id><1 byte of denomination><4 bytes of group id><2 bytes of idx>
+// <1 byte of type><4 bytes of property Id><1 byte of denomination><4 bytes of group id><2 bytes of xap>
 #define MINT_KEY_SIZE sizeof(KeyType) + sizeof(uint8_t) + sizeof(uint16_t) + 2 * sizeof(uint32_t)
 std::array<uint8_t, MINT_KEY_SIZE> CreateMintKey(
     uint32_t propertyId,
     uint8_t denomination,
     uint32_t groupId,
-    uint16_t idx)
+    uint16_t xap)
 {
-    return CreateKey(KeyType::Mint, propertyId, denomination, groupId, idx);
+    return CreateKey(KeyType::Mint, propertyId, denomination, groupId, xap);
 }
 
 // array size represent size of key
@@ -178,7 +178,7 @@ SigmaPublicKey ParseMint(const std::string& val)
 }
 
 bool ParseMintKey(
-    const leveldb::Slice& key, uint32_t& propertyId, uint8_t& denomination, uint32_t& groupId, uint16_t& idx)
+    const leveldb::Slice& key, uint32_t& propertyId, uint8_t& denomination, uint32_t& groupId, uint16_t& xap)
 {
     if (key.size() > 0 && key.data()[0] == static_cast<char>(KeyType::Mint)) {
         if (key.size() != MINT_KEY_SIZE) {
@@ -189,11 +189,11 @@ bool ParseMintKey(
         std::memcpy(&propertyId, it, sizeof(propertyId));
         std::memcpy(&denomination, it += sizeof(propertyId), sizeof(denomination));
         std::memcpy(&groupId, it += sizeof(denomination), sizeof(groupId));
-        std::memcpy(&idx, it += sizeof(groupId), sizeof(idx));
+        std::memcpy(&xap, it += sizeof(groupId), sizeof(xap));
 
         elysium::swapByteOrder(propertyId);
         elysium::swapByteOrder(groupId);
-        elysium::swapByteOrder(idx);
+        elysium::swapByteOrder(xap);
 
         return true;
     }
@@ -246,8 +246,8 @@ SigmaDatabase *sigmaDb;
 constexpr uint16_t SigmaDatabase::MAX_GROUP_SIZE;
 
 // Database structure
-// Index height and commitment
-// 0<prob_id><denom><group_id><idx>=<GroupElement><int>
+// Apollon height and commitment
+// 0<prob_id><denom><group_id><xap>=<GroupElement><int>
 // Sequence of mint sorted following blockchain
 // 1<seq uint64>=key
 SigmaDatabase::SigmaDatabase(const boost::filesystem::path& path, bool wipe, uint16_t groupSize)
@@ -539,7 +539,7 @@ size_t SigmaDatabase::GetAnonimityGroup(
         }
 
         if (mintIdx != i) {
-            throw std::runtime_error("GetAnonimityGroup() : coin index is out of order");
+            throw std::runtime_error("GetAnonimityGroup() : coin apollon is out of order");
         }
 
         auto pub = ParseMint(it->value().ToString());
@@ -627,9 +627,9 @@ uint64_t SigmaDatabase::GetNextSequence()
 }
 
 elysium::SigmaPublicKey SigmaDatabase::GetMint(
-    uint32_t propertyId, uint8_t denomination, uint32_t groupId, uint16_t index)
+    uint32_t propertyId, uint8_t denomination, uint32_t groupId, uint16_t apollon)
 {
-    auto key = CreateMintKey(propertyId, denomination, groupId, index);
+    auto key = CreateMintKey(propertyId, denomination, groupId, apollon);
 
     std::string val;
     auto status = pdb->Get(

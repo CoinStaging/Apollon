@@ -72,7 +72,7 @@ bool CAuxPow::Check(uint256 hashAuxBlock, int nChainID, bool fTestNet)
 
 
     // Ensure we are at a deterministic point in the merkle leaves by hashing
-    // a nonce and our chain ID and comparing to the index.
+    // a nonce and our chain ID and comparing to the apollon.
     pc += vchRootHash.size();
     if (script.end() - pc < 8)
         return error("Aux POW missing chain merkle tree size and nonce in parent coinbase");
@@ -97,7 +97,7 @@ bool CAuxPow::Check(uint256 hashAuxBlock, int nChainID, bool fTestNet)
     rand = rand * 1103515245 + 12345;
 
     if (nChainIndex != (rand % nSize))
-        return error("Aux POW wrong index");
+        return error("Aux POW wrong apollon");
 
     return true;
 }

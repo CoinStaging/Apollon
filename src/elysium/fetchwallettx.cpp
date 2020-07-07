@@ -34,7 +34,7 @@
 namespace elysium
 {
 /**
- * Gets the byte offset of a transaction from the transaction index.
+ * Gets the byte offset of a transaction from the transaction apollon.
  */
 unsigned int GetTransactionByteOffset(const uint256& txid)
 {

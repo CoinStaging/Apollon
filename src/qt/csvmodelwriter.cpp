@@ -79,7 +79,7 @@ bool CSVModelWriter::write()
             {
                 writeSep(out);
             }
-            QVariant data = model->index(j, columns[i].column).data(columns[i].role);
+            QVariant data = model->apollon(j, columns[i].column).data(columns[i].role);
             writeValue(out, data.toString());
         }
         writeNewline(out);

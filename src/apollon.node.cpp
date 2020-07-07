@@ -437,7 +437,7 @@ UniValue CIndexnode::ToJSON() const {
     UniValue outpointObj(UniValue::VOBJ);
     UniValue authorityObj(UniValue::VOBJ);
     outpointObj.push_back(Pair("txid", outpoint.hash.ToString().substr(0,64)));
-    outpointObj.push_back(Pair("index", to_string(outpoint.n)));
+    outpointObj.push_back(Pair("apollon", to_string(outpoint.n)));
 
     std::string authority = addr.ToString();
     std::string ip   = authority.substr(0, authority.find(":"));
@@ -779,7 +779,7 @@ bool CIndexnodeBroadcast::CheckOutpoint(int &nDos) {
             return false;
         }
         if (coins.vout[vin.prevout.n].nValue != INDEXNODE_COIN_REQUIRED * COIN) {
-            LogPrint("indexnode", "CIndexnodeBroadcast::CheckOutpoint -- Indexnode UTXO should have 1000 IDX, indexnode=%s\n", vin.prevout.ToStringShort());
+            LogPrint("indexnode", "CIndexnodeBroadcast::CheckOutpoint -- Indexnode UTXO should have 1000 XAP, indexnode=%s\n", vin.prevout.ToStringShort());
             return false;
         }
         if (chainActive.Height() - coins.nHeight + 1 < Params().GetConsensus().nIndexnodeMinimumConfirmations) {
@@ -802,7 +802,7 @@ bool CIndexnodeBroadcast::CheckOutpoint(int &nDos) {
     }
 
     // verify that sig time is legit in past
-    // should be at least not earlier than block when 1000 IDX tx got nIndexnodeMinimumConfirmations
+    // should be at least not earlier than block when 1000 XAP tx got nIndexnodeMinimumConfirmations
     uint256 hashBlock = uint256();
     CTransaction tx2;
     GetTransaction(vin.prevout.hash, tx2, Params().GetConsensus(), hashBlock, true);
@@ -810,7 +810,7 @@ bool CIndexnodeBroadcast::CheckOutpoint(int &nDos) {
         LOCK(cs_main);
         BlockMap::iterator mi = mapBlockIndex.find(hashBlock);
         if (mi != mapBlockIndex.end() && (*mi).second) {
-            CBlockIndex *pMNIndex = (*mi).second; // block for 1000 IDX tx -> 1 confirmation
+            CBlockIndex *pMNIndex = (*mi).second; // block for 1000 XAP tx -> 1 confirmation
             CBlockIndex *pConfIndex = chainActive[pMNIndex->nHeight + Params().GetConsensus().nIndexnodeMinimumConfirmations - 1]; // block where tx got nIndexnodeMinimumConfirmations
             if (pConfIndex->GetBlockTime() > sigTime) {
                 LogPrintf("CIndexnodeBroadcast::CheckOutpoint -- Bad sigTime %d (%d conf block is at %d) for Indexnode %s %s\n",

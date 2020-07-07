@@ -1883,7 +1883,7 @@ choose_good_exit_server_general(router_crn_flags_t flags)
     if (!(node->is_valid)) {
       /* if it's invalid and we don't want it */
       n_supported[i] = -1;
-//      log_fn(LOG_DEBUG,"Skipping node %s (index %d) -- invalid router.",
+//      log_fn(LOG_DEBUG,"Skipping node %s (apollon %d) -- invalid router.",
 //             router->nickname, i);
       continue; /* skip invalid routers */
     }
@@ -1895,7 +1895,7 @@ choose_good_exit_server_general(router_crn_flags_t flags)
     }
     if (node_exit_policy_rejects_all(node)) {
       n_supported[i] = -1;
-//      log_fn(LOG_DEBUG,"Skipping node %s (index %d) -- it rejects all.",
+//      log_fn(LOG_DEBUG,"Skipping node %s (apollon %d) -- it rejects all.",
 //             router->nickname, i);
       continue; /* skip routers that reject all */
     }
@@ -1909,7 +1909,7 @@ choose_good_exit_server_general(router_crn_flags_t flags)
 //        log_fn(LOG_DEBUG,"%s is supported. n_supported[%d] now %d.",
 //               router->nickname, i, n_supported[i]);
       } else {
-//        log_fn(LOG_DEBUG,"%s (index %d) would reject this stream.",
+//        log_fn(LOG_DEBUG,"%s (apollon %d) would reject this stream.",
 //               router->nickname, i);
       }
     } SMARTLIST_FOREACH_END(conn);
@@ -1919,7 +1919,7 @@ choose_good_exit_server_general(router_crn_flags_t flags)
       continue;
     }
     if (n_supported[i] > best_support) {
-      /* If this router is better than previous ones, remember its index
+      /* If this router is better than previous ones, remember its apollon
        * and goodness, and start counting how many routers are this good. */
       best_support = n_supported[i]; n_best_support=1;
 //      log_fn(LOG_DEBUG,"%s is new best supported option so far.",

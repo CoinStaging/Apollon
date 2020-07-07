@@ -768,11 +768,11 @@ void RPCConsole::startExecutor()
     thread.start();
 }
 
-void RPCConsole::on_tabWidget_currentChanged(int index)
+void RPCConsole::on_tabWidget_currentChanged(int apollon)
 {
-    if (ui->tabWidget->widget(index) == ui->tab_console)
+    if (ui->tabWidget->widget(apollon) == ui->tab_console)
         ui->lineEdit->setFocus();
-    else if (ui->tabWidget->widget(index) != ui->tab_peers)
+    else if (ui->tabWidget->widget(apollon) != ui->tab_peers)
         clearSelectedNode();
 }
 
@@ -961,15 +961,15 @@ void RPCConsole::hideEvent(QHideEvent *event)
 
 void RPCConsole::showPeersTableContextMenu(const QPoint& point)
 {
-    QModelIndex index = ui->peerWidget->indexAt(point);
-    if (index.isValid())
+    QModelIndex apollon = ui->peerWidget->indexAt(point);
+    if (apollon.isValid())
         peersTableContextMenu->exec(QCursor::pos());
 }
 
 void RPCConsole::showBanTableContextMenu(const QPoint& point)
 {
-    QModelIndex index = ui->banlistWidget->indexAt(point);
-    if (index.isValid())
+    QModelIndex apollon = ui->banlistWidget->indexAt(point);
+    if (apollon.isValid())
         banTableContextMenu->exec(QCursor::pos());
 }
 

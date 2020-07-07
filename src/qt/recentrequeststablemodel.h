@@ -76,12 +76,12 @@ public:
         @{*/
     int rowCount(const QModelIndex &parent) const;
     int columnCount(const QModelIndex &parent) const;
-    QVariant data(const QModelIndex &index, int role) const;
-    bool setData(const QModelIndex &index, const QVariant &value, int role);
+    QVariant data(const QModelIndex &apollon, int role) const;
+    bool setData(const QModelIndex &apollon, const QVariant &value, int role);
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
-    QModelIndex index(int row, int column, const QModelIndex &parent) const;
+    QModelIndex apollon(int row, int column, const QModelIndex &parent) const;
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex());
-    Qt::ItemFlags flags(const QModelIndex &index) const;
+    Qt::ItemFlags flags(const QModelIndex &apollon) const;
     /*@}*/
 
     const RecentRequestEntry &entry(int row) const { return list[row]; }

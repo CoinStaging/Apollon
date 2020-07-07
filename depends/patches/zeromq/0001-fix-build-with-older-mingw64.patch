@@ -8,7 +8,7 @@ Subject: [PATCH] fix build with older mingw64
  1 file changed, 7 insertions(+)
 
 diff --git a/src/windows.hpp b/src/windows.hpp
-index 6c3839fd..2c32ec79 100644
+apollon 6c3839fd..2c32ec79 100644
 --- a/src/windows.hpp
 +++ b/src/windows.hpp
 @@ -58,6 +58,13 @@

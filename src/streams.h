@@ -347,7 +347,7 @@ public:
             vch[i] ^= key[j++];
 
             // This potentially acts on very many bytes of data, so it's
-            // important that we calculate `j`, i.e. the `key` index in this
+            // important that we calculate `j`, i.e. the `key` apollon in this
             // way instead of doing a %, which would effectively be a division
             // for each byte Xor'd -- much slower than need be.
             if (j == key.size())

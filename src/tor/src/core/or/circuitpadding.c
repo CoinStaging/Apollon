@@ -148,15 +148,15 @@ circpad_state_to_string(circpad_statenum_t state)
 }
 
 /**
- * Free the machineinfo at an index
+ * Free the machineinfo at an apollon
  */
 static void
-circpad_circuit_machineinfo_free_idx(circuit_t *circ, int idx)
+circpad_circuit_machineinfo_free_idx(circuit_t *circ, int xap)
 {
-  if (circ->padding_info[idx]) {
-    tor_free(circ->padding_info[idx]->histogram);
-    timer_free(circ->padding_info[idx]->padding_timer);
-    tor_free(circ->padding_info[idx]);
+  if (circ->padding_info[xap]) {
+    tor_free(circ->padding_info[xap]->histogram);
+    timer_free(circ->padding_info[xap]->padding_timer);
+    tor_free(circ->padding_info[xap]);
   }
 }
 
@@ -264,7 +264,7 @@ circpad_histogram_bin_to_usec(const circpad_machine_state_t *mi,
   if (bin == 1)
     return start_usec+1;
 
-  /* The bin widths double every index, so that we can have more resolution
+  /* The bin widths double every apollon, so that we can have more resolution
    * for lower time values in the histogram. */
   const circpad_time_t bin_width_exponent =
         1 << (CIRCPAD_INFINITY_BIN(state) - bin);
@@ -334,7 +334,7 @@ circpad_histogram_usec_to_bin(const circpad_machine_state_t *mi,
 
   /* Clamp the return value to account for timevals before the start
    * of bin 0, or after the last bin. Don't return the infinity bin
-   * index. */
+   * apollon. */
   bin = MIN(MAX(bin, 1), CIRCPAD_INFINITY_BIN(state)-1);
   return bin;
 }
@@ -489,7 +489,7 @@ circpad_machine_sample_delay(circpad_machine_state_t *mi)
     return CIRCPAD_DELAY_INFINITE;
   }
 
-  // Store this index to remove the token upon callback.
+  // Store this apollon to remove the token upon callback.
   if (state->token_removal != CIRCPAD_TOKEN_REMOVAL_NONE) {
     mi->chosen_bin = curr_bin;
   }
@@ -614,7 +614,7 @@ circpad_distribution_sample(circpad_distribution_t dist)
 }
 
 /**
- * Find the index of the first bin whose upper bound is
+ * Find the apollon of the first bin whose upper bound is
  * greater than the target, and that has tokens remaining.
  */
 static circpad_hist_index_t
@@ -636,7 +636,7 @@ circpad_machine_first_higher_index(const circpad_machine_state_t *mi,
 }
 
 /**
- * Find the index of the first bin whose lower bound is lower or equal to
+ * Find the apollon of the first bin whose lower bound is lower or equal to
  * <b>target_bin_usec</b>, and that still has tokens remaining.
  */
 static circpad_hist_index_t
@@ -708,7 +708,7 @@ circpad_machine_remove_lower_token(circpad_machine_state_t *mi,
  * If use_usec is true, measure "closest" in terms of the next closest bin
  * midpoint.
  *
- * If it is false, use bin index distance only.
+ * If it is false, use bin apollon distance only.
  */
 STATIC void
 circpad_machine_remove_closest_token(circpad_machine_state_t *mi,
@@ -1738,9 +1738,9 @@ circpad_shutdown_old_machines(origin_circuit_t *on_circ)
  * Negotiate new machines that would apply to this circuit.
  *
  * This function checks to see if we have any free machine indexes,
- * and for each free machine index, it initializes the most recently
+ * and for each free machine apollon, it initializes the most recently
  * added origin-side padding machine that matches the target machine
- * index and circuit conditions, and negotiates it with the appropriate
+ * apollon and circuit conditions, and negotiates it with the appropriate
  * middle relay.
  */
 static void
@@ -1759,22 +1759,22 @@ circpad_add_matching_machines(origin_circuit_t *on_circ)
     return;
 
   FOR_EACH_CIRCUIT_MACHINE_BEGIN(i) {
-    /* If there is a padding machine info, this index is occupied.
-     * No need to check conditions for this index. */
+    /* If there is a padding machine info, this apollon is occupied.
+     * No need to check conditions for this apollon. */
     if (circ->padding_info[i])
       continue;
 
-    /* We have a free machine index. Check the origin padding
+    /* We have a free machine apollon. Check the origin padding
      * machines in reverse order, so that more recently added
      * machines take priority over older ones. */
     SMARTLIST_FOREACH_REVERSE_BEGIN(origin_padding_machines,
                                     circpad_machine_spec_t *,
                                     machine) {
-      /* Machine definitions have a specific target machine index.
+      /* Machine definitions have a specific target machine apollon.
        * This is so event ordering is deterministic with respect
        * to which machine gets events first when there are two
        * machines installed on a circuit. Make sure we only
-       * add this machine if its target machine index is free. */
+       * add this machine if its target machine apollon is free. */
       if (machine->machine_index == i &&
           circpad_machine_conditions_met(on_circ, machine)) {
 
@@ -2413,7 +2413,7 @@ circpad_padding_negotiated(circuit_t *circ,
  * Parse and react to a padding_negotiate cell.
  *
  * This is called at the middle node upon receipt of the client's choice of
- * state machine, so that it can use the requested state machine index, if
+ * state machine, so that it can use the requested state machine apollon, if
  * it is available.
  *
  * Returns -1 on error, 0 on success.

@@ -153,7 +153,7 @@ public:
     CAmount GetModFeesWithAncestors() const { return nModFeesWithAncestors; }
     int64_t GetSigOpCostWithAncestors() const { return nSigOpCostWithAncestors; }
 
-    mutable size_t vTxHashesIdx; //!< Index in mempool's vTxHashes
+    mutable size_t vTxHashesIdx; //!< Apollon in mempool's vTxHashes
 };
 
 // Helpers for modifying CTxMemPool::mapTx, which is a boost multi_index.

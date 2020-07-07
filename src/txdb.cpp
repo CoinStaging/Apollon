@@ -77,7 +77,7 @@ bool CCoinsViewDB::BatchWrite(CCoinsMap &mapCoins, const uint256 &hashBlock) {
     return db.WriteBatch(batch);
 }
 
-CBlockTreeDB::CBlockTreeDB(size_t nCacheSize, bool fMemory, bool fWipe) : CDBWrapper(GetDataDir() / "blocks" / "index", nCacheSize, fMemory, fWipe) {
+CBlockTreeDB::CBlockTreeDB(size_t nCacheSize, bool fMemory, bool fWipe) : CDBWrapper(GetDataDir() / "blocks" / "apollon", nCacheSize, fMemory, fWipe) {
 }
 
 bool CBlockTreeDB::ReadBlockFileInfo(int nFile, CBlockFileInfo &info) {
@@ -259,7 +259,7 @@ bool CBlockTreeDB::ReadAddressIndex(uint160 addressHash, AddressType type,
                 addressIndex.push_back(make_pair(key.second, nValue));
                 pcursor->Next();
             } else {
-                return error("failed to get address index value");
+                return error("failed to get address apollon value");
             }
         } else {
             break;
@@ -324,7 +324,7 @@ bool CBlockTreeDB::LoadBlockIndexGuts(boost::function<CBlockIndex*(const uint256
         if (pcursor->GetKey(key) && key.first == DB_BLOCK_INDEX) {
             CDiskBlockIndex diskindex;
             if (pcursor->GetValue(diskindex)) {
-                // Construct block index object
+                // Construct block apollon object
             	//if(diskindex.hashBlock != uint256()
             	//	&& diskindex.hashPrev != uint256()){
 
@@ -369,8 +369,8 @@ bool CBlockTreeDB::LoadBlockIndexGuts(boost::function<CBlockIndex*(const uint256
 
 int CBlockTreeDB::GetBlockIndexVersion()
 {
-    // Get random block index entry, check its version. The only reason for these functions to exist
-    // is to check if the index is from previous version and needs to be rebuilt. Comparison of ANY
+    // Get random block apollon entry, check its version. The only reason for these functions to exist
+    // is to check if the apollon is from previous version and needs to be rebuilt. Comparison of ANY
     // record version to threshold value would be enough to decide if reindex is needed.
 
     return GetBlockIndexVersion(uint256());

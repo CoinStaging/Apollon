@@ -46,7 +46,7 @@ ZerocoinPage::ZerocoinPage(const PlatformStyle *platformStyle, Mode mode, QWidge
             setWindowTitle(tr("Zerocoin"));
     }
     ui->labelExplanation->setText(
-            tr("Here you can use your index to mint a new, private Zerocoin or spend a previously-minted Zerocoin to a 3rd party Index address or your own wallet"));
+            tr("Here you can use your apollon to mint a new, private Zerocoin or spend a previously-minted Zerocoin to a 3rd party Apollon address or your own wallet"));
     ui->zerocoinAmount->setVisible(true);
     ui->zerocoinMintButton->setVisible(true);
     ui->zerocoinSpendButton->setVisible(true);
@@ -176,10 +176,10 @@ void ZerocoinPage::zerocoinSpendToMeCheckBoxChecked(int state) {
 //    QTableView *table = ui->tableView;
 //    QModelIndexList indexes = table->selectionModel()->selectedRows(AddressTableModel::Address);
 //
-//    Q_FOREACH(const QModelIndex &index, indexes) {
+//    Q_FOREACH(const QModelIndex &apollon, indexes) {
 //    {
-//        QString address = index.data().toString();
-//        QString label = index.sibling(index.row(), 0).data(Qt::EditRole).toString();
+//        QString address = apollon.data().toString();
+//        QString label = apollon.sibling(apollon.row(), 0).data(Qt::EditRole).toString();
 //
 //        QRCodeDialog *dialog = new QRCodeDialog(address, label, tab == ReceivingTab, this);
 //        dialog->setModel(optionsModel);
@@ -197,8 +197,8 @@ void ZerocoinPage::zerocoinSpendToMeCheckBoxChecked(int state) {
 //    // Figure out which address was selected, and return it
 //    QModelIndexList indexes = table->selectionModel()->selectedRows(AddressTableModel::Address);
 //
-//    Q_FOREACH(const QModelIndex &index, indexes) {
-//        QVariant address = table->model()->data(index);
+//    Q_FOREACH(const QModelIndex &apollon, indexes) {
+//        QVariant address = table->model()->data(apollon);
 //        returnValue = address.toString();
 //    }
 //
@@ -231,18 +231,18 @@ void ZerocoinPage::on_exportButton_clicked() {
 }
 
 void ZerocoinPage::contextualMenu(const QPoint &point) {
-    QModelIndex index = ui->tableView->indexAt(point);
-    if (index.isValid()) {
+    QModelIndex apollon = ui->tableView->indexAt(point);
+    if (apollon.isValid()) {
         contextMenu->exec(QCursor::pos());
     }
 }
 
 void ZerocoinPage::selectNewAddress(const QModelIndex &parent, int begin, int /*end*/) {
-    QModelIndex idx = proxyModel->mapFromSource(model->index(begin, AddressTableModel::Address, parent));
-    if (idx.isValid() && (idx.data(Qt::EditRole).toString() == newAddressToSelect)) {
+    QModelIndex xap = proxyModel->mapFromSource(model->apollon(begin, AddressTableModel::Address, parent));
+    if (xap.isValid() && (xap.data(Qt::EditRole).toString() == newAddressToSelect)) {
         // Select row of newly created address, once
         ui->tableView->setFocus();
-        ui->tableView->selectRow(idx.row());
+        ui->tableView->selectRow(xap.row());
         newAddressToSelect.clear();
     }
 }

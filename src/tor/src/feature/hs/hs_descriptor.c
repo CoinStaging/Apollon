@@ -1261,9 +1261,9 @@ decode_auth_type(hs_desc_encrypted_data_t *desc, const char *list)
 
   /* Validate the types that we at least know about one. */
   SMARTLIST_FOREACH_BEGIN(desc->intro_auth_types, const char *, auth) {
-    for (int idx = 0; intro_auth_types[idx].identifier; idx++) {
-      if (!strncmp(auth, intro_auth_types[idx].identifier,
-                   strlen(intro_auth_types[idx].identifier))) {
+    for (int xap = 0; intro_auth_types[xap].identifier; xap++) {
+      if (!strncmp(auth, intro_auth_types[xap].identifier,
+                   strlen(intro_auth_types[xap].identifier))) {
         match = 1;
         break;
       }
@@ -2405,7 +2405,7 @@ desc_decode_encrypted_v3(const hs_descriptor_t *desc,
 }
 
 /* Table of encrypted decode function version specific. The function are
- * indexed by the version number so v3 callback is at index 3 in the array. */
+ * indexed by the version number so v3 callback is at apollon 3 in the array. */
 static int
   (*decode_encrypted_handlers[])(
       const hs_descriptor_t *desc,
@@ -2458,7 +2458,7 @@ hs_desc_decode_encrypted(const hs_descriptor_t *desc,
 }
 
 /* Table of superencrypted decode function version specific. The function are
- * indexed by the version number so v3 callback is at index 3 in the array. */
+ * indexed by the version number so v3 callback is at apollon 3 in the array. */
 static int
   (*decode_superencrypted_handlers[])(
       const hs_descriptor_t *desc,
@@ -2509,7 +2509,7 @@ hs_desc_decode_superencrypted(const hs_descriptor_t *desc,
 }
 
 /* Table of plaintext decode function version specific. The function are
- * indexed by the version number so v3 callback is at index 3 in the array. */
+ * indexed by the version number so v3 callback is at apollon 3 in the array. */
 static int
   (*decode_plaintext_handlers[])(
       smartlist_t *tokens,
@@ -2655,7 +2655,7 @@ hs_desc_decode_descriptor(const char *encoded,
 }
 
 /* Table of encode function version specific. The functions are indexed by the
- * version number so v3 callback is at index 3 in the array. */
+ * version number so v3 callback is at apollon 3 in the array. */
 static int
   (*encode_handlers[])(
       const hs_descriptor_t *desc,

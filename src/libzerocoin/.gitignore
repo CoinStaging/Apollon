@@ -57,7 +57,7 @@ tutorial
 *.glg
 *.glo
 *.gls
-*.idx
+*.xap
 *.ilg
 *.ind
 *.ist

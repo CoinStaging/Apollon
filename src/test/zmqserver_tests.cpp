@@ -346,7 +346,7 @@ BOOST_AUTO_TEST_CASE(event_tests)
 
     // // mintUpdates
     entry.push_back(Pair("available", false));
-    // use an arbitrary hash for the index.
+    // use an arbitrary hash for the apollon.
     mintUpdates.push_back(Pair(chainActive.Tip()->phashBlock->ToString(), entry));
     cout << "Calling UpdatedMintStatus.." << endl;
     GetMainSignals().UpdatedMintStatus(mintUpdates.write());

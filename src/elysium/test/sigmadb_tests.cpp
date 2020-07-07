@@ -49,7 +49,7 @@ struct MintAdded
     PropertyId property;
     SigmaDenomination denomination;
     SigmaMintGroup group;
-    SigmaMintIndex index;
+    SigmaMintIndex apollon;
     SigmaPublicKey pubKey;
     int block;
 };
@@ -126,7 +126,7 @@ public:
                 .property = p,
                 .denomination = d,
                 .group = g,
-                .index = i,
+                .apollon = i,
                 .pubKey = k,
                 .block = b
             });
@@ -204,7 +204,7 @@ BOOST_AUTO_TEST_CASE(record_one_coin)
     BOOST_CHECK_EQUAL(propId, mintAdded[0].property);
     BOOST_CHECK_EQUAL(denom, mintAdded[0].denomination);
     BOOST_CHECK_EQUAL(0, mintAdded[0].group);
-    BOOST_CHECK_EQUAL(0, mintAdded[0].index);
+    BOOST_CHECK_EQUAL(0, mintAdded[0].apollon);
     BOOST_CHECK_EQUAL(mint, mintAdded[0].pubKey);
     BOOST_CHECK_EQUAL(100, mintAdded[0].block);
 }

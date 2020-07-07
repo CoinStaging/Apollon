@@ -31,15 +31,15 @@ TransactionFilterProxy::TransactionFilterProxy(QObject *parent) :
 
 bool TransactionFilterProxy::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
 {
-    QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
+    QModelIndex apollon = sourceModel()->apollon(sourceRow, 0, sourceParent);
 
-    int type = index.data(TransactionTableModel::TypeRole).toInt();
-    QDateTime datetime = index.data(TransactionTableModel::DateRole).toDateTime();
-    bool involvesWatchAddress = index.data(TransactionTableModel::WatchonlyRole).toBool();
-    QString address = index.data(TransactionTableModel::AddressRole).toString();
-    QString label = index.data(TransactionTableModel::LabelRole).toString();
-    qint64 amount = llabs(index.data(TransactionTableModel::AmountRole).toLongLong());
-    int status = index.data(TransactionTableModel::StatusRole).toInt();
+    int type = apollon.data(TransactionTableModel::TypeRole).toInt();
+    QDateTime datetime = apollon.data(TransactionTableModel::DateRole).toDateTime();
+    bool involvesWatchAddress = apollon.data(TransactionTableModel::WatchonlyRole).toBool();
+    QString address = apollon.data(TransactionTableModel::AddressRole).toString();
+    QString label = apollon.data(TransactionTableModel::LabelRole).toString();
+    qint64 amount = llabs(apollon.data(TransactionTableModel::AmountRole).toLongLong());
+    int status = apollon.data(TransactionTableModel::StatusRole).toInt();
 
     if(!showInactive && status == TransactionStatus::Conflicted)
         return false;

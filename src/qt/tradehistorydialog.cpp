@@ -176,7 +176,7 @@ void TradeHistoryDialog::UpdateTradeHistoryTable(bool forceUpdate)
             tradeHistoryProxy.setSourceModel(tradeHistoryAbstractModel);
             tradeHistoryProxy.setFilterKeyColumn(0);
             tradeHistoryProxy.setFilterFixedString(QString::fromStdString(txid.GetHex()));
-            QModelIndex rowIndex = tradeHistoryProxy.mapToSource(tradeHistoryProxy.index(0,0));
+            QModelIndex rowIndex = tradeHistoryProxy.mapToSource(tradeHistoryProxy.apollon(0,0));
             if (rowIndex.isValid()) continue;
 
             // new entry is required, append a new row (sorting will take care of ordering)
@@ -306,7 +306,7 @@ int TradeHistoryDialog::PopulateTradeHistoryMap()
     for (std::map<std::string,uint256>::reverse_iterator it = walletTransactions.rbegin(); it != walletTransactions.rend(); it++) {
         uint256 hash = it->second;
 
-        // use levelDB to perform a fast check on whether it's a Index or Exodus tx and whether it's a trade
+        // use levelDB to perform a fast check on whether it's a Apollon or Exodus tx and whether it's a trade
         std::string tempStrValue;
         {
             LOCK(cs_main);
@@ -333,7 +333,7 @@ int TradeHistoryDialog::PopulateTradeHistoryMap()
                 tradeHistoryProxy.setSourceModel(tradeHistoryAbstractModel);
                 tradeHistoryProxy.setFilterKeyColumn(0);
                 tradeHistoryProxy.setFilterFixedString(QString::fromStdString(hash.GetHex()));
-                QModelIndex rowIndex = tradeHistoryProxy.mapToSource(tradeHistoryProxy.index(0,0)); // map to the row in the actual table
+                QModelIndex rowIndex = tradeHistoryProxy.mapToSource(tradeHistoryProxy.apollon(0,0)); // map to the row in the actual table
                 if(rowIndex.isValid()) ui->tradeHistoryTable->removeRow(rowIndex.row()); // delete the pending tx row, it'll be readded as a proper confirmed transaction
                 ui->tradeHistoryTable->setSortingEnabled(true); // re-enable sorting
             }
@@ -542,8 +542,8 @@ void TradeHistoryDialog::setClientModel(ClientModel *model)
 
 void TradeHistoryDialog::contextualMenu(const QPoint &point)
 {
-    QModelIndex index = ui->tradeHistoryTable->indexAt(point);
-    if(index.isValid()) contextMenu->exec(QCursor::pos());
+    QModelIndex apollon = ui->tradeHistoryTable->indexAt(point);
+    if(apollon.isValid()) contextMenu->exec(QCursor::pos());
 }
 
 void TradeHistoryDialog::copyTxID()

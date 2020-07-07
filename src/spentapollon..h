@@ -164,7 +164,7 @@ struct CAddressUnspentKey {
     AddressType type;
     uint160 hashBytes;
     uint256 txhash;
-    size_t index;
+    size_t apollon;
 
     size_t GetSerializeSize(int nType, int nVersion) const {
         return 57;
@@ -174,21 +174,21 @@ struct CAddressUnspentKey {
         ser_writedata8(s, static_cast<unsigned int>(type));
         hashBytes.Serialize(s, nType, nVersion);
         txhash.Serialize(s, nType, nVersion);
-        ser_writedata32(s, index);
+        ser_writedata32(s, apollon);
     }
     template<typename Stream>
     void Unserialize(Stream& s, int nType, int nVersion) {
         type = static_cast<AddressType>(ser_readdata8(s));
         hashBytes.Unserialize(s, nType, nVersion);
         txhash.Unserialize(s, nType, nVersion);
-        index = ser_readdata32(s);
+        apollon = ser_readdata32(s);
     }
 
     CAddressUnspentKey(AddressType addressType, uint160 addressHash, uint256 txid, size_t indexValue) {
         type = addressType;
         hashBytes = addressHash;
         txhash = txid;
-        index = indexValue;
+        apollon = indexValue;
     }
 
     CAddressUnspentKey() {
@@ -199,7 +199,7 @@ struct CAddressUnspentKey {
         type = AddressType::unknown;
         hashBytes.SetNull();
         txhash.SetNull();
-        index = 0;
+        apollon = 0;
     }
 };
 
@@ -244,7 +244,7 @@ struct CAddressIndexKey {
     int blockHeight;
     unsigned int txindex;
     uint256 txhash;
-    size_t index;
+    size_t apollon;
     bool spending;
 
     size_t GetSerializeSize(int nType, int nVersion) const {
@@ -258,7 +258,7 @@ struct CAddressIndexKey {
         ser_writedata32be(s, blockHeight);
         ser_writedata32be(s, txindex);
         txhash.Serialize(s, nType, nVersion);
-        ser_writedata32(s, index);
+        ser_writedata32(s, apollon);
         char f = spending;
         ser_writedata8(s, f);
     }
@@ -269,7 +269,7 @@ struct CAddressIndexKey {
         blockHeight = ser_readdata32be(s);
         txindex = ser_readdata32be(s);
         txhash.Unserialize(s, nType, nVersion);
-        index = ser_readdata32(s);
+        apollon = ser_readdata32(s);
         char f = ser_readdata8(s);
         spending = f;
     }
@@ -281,7 +281,7 @@ struct CAddressIndexKey {
         blockHeight = height;
         txindex = blockindex;
         txhash = txid;
-        index = indexValue;
+        apollon = indexValue;
         spending = isSpending;
     }
 
@@ -295,7 +295,7 @@ struct CAddressIndexKey {
         blockHeight = 0;
         txindex = 0;
         txhash.SetNull();
-        index = 0;
+        apollon = 0;
         spending = false;
     }
 

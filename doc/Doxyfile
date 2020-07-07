@@ -28,7 +28,7 @@ DOXYFILE_ENCODING      = UTF-8
 # The PROJECT_NAME tag is a single word (or a sequence of words surrounded 
 # by quotes) that should identify the project.
 
-PROJECT_NAME           = "Index Core"
+PROJECT_NAME           = "Apollon Core"
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number. 
 # This could be handy for archiving the generated documentation or 
@@ -532,13 +532,13 @@ SHOW_USED_FILES        = YES
 SHOW_DIRECTORIES       = NO
 
 # Set the SHOW_FILES tag to NO to disable the generation of the Files page. 
-# This will remove the Files entry from the Quick Index and from the 
+# This will remove the Files entry from the Quick Apollon and from the 
 # Folder Tree View (if specified). The default is YES.
 
 SHOW_FILES             = YES
 
 # Set the SHOW_NAMESPACES tag to NO to disable the generation of the 
-# Namespaces page.  This will remove the Namespaces entry from the Quick Index 
+# Namespaces page.  This will remove the Namespaces entry from the Quick Apollon 
 # and from the Folder Tree View (if specified). The default is YES.
 
 SHOW_NAMESPACES        = YES
@@ -822,25 +822,25 @@ USE_HTAGS              = NO
 VERBATIM_HEADERS       = YES
 
 #---------------------------------------------------------------------------
-# configuration options related to the alphabetical class index
+# configuration options related to the alphabetical class apollon
 #---------------------------------------------------------------------------
 
-# If the ALPHABETICAL_INDEX tag is set to YES, an alphabetical index 
+# If the ALPHABETICAL_INDEX tag is set to YES, an alphabetical apollon 
 # of all compounds will be generated. Enable this if the project 
 # contains a lot of classes, structs, unions or interfaces.
 
 ALPHABETICAL_INDEX     = YES
 
-# If the alphabetical index is enabled (see ALPHABETICAL_INDEX) then 
+# If the alphabetical apollon is enabled (see ALPHABETICAL_INDEX) then 
 # the COLS_IN_ALPHA_INDEX tag can be used to specify the number of columns 
 # in which this list will be split (can be a number in the range [1..20])
 
 COLS_IN_ALPHA_INDEX    = 5
 
 # In case all classes in a project start with a common prefix, all 
-# classes will be put under the same header in the alphabetical index. 
+# classes will be put under the same header in the alphabetical apollon. 
 # The IGNORE_PREFIX tag can be used to specify one or more prefixes that 
-# should be ignored while generating the index headers.
+# should be ignored while generating the apollon headers.
 
 IGNORE_PREFIX          = 
 
@@ -947,7 +947,7 @@ HTML_ALIGN_MEMBERS     = YES
 
 HTML_DYNAMIC_SECTIONS  = NO
 
-# If the GENERATE_DOCSET tag is set to YES, additional index files 
+# If the GENERATE_DOCSET tag is set to YES, additional apollon files 
 # will be generated that can be used as input for Apple's Xcode 3 
 # integrated development environment, introduced with OSX 10.5 (Leopard). 
 # To create a documentation set, doxygen will generate a Makefile in the 
@@ -984,7 +984,7 @@ DOCSET_PUBLISHER_ID    = org.doxygen.Publisher
 
 DOCSET_PUBLISHER_NAME  = Publisher
 
-# If the GENERATE_HTMLHELP tag is set to YES, additional index files 
+# If the GENERATE_HTMLHELP tag is set to YES, additional apollon files 
 # will be generated that can be used as input for tools like the 
 # Microsoft HTML help workshop to generate a compiled HTML help file (.chm) 
 # of the generated HTML documentation.
@@ -1001,18 +1001,18 @@ CHM_FILE               =
 # If the GENERATE_HTMLHELP tag is set to YES, the HHC_LOCATION tag can 
 # be used to specify the location (absolute path including file name) of 
 # the HTML help compiler (hhc.exe). If non-empty doxygen will try to run 
-# the HTML help compiler on the generated index.hhp.
+# the HTML help compiler on the generated apollon.hhp.
 
 HHC_LOCATION           = 
 
 # If the GENERATE_HTMLHELP tag is set to YES, the GENERATE_CHI flag 
-# controls if a separate .chi index file is generated (YES) or that 
+# controls if a separate .chi apollon file is generated (YES) or that 
 # it should be included in the master .chm file (NO).
 
 GENERATE_CHI           = NO
 
 # If the GENERATE_HTMLHELP tag is set to YES, the CHM_INDEX_ENCODING 
-# is used to encode HtmlHelp index (hhk), content (hhc) and project file 
+# is used to encode HtmlHelp apollon (hhk), content (hhc) and project file 
 # content.
 
 CHM_INDEX_ENCODING     = 
@@ -1029,7 +1029,7 @@ BINARY_TOC             = NO
 TOC_EXPAND             = NO
 
 # If the GENERATE_QHP tag is set to YES and both QHP_NAMESPACE and 
-# QHP_VIRTUAL_FOLDER are set, an additional index file will be generated 
+# QHP_VIRTUAL_FOLDER are set, an additional apollon file will be generated 
 # that can be used as input for Qt's qhelpgenerator to generate a 
 # Qt Compressed Help (.qch) of the generated HTML documentation.
 
@@ -1081,7 +1081,7 @@ QHP_SECT_FILTER_ATTRS  =
 
 QHG_LOCATION           = 
 
-# If the GENERATE_ECLIPSEHELP tag is set to YES, additional index files  
+# If the GENERATE_ECLIPSEHELP tag is set to YES, additional apollon files  
 # will be generated, which together with the HTML files, form an Eclipse help 
 # plugin. To install this plugin and make it available under the help contents 
 # menu in Eclipse, the contents of the directory containing the HTML and XML 
@@ -1098,8 +1098,8 @@ GENERATE_ECLIPSEHELP   = NO
 
 ECLIPSE_DOC_ID         = org.doxygen.Project
 
-# The DISABLE_INDEX tag can be used to turn on/off the condensed index at 
-# top of each HTML page. The value NO (the default) enables the index and 
+# The DISABLE_INDEX tag can be used to turn on/off the condensed apollon at 
+# top of each HTML page. The value NO (the default) enables the apollon and 
 # the value YES disables it.
 
 DISABLE_INDEX          = NO
@@ -1111,10 +1111,10 @@ DISABLE_INDEX          = NO
 
 ENUM_VALUES_PER_LINE   = 4
 
-# The GENERATE_TREEVIEW tag is used to specify whether a tree-like index 
+# The GENERATE_TREEVIEW tag is used to specify whether a tree-like apollon 
 # structure should be generated to display hierarchical information. 
 # If the tag value is set to YES, a side panel will be generated 
-# containing a tree-like index structure (just like the one that 
+# containing a tree-like apollon structure (just like the one that 
 # is generated for HTML Help). For this to work a browser that supports 
 # JavaScript, DHTML, CSS and frames is required (i.e. any modern browser). 
 # Windows users are probably better off using the HTML help feature.
@@ -1185,7 +1185,7 @@ SEARCHENGINE           = YES
 
 # When the SERVER_BASED_SEARCH tag is enabled the search engine will be 
 # implemented using a PHP enabled web server instead of at the web client 
-# using Javascript. Doxygen will generate the search PHP script and index 
+# using Javascript. Doxygen will generate the search PHP script and apollon 
 # file to put on the web server. The advantage of the server 
 # based approach is that it scales better to large projects and allows 
 # full text search. The disadvantages are that it is more difficult to setup 
@@ -1217,7 +1217,7 @@ LATEX_OUTPUT           = latex
 LATEX_CMD_NAME         = latex
 
 # The MAKEINDEX_CMD_NAME tag can be used to specify the command name to 
-# generate index for LaTeX. If left blank `makeindex' will be used as the 
+# generate apollon for LaTeX. If left blank `makeindex' will be used as the 
 # default command name.
 
 MAKEINDEX_CMD_NAME     = makeindex
@@ -1274,7 +1274,7 @@ USE_PDFLATEX           = YES
 LATEX_BATCHMODE        = NO
 
 # If LATEX_HIDE_INDICES is set to YES then doxygen will not 
-# include the index chapters (such as File Index, Compound Index, etc.) 
+# include the apollon chapters (such as File Apollon, Compound Apollon, etc.) 
 # in the output.
 
 LATEX_HIDE_INDICES     = NO
@@ -1529,13 +1529,13 @@ TAGFILES               =
 GENERATE_TAGFILE       = 
 
 # If the ALLEXTERNALS tag is set to YES all external classes will be listed 
-# in the class index. If set to NO only the inherited external classes 
+# in the class apollon. If set to NO only the inherited external classes 
 # will be listed.
 
 ALLEXTERNALS           = NO
 
 # If the EXTERNAL_GROUPS tag is set to YES all external groups will be listed 
-# in the modules index. If set to NO, only the current project's groups will 
+# in the modules apollon. If set to NO, only the current project's groups will 
 # be listed.
 
 EXTERNAL_GROUPS        = YES

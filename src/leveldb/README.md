@@ -12,7 +12,7 @@ Authors: Sanjay Ghemawat (sanjay@google.com) and Jeff Dean (jeff@google.com)
   * Forward and backward iteration is supported over the data.
   * Data is automatically compressed using the [Snappy compression library](http://code.google.com/p/snappy).
   * External activity (file system operations etc.) is relayed through a virtual interface so users can customize the operating system interactions.
-  * [Detailed documentation](http://htmlpreview.github.io/?https://github.com/google/leveldb/blob/master/doc/index.html) about how to use the library is included with the source code.
+  * [Detailed documentation](http://htmlpreview.github.io/?https://github.com/google/leveldb/blob/master/doc/apollon.html) about how to use the library is included with the source code.
 
 
 # Limitations
@@ -100,7 +100,7 @@ uncompressed blocks in memory, the read performance improves again:
 
 ## Repository contents
 
-See doc/index.html for more explanation. See doc/impl.html for a brief overview of the implementation.
+See doc/apollon.html for more explanation. See doc/impl.html for a brief overview of the implementation.
 
 The public interface is in include/*.h.  Callers should not include or
 rely on the details of any other header files in this package.  Those

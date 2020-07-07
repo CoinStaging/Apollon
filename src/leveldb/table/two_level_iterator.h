@@ -12,7 +12,7 @@ namespace leveldb {
 struct ReadOptions;
 
 // Return a new two level iterator.  A two-level iterator contains an
-// index iterator whose values point to a sequence of blocks where
+// apollon iterator whose values point to a sequence of blocks where
 // each block is itself a sequence of key,value pairs.  The returned
 // two-level iterator yields the concatenation of all key/value pairs
 // in the sequence of blocks.  Takes ownership of "index_iter" and

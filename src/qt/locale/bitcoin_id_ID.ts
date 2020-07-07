@@ -154,8 +154,8 @@
         <translation>Mengindex ulang blok di dalam disk...</translation>
     </message>
     <message>
-        <source>Send coins to a Index address</source>
-        <translation>Kirim koin ke alamat Index</translation>
+        <source>Send coins to a Apollon address</source>
+        <translation>Kirim koin ke alamat Apollon</translation>
     </message>
     <message>
         <source>Backup wallet to another location</source>
@@ -178,8 +178,8 @@
         <translation>&amp;Verifikasi pesan...</translation>
     </message>
     <message>
-        <source>Index</source>
-        <translation>Index</translation>
+        <source>Apollon</source>
+        <translation>Apollon</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -206,12 +206,12 @@
         <translation>Enkripsi private key yang dimiliki dompet Anda</translation>
     </message>
     <message>
-        <source>Sign messages with your Index addresses to prove you own them</source>
-        <translation>Tanda tangani sebuah pesan menggunakan alamat Index Anda untuk membuktikan bahwa Anda adalah pemilik alamat tersebut</translation>
+        <source>Sign messages with your Apollon addresses to prove you own them</source>
+        <translation>Tanda tangani sebuah pesan menggunakan alamat Apollon Anda untuk membuktikan bahwa Anda adalah pemilik alamat tersebut</translation>
     </message>
     <message>
-        <source>Verify messages to ensure they were signed with specified Index addresses</source>
-        <translation>Verifikasi pesan untuk memastikan bahwa pesan tersebut ditanda tangani oleh suatu alamat Index tertentu</translation>
+        <source>Verify messages to ensure they were signed with specified Apollon addresses</source>
+        <translation>Verifikasi pesan untuk memastikan bahwa pesan tersebut ditanda tangani oleh suatu alamat Apollon tertentu</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -230,8 +230,8 @@
         <translation>Baris tab</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and index: URIs)</source>
-        <translation>Permintaan pembayaran (membuat kode QR dan index: URIs)</translation>
+        <source>Request payments (generates QR codes and apollon: URIs)</source>
+        <translation>Permintaan pembayaran (membuat kode QR dan apollon: URIs)</translation>
     </message>
     <message>
         <source>Show the list of used sending addresses and labels</source>
@@ -242,16 +242,16 @@
         <translation>Tampilkan daftar alamat dan label yang diterima</translation>
     </message>
     <message>
-        <source>Open a index: URI or payment request</source>
-        <translation>Buka URI index: atau permintaan pembayaran</translation>
+        <source>Open a apollon: URI or payment request</source>
+        <translation>Buka URI apollon: atau permintaan pembayaran</translation>
     </message>
     <message>
         <source>&amp;Command-line options</source>
         <translation>&amp;pilihan Command-line</translation>
     </message>
     <message numerus="yes">
-        <source>%n active connection(s) to Index network</source>
-        <translation><numerusform>%n koneksi aktif ke jaringan Index</numerusform></translation>
+        <source>%n active connection(s) to Apollon network</source>
+        <translation><numerusform>%n koneksi aktif ke jaringan Apollon</numerusform></translation>
     </message>
     <message>
         <source>No block source available...</source>
@@ -669,16 +669,16 @@
         <translation>&amp;Perubahan saldo untuk transaksi yang belum dikonfirmasi</translation>
     </message>
     <message>
-        <source>Automatically open the Index client port on the router. This only works when your router supports UPnP and it is enabled.</source>
-        <translation>Otomatis membuka port client Index di router. Hanya berjalan apabila router anda mendukung UPnP dan di-enable.</translation>
+        <source>Automatically open the Apollon client port on the router. This only works when your router supports UPnP and it is enabled.</source>
+        <translation>Otomatis membuka port client Apollon di router. Hanya berjalan apabila router anda mendukung UPnP dan di-enable.</translation>
     </message>
     <message>
         <source>Map port using &amp;UPnP</source>
         <translation>Petakan port dengan &amp;UPnP</translation>
     </message>
     <message>
-        <source>Connect to the Index network through a SOCKS5 proxy.</source>
-        <translation>Hubungkan ke jaringan Index melalui SOCKS5 proxy.</translation>
+        <source>Connect to the Apollon network through a SOCKS5 proxy.</source>
+        <translation>Hubungkan ke jaringan Apollon melalui SOCKS5 proxy.</translation>
     </message>
     <message>
         <source>Proxy &amp;IP:</source>
@@ -784,8 +784,8 @@
         <translation>Formulir</translation>
     </message>
     <message>
-        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Index network after a connection is established, but this process has not completed yet.</source>
-        <translation>Informasi terlampir mungkin sudah kedaluwarsa. Dompet Anda secara otomatis mensinkronisasi dengan jaringan Index ketika sebuah hubungan terbentuk, namun proses ini belum selesai.</translation>
+        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Apollon network after a connection is established, but this process has not completed yet.</source>
+        <translation>Informasi terlampir mungkin sudah kedaluwarsa. Dompet Anda secara otomatis mensinkronisasi dengan jaringan Apollon ketika sebuah hubungan terbentuk, namun proses ini belum selesai.</translation>
     </message>
     <message>
         <source>Available:</source>
@@ -841,8 +841,8 @@
         <translation>Nilai</translation>
     </message>
     <message>
-        <source>Enter a Index address (e.g. %1)</source>
-        <translation>Masukkan alamat Index (contoh %1)</translation>
+        <source>Enter a Apollon address (e.g. %1)</source>
+        <translation>Masukkan alamat Apollon (contoh %1)</translation>
     </message>
     <message>
         <source>%1 h</source>
@@ -1317,8 +1317,8 @@
         <translation>Salin tanda tangan terpilih ke sistem klipboard</translation>
     </message>
     <message>
-        <source>Sign the message to prove you own this Index address</source>
-        <translation>Tandai pesan untuk menyetujui kamu pemiliki alamat Index ini</translation>
+        <source>Sign the message to prove you own this Apollon address</source>
+        <translation>Tandai pesan untuk menyetujui kamu pemiliki alamat Apollon ini</translation>
     </message>
     <message>
         <source>Sign &amp;Message</source>
@@ -1388,7 +1388,7 @@
     <name>WalletView</name>
     </context>
 <context>
-    <name>index-core</name>
+    <name>apollon-core</name>
     <message>
         <source>Options:</source>
         <translation>Pilihan:</translation>
@@ -1418,8 +1418,8 @@
         <translation>Terima hubungan dari luar (standar: 1 kalau -proxy atau -connect tidak dipilih)</translation>
     </message>
     <message>
-        <source>Index Core</source>
-        <translation>Index Core</translation>
+        <source>Apollon Core</source>
+        <translation>Apollon Core</translation>
     </message>
     <message>
         <source>Execute command when a wallet transaction changes (%s in cmd is replaced by TxID)</source>
@@ -1594,7 +1594,7 @@
         <translation>Saldo tidak mencukupi</translation>
     </message>
     <message>
-        <source>Loading block index...</source>
+        <source>Loading block apollon...</source>
         <translation>Memuat indeks blok...</translation>
     </message>
     <message>

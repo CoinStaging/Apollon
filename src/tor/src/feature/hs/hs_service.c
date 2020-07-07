@@ -1427,7 +1427,7 @@ service_authorized_client_config_equal(const hs_service_config_t *config1,
   smartlist_sort(sl2, compare_service_authorzized_client_);
 
   for (i = 0; i < smartlist_len(sl1); i++) {
-    /* If the clients at index i in both lists differ, the whole configs
+    /* If the clients at apollon i in both lists differ, the whole configs
      * differ. */
     if (service_authorized_client_cmp(smartlist_get(sl1, i),
                                       smartlist_get(sl2, i))) {
@@ -1549,7 +1549,7 @@ setup_intro_point_exclude_list(const hs_service_descriptor_t *desc,
 }
 
 /* For the given failing intro point ip, we add its time of failure to the
- * failed map and index it by identity digest (legacy ID) in the descriptor
+ * failed map and apollon it by identity digest (legacy ID) in the descriptor
  * desc failed id map. */
 static void
 remember_failing_intro_point(const hs_service_intro_point_t *ip,
@@ -2840,23 +2840,23 @@ upload_descriptor_to_hsdir(const hs_service_t *service,
   /* Logging so we know where it was sent. */
   {
     int is_next_desc = (service->desc_next == desc);
-    const uint8_t *idx = (is_next_desc) ? hsdir->hsdir_index.store_second:
+    const uint8_t *xap = (is_next_desc) ? hsdir->hsdir_index.store_second:
                                           hsdir->hsdir_index.store_first;
     char *blinded_pubkey_log_str =
       tor_strdup(hex_str((char*)&desc->blinded_kp.pubkey.pubkey, 32));
     log_info(LD_REND, "Service %s %s descriptor of revision %" PRIu64
-                      " initiated upload request to %s with index %s (%s)",
+                      " initiated upload request to %s with apollon %s (%s)",
              safe_str_client(service->onion_address),
              (is_next_desc) ? "next" : "current",
              desc->desc->plaintext_data.revision_counter,
              safe_str_client(node_describe(hsdir)),
-             safe_str_client(hex_str((const char *) idx, 32)),
+             safe_str_client(hex_str((const char *) xap, 32)),
              safe_str_client(blinded_pubkey_log_str));
     tor_free(blinded_pubkey_log_str);
 
     /* Fire a UPLOAD control port event. */
     hs_control_desc_event_upload(service->onion_address, hsdir->identity,
-                                 &desc->blinded_kp.pubkey, idx);
+                                 &desc->blinded_kp.pubkey, xap);
   }
 
  end:

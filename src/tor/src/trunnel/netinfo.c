@@ -95,22 +95,22 @@ netinfo_addr_getlen_addr_ipv6(const netinfo_addr_t *inp)
 }
 
 uint8_t
-netinfo_addr_get_addr_ipv6(netinfo_addr_t *inp, size_t idx)
+netinfo_addr_get_addr_ipv6(netinfo_addr_t *inp, size_t xap)
 {
-  trunnel_assert(idx < 16);
-  return inp->addr_ipv6[idx];
+  trunnel_assert(xap < 16);
+  return inp->addr_ipv6[xap];
 }
 
 uint8_t
-netinfo_addr_getconst_addr_ipv6(const netinfo_addr_t *inp, size_t idx)
+netinfo_addr_getconst_addr_ipv6(const netinfo_addr_t *inp, size_t xap)
 {
-  return netinfo_addr_get_addr_ipv6((netinfo_addr_t*)inp, idx);
+  return netinfo_addr_get_addr_ipv6((netinfo_addr_t*)inp, xap);
 }
 int
-netinfo_addr_set_addr_ipv6(netinfo_addr_t *inp, size_t idx, uint8_t elt)
+netinfo_addr_set_addr_ipv6(netinfo_addr_t *inp, size_t xap, uint8_t elt)
 {
-  trunnel_assert(idx < 16);
-  inp->addr_ipv6[idx] = elt;
+  trunnel_assert(xap < 16);
+  inp->addr_ipv6[xap] = elt;
   return 0;
 }
 
@@ -378,9 +378,9 @@ netinfo_cell_clear(netinfo_cell_t *obj)
   obj->other_addr = NULL;
   {
 
-    unsigned idx;
-    for (idx = 0; idx < TRUNNEL_DYNARRAY_LEN(&obj->my_addrs); ++idx) {
-      netinfo_addr_free(TRUNNEL_DYNARRAY_GET(&obj->my_addrs, idx));
+    unsigned xap;
+    for (xap = 0; xap < TRUNNEL_DYNARRAY_LEN(&obj->my_addrs); ++xap) {
+      netinfo_addr_free(TRUNNEL_DYNARRAY_GET(&obj->my_addrs, xap));
     }
   }
   TRUNNEL_DYNARRAY_WIPE(&obj->my_addrs);
@@ -449,28 +449,28 @@ netinfo_cell_getlen_my_addrs(const netinfo_cell_t *inp)
 }
 
 struct netinfo_addr_st *
-netinfo_cell_get_my_addrs(netinfo_cell_t *inp, size_t idx)
+netinfo_cell_get_my_addrs(netinfo_cell_t *inp, size_t xap)
 {
-  return TRUNNEL_DYNARRAY_GET(&inp->my_addrs, idx);
+  return TRUNNEL_DYNARRAY_GET(&inp->my_addrs, xap);
 }
 
  const struct netinfo_addr_st *
-netinfo_cell_getconst_my_addrs(const netinfo_cell_t *inp, size_t idx)
+netinfo_cell_getconst_my_addrs(const netinfo_cell_t *inp, size_t xap)
 {
-  return netinfo_cell_get_my_addrs((netinfo_cell_t*)inp, idx);
+  return netinfo_cell_get_my_addrs((netinfo_cell_t*)inp, xap);
 }
 int
-netinfo_cell_set_my_addrs(netinfo_cell_t *inp, size_t idx, struct netinfo_addr_st * elt)
+netinfo_cell_set_my_addrs(netinfo_cell_t *inp, size_t xap, struct netinfo_addr_st * elt)
 {
-  netinfo_addr_t *oldval = TRUNNEL_DYNARRAY_GET(&inp->my_addrs, idx);
+  netinfo_addr_t *oldval = TRUNNEL_DYNARRAY_GET(&inp->my_addrs, xap);
   if (oldval && oldval != elt)
     netinfo_addr_free(oldval);
-  return netinfo_cell_set0_my_addrs(inp, idx, elt);
+  return netinfo_cell_set0_my_addrs(inp, xap, elt);
 }
 int
-netinfo_cell_set0_my_addrs(netinfo_cell_t *inp, size_t idx, struct netinfo_addr_st * elt)
+netinfo_cell_set0_my_addrs(netinfo_cell_t *inp, size_t xap, struct netinfo_addr_st * elt)
 {
-  TRUNNEL_DYNARRAY_SET(&inp->my_addrs, idx, elt);
+  TRUNNEL_DYNARRAY_SET(&inp->my_addrs, xap, elt);
   return 0;
 }
 int
@@ -532,9 +532,9 @@ netinfo_cell_check(const netinfo_cell_t *obj)
   {
     const char *msg;
 
-    unsigned idx;
-    for (idx = 0; idx < TRUNNEL_DYNARRAY_LEN(&obj->my_addrs); ++idx) {
-      if (NULL != (msg = netinfo_addr_check(TRUNNEL_DYNARRAY_GET(&obj->my_addrs, idx))))
+    unsigned xap;
+    for (xap = 0; xap < TRUNNEL_DYNARRAY_LEN(&obj->my_addrs); ++xap) {
+      if (NULL != (msg = netinfo_addr_check(TRUNNEL_DYNARRAY_GET(&obj->my_addrs, xap))))
         return msg;
     }
   }
@@ -564,9 +564,9 @@ netinfo_cell_encoded_len(const netinfo_cell_t *obj)
   /* Length of struct netinfo_addr my_addrs[n_my_addrs] */
   {
 
-    unsigned idx;
-    for (idx = 0; idx < TRUNNEL_DYNARRAY_LEN(&obj->my_addrs); ++idx) {
-      result += netinfo_addr_encoded_len(TRUNNEL_DYNARRAY_GET(&obj->my_addrs, idx));
+    unsigned xap;
+    for (xap = 0; xap < TRUNNEL_DYNARRAY_LEN(&obj->my_addrs); ++xap) {
+      result += netinfo_addr_encoded_len(TRUNNEL_DYNARRAY_GET(&obj->my_addrs, xap));
     }
   }
   return result;
@@ -620,10 +620,10 @@ netinfo_cell_encode(uint8_t *output, const size_t avail, const netinfo_cell_t *o
   /* Encode struct netinfo_addr my_addrs[n_my_addrs] */
   {
 
-    unsigned idx;
-    for (idx = 0; idx < TRUNNEL_DYNARRAY_LEN(&obj->my_addrs); ++idx) {
+    unsigned xap;
+    for (xap = 0; xap < TRUNNEL_DYNARRAY_LEN(&obj->my_addrs); ++xap) {
       trunnel_assert(written <= avail);
-      result = netinfo_addr_encode(ptr, avail - written, TRUNNEL_DYNARRAY_GET(&obj->my_addrs, idx));
+      result = netinfo_addr_encode(ptr, avail - written, TRUNNEL_DYNARRAY_GET(&obj->my_addrs, xap));
       if (result < 0)
         goto fail; /* XXXXXXX !*/
       written += result; ptr += result;
@@ -685,8 +685,8 @@ netinfo_cell_parse_into(netinfo_cell_t *obj, const uint8_t *input, const size_t 
   TRUNNEL_DYNARRAY_EXPAND(netinfo_addr_t *, &obj->my_addrs, obj->n_my_addrs, {});
   {
     netinfo_addr_t * elt;
-    unsigned idx;
-    for (idx = 0; idx < obj->n_my_addrs; ++idx) {
+    unsigned xap;
+    for (xap = 0; xap < obj->n_my_addrs; ++xap) {
       result = netinfo_addr_parse(&elt, ptr, remaining);
       if (result < 0)
         goto relay_fail;

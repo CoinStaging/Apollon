@@ -32,11 +32,11 @@ from the root of the repository.
 Note: You only need Berkeley DB if the wallet is enabled (see Disable-wallet mode).
       
       
-Build Index Core
+Build Apollon Core
 ------------------------
-1.  Build Index-core:
+1.  Build Apollon-core:
 
-    Configure and build the headless Index binaries as well as the GUI (if Qt is found).
+    Configure and build the headless Apollon binaries as well as the GUI (if Qt is found).
     
     In case you want to build the disk image with `make deploy` (.dmg / optional), by passing `--with-gui` to configure.
     
@@ -58,26 +58,26 @@ Build Index Core
 Running
 -------
 
-Index Core is now available at `./src/indexd`
+Apollon Core is now available at `./src/indexd`
 
 Before running, it's recommended you create an RPC configuration file.
 
-    echo -e "rpcuser=bitcoinrpc\nrpcpassword=$(xxd -l 16 -p /dev/urandom)" > "/Users/${USER}/Library/Application Support/index/index.conf"
+    echo -e "rpcuser=bitcoinrpc\nrpcpassword=$(xxd -l 16 -p /dev/urandom)" > "/Users/${USER}/Library/Application Support/apollon/apollon.conf"
 
-    chmod 600 "/Users/${USER}/Library/Application Support/index/index.conf"
+    chmod 600 "/Users/${USER}/Library/Application Support/apollon/apollon.conf"
 
 The first time you run indexd, it will start downloading the blockchain. This process could take several hours.
 
 You can monitor the download process by looking at the debug.log file:
 
-    tail -f $HOME/Library/Application\ Support/index/debug.log
+    tail -f $HOME/Library/Application\ Support/apollon/debug.log
 
 Other commands:
 -------
 
-    ./src/indexd -daemon # Starts the Index daemon.
-    ./src/index-cli --help # Outputs a list of command-line options.
-    ./src/index-cli help # Outputs a list of RPC commands when the daemon is running.
+    ./src/indexd -daemon # Starts the Apollon daemon.
+    ./src/apollon-cli --help # Outputs a list of command-line options.
+    ./src/apollon-cli help # Outputs a list of RPC commands when the daemon is running.
 
 Using Qt Creator as IDE
 ------------------------

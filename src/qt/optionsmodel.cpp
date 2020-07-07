@@ -187,12 +187,12 @@ int OptionsModel::rowCount(const QModelIndex & parent) const
 }
 
 // read QSettings values and return them
-QVariant OptionsModel::data(const QModelIndex & index, int role) const
+QVariant OptionsModel::data(const QModelIndex & apollon, int role) const
 {
     if(role == Qt::EditRole)
     {
         QSettings settings;
-        switch(index.row())
+        switch(apollon.row())
         {
         case StartAtStartup:
             return GUIUtil::GetStartOnSystemStartup();
@@ -213,12 +213,12 @@ QVariant OptionsModel::data(const QModelIndex & index, int role) const
         case ProxyUse:
             return settings.value("fUseProxy", false);
         case ProxyIP: {
-            // contains IP at index 0 and port at index 1
+            // contains IP at apollon 0 and port at apollon 1
             QStringList strlIpPort = settings.value("addrProxy").toString().split(":", QString::SkipEmptyParts);
             return strlIpPort.at(0);
         }
         case ProxyPort: {
-            // contains IP at index 0 and port at index 1
+            // contains IP at apollon 0 and port at apollon 1
             QStringList strlIpPort = settings.value("addrProxy").toString().split(":", QString::SkipEmptyParts);
             return strlIpPort.at(1);
         }
@@ -230,12 +230,12 @@ QVariant OptionsModel::data(const QModelIndex & index, int role) const
         case ProxyUseTor:
             return settings.value("fUseSeparateProxyTor", false);
         case ProxyIPTor: {
-            // contains IP at index 0 and port at index 1
+            // contains IP at apollon 0 and port at apollon 1
             QStringList strlIpPort = settings.value("addrSeparateProxyTor").toString().split(":", QString::SkipEmptyParts);
             return strlIpPort.at(0);
         }
         case ProxyPortTor: {
-            // contains IP at index 0 and port at index 1
+            // contains IP at apollon 0 and port at apollon 1
             QStringList strlIpPort = settings.value("addrSeparateProxyTor").toString().split(":", QString::SkipEmptyParts);
             return strlIpPort.at(1);
         }
@@ -268,13 +268,13 @@ QVariant OptionsModel::data(const QModelIndex & index, int role) const
 }
 
 // write QSettings values
-bool OptionsModel::setData(const QModelIndex & index, const QVariant & value, int role)
+bool OptionsModel::setData(const QModelIndex & apollon, const QVariant & value, int role)
 {
     bool successful = true; /* set to false on parse error */
     if(role == Qt::EditRole)
     {
         QSettings settings;
-        switch(index.row())
+        switch(apollon.row())
         {
         case StartAtStartup:
             successful = GUIUtil::SetStartOnSystemStartup(value.toBool());
@@ -305,7 +305,7 @@ bool OptionsModel::setData(const QModelIndex & index, const QVariant & value, in
             }
             break;
         case ProxyIP: {
-            // contains current IP at index 0 and current port at index 1
+            // contains current IP at apollon 0 and current port at apollon 1
             QStringList strlIpPort = settings.value("addrProxy").toString().split(":", QString::SkipEmptyParts);
             // if that key doesn't exist or has a changed IP
             if (!settings.contains("addrProxy") || strlIpPort.at(0) != value.toString()) {
@@ -317,7 +317,7 @@ bool OptionsModel::setData(const QModelIndex & index, const QVariant & value, in
         }
         break;
         case ProxyPort: {
-            // contains current IP at index 0 and current port at index 1
+            // contains current IP at apollon 0 and current port at apollon 1
             QStringList strlIpPort = settings.value("addrProxy").toString().split(":", QString::SkipEmptyParts);
             // if that key doesn't exist or has a changed port
             if (!settings.contains("addrProxy") || strlIpPort.at(1) != value.toString()) {
@@ -337,7 +337,7 @@ bool OptionsModel::setData(const QModelIndex & index, const QVariant & value, in
             }
             break;
         case ProxyIPTor: {
-            // contains current IP at index 0 and current port at index 1
+            // contains current IP at apollon 0 and current port at apollon 1
             QStringList strlIpPort = settings.value("addrSeparateProxyTor").toString().split(":", QString::SkipEmptyParts);
             // if that key doesn't exist or has a changed IP
             if (!settings.contains("addrSeparateProxyTor") || strlIpPort.at(0) != value.toString()) {
@@ -349,7 +349,7 @@ bool OptionsModel::setData(const QModelIndex & index, const QVariant & value, in
         }
         break;
         case ProxyPortTor: {
-            // contains current IP at index 0 and current port at index 1
+            // contains current IP at apollon 0 and current port at apollon 1
             QStringList strlIpPort = settings.value("addrSeparateProxyTor").toString().split(":", QString::SkipEmptyParts);
             // if that key doesn't exist or has a changed port
             if (!settings.contains("addrSeparateProxyTor") || strlIpPort.at(1) != value.toString()) {
@@ -420,7 +420,7 @@ bool OptionsModel::setData(const QModelIndex & index, const QVariant & value, in
         }
     }
 
-    Q_EMIT dataChanged(index, index);
+    Q_EMIT dataChanged(apollon, apollon);
 
     return successful;
 }

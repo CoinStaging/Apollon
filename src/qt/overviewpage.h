@@ -64,7 +64,7 @@ public Q_SLOTS:
     //void reinitElysium();
 
 Q_SIGNALS:
-    void transactionClicked(const QModelIndex &index);
+    void transactionClicked(const QModelIndex &apollon);
     void enabledTorChanged();
     void elysiumTransactionClicked(const uint256& txid);
 
@@ -89,7 +89,7 @@ private:
 
 private Q_SLOTS:
     void updateDisplayUnit();
-    void handleTransactionClicked(const QModelIndex &index);
+    void handleTransactionClicked(const QModelIndex &apollon);
     void handleEnabledTorChanged();
     void updateAlerts(const QString &warnings);
     void updateWatchOnlyLabels(bool showWatchOnly);

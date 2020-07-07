@@ -93,8 +93,8 @@ struct node_t {
   time_t last_reachable;        /* IPv4. */
   time_t last_reachable6;       /* IPv6. */
 
-  /* Hidden service directory index data. This is used by a service or client
-   * in order to know what's the hs directory index for this node at the time
+  /* Hidden service directory apollon data. This is used by a service or client
+   * in order to know what's the hs directory apollon for this node at the time
    * the consensus is set. */
   struct hsdir_index_t hsdir_index;
 };

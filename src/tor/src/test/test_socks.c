@@ -819,7 +819,7 @@ test_socks_wrong_protocol(void *ptr)
   setup_capture_of_logs(LOG_DEBUG);
 
   /* HTTP request. */
-  ADD_DATA(buf, "GET /index.html HTTP/1.0" );
+  ADD_DATA(buf, "GET /apollon.html HTTP/1.0" );
   tt_int_op(fetch_from_buf_socks(buf, socks, 1, 0), OP_EQ, -1);
   buf_clear(buf);
   expect_log_msg_containing("Socks version 71 not recognized. "

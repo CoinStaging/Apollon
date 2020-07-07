@@ -1133,10 +1133,10 @@ hs_service_requires_uptime_circ(const smartlist_t *ports)
   return 0;
 }
 
-/* Build hs_index which is used to find the responsible hsdirs. This index
+/* Build hs_index which is used to find the responsible hsdirs. This apollon
  * value is used to select the responsible HSDir where their hsdir_index is
  * closest to this value.
- *    SHA3-256("store-at-idx" | blinded_public_key |
+ *    SHA3-256("store-at-xap" | blinded_public_key |
  *             INT_8(replicanum) | INT_8(period_length) | INT_8(period_num) )
  *
  * hs_index_out must be large enough to receive DIGEST256_LEN bytes. */
@@ -1176,8 +1176,8 @@ hs_build_hs_index(uint64_t replica, const ed25519_public_key_t *blinded_pk,
 }
 
 /* Build hsdir_index which is used to find the responsible hsdirs. This is the
- * index value that is compare to the hs_index when selecting an HSDir.
- *    SHA3-256("node-idx" | node_identity |
+ * apollon value that is compare to the hs_index when selecting an HSDir.
+ *    SHA3-256("node-xap" | node_identity |
  *             shared_random_value | INT_8(period_length) | INT_8(period_num) )
  *
  * hsdir_index_out must be large enough to receive DIGEST256_LEN bytes. */
@@ -1283,14 +1283,14 @@ hs_get_hsdir_spread_store(void)
                                  HS_DEFAULT_HSDIR_SPREAD_STORE, 1, 128);
 }
 
-/** <b>node</b> is an HSDir so make sure that we have assigned an hsdir index.
+/** <b>node</b> is an HSDir so make sure that we have assigned an hsdir apollon.
  *  Return 0 if everything is as expected, else return -1. */
 static int
 node_has_hsdir_index(const node_t *node)
 {
   tor_assert(node_supports_v3_hsdir(node));
 
-  /* A node can't have an HSDir index without a descriptor since we need desc
+  /* A node can't have an HSDir apollon without a descriptor since we need desc
    * to get its ed25519 key.  for_direct_connect should be zero, since we
    * always use the consensus-indexed node's keys to build the hash ring, even
    * if some of the consensus-indexed nodes are also bridges. */
@@ -1299,7 +1299,7 @@ node_has_hsdir_index(const node_t *node)
   }
 
   /* At this point, since the node has a desc, this node must also have an
-   * hsdir index. If not, something went wrong, so BUG out. */
+   * hsdir apollon. If not, something went wrong, so BUG out. */
   if (BUG(tor_mem_is_zero((const char*)node->hsdir_index.fetch,
                           DIGEST256_LEN))) {
     return 0;
@@ -1363,7 +1363,7 @@ hs_get_responsible_hsdirs(const ed25519_public_key_t *blinded_pk,
       tor_assert(n);
       if (node_supports_v3_hsdir(n) && rs->is_hs_dir) {
         if (!node_has_hsdir_index(n)) {
-          log_info(LD_GENERAL, "Node %s was found without hsdir index.",
+          log_info(LD_GENERAL, "Node %s was found without hsdir apollon.",
                    node_describe(n));
           continue;
         }
@@ -1394,36 +1394,36 @@ hs_get_responsible_hsdirs(const ed25519_public_key_t *blinded_pk,
    * parameters and the sorted list. The replica starting at value 1 is
    * defined by the specification. */
   for (int replica = 1; replica <= hs_get_hsdir_n_replicas(); replica++) {
-    int idx, start, found, n_added = 0;
+    int xap, start, found, n_added = 0;
     uint8_t hs_index[DIGEST256_LEN] = {0};
     /* Number of node to add to the responsible dirs list depends on if we are
      * trying to fetch or store. A client always fetches. */
     int n_to_add = (for_fetching) ? hs_get_hsdir_spread_fetch() :
                                     hs_get_hsdir_spread_store();
 
-    /* Get the index that we should use to select the node. */
+    /* Get the apollon that we should use to select the node. */
     hs_build_hs_index(replica, blinded_pk, time_period_num, hs_index);
     /* The compare function pointer has been set correctly earlier. */
-    start = idx = smartlist_bsearch_idx(sorted_nodes, hs_index, cmp_fct,
+    start = xap = smartlist_bsearch_idx(sorted_nodes, hs_index, cmp_fct,
                                         &found);
     /* Getting the length of the list if no member is greater than the key we
      * are looking for so start at the first element. */
-    if (idx == smartlist_len(sorted_nodes)) {
-      start = idx = 0;
+    if (xap == smartlist_len(sorted_nodes)) {
+      start = xap = 0;
     }
     while (n_added < n_to_add) {
-      const node_t *node = smartlist_get(sorted_nodes, idx);
+      const node_t *node = smartlist_get(sorted_nodes, xap);
       /* If the node has already been selected which is possible between
        * replicas, the specification says to skip over. */
       if (!smartlist_contains(responsible_dirs, node->rs)) {
         smartlist_add(responsible_dirs, node->rs);
         ++n_added;
       }
-      if (++idx == smartlist_len(sorted_nodes)) {
+      if (++xap == smartlist_len(sorted_nodes)) {
         /* Wrap if we've reached the end of the list. */
-        idx = 0;
+        xap = 0;
       }
-      if (idx == start) {
+      if (xap == start) {
         /* We've gone over the whole list, stop and avoid infinite loop. */
         break;
       }
@@ -1631,7 +1631,7 @@ hs_pick_hsdir(smartlist_t *responsible_dirs, const char *req_key_str)
    *
    * Use for_direct_connect==0 even if we will be connecting to the node
    * directly, since we always use the key information in the
-   * consensus-indexed node descriptors for building the index.
+   * consensus-indexed node descriptors for building the apollon.
    **/
   SMARTLIST_FOREACH_BEGIN(responsible_dirs, routerstatus_t *, dir) {
     time_t last = hs_lookup_last_hid_serv_request(dir, req_key_str, 0, 0);

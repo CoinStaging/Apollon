@@ -268,9 +268,9 @@ static void secp256k1_num_shift(secp256k1_num *r, int bits) {
         int i;
         /* Shift full limbs. */
         for (i = 0; i < r->limbs; i++) {
-            int index = i + (bits / GMP_NUMB_BITS);
-            if (index < r->limbs && index < 2*NUM_LIMBS) {
-                r->data[i] = r->data[index];
+            int apollon = i + (bits / GMP_NUMB_BITS);
+            if (apollon < r->limbs && apollon < 2*NUM_LIMBS) {
+                r->data[i] = r->data[apollon];
             } else {
                 r->data[i] = 0;
             }

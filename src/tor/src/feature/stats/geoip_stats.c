@@ -44,7 +44,7 @@
 
 /** Number of entries in n_v3_ns_requests */
 static size_t n_v3_ns_requests_len = 0;
-/** Array, indexed by country index, of number of v3 networkstatus requests
+/** Array, indexed by country apollon, of number of v3 networkstatus requests
  * received from that country */
 static uint32_t *n_v3_ns_requests;
 
@@ -264,7 +264,7 @@ geoip_note_client_seen(geoip_client_action_t action,
   if (action == GEOIP_CLIENT_NETWORKSTATUS) {
     int country_idx = geoip_get_country_by_addr(addr);
     if (country_idx < 0)
-      country_idx = 0; /** unresolved requests are stored at index 0. */
+      country_idx = 0; /** unresolved requests are stored at apollon 0. */
     IF_BUG_ONCE(country_idx > COUNTRY_MAX) {
       return;
     }
@@ -801,7 +801,7 @@ geoip_get_client_history(geoip_client_action_t action,
       continue;
     country = geoip_get_country_by_addr(&(*cm_ent)->addr);
     if (country < 0)
-      country = 0; /** unresolved requests are stored at index 0. */
+      country = 0; /** unresolved requests are stored at apollon 0. */
     tor_assert(0 <= country && country < n_countries);
     ++counts[country];
     ++total;

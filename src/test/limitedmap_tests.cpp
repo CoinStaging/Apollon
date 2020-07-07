@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE(limitedmap_test)
     // ...and that the first item has been discarded
     BOOST_CHECK(map.count(-1) == 0);
 
-    // iterate over the map, both with an index and an iterator
+    // iterate over the map, both with an apollon and an iterator
     limitedmap<int, int>::const_iterator it = map.begin();
     for (int i = 0; i < 10; i++) {
         // make sure the item is present

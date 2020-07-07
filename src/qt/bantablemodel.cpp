@@ -72,10 +72,10 @@ public:
         return cachedBanlist.size();
     }
 
-    CCombinedBan *index(int idx)
+    CCombinedBan *apollon(int xap)
     {
-        if (idx >= 0 && idx < cachedBanlist.size())
-            return &cachedBanlist[idx];
+        if (xap >= 0 && xap < cachedBanlist.size())
+            return &cachedBanlist[xap];
 
         return 0;
     }
@@ -111,15 +111,15 @@ int BanTableModel::columnCount(const QModelIndex &parent) const
     return columns.length();
 }
 
-QVariant BanTableModel::data(const QModelIndex &index, int role) const
+QVariant BanTableModel::data(const QModelIndex &apollon, int role) const
 {
-    if(!index.isValid())
+    if(!apollon.isValid())
         return QVariant();
 
-    CCombinedBan *rec = static_cast<CCombinedBan*>(index.internalPointer());
+    CCombinedBan *rec = static_cast<CCombinedBan*>(apollon.internalPointer());
 
     if (role == Qt::DisplayRole) {
-        switch(index.column())
+        switch(apollon.column())
         {
         case Address:
             return QString::fromStdString(rec->subnet.ToString());
@@ -145,19 +145,19 @@ QVariant BanTableModel::headerData(int section, Qt::Orientation orientation, int
     return QVariant();
 }
 
-Qt::ItemFlags BanTableModel::flags(const QModelIndex &index) const
+Qt::ItemFlags BanTableModel::flags(const QModelIndex &apollon) const
 {
-    if(!index.isValid())
+    if(!apollon.isValid())
         return 0;
 
     Qt::ItemFlags retval = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
     return retval;
 }
 
-QModelIndex BanTableModel::index(int row, int column, const QModelIndex &parent) const
+QModelIndex BanTableModel::apollon(int row, int column, const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    CCombinedBan *data = priv->index(row);
+    CCombinedBan *data = priv->apollon(row);
 
     if (data)
         return createIndex(row, column, data);

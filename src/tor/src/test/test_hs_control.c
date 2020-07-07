@@ -62,7 +62,7 @@ node_describe_longname_by_id_replacement(const char *id_digest)
   }
 }
 
-/* HSDir fetch index is a series of 'D' */
+/* HSDir fetch apollon is a series of 'D' */
 #define HSDIR_INDEX_FETCH_HEX \
   "4343434343434343434343434343434343434343434343434343434343434343"
 #define HSDIR_INDEX_STORE_HEX \

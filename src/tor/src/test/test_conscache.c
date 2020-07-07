@@ -139,7 +139,7 @@ test_conscache_cleanup(void *arg)
     char num[8];
     tor_snprintf(num, sizeof(num), "%d", i);
     config_line_append(&labels, "test-id", "cleanup");
-    config_line_append(&labels, "index", num);
+    config_line_append(&labels, "apollon", num);
     size_t bodylen = i * 3;
     uint8_t *body = tor_malloc(bodylen);
     memset(body, i, bodylen);
@@ -191,16 +191,16 @@ test_conscache_cleanup(void *arg)
   /* At this point, the aggressively-released items with refcount 1 should
    * be unmapped. Nothing should be deleted. */
   consensus_cache_entry_t *e_tmp;
-  e_tmp = consensus_cache_find_first(cache, "index", "3");
+  e_tmp = consensus_cache_find_first(cache, "apollon", "3");
   tt_assert(e_tmp);
   tt_assert(! consensus_cache_entry_is_mapped(e_tmp));
-  e_tmp = consensus_cache_find_first(cache, "index", "5");
+  e_tmp = consensus_cache_find_first(cache, "apollon", "5");
   tt_assert(e_tmp);
   tt_assert(consensus_cache_entry_is_mapped(e_tmp));
-  e_tmp = consensus_cache_find_first(cache, "index", "6");
+  e_tmp = consensus_cache_find_first(cache, "apollon", "6");
   tt_assert(e_tmp);
   tt_assert(consensus_cache_entry_is_mapped(e_tmp));
-  e_tmp = consensus_cache_find_first(cache, "index", "7");
+  e_tmp = consensus_cache_find_first(cache, "apollon", "7");
   tt_ptr_op(e_tmp, OP_EQ, NULL); // not found because pending deletion.
 
   /* Delete the pending-deletion items. */
@@ -212,24 +212,24 @@ test_conscache_cleanup(void *arg)
     smartlist_free(entries);
     tt_int_op(n, OP_EQ, 20 - 2); /* 1 entry was deleted; 1 is not-found. */
   }
-  e_tmp = consensus_cache_find_first(cache, "index", "7"); // refcnt == 1...
+  e_tmp = consensus_cache_find_first(cache, "apollon", "7"); // refcnt == 1...
   tt_ptr_op(e_tmp, OP_EQ, NULL); // so deleted.
-  e_tmp = consensus_cache_find_first(cache, "index", "14"); // refcnt == 2
+  e_tmp = consensus_cache_find_first(cache, "apollon", "14"); // refcnt == 2
   tt_ptr_op(e_tmp, OP_EQ, NULL); // not deleted; but not found.
 
   /* Now do lazy unmapping. */
   // should do nothing.
   consensus_cache_unmap_lazy(cache, example_time - 10);
-  e_tmp = consensus_cache_find_first(cache, "index", "11");
+  e_tmp = consensus_cache_find_first(cache, "apollon", "11");
   tt_assert(e_tmp);
   tt_assert(consensus_cache_entry_is_mapped(e_tmp));
   // should actually unmap
   consensus_cache_unmap_lazy(cache, example_time + 10);
-  e_tmp = consensus_cache_find_first(cache, "index", "11");
+  e_tmp = consensus_cache_find_first(cache, "apollon", "11");
   tt_assert(e_tmp);
   tt_assert(! consensus_cache_entry_is_mapped(e_tmp));
   // This one will still be mapped, since it has a reference.
-  e_tmp = consensus_cache_find_first(cache, "index", "16");
+  e_tmp = consensus_cache_find_first(cache, "apollon", "16");
   tt_assert(e_tmp);
   tt_assert(consensus_cache_entry_is_mapped(e_tmp));
 
@@ -282,7 +282,7 @@ test_conscache_filter(void *arg)
     char num[8];
     tor_snprintf(num, sizeof(num), "%d", i);
     config_line_append(&labels, "test-id", "filter");
-    config_line_append(&labels, "index", num);
+    config_line_append(&labels, "apollon", num);
     tor_snprintf(num, sizeof(num), "%d", i % 3);
     config_line_append(&labels, "mod3", num);
     tor_snprintf(num, sizeof(num), "%d", i % 5);
@@ -317,8 +317,8 @@ test_conscache_filter(void *arg)
 
   consensus_cache_entry_t *ent1 = smartlist_get(lst, 0);
   consensus_cache_entry_t *ent2 = smartlist_get(lst, 1);
-  const char *idx1 = consensus_cache_entry_get_value(ent1, "index");
-  const char *idx2 = consensus_cache_entry_get_value(ent2, "index");
+  const char *idx1 = consensus_cache_entry_get_value(ent1, "apollon");
+  const char *idx2 = consensus_cache_entry_get_value(ent2, "apollon");
   tt_assert( (!strcmp(idx1, "28") && !strcmp(idx2, "13")) ||
              (!strcmp(idx1, "13") && !strcmp(idx2, "28")) );
 

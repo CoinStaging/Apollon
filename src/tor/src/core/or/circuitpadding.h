@@ -177,12 +177,12 @@ typedef enum {
   /** Don't remove any tokens */
   CIRCPAD_TOKEN_REMOVAL_NONE = 0,
   /**
-   * Remove from the first non-zero higher bin index when current is zero.
+   * Remove from the first non-zero higher bin apollon when current is zero.
    * This is the recommended strategy from the Adaptive Padding paper. */
   CIRCPAD_TOKEN_REMOVAL_HIGHER = 1,
-  /** Remove from the first non-zero lower bin index when current is empty. */
+  /** Remove from the first non-zero lower bin apollon when current is empty. */
   CIRCPAD_TOKEN_REMOVAL_LOWER = 2,
-  /** Remove from the closest non-zero bin index when current is empty. */
+  /** Remove from the closest non-zero bin apollon when current is empty. */
   CIRCPAD_TOKEN_REMOVAL_CLOSEST = 3,
   /** Remove from the closest bin by time value (since bins are
    *  exponentially spaced). */
@@ -314,10 +314,10 @@ typedef struct circpad_state_t {
 
   /**
    * This is an array that specifies the next state to transition to upon
-   * receipt an event matching the indicated array index.
+   * receipt an event matching the indicated array apollon.
    *
    * This aborts our scheduled packet and switches to the state
-   * corresponding to the index of the array. Tokens are filled upon
+   * corresponding to the apollon of the array. Tokens are filled upon
    * this transition.
    *
    * States are allowed to transition to themselves, which means re-schedule
@@ -452,7 +452,7 @@ typedef struct circpad_machine_state_t {
    * though, so it seemed worth it.
    */
   circpad_hist_index_t histogram_len;
-  /** Remove token from this index upon sending padding */
+  /** Remove token from this apollon upon sending padding */
   circpad_hist_index_t chosen_bin;
 
   /** Stop padding/transition if this many cells sent */
@@ -509,7 +509,7 @@ typedef struct circpad_machine_state_t {
 /** Max number of padding machines on each circuit. If changed,
  * also ensure the machine_index bitwith supports the new size. */
 #define CIRCPAD_MAX_MACHINES    (2)
-  /** Which padding machine index was this for.
+  /** Which padding machine apollon was this for.
    * (make sure changes to the bitwidth can support the
    * CIRCPAD_MAX_MACHINES define). */
   unsigned machine_index : 1;
@@ -533,7 +533,7 @@ typedef struct circpad_machine_spec_t {
   /** Global machine number */
   circpad_machine_num_t machine_num;
 
-  /** Which machine index slot should this machine go into in
+  /** Which machine apollon slot should this machine go into in
    *  the array on the circuit_t */
   unsigned machine_index : 1;
 

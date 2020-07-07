@@ -139,11 +139,11 @@
     </message>
     <message>
         <source>Reindexing blocks on disk...</source>
-        <translation>Cargando el index de bloques...</translation>
+        <translation>Cargando el apollon de bloques...</translation>
     </message>
     <message>
-        <source>Send coins to a Index address</source>
-        <translation>Enviar monedas a una dirección Index</translation>
+        <source>Send coins to a Apollon address</source>
+        <translation>Enviar monedas a una dirección Apollon</translation>
     </message>
     <message>
         <source>Backup wallet to another location</source>
@@ -166,8 +166,8 @@
         <translation>Verificar mensaje....</translation>
     </message>
     <message>
-        <source>Index</source>
-        <translation>Index</translation>
+        <source>Apollon</source>
+        <translation>Apollon</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -186,7 +186,7 @@
         <translation>&amp;Mostrar/Ocultar</translation>
     </message>
     <message>
-        <source>Sign messages with your Index addresses to prove you own them</source>
+        <source>Sign messages with your Apollon addresses to prove you own them</source>
         <translation>Firmar un mensaje para provar que usted es dueño de esta dirección</translation>
     </message>
     <message>
@@ -206,8 +206,8 @@
         <translation>Barra de pestañas</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and index: URIs)</source>
-        <translation>Pide pagos (genera codigos QR and index: URIs)</translation>
+        <source>Request payments (generates QR codes and apollon: URIs)</source>
+        <translation>Pide pagos (genera codigos QR and apollon: URIs)</translation>
     </message>
     <message>
         <source>%1 and %2</source>
@@ -368,8 +368,8 @@
         <translation>experto</translation>
     </message>
     <message>
-        <source>Automatically open the Index client port on the router. This only works when your router supports UPnP and it is enabled.</source>
-        <translation>Abre automáticamente el puerto del cliente Index en el router. Esto funciona solo cuando tu router es compatible con UPnP y está habilitado.</translation>
+        <source>Automatically open the Apollon client port on the router. This only works when your router supports UPnP and it is enabled.</source>
+        <translation>Abre automáticamente el puerto del cliente Apollon en el router. Esto funciona solo cuando tu router es compatible con UPnP y está habilitado.</translation>
     </message>
     <message>
         <source>Map port using &amp;UPnP</source>
@@ -689,7 +689,7 @@
         <translation>Firma</translation>
     </message>
     <message>
-        <source>Sign the message to prove you own this Index address</source>
+        <source>Sign the message to prove you own this Apollon address</source>
         <translation>Firmar un mensjage para probar que usted es dueño de esta dirección</translation>
     </message>
     <message>
@@ -752,7 +752,7 @@
     <name>WalletView</name>
     </context>
 <context>
-    <name>index-core</name>
+    <name>apollon-core</name>
     <message>
         <source>Options:</source>
         <translation>Opciones:
@@ -774,8 +774,8 @@
 </translation>
     </message>
     <message>
-        <source>Index Core</source>
-        <translation>Index Core</translation>
+        <source>Apollon Core</source>
+        <translation>Apollon Core</translation>
     </message>
     <message>
         <source>Connect only to the specified node(s)</source>
@@ -830,8 +830,8 @@
         <translation>Fondos insuficientes</translation>
     </message>
     <message>
-        <source>Loading block index...</source>
-        <translation>Cargando el index de bloques...</translation>
+        <source>Loading block apollon...</source>
+        <translation>Cargando el apollon de bloques...</translation>
     </message>
     <message>
         <source>Add a node to connect to and attempt to keep the connection open</source>

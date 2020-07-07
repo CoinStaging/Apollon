@@ -19,7 +19,7 @@ class CRPCConvertParam
 {
 public:
     std::string methodName; //!< method whose params want conversion
-    int paramIdx;           //!< 0-based idx of param to convert
+    int paramIdx;           //!< 0-based xap of param to convert
 };
 
 static const CRPCConvertParam vRPCConvertParams[] =
@@ -119,7 +119,7 @@ static const CRPCConvertParam vRPCConvertParams[] =
     { "getaddressdeltas", 0},
     { "getaddressutxos", 0},
     { "getaddressmempool", 0},
-        //[index]
+        //[apollon]
     { "setmininput", 0 },
     {"spork", 1},
     { "mint", 0 },
@@ -302,8 +302,8 @@ private:
 public:
     CRPCConvertTable();
 
-    bool convert(const std::string& method, int idx) {
-        return (members.count(std::make_pair(method, idx)) > 0);
+    bool convert(const std::string& method, int xap) {
+        return (members.count(std::make_pair(method, xap)) > 0);
     }
 };
 
@@ -337,10 +337,10 @@ UniValue RPCConvertValues(const std::string &strMethod, const std::vector<std::s
 {
     UniValue params(UniValue::VARR);
 
-    for (unsigned int idx = 0; idx < strParams.size(); idx++) {
-        const std::string& strVal = strParams[idx];
+    for (unsigned int xap = 0; xap < strParams.size(); xap++) {
+        const std::string& strVal = strParams[xap];
 
-        if (!rpcCvtTable.convert(strMethod, idx)) {
+        if (!rpcCvtTable.convert(strMethod, xap)) {
             // insert string value directly
             params.push_back(strVal);
         } else {

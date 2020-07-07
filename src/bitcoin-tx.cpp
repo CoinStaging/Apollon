@@ -56,10 +56,10 @@ static int AppInitRawTx(int argc, char* argv[])
     if (argc<2 || mapArgs.count("-?") || mapArgs.count("-h") || mapArgs.count("-help"))
     {
         // First part of help message is specific to this utility
-        std::string strUsage = strprintf(_("%s index-tx utility version"), _(PACKAGE_NAME)) + " " + FormatFullVersion() + "\n\n" +
+        std::string strUsage = strprintf(_("%s apollon-tx utility version"), _(PACKAGE_NAME)) + " " + FormatFullVersion() + "\n\n" +
             _("Usage:") + "\n" +
-              "  index-tx [options] <hex-tx> [commands]  " + _("Update hex-encoded Index transaction") + "\n" +
-              "  index-tx [options] -create [commands]   " + _("Create hex-encoded Index transaction") + "\n" +
+              "  apollon-tx [options] <hex-tx> [commands]  " + _("Update hex-encoded Apollon transaction") + "\n" +
+              "  apollon-tx [options] -create [commands]   " + _("Create hex-encoded Apollon transaction") + "\n" +
               "\n";
 
         fprintf(stdout, "%s", strUsage.c_str());
@@ -305,10 +305,10 @@ static void MutateTxAddOutScript(CMutableTransaction& tx, const string& strInput
 
 static void MutateTxDelInput(CMutableTransaction& tx, const string& strInIdx)
 {
-    // parse requested deletion index
+    // parse requested deletion apollon
     int inIdx = atoi(strInIdx);
     if (inIdx < 0 || inIdx >= (int)tx.vin.size()) {
-        string strErr = "Invalid TX input index '" + strInIdx + "'";
+        string strErr = "Invalid TX input apollon '" + strInIdx + "'";
         throw runtime_error(strErr.c_str());
     }
 
@@ -318,10 +318,10 @@ static void MutateTxDelInput(CMutableTransaction& tx, const string& strInIdx)
 
 static void MutateTxDelOutput(CMutableTransaction& tx, const string& strOutIdx)
 {
-    // parse requested deletion index
+    // parse requested deletion apollon
     int outIdx = atoi(strOutIdx);
     if (outIdx < 0 || outIdx >= (int)tx.vout.size()) {
-        string strErr = "Invalid TX output index '" + strOutIdx + "'";
+        string strErr = "Invalid TX output apollon '" + strOutIdx + "'";
         throw runtime_error(strErr.c_str());
     }
 
@@ -635,7 +635,7 @@ static int CommandLineRawTx(int argc, char* argv[])
             if (argc < 2)
                 throw runtime_error("too few parameters");
 
-            // param: hex-encoded Index transaction
+            // param: hex-encoded Apollon transaction
             string strHexTx(argv[1]);
             if (strHexTx == "-")                 // "-" implies standard input
                 strHexTx = readStdin();

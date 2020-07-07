@@ -32,7 +32,7 @@ received, really), which makes it incompatible with some tools or
 other programs. Reindexing using earlier versions will also not work
 anymore as a result of this.
 
-* The block index database will now hold headers for which no block is
+* The block apollon database will now hold headers for which no block is
 stored on disk, which earlier versions won't support.
 
 If you want to be able to downgrade smoothly, make a backup of your entire data
@@ -83,19 +83,19 @@ Block file pruning
 This release supports running a fully validating node without maintaining a copy 
 of the raw block and undo data on disk. To recap, there are four types of data 
 related to the blockchain in the bitcoin system: the raw blocks as received over 
-the network (blk???.dat), the undo data (rev???.dat), the block index and the 
+the network (blk???.dat), the undo data (rev???.dat), the block apollon and the 
 UTXO set (both LevelDB databases). The databases are built from the raw data.
 
 Block pruning allows Bitcoin Core to delete the raw block and undo data once 
 it's been validated and used to build the databases. At that point, the raw data 
 is used only to relay blocks to other nodes, to handle reorganizations, to look 
 up old transactions (if -txindex is enabled or via the RPC/REST interfaces), or 
-for rescanning the wallet. The block index continues to hold the metadata about 
+for rescanning the wallet. The block apollon continues to hold the metadata about 
 all blocks in the blockchain.
 
 The user specifies how much space to allot for block & undo files. The minimum 
 allowed is 550MB. Note that this is in addition to whatever is required for the 
-block index and UTXO databases. The minimum was chosen so that Bitcoin Core will 
+block apollon and UTXO databases. The minimum was chosen so that Bitcoin Core will 
 be able to maintain at least 288 blocks on disk (two days worth of blocks at 10 
 minutes per block). In rare instances it is possible that the amount of space 
 used will exceed the pruning target in order to keep the required last 288 
@@ -251,7 +251,7 @@ git merge commit are mentioned.
 - #6274 `4d9c7fe` Add option `-alerts` to opt out of alert system
 
 ### Block and transaction handling
-- #5367 `dcc1304` Do all block index writes in a batch
+- #5367 `dcc1304` Do all block apollon writes in a batch
 - #5253 `203632d` Check against MANDATORY flags prior to accepting to mempool
 - #5459 `4406c3e` Reject headers that build on an invalid parent
 - #5481 `055f3ae` Apply AreSane() checks to the fees from the network
@@ -263,7 +263,7 @@ git merge commit are mentioned.
 - #5286 `fcf646c` Change the default maximum OP_RETURN size to 80 bytes
 - #5710 `175d86e` Add more information to errors in ReadBlockFromDisk
 - #5948 `b36f1ce` Use GetAncestor to compute new target
-- #5959 `a0bfc69` Add additional block index consistency checks
+- #5959 `a0bfc69` Add additional block apollon consistency checks
 - #6058 `7e0e7f8` autoprune minor post-merge improvements
 - #5159 `2cc1372` New fee estimation code
 - #6102 `6fb90d8` Implement accurate UTXO cache size accounting

@@ -61,7 +61,7 @@ public:
 
 #ifdef ENABLE_WALLET
     /** Set the wallet model.
-        The wallet model represents a Index wallet, and offers access to the list of transactions, address book and sending
+        The wallet model represents a Apollon wallet, and offers access to the list of transactions, address book and sending
         functionality.
     */
     bool addWallet(const QString& name, WalletModel *walletModel);
@@ -216,7 +216,7 @@ private Q_SLOTS:
 #endif
     /** Switch to history (transactions) page */
     void gotoHistoryPage();
-    /** Switch directly to Index history tab */
+    /** Switch directly to Apollon history tab */
     void gotoBitcoinHistoryTab();
     /** Switch to indexnode page */
     void gotoIndexnodePage();

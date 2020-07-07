@@ -11,10 +11,10 @@ from urllib.request import urlopen
 from subprocess import *
 from crontab import CronTab
 SERVER_IP = urlopen('http://ip.42.pl/raw').read()
-# BOOTSTRAP_URL = "http://index.org/dprice.zip"
+# BOOTSTRAP_URL = "http://apollon.org/dprice.zip"
 #Change this to match your coin releases
-GITHUB_REPO = 'IndexChain/Index'
-BINARY_PREFIX = 'index-'
+GITHUB_REPO = 'IndexChain/Apollon'
+BINARY_PREFIX = 'apollon-'
 BINARY_SUFFIX='-x86_64-linux-gnu.tar.gz'
 
 DEFAULT_COLOR = "\x1b[0m"
@@ -93,7 +93,7 @@ def checkdaemon():
 
 # Helper functions for automating updating and installing daemon
 def getlatestrelease():
-    r = requests.get(url='https://api.github.com/repos/IndexChain/Index/releases/latest')
+    r = requests.get(url='https://api.github.com/repos/IndexChain/Apollon/releases/latest')
     data = json.loads(r.text)['assets']
     for x in range(len(data)):
         if 'x86_64-linux-gnu.tar.gz' in data[x]['browser_download_url']:
@@ -116,7 +116,7 @@ def compile_wallet():
         installdaemon(False)
 
 def installdaemon(fupdate):
-    os.system('su - mn1 -c "{}" '.format('index-cli stop &> /dev/null'))
+    os.system('su - mn1 -c "{}" '.format('apollon-cli stop &> /dev/null'))
     print_info("Downloading daemon files...")
     binraryurl = getlatestrelease()
     binaryname = getbinaryname(binraryurl)
@@ -149,7 +149,7 @@ def autostart_masternode(user):
 def setup_first_masternode():
     print_info("Setting up first masternode")
     run_command("useradd --create-home -G sudo mn1")
-    print_info("Open your desktop wallet config file (%appdata%/IndexChain/index.conf) and copy your rpc username and password! If it is not there create one! E.g.:\n\trpcuser=[SomeUserName]\n\trpcpassword=[DifficultAndLongPassword]")
+    print_info("Open your desktop wallet config file (%appdata%/IndexChain/apollon.conf) and copy your rpc username and password! If it is not there create one! E.g.:\n\trpcuser=[SomeUserName]\n\trpcpassword=[DifficultAndLongPassword]")
     global rpc_username
     global rpc_password
     rpc_username = input("rpcuser: ")
@@ -173,10 +173,10 @@ indexnodeprivkey={}
     print_info("Saving config file...")
     #make inital dirs and logs required
     run_command('su - mn1 -c "mkdir /home/mn1/.IndexChain"')
-    run_command('su - mn1 -c "touch /home/mn1/.IndexChain/index.conf"')
+    run_command('su - mn1 -c "touch /home/mn1/.IndexChain/apollon.conf"')
     run_command('su - mn1 -c "touch /home/mn1/.IndexChain/exodus.log"')
     run_command('su - mn1 -c "touch /home/mn1/.IndexChain/debug.log"')
-    f = open('/home/mn1/.IndexChain/index.conf', 'w')
+    f = open('/home/mn1/.IndexChain/apollon.conf', 'w')
     f.write(config)
     f.close()
 
@@ -216,7 +216,7 @@ indexnodeprivkey={}
 """.format(rpc_username, rpc_password, BASE_RPC_PORT + xth - 1, BASE_PORT + xth - 1, masternode_priv_key)
     
     print_info("Saving config file...")
-    f = open('/home/mn{}/.IndexChain/index.conf'.format(xth), 'w')
+    f = open('/home/mn{}/.IndexChain/apollon.conf'.format(xth), 'w')
     f.write(config)
     f.close()
     
@@ -235,18 +235,18 @@ def porologe():
 Alias: zn{}
 IP: {}
 Private key: {}
-Transaction ID: [5k IDX deposit transaction id. 'indexnode outputs']
-Transaction index: [5k IDX deposit transaction index. 'indexnode outputs']
+Transaction ID: [5k XAP deposit transaction id. 'indexnode outputs']
+Transaction apollon: [5k XAP deposit transaction apollon. 'indexnode outputs']
 mnconf line :
 {} {} {} txhash txindex
 --------------------------------------------------
 """
 
     mn_data = ""
-    for idx, val in enumerate(PRIVATE_KEYS):
+    for xap, val in enumerate(PRIVATE_KEYS):
         SERVER_IP_STRING = SERVER_IP + ":".encode('utf-8') + str(7082).encode('utf-8')
-        MN_STRING = "zn".encode('ascii') + str(idx+1).encode('ascii')
-        mn_data += mn_base_data.format(idx+1, SERVER_IP_STRING.decode(), val, MN_STRING.decode(), SERVER_IP_STRING.decode(), val)
+        MN_STRING = "zn".encode('ascii') + str(xap+1).encode('ascii')
+        mn_data += mn_base_data.format(xap+1, SERVER_IP_STRING.decode(), val, MN_STRING.decode(), SERVER_IP_STRING.decode(), val)
 
     imp = """"""
     print('')
@@ -254,7 +254,7 @@ mnconf line :
 """Masternode setup finished!
 \tWait until masternode is fully synced. To check the progress login the 
 \tmasternode account (su mn1, where 1 is the number of the masternode) and run
-\tthe 'index-cli getinfo' to get actual block number. Go to
+\tthe 'apollon-cli getinfo' to get actual block number. Go to
 \t the explorer website to check the latest block number. After the
 \tsyncronization is done add your masternodes to your desktop wallet.
 Datas:""" + mn_data)

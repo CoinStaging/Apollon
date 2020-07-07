@@ -114,8 +114,8 @@
         <translation>Промени &amp;лозинку...</translation>
     </message>
     <message>
-        <source>Send coins to a Index address</source>
-        <translation>Пошаљите новац на Index адресу</translation>
+        <source>Send coins to a Apollon address</source>
+        <translation>Пошаљите новац на Apollon адресу</translation>
     </message>
     <message>
         <source>Change the passphrase used for wallet encryption</source>
@@ -392,7 +392,7 @@
     <name>WalletView</name>
     </context>
 <context>
-    <name>index-core</name>
+    <name>apollon-core</name>
     <message>
         <source>Options:</source>
         <translation>Opcije</translation>
@@ -422,7 +422,7 @@
         <translation>učitavam adrese....</translation>
     </message>
     <message>
-        <source>Loading block index...</source>
+        <source>Loading block apollon...</source>
         <translation>Učitavam blok indeksa...</translation>
     </message>
     <message>

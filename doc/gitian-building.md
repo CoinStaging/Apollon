@@ -1,7 +1,7 @@
 Gitian building
 ================
 
-*Setup instructions for a Gitian build of Index Core using a Debian VM or physical system.*
+*Setup instructions for a Gitian build of Apollon Core using a Debian VM or physical system.*
 
 Gitian is the deterministic build process that is used to build the Bitcoin
 Core executables. It provides a way to be reasonably sure that the
@@ -26,7 +26,7 @@ Table of Contents
 - [Installing Gitian](#installing-gitian)
 - [Setting up the Gitian image](#setting-up-the-gitian-image)
 - [Getting and building the inputs](#getting-and-building-the-inputs)
-- [Building Index Core](#building-bitcoin-core)
+- [Building Apollon Core](#building-bitcoin-core)
 - [Building an alternative repository](#building-an-alternative-repository)
 - [Signing externally](#signing-externally)
 - [Uploading signatures](#uploading-signatures)
@@ -226,7 +226,7 @@ Connecting to the VM
 
 After the VM has booted you can connect to it using SSH, and files can be copied from and to the VM using a SFTP utility.
 Connect to `localhost`, port `22222` (or the port configured when installing the VM).
-On Windows you can use [putty](http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html) and [WinSCP](http://winscp.net/eng/index.php).
+On Windows you can use [putty](http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html) and [WinSCP](http://winscp.net/eng/apollon.php).
 
 For example, to connect as `root` from a Linux command prompt use
 
@@ -309,7 +309,7 @@ Clone the git repositories for bitcoin and Gitian.
 
 ```bash
 git clone https://github.com/devrandom/gitian-builder.git
-git clone https://github.com/IndexChain/Index
+git clone https://github.com/IndexChain/Apollon
 git clone https://github.com/bitcoin-core/gitian.sigs.git
 ```
 
@@ -337,15 +337,15 @@ Getting and building the inputs
 --------------------------------
 
 Follow the instructions in [doc/release-process.md](release-process.md#fetch-and-build-inputs-first-time-or-when-dependency-versions-change)
-in the Index repository under 'Fetch and create inputs' to install sources which require
+in the Apollon repository under 'Fetch and create inputs' to install sources which require
 manual intervention. Also optionally follow the next step: 'Seed the Gitian sources cache
 and offline git repositories' which will fetch the remaining files required for building
 offline.
 
-Building Index Core
+Building Apollon Core
 ----------------
 
-To build Index Core (for Linux, OS X and Windows) just follow the steps under 'perform
+To build Apollon Core (for Linux, OS X and Windows) just follow the steps under 'perform
 Gitian builds' in [doc/release-process.md](release-process.md#perform-gitian-builds) in the bitcoin repository.
 
 This may take some time as it will build all the dependencies needed for each descriptor.
@@ -391,11 +391,11 @@ and inputs.
 
 For example:
 ```bash
-URL=https://github.com/snguyen-vn/index.git
+URL=https://github.com/snguyen-vn/apollon.git
 COMMIT=2014_03_windows_unicode_path
-./bin/gbuild --commit index=${COMMIT} --url bitcoin=${URL} ../bitcoin/contrib/gitian-descriptors/gitian-linux.yml
-./bin/gbuild --commit index=${COMMIT} --url bitcoin=${URL} ../bitcoin/contrib/gitian-descriptors/gitian-win.yml
-./bin/gbuild --commit index=${COMMIT} --url bitcoin=${URL} ../bitcoin/contrib/gitian-descriptors/gitian-osx.yml
+./bin/gbuild --commit apollon=${COMMIT} --url bitcoin=${URL} ../bitcoin/contrib/gitian-descriptors/gitian-linux.yml
+./bin/gbuild --commit apollon=${COMMIT} --url bitcoin=${URL} ../bitcoin/contrib/gitian-descriptors/gitian-win.yml
+./bin/gbuild --commit apollon=${COMMIT} --url bitcoin=${URL} ../bitcoin/contrib/gitian-descriptors/gitian-osx.yml
 ```
 
 Building fully offline

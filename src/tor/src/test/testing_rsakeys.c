@@ -440,7 +440,7 @@ static int next_key_idx_2048;
 #endif /* defined(USE_PREGENERATED_RSA_KEYS) */
 
 /** Generate and return a new keypair for use in unit tests.  If we're using
- * the key cache optimization, we might reuse keys. "idx" is ignored.
+ * the key cache optimization, we might reuse keys. "xap" is ignored.
  * Our only guarantee is that we won't reuse a key till this function has been
  * called several times. The order in which keys are returned is slightly
  * randomized, so that tests that depend on a particular order will not be
@@ -478,9 +478,9 @@ pk_generate_internal(int bits)
 }
 
 crypto_pk_t *
-pk_generate(int idx)
+pk_generate(int xap)
 {
-  (void) idx;
+  (void) xap;
   return pk_generate_internal(1024);
 }
 
@@ -504,17 +504,17 @@ void
 free_pregenerated_keys(void)
 {
 #ifdef USE_PREGENERATED_RSA_KEYS
-  unsigned idx;
-  for (idx = 0; idx < N_PREGEN_KEYS_1024; ++idx) {
-    if (pregen_keys_1024[idx]) {
-      crypto_pk_free(pregen_keys_1024[idx]);
-      pregen_keys_1024[idx] = NULL;
+  unsigned xap;
+  for (xap = 0; xap < N_PREGEN_KEYS_1024; ++xap) {
+    if (pregen_keys_1024[xap]) {
+      crypto_pk_free(pregen_keys_1024[xap]);
+      pregen_keys_1024[xap] = NULL;
     }
   }
-  for (idx = 0; idx < N_PREGEN_KEYS_2048; ++idx) {
-    if (pregen_keys_2048[idx]) {
-      crypto_pk_free(pregen_keys_2048[idx]);
-      pregen_keys_2048[idx] = NULL;
+  for (xap = 0; xap < N_PREGEN_KEYS_2048; ++xap) {
+    if (pregen_keys_2048[xap]) {
+      crypto_pk_free(pregen_keys_2048[xap]);
+      pregen_keys_2048[xap] = NULL;
     }
   }
 #endif /* defined(USE_PREGENERATED_RSA_KEYS) */

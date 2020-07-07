@@ -218,7 +218,7 @@ channelpadding_get_netflow_inactive_timeout_ms(const channel_t *chan)
    * (as seen by the Exp[max(X,X)] column).
    *
    * To calculate average padding packet frequency (and thus overhead),
-   * index into the table by picking a row based on R = high-low. Then,
+   * apollon into the table by picking a row based on R = high-low. Then,
    * use the appropriate column (Exp[Z] for two-sided padding, and
    * Exp[max(X,X)] for one-sided padding). Finally, take this value
    * and add it to the low timeout value. This value is the average

@@ -1503,7 +1503,7 @@ add_noparam_filter(scmp_filter_ctx ctx)
   for (i = 0; i < ARRAY_LENGTH(filter_nopar_gen); i++) {
     rc = seccomp_rule_add_0(ctx, SCMP_ACT_ALLOW, filter_nopar_gen[i]);
     if (rc != 0) {
-      log_err(LD_BUG,"(Sandbox) failed to add syscall index %d (NR=%d), "
+      log_err(LD_BUG,"(Sandbox) failed to add syscall apollon %d (NR=%d), "
           "received libseccomp error %d", i, filter_nopar_gen[i], rc);
       return rc;
     }

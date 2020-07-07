@@ -86,7 +86,7 @@ public:
             std::string port = authority.substr(authority.find(":")+1, authority.length());
 
             outpoint.push_back(Pair("txid", getTxHash().substr(0,64)));
-            outpoint.push_back(Pair("index", getOutputIndex()));
+            outpoint.push_back(Pair("apollon", getOutputIndex()));
             authorityObj.push_back(Pair("ip", ip));
             authorityObj.push_back(Pair("port", port));
 

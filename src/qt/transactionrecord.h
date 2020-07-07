@@ -89,13 +89,13 @@ public:
     static const int RecommendedNumConfirmations = 6;
 
     TransactionRecord():
-            hash(), time(0), type(Other), address(""), debit(0), credit(0), idx(0)
+            hash(), time(0), type(Other), address(""), debit(0), credit(0), xap(0)
     {
     }
 
     TransactionRecord(uint256 hash, qint64 time):
             hash(hash), time(time), type(Other), address(""), debit(0),
-            credit(0), idx(0)
+            credit(0), xap(0)
     {
     }
 
@@ -103,7 +103,7 @@ public:
                 Type type, const std::string &address,
                 const CAmount& debit, const CAmount& credit):
             hash(hash), time(time), type(type), address(address), debit(debit), credit(credit),
-            idx(0)
+            xap(0)
     {
     }
 
@@ -122,8 +122,8 @@ public:
     CAmount credit;
     /**@}*/
 
-    /** Subtransaction index, for sort key */
-    int idx;
+    /** Subtransaction apollon, for sort key */
+    int xap;
 
     /** Status: can change with block chain update */
     TransactionStatus status;
@@ -134,7 +134,7 @@ public:
     /** Return the unique identifier for this transaction (part) */
     QString getTxID() const;
 
-    /** Return the output index of the subtransaction  */
+    /** Return the output apollon of the subtransaction  */
     int getOutputIndex() const;
 
     /** Update status from core wallet tx.

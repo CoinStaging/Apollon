@@ -170,7 +170,7 @@
         <translation>Preindexúvam bloky na disku...</translation>
     </message>
     <message>
-        <source>Send coins to a Index address</source>
+        <source>Send coins to a Apollon address</source>
         <translation>Poslať indexs na adresu</translation>
     </message>
     <message>
@@ -194,8 +194,8 @@
         <translation>O&amp;veriť správu...</translation>
     </message>
     <message>
-        <source>Index</source>
-        <translation>Index</translation>
+        <source>Apollon</source>
+        <translation>Apollon</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -222,12 +222,12 @@
         <translation>Zašifruj súkromné kľúče ktoré patria do vašej peňaženky</translation>
     </message>
     <message>
-        <source>Sign messages with your Index addresses to prove you own them</source>
-        <translation>Podpísať správu s vašou adresou Index aby ste preukázali že ju vlastníte</translation>
+        <source>Sign messages with your Apollon addresses to prove you own them</source>
+        <translation>Podpísať správu s vašou adresou Apollon aby ste preukázali že ju vlastníte</translation>
     </message>
     <message>
-        <source>Verify messages to ensure they were signed with specified Index addresses</source>
-        <translation>Overiť či správa bola podpísaná uvedenou Index adresou</translation>
+        <source>Verify messages to ensure they were signed with specified Apollon addresses</source>
+        <translation>Overiť či správa bola podpísaná uvedenou Apollon adresou</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -246,8 +246,8 @@
         <translation>Lišta záložiek</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and index: URIs)</source>
-        <translation>Vyžiadať platby (vygeneruje QR kódy a index: URI)</translation>
+        <source>Request payments (generates QR codes and apollon: URIs)</source>
+        <translation>Vyžiadať platby (vygeneruje QR kódy a apollon: URI)</translation>
     </message>
     <message>
         <source>Show the list of used sending addresses and labels</source>
@@ -258,16 +258,16 @@
         <translation>Zobraziť zoznam použitých prijímacích adries a ich popisov</translation>
     </message>
     <message>
-        <source>Open a index: URI or payment request</source>
-        <translation>Otvoriť index URI alebo výzvu k platbe</translation>
+        <source>Open a apollon: URI or payment request</source>
+        <translation>Otvoriť apollon URI alebo výzvu k platbe</translation>
     </message>
     <message>
         <source>&amp;Command-line options</source>
         <translation>Možnosti príkazového riadku</translation>
     </message>
     <message numerus="yes">
-        <source>%n active connection(s) to Index network</source>
-        <translation><numerusform>%n aktívne pripojenie do siete Index</numerusform><numerusform>%n aktívne pripojenia do siete Index</numerusform><numerusform>%n aktívnych pripojení do siete Index</numerusform></translation>
+        <source>%n active connection(s) to Apollon network</source>
+        <translation><numerusform>%n aktívne pripojenie do siete Apollon</numerusform><numerusform>%n aktívne pripojenia do siete Apollon</numerusform><numerusform>%n aktívnych pripojení do siete Apollon</numerusform></translation>
     </message>
     <message>
         <source>Indexing blocks on disk...</source>
@@ -334,7 +334,7 @@
         <translation>Aktualizovaný</translation>
     </message>
     <message>
-        <source>Show the %1 help message to get a list with possible Index command-line options</source>
+        <source>Show the %1 help message to get a list with possible Apollon command-line options</source>
         <translation>Ukáž %1 zoznam možných nastavení Zcoinu pomocou príkazového riadku</translation>
     </message>
     <message>
@@ -591,8 +591,8 @@
         <translation>Keďže toto je prvé spustenie programu, môžete si vybrať, kam %1 bude ukladať vaše údaje.</translation>
     </message>
     <message>
-        <source>%1 will download and store a copy of the Index block chain. At least %2GB of data will be stored in this directory, and it will grow over time. The wallet will also be stored in this directory.</source>
-        <translation>%1 stiahne a uloží kópiu Index block chain. Minimálne %2GB dát bude uložených v tejto zložke, a bude sa zväčšovať postupom času. Peňaženka bude taktiež uložená v tejto zložke.</translation>
+        <source>%1 will download and store a copy of the Apollon block chain. At least %2GB of data will be stored in this directory, and it will grow over time. The wallet will also be stored in this directory.</source>
+        <translation>%1 stiahne a uloží kópiu Apollon block chain. Minimálne %2GB dát bude uložených v tejto zložke, a bude sa zväčšovať postupom času. Peňaženka bude taktiež uložená v tejto zložke.</translation>
     </message>
     <message>
         <source>Use the default data directory</source>
@@ -733,16 +733,16 @@
         <translation>Minúť nepotvrdený výdavok</translation>
     </message>
     <message>
-        <source>Automatically open the Index client port on the router. This only works when your router supports UPnP and it is enabled.</source>
-        <translation>Automaticky otvorit port pre Index na routeri. Toto funguje len ak router podporuje UPnP a je táto podpora aktivovaná.</translation>
+        <source>Automatically open the Apollon client port on the router. This only works when your router supports UPnP and it is enabled.</source>
+        <translation>Automaticky otvorit port pre Apollon na routeri. Toto funguje len ak router podporuje UPnP a je táto podpora aktivovaná.</translation>
     </message>
     <message>
         <source>Map port using &amp;UPnP</source>
         <translation>Mapovať port pomocou &amp;UPnP</translation>
     </message>
     <message>
-        <source>Connect to the Index network through a SOCKS5 proxy.</source>
-        <translation>Pripojiť do siete Index cez proxy server SOCKS5.</translation>
+        <source>Connect to the Apollon network through a SOCKS5 proxy.</source>
+        <translation>Pripojiť do siete Apollon cez proxy server SOCKS5.</translation>
     </message>
     <message>
         <source>&amp;Connect through SOCKS5 proxy (default proxy):</source>
@@ -781,7 +781,7 @@
         <translation>Tor</translation>
     </message>
     <message>
-        <source>Connect to the Index network through a separate SOCKS5 proxy for Tor hidden services.</source>
+        <source>Connect to the Apollon network through a separate SOCKS5 proxy for Tor hidden services.</source>
         <translation>Pripojiť k Zcoinovej sieti cez separované SOCKS5 proxy pre skrytú službu Tor.</translation>
     </message>
     <message>
@@ -830,7 +830,7 @@
     </message>
     <message>
         <source>Choose the default subdivision unit to show in the interface and when sending indexs.</source>
-        <translation>Zvoľte ako deliť index pri zobrazovaní pri platbách a užívateľskom rozhraní.</translation>
+        <translation>Zvoľte ako deliť apollon pri zobrazovaní pri platbách a užívateľskom rozhraní.</translation>
     </message>
     <message>
         <source>Whether to show coin control features or not.</source>
@@ -880,8 +880,8 @@
         <translation>Forma</translation>
     </message>
     <message>
-        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Index network after a connection is established, but this process has not completed yet.</source>
-        <translation>Zobrazené informácie môžu byť neaktuálne. Vaša peňaženka sa automaticky synchronizuje so sieťou Index po nadviazaní spojenia, ale tento proces ešte nie je ukončený.</translation>
+        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Apollon network after a connection is established, but this process has not completed yet.</source>
+        <translation>Zobrazené informácie môžu byť neaktuálne. Vaša peňaženka sa automaticky synchronizuje so sieťou Apollon po nadviazaní spojenia, ale tento proces ešte nie je ukončený.</translation>
     </message>
     <message>
         <source>Watch-only:</source>
@@ -973,8 +973,8 @@
         <translation>Suma</translation>
     </message>
     <message>
-        <source>Enter a Index address (e.g. %1)</source>
-        <translation>Zadajte Index adresu (napr. %1)</translation>
+        <source>Enter a Apollon address (e.g. %1)</source>
+        <translation>Zadajte Apollon adresu (napr. %1)</translation>
     </message>
     <message>
         <source>%1 d</source>
@@ -1323,8 +1323,8 @@
         <translation>Znovu použiť jestvujúcu prijímaciu adresu (neodporúča sa)</translation>
     </message>
     <message>
-        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the Index network.</source>
-        <translation>Pridať voliteľnú správu k výzve na zaplatenie, ktorá sa zobrazí keď bude výzva otvorená. Poznámka: Správa nebude poslaná s platbou cez sieť Index.</translation>
+        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the Apollon network.</source>
+        <translation>Pridať voliteľnú správu k výzve na zaplatenie, ktorá sa zobrazí keď bude výzva otvorená. Poznámka: Správa nebude poslaná s platbou cez sieť Apollon.</translation>
     </message>
     <message>
         <source>An optional label to associate with the new receiving address.</source>
@@ -1484,7 +1484,7 @@
         <translation>spolu aspoň</translation>
     </message>
     <message>
-        <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks. But be aware that this can end up in a never confirming transaction once there is more demand for Index transactions than the network can process.</source>
+        <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks. But be aware that this can end up in a never confirming transaction once there is more demand for Apollon transactions than the network can process.</source>
         <translation>Zaplatenie len minimálneho poplatku je v poriadku, pokiaľ existuje menej transakcií ako miesta v blokoch. Uvedomte si však, že ak bude vyšší dopyt po transakciách ako dokáže sieť spracovať, môže byť vaša transakcia odsúvaná a nepotvrdená donekonečna.</translation>
     </message>
     <message>
@@ -1579,7 +1579,7 @@
         <translation>Toto je normálna platba.</translation>
     </message>
     <message>
-        <source>The Index address to send the payment to</source>
+        <source>The Apollon address to send the payment to</source>
         <translation>Zvoľte adresu kam poslať platbu</translation>
     </message>
     <message>
@@ -1623,8 +1623,8 @@
         <translation>Vložte popis pre túto adresu aby sa uložila do zoznamu použitých adries</translation>
     </message>
     <message>
-        <source>A message that was attached to the index: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Index network.</source>
-        <translation>Správa ktorá bola pripojená k index: URI a ktorá bude uložená s transakcou pre Vaše potreby. Poznámka: Táto správa nebude poslaná cez sieť Index.</translation>
+        <source>A message that was attached to the apollon: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Apollon network.</source>
+        <translation>Správa ktorá bola pripojená k apollon: URI a ktorá bude uložená s transakcou pre Vaše potreby. Poznámka: Táto správa nebude poslaná cez sieť Apollon.</translation>
     </message>
     <message>
         <source>Pay To:</source>
@@ -1660,8 +1660,8 @@
         <translation>&amp;Podpísať Správu</translation>
     </message>
     <message>
-        <source>The Index address to sign the message with</source>
-        <translation>Index adresa pre podpísanie správy s</translation>
+        <source>The Apollon address to sign the message with</source>
+        <translation>Apollon adresa pre podpísanie správy s</translation>
     </message>
     <message>
         <source>Choose previously used address</source>
@@ -1692,7 +1692,7 @@
         <translation>Kopírovať práve zvolenú adresu do systémového klipbordu</translation>
     </message>
     <message>
-        <source>Sign the message to prove you own this Index address</source>
+        <source>Sign the message to prove you own this Apollon address</source>
         <translation>Podpíšte správu aby ste dokázali že vlastníte túto adresu</translation>
     </message>
     <message>
@@ -1712,12 +1712,12 @@
         <translation>O&amp;veriť správu...</translation>
     </message>
     <message>
-        <source>The Index address the message was signed with</source>
-        <translation>Adresa Index, ktorou bola podpísaná správa</translation>
+        <source>The Apollon address the message was signed with</source>
+        <translation>Adresa Apollon, ktorou bola podpísaná správa</translation>
     </message>
     <message>
-        <source>Verify the message to ensure it was signed with the specified Index address</source>
-        <translation>Overím správy sa uistiť že bola podpísaná označenou Index adresou</translation>
+        <source>Verify the message to ensure it was signed with the specified Apollon address</source>
+        <translation>Overím správy sa uistiť že bola podpísaná označenou Apollon adresou</translation>
     </message>
     <message>
         <source>Verify &amp;Message</source>
@@ -1779,7 +1779,7 @@
     <name>WalletView</name>
     </context>
 <context>
-    <name>index-core</name>
+    <name>apollon-core</name>
     <message>
         <source>Options:</source>
         <translation>Možnosti:</translation>
@@ -1833,8 +1833,8 @@
         <translation>Prijať spojenia zvonku (predvolené: 1 ak žiadne -proxy alebo -connect)</translation>
     </message>
     <message>
-        <source>Index Core</source>
-        <translation>Jadro Index</translation>
+        <source>Apollon Core</source>
+        <translation>Jadro Apollon</translation>
     </message>
     <message>
         <source>-fallbackfee is set very high! This is the transaction fee you may pay when fee estimates are not available.</source>
@@ -1882,7 +1882,7 @@
     </message>
     <message>
         <source>This is a pre-release test build - use at your own risk - do not use for mining or merchant applications</source>
-        <translation>Toto je pred-testovacia verzia - použitie je na vlastné riziko - nepoužívajte na tvorbu Index ani obchodovanie.</translation>
+        <translation>Toto je pred-testovacia verzia - použitie je na vlastné riziko - nepoužívajte na tvorbu Apollon ani obchodovanie.</translation>
     </message>
     <message>
         <source>Warning: The network does not appear to fully agree! Some miners appear to be experiencing issues.</source>
@@ -1915,8 +1915,8 @@ The network does not appear to fully agree! Some miners appear to be experiencin
         <translation>Voľby vytvorenia bloku:</translation>
     </message>
     <message>
-        <source>Change index out of range</source>
-        <translation>Menný index mimo rozsah</translation>
+        <source>Change apollon out of range</source>
+        <translation>Menný apollon mimo rozsah</translation>
     </message>
     <message>
         <source>Connect only to the specified node(s)</source>
@@ -2055,8 +2055,8 @@ The network does not appear to fully agree! Some miners appear to be experiencin
         <translation>Redukovanie je nekompatibilné s -txindex.</translation>
     </message>
     <message>
-        <source>Rebuild chain state and block index from the blk*.dat files on disk</source>
-        <translation>Obnoviť stav reťazca a index blokov zo súborov blk*.dat na disku.</translation>
+        <source>Rebuild chain state and block apollon from the blk*.dat files on disk</source>
+        <translation>Obnoviť stav reťazca a apollon blokov zo súborov blk*.dat na disku.</translation>
     </message>
     <message>
         <source>Rebuild chain state from the currently indexed blocks</source>
@@ -2335,8 +2335,8 @@ The network does not appear to fully agree! Some miners appear to be experiencin
         <translation>Ako dôkladné je -checkblocks overenie blokov (0-4, predvolené: %u)</translation>
     </message>
     <message>
-        <source>Maintain a full transaction index, used by the getrawtransaction rpc call (default: %u)</source>
-        <translation>Udržiavať kompletný transakčný index, využíva getrawtransaction rpc volanie (predvolené: %u)</translation>
+        <source>Maintain a full transaction apollon, used by the getrawtransaction rpc call (default: %u)</source>
+        <translation>Udržiavať kompletný transakčný apollon, využíva getrawtransaction rpc volanie (predvolené: %u)</translation>
     </message>
     <message>
         <source>Number of seconds to keep misbehaving peers from reconnecting (default: %u)</source>
@@ -2467,7 +2467,7 @@ The network does not appear to fully agree! Some miners appear to be experiencin
         <translation>Nedostatok prostriedkov</translation>
     </message>
     <message>
-        <source>Loading block index...</source>
+        <source>Loading block apollon...</source>
         <translation>Načítavanie zoznamu blokov...</translation>
     </message>
     <message>

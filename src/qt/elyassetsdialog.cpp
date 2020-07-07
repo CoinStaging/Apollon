@@ -264,8 +264,8 @@ void ElyAssetsDialog::propSelectorChanged()
 
 void ElyAssetsDialog::contextualMenu(const QPoint &point)
 {
-    QModelIndex index = ui->balancesTable->indexAt(point);
-    if(index.isValid())
+    QModelIndex apollon = ui->balancesTable->indexAt(point);
+    if(apollon.isValid())
     {
         QString spId = ui->propSelectorWidget->itemData(ui->propSelectorWidget->currentIndex()).toString();
         unsigned int propertyId = spId.toUInt();

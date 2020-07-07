@@ -24,7 +24,7 @@ inline bool IsZerocoinTxV2(libzerocoin::CoinDenomination denomination, const Con
 }
 
 // Zerocoin transaction info, added to the CBlock to ensure zerocoin mint/spend transactions got their info stored into
-// index
+// apollon
 class CZerocoinTxInfo {
 public:
     // all the zerocoin transactions encountered so far
@@ -69,7 +69,7 @@ bool ZerocoinBuildStateFromIndex(CChain *chain, set<CBlockIndex *> &changes);
 CBigNum ZerocoinGetSpendSerialNumber(const CTransaction &tx, const CTxIn &txin);
 
 /*
- * State of minted/spent coins as extracted from the index
+ * State of minted/spent coins as extracted from the apollon
  */
 class CZerocoinState {
 friend bool ZerocoinBuildStateFromIndex(CChain *, set<CBlockIndex *> &);
@@ -117,14 +117,14 @@ public:
     unordered_map<CBigNum,uint256,CBigNumHash> mempoolCoinSerials;
 
     // Add mint, automatically assigning id to it. Returns id and previous accumulator value (if any)
-    int AddMint(CBlockIndex *index, int denomination, const CBigNum &pubCoin, CBigNum &previousAccValue);
+    int AddMint(CBlockIndex *apollon, int denomination, const CBigNum &pubCoin, CBigNum &previousAccValue);
     // Add serial to the list of used ones
     void AddSpend(const CBigNum &serial);
 
     // Add everything from the block to the state
-    void AddBlock(CBlockIndex *index, const Consensus::Params &params);
+    void AddBlock(CBlockIndex *apollon, const Consensus::Params &params);
     // Disconnect block from the chain rolling back mints and spends
-    void RemoveBlock(CBlockIndex *index);
+    void RemoveBlock(CBlockIndex *apollon);
 
     // Query coin group with given denomination and id
     bool GetCoinGroupInfo(int denomination, int id, CoinGroupInfo &result);

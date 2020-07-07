@@ -25,7 +25,7 @@ class CBadSequence : public CBadTxIn
 {
 };
 
-/** An outpoint - a combination of a transaction hash and an index n into its vout */
+/** An outpoint - a combination of a transaction hash and an apollon n into its vout */
 class COutPoint
 {
 public:
@@ -245,7 +245,7 @@ public:
     bool IsDust(const CFeeRate &minRelayTxFee) const
     {
 //        return (nValue < GetDustThreshold(minRelayTxFee));
-        //index: disable dust
+        //apollon: disable dust
         return false;
     }
 

@@ -164,12 +164,12 @@ void ReceiveCoinsDialog::on_receiveButton_clicked()
     model->getRecentRequestsTableModel()->addNewRequest(info);
 }
 
-void ReceiveCoinsDialog::on_recentRequestsView_doubleClicked(const QModelIndex &index)
+void ReceiveCoinsDialog::on_recentRequestsView_doubleClicked(const QModelIndex &apollon)
 {
     const RecentRequestsTableModel *submodel = model->getRecentRequestsTableModel();
     ReceiveRequestDialog *dialog = new ReceiveRequestDialog(this);
     dialog->setModel(model->getOptionsModel());
-    dialog->setInfo(submodel->entry(index.row()).recipient);
+    dialog->setInfo(submodel->entry(apollon.row()).recipient);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     dialog->show();
 }
@@ -188,8 +188,8 @@ void ReceiveCoinsDialog::on_showRequestButton_clicked()
         return;
     QModelIndexList selection = ui->recentRequestsView->selectionModel()->selectedRows();
 
-    Q_FOREACH (const QModelIndex& index, selection) {
-        on_recentRequestsView_doubleClicked(index);
+    Q_FOREACH (const QModelIndex& apollon, selection) {
+        on_recentRequestsView_doubleClicked(apollon);
     }
 }
 

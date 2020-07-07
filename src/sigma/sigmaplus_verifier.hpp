@@ -67,7 +67,7 @@ bool SigmaPlusVerifier<Exponent, GroupElement>::verify(
     std::vector<Exponent> f_i_;
     f_i_.reserve(N);
 
-    // if fPadding is true last index is special
+    // if fPadding is true last apollon is special
     for (std::size_t i = 0; i < (fPadding ? N-1 : N); ++i) {
         std::vector<uint64_t> I = SigmaPrimitives<Exponent, GroupElement>::convert_to_nal(i, n, m);
         Exponent f_i(uint64_t(1));

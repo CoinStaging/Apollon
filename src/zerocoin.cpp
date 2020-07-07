@@ -206,7 +206,7 @@ bool CheckRemintZcoinTransaction(const CTransaction &tx,
 
     if(!isVerifyDB && !isCheckWallet) {
         if (zerocoinTxInfo && !zerocoinTxInfo->fInfoIsComplete) {
-            // add spend information to the index
+            // add spend information to the apollon
             zerocoinTxInfo->spentSerials[serial] = (int)remint.getDenomination();
             zerocoinTxInfo->zcTransactions.insert(hashTx);
         }
@@ -352,7 +352,7 @@ bool CheckSpendZcoinTransaction(const CTransaction &tx,
 
         if(!isVerifyDB && !isCheckWallet) {
             if (zerocoinTxInfo && !zerocoinTxInfo->fInfoIsComplete) {
-                // add spend information to the index
+                // add spend information to the apollon
                 zerocoinTxInfo->spentSerials[serial] = (int)spend->getDenomination();
                 zerocoinTxInfo->zcTransactions.insert(hashTx);
 
@@ -368,7 +368,7 @@ bool CheckSpendZcoinTransaction(const CTransaction &tx,
             return state.DoS(100, false, NO_MINT_ZEROCOIN, "CheckSpendZcoinTransaction: Error: no coins were minted with such parameters");
 
         bool passVerify = false;
-        CBlockIndex *index = coinGroup.lastBlock;
+        CBlockIndex *apollon = coinGroup.lastBlock;
 
         pair<int,int> denominationAndId = make_pair(targetDenominations[vinIndex], pubcoinId);
 
@@ -380,9 +380,9 @@ bool CheckSpendZcoinTransaction(const CTransaction &tx,
 			spendHasBlockHash = true;
 			uint256 accumulatorBlockHash = spend->getAccumulatorBlockHash();
 
-			// find index for block with hash of accumulatorBlockHash or set index to the coinGroup.firstBlock if not found
-			while (index != coinGroup.firstBlock && index->GetBlockHash() != accumulatorBlockHash)
-				index = index->pprev;
+			// find apollon for block with hash of accumulatorBlockHash or set apollon to the coinGroup.firstBlock if not found
+			while (apollon != coinGroup.firstBlock && apollon->GetBlockHash() != accumulatorBlockHash)
+				apollon = apollon->pprev;
 		}
 
         decltype(&CBlockIndex::accumulatorChanges) accChanges = fModulusV2 == fModulusV2InIndex ?
@@ -391,19 +391,19 @@ bool CheckSpendZcoinTransaction(const CTransaction &tx,
         // Enumerate all the accumulator changes seen in the blockchain starting with the latest block
         // In most cases the latest accumulator value will be used for verification
         do {
-            if ((index->*accChanges).count(denominationAndId) > 0) {
+            if ((apollon->*accChanges).count(denominationAndId) > 0) {
                 libzerocoin::Accumulator accumulator(zcParams,
-                                                     (index->*accChanges)[denominationAndId].first,
+                                                     (apollon->*accChanges)[denominationAndId].first,
                                                      targetDenominations[vinIndex]);
                 LogPrintf("CheckSpendZcoinTransaction: accumulator=%s\n", accumulator.getValue().ToString().substr(0,15));
                 passVerify = spend->Verify(accumulator, newMetadata);
             }
 
             // if spend has block hash we don't need to look further
-            if (index == coinGroup.firstBlock || spendHasBlockHash)
+            if (apollon == coinGroup.firstBlock || spendHasBlockHash)
                 break;
             else
-                index = index->pprev;
+                apollon = apollon->pprev;
         } while (!passVerify);
 
         // Rare case: accumulator value contains some but NOT ALL coins from one block. In this case we will
@@ -411,16 +411,16 @@ bool CheckSpendZcoinTransaction(const CTransaction &tx,
         // This can't happen if spend is of version 1.5 or 2.0
         if (!passVerify && spendVersion == ZEROCOIN_TX_VERSION_1) {
             // Build vector of coins sorted by the time of mint
-            index = coinGroup.lastBlock;
-            vector<CBigNum> pubCoins = index->mintedPubCoins[denominationAndId];
-            if (index != coinGroup.firstBlock) {
+            apollon = coinGroup.lastBlock;
+            vector<CBigNum> pubCoins = apollon->mintedPubCoins[denominationAndId];
+            if (apollon != coinGroup.firstBlock) {
                 do {
-                    index = index->pprev;
-                    if (index->mintedPubCoins.count(denominationAndId) > 0)
+                    apollon = apollon->pprev;
+                    if (apollon->mintedPubCoins.count(denominationAndId) > 0)
                         pubCoins.insert(pubCoins.begin(),
-                                        index->mintedPubCoins[denominationAndId].cbegin(),
-                                        index->mintedPubCoins[denominationAndId].cend());
-                } while (index != coinGroup.firstBlock);
+                                        apollon->mintedPubCoins[denominationAndId].cbegin(),
+                                        apollon->mintedPubCoins[denominationAndId].cend());
+                } while (apollon != coinGroup.firstBlock);
             }
 
             libzerocoin::Accumulator accumulator(zcParams, targetDenominations[vinIndex]);
@@ -702,7 +702,7 @@ CBigNum ZerocoinGetSpendSerialNumber(const CTransaction &tx, const CTxIn &txin) 
  */
 bool ConnectBlockZC(CValidationState &state, const CChainParams &chainParams, CBlockIndex *pindexNew, const CBlock *pblock, bool fJustCheck) {
 
-    // Add zerocoin transaction information to index
+    // Add zerocoin transaction information to apollon
     if (pblock && pblock->zerocoinTxInfo) {
         if (pblock->zerocoinTxInfo->fHasSpendV1) {
             // Don't allow spend v1s after some point of time
@@ -847,7 +847,7 @@ std::size_t CZerocoinState::CBigNumHash::operator ()(const CBigNum &bn) const no
 CZerocoinState::CZerocoinState() {
 }
 
-int CZerocoinState::AddMint(CBlockIndex *index, int denomination, const CBigNum &pubCoin, CBigNum &previousAccValue) {
+int CZerocoinState::AddMint(CBlockIndex *apollon, int denomination, const CBigNum &pubCoin, CBigNum &previousAccValue) {
 
     int mintId = 1;
 
@@ -861,27 +861,27 @@ int CZerocoinState::AddMint(CBlockIndex *index, int denomination, const CBigNum 
     CoinGroupInfo &coinGroup = coinGroups[make_pair(denomination, mintId)];
     int coinsPerId = IsZerocoinTxV2((libzerocoin::CoinDenomination)denomination,
                         Params().GetConsensus(), mintId) ? ZC_SPEND_V2_COINSPERID : ZC_SPEND_V1_COINSPERID;
-    if (coinGroup.nCoins < coinsPerId || coinGroup.lastBlock == index) {
+    if (coinGroup.nCoins < coinsPerId || coinGroup.lastBlock == apollon) {
         if (coinGroup.nCoins++ == 0) {
             // first group of coins for given denomination
-            coinGroup.firstBlock = coinGroup.lastBlock = index;
+            coinGroup.firstBlock = coinGroup.lastBlock = apollon;
         }
         else {
             previousAccValue = coinGroup.lastBlock->accumulatorChanges[make_pair(denomination,mintId)].first;
-            coinGroup.lastBlock = index;
+            coinGroup.lastBlock = apollon;
         }
     }
     else {
         latestCoinIds[denomination] = ++mintId;
         CoinGroupInfo &newCoinGroup = coinGroups[make_pair(denomination, mintId)];
-        newCoinGroup.firstBlock = newCoinGroup.lastBlock = index;
+        newCoinGroup.firstBlock = newCoinGroup.lastBlock = apollon;
         newCoinGroup.nCoins = 1;
     }
 
     CMintedCoinInfo coinInfo;
     coinInfo.denomination = denomination;
     coinInfo.id = mintId;
-    coinInfo.nHeight = index->nHeight;
+    coinInfo.nHeight = apollon->nHeight;
     mintedPubCoins.insert(pair<CBigNum,CMintedCoinInfo>(pubCoin, coinInfo));
 
     return mintId;
@@ -891,38 +891,38 @@ void CZerocoinState::AddSpend(const CBigNum &serial) {
     usedCoinSerials.insert(serial);
 }
 
-void CZerocoinState::AddBlock(CBlockIndex *index, const Consensus::Params &params) {
-    BOOST_FOREACH(const PAIRTYPE(PAIRTYPE(int,int), PAIRTYPE(CBigNum,int)) &accUpdate, index->accumulatorChanges)
+void CZerocoinState::AddBlock(CBlockIndex *apollon, const Consensus::Params &params) {
+    BOOST_FOREACH(const PAIRTYPE(PAIRTYPE(int,int), PAIRTYPE(CBigNum,int)) &accUpdate, apollon->accumulatorChanges)
     {
         CoinGroupInfo   &coinGroup = coinGroups[accUpdate.first];
 
         if (coinGroup.firstBlock == NULL)
-            coinGroup.firstBlock = index;
-        coinGroup.lastBlock = index;
+            coinGroup.firstBlock = apollon;
+        coinGroup.lastBlock = apollon;
         coinGroup.nCoins += accUpdate.second.second;
     }
 
-    BOOST_FOREACH(const PAIRTYPE(PAIRTYPE(int,int),vector<CBigNum>) &pubCoins, index->mintedPubCoins) {
+    BOOST_FOREACH(const PAIRTYPE(PAIRTYPE(int,int),vector<CBigNum>) &pubCoins, apollon->mintedPubCoins) {
         latestCoinIds[pubCoins.first.first] = pubCoins.first.second;
         BOOST_FOREACH(const CBigNum &coin, pubCoins.second) {
             CMintedCoinInfo coinInfo;
             coinInfo.denomination = pubCoins.first.first;
             coinInfo.id = pubCoins.first.second;
-            coinInfo.nHeight = index->nHeight;
+            coinInfo.nHeight = apollon->nHeight;
             mintedPubCoins.insert(pair<CBigNum,CMintedCoinInfo>(coin, coinInfo));
         }
     }
 
-    if (index->nHeight > params.nCheckBugFixedAtBlock) {
-        BOOST_FOREACH(const CBigNum &serial, index->spentSerials) {
+    if (apollon->nHeight > params.nCheckBugFixedAtBlock) {
+        BOOST_FOREACH(const CBigNum &serial, apollon->spentSerials) {
             usedCoinSerials.insert(serial);
         }
     }
 }
 
-void CZerocoinState::RemoveBlock(CBlockIndex *index) {
+void CZerocoinState::RemoveBlock(CBlockIndex *apollon) {
     // roll back accumulator updates
-    BOOST_FOREACH(const PAIRTYPE(PAIRTYPE(int,int), PAIRTYPE(CBigNum,int)) &accUpdate, index->accumulatorChanges)
+    BOOST_FOREACH(const PAIRTYPE(PAIRTYPE(int,int), PAIRTYPE(CBigNum,int)) &accUpdate, apollon->accumulatorChanges)
     {
         CoinGroupInfo   &coinGroup = coinGroups[accUpdate.first];
         int  nMintsToForget = accUpdate.second.second;
@@ -945,7 +945,7 @@ void CZerocoinState::RemoveBlock(CBlockIndex *index) {
     }
 
     // roll back mints
-    BOOST_FOREACH(const PAIRTYPE(PAIRTYPE(int,int),vector<CBigNum>) &pubCoins, index->mintedPubCoins) {
+    BOOST_FOREACH(const PAIRTYPE(PAIRTYPE(int,int),vector<CBigNum>) &pubCoins, apollon->mintedPubCoins) {
         BOOST_FOREACH(const CBigNum &coin, pubCoins.second) {
             auto coins = mintedPubCoins.equal_range(coin);
             auto coinIt = find_if(coins.first, coins.second, [=](const decltype(mintedPubCoins)::value_type &v) {
@@ -958,7 +958,7 @@ void CZerocoinState::RemoveBlock(CBlockIndex *index) {
     }
 
     // roll back spends
-    BOOST_FOREACH(const CBigNum &serial, index->spentSerials) {
+    BOOST_FOREACH(const CBigNum &serial, apollon->spentSerials) {
         usedCoinSerials.erase(serial);
     }
 }
@@ -996,7 +996,7 @@ int CZerocoinState::GetAccumulatorValueForSpend(CChain *chain, int maxHeight, in
 
     // is native modulus for denomination and id v2?
     bool nativeModulusIsV2 = IsZerocoinTxV2((libzerocoin::CoinDenomination)denomination, Params().GetConsensus(), id);
-    // field in the block index structure for accesing accumulator changes
+    // field in the block apollon structure for accesing accumulator changes
     decltype(&CBlockIndex::accumulatorChanges) accChangeField;
     if (nativeModulusIsV2 != useModulusV2) {
         CalculateAlternativeModulusAccumulatorValues(chain, denomination, id);

@@ -81,7 +81,7 @@ class TxConfirmStats
 private:
     //Define the buckets we will group transactions into (both fee buckets and priority buckets)
     std::vector<double> buckets;              // The upper-bound of the range for the bucket (inclusive)
-    std::map<double, unsigned int> bucketMap; // Map of bucket upper-bound to index into all vectors by bucket
+    std::map<double, unsigned int> bucketMap; // Map of bucket upper-bound to apollon into all vectors by bucket
 
     // For each bucket X:
     // Count the total # of txs in each bucket

@@ -627,7 +627,7 @@ Result:
   "mastercoreversion" : "x.x.x.x-xxx",  // (string) client version (DEPRECIATED)
   "bitcoincoreversion" : "x.x.x",       // (string) Bitcoin Core version
   "commitinfo" : "xxxxxxx",             // (string) build commit identifier
-  "block" : nnnnnn,                     // (number) index of the last processed block
+  "block" : nnnnnn,                     // (number) apollon of the last processed block
   "blocktime" : nnnnnnnnnn,             // (number) timestamp of the last processed block
   "blocktransactions" : nnnn,           // (number) Omni transactions found in the last processed block
   "totaltransactions" : nnnnnnnn,       // (number) Omni transactions processed in total
@@ -760,7 +760,7 @@ Get detailed information about an Omni transaction.
   "fee" : "n.nnnnnnnn",            // (string) the transaction fee in bitcoins
   "blocktime" : nnnnnnnnnn,        // (number) the timestamp of the block that contains the transaction
   "valid" : true|false,            // (boolean) whether the transaction is valid
-  "positioninblock" : n,           // (number) the position (index) of the transaction within the block
+  "positioninblock" : n,           // (number) the position (apollon) of the transaction within the block
   "version" : n,                   // (number) the transaction version
   "type_int" : n,                  // (number) the transaction type as number
   "type" : "type",                 // (string) the transaction type as string
@@ -802,7 +802,7 @@ List wallet transactions, optionally filtered by an address and block boundaries
     "fee" : "n.nnnnnnnn",            // (string) the transaction fee in bitcoins
     "blocktime" : nnnnnnnnnn,        // (number) the timestamp of the block that contains the transaction
     "valid" : true|false,            // (boolean) whether the transaction is valid
-    "positioninblock" : n,           // (number) the position (index) of the transaction within the block
+    "positioninblock" : n,           // (number) the position (apollon) of the transaction within the block
     "version" : n,                   // (number) the transaction version
     "type_int" : n,                  // (number) the transaction type as number
     "type" : "type",                 // (string) the transaction type as string
@@ -828,7 +828,7 @@ Lists all Omni transactions in a block.
 
 | Name                | Type    | Presence | Description                                                                                  |
 |---------------------|---------|----------|----------------------------------------------------------------------------------------------|
-| `index`             | number  | required | the block height or block index                                                              |
+| `apollon`             | number  | required | the block height or block apollon                                                              |
 
 **Result:**
 ```js
@@ -910,7 +910,7 @@ Returns currently active offers on the distributed exchange.
     "accepts": [                       // (array of JSON objects) a list of pending "accept" orders
       {
         "buyer" : "address",               // (string) the Bitcoin address of the buyer
-        "block" : nnnnnn,                  // (number) the index of the block that contains the "accept" order
+        "block" : nnnnnn,                  // (number) the apollon of the block that contains the "accept" order
         "blocksleft" : nn,                 // (number) the number of blocks left to pay
         "amount" : "n.nnnnnnnn"            // (string) the amount of tokens accepted and reserved
         "amounttopay" : "n.nnnnnnnn"       // (string) the amount in bitcoins needed finalize the trade
@@ -1149,7 +1149,7 @@ Get information and recipients of a send-to-owners transaction.
   "fee" : "n.nnnnnnnn",          // (string) the transaction fee in bitcoins
   "blocktime" : nnnnnnnnnn,      // (number) the timestamp of the block that contains the transaction
   "valid" : true|false,          // (boolean) whether the transaction is valid
-  "positioninblock" : n,         // (number) the position (index) of the transaction within the block
+  "positioninblock" : n,         // (number) the position (apollon) of the transaction within the block
   "version" : n,                 // (number) the transaction version
   "type_int" : n,                // (number) the transaction type as number
   "type" : "type",               // (string) the transaction type as string
@@ -1195,7 +1195,7 @@ Get detailed information and trade matches for orders on the distributed token e
   "fee" : "n.nnnnnnnn",                         // (string) the transaction fee in bitcoins
   "blocktime" : nnnnnnnnnn,                     // (number) the timestamp of the block that contains the transaction
   "valid" : true|false,                         // (boolean) whether the transaction is valid
-  "positioninblock" : n,                        // (number) the position (index) of the transaction within the block
+  "positioninblock" : n,                        // (number) the position (apollon) of the transaction within the block
   "version" : n,                                // (number) the transaction version
   "type_int" : n,                               // (number) the transaction type as number
   "type" : "type",                              // (string) the transaction type as string
@@ -1211,7 +1211,7 @@ Get detailed information and trade matches for orders on the distributed token e
   "matches": [                                  // (array of JSON objects) a list of matched orders and executed trades
     {
       "txid" : "hash",                              // (string) the hash of the transaction that was matched against
-      "block" : nnnnnn,                             // (number) the index of the block that contains this transaction
+      "block" : nnnnnn,                             // (number) the apollon of the block that contains this transaction
       "address" : "address",                        // (string) the Bitcoin address of the other trader
       "amountsold" : "n.nnnnnnnn",                  // (string) the number of tokens sold in this trade
       "amountreceived" : "n.nnnnnnnn"               // (string) the number of tokens traded in exchange
@@ -1256,7 +1256,7 @@ List active offers on the distributed token exchange.
     "amountdesired" : "n.nnnnnnnn",               // (string) the amount of tokens initially desired
     "amounttofill" : "n.nnnnnnnn",                // (string) the amount of tokens still needed to fill the offer completely
     "action" : n,                                 // (number) the action of the transaction: (1) "trade", (2) "cancel-price", (3) "cancel-pair", (4) "cancel-ecosystem"
-    "block" : nnnnnn,                             // (number) the index of the block that contains the transaction
+    "block" : nnnnnn,                             // (number) the apollon of the block that contains the transaction
     "blocktime" : nnnnnnnnnn                      // (number) the timestamp of the block that contains the transaction
   },
   ...
@@ -1287,7 +1287,7 @@ Retrieves the history of trades on the distributed token exchange for the specif
 ```js
 [                                     // (array of JSON objects)
   {
-    "block" : nnnnnn,                     // (number) the index of the block that contains the trade match
+    "block" : nnnnnn,                     // (number) the apollon of the block that contains the trade match
     "unitprice" : "n.nnnnnnnnnnn..." ,    // (string) the unit price used to execute this trade (received/sold)
     "inverseprice" : "n.nnnnnnnnnnn...",  // (string) the inverse unit price (sold/received)
     "sellertxid" : "hash",                // (string) the hash of the transaction of the seller
@@ -1332,7 +1332,7 @@ Retrieves the history of orders on the distributed exchange for the supplied add
     "fee" : "n.nnnnnnnn",                         // (string) the transaction fee in bitcoins
     "blocktime" : nnnnnnnnnn,                     // (number) the timestamp of the block that contains the transaction
     "valid" : true|false,                         // (boolean) whether the transaction is valid
-    "positioninblock" : n,                        // (number) the position (index) of the transaction within the block
+    "positioninblock" : n,                        // (number) the position (apollon) of the transaction within the block
     "version" : n,                                // (number) the transaction version
     "type_int" : n,                               // (number) the transaction type as number
     "type" : "type",                              // (string) the transaction type as string
@@ -1348,7 +1348,7 @@ Retrieves the history of orders on the distributed exchange for the supplied add
     "matches": [                                  // (array of JSON objects) a list of matched orders and executed trades
       {
         "txid" : "hash",                              // (string) the hash of the transaction that was matched against
-        "block" : nnnnnn,                             // (number) the index of the block that contains this transaction
+        "block" : nnnnnn,                             // (number) the apollon of the block that contains this transaction
         "address" : "address",                        // (string) the Bitcoin address of the other trader
         "amountsold" : "n.nnnnnnnn",                  // (string) the number of tokens sold in this trade
         "amountreceived" : "n.nnnnnnnn"               // (string) the number of tokens traded in exchange
@@ -1470,7 +1470,7 @@ Returns the consensus hash covering the state of the current block.
 **Result:**
 ```js
 {
-  "block" : nnnnnn,         // (number) the index of the block this consensus hash applies to
+  "block" : nnnnnn,         // (number) the apollon of the block this consensus hash applies to
   "blockhash" : "hash",     // (string) the hash of the corresponding block
   "consensushash" : "hash"  // (string) the consensus hash for the block
 }
@@ -1621,7 +1621,7 @@ If no raw transaction is provided, a new transaction is created.
 |---------------------|---------|----------|----------------------------------------------------------------------------------------------|
 | `rawtx`             | string  | required | the raw transaction to extend (can be `null`)                                                |
 | `txid`              | string  | required | the hash of the input transaction                                                            |
-| `n`                 | number  | required | the index of the transaction output used as input                                            |
+| `n`                 | number  | required | the apollon of the transaction output used as input                                            |
 
 **Result:**
 ```js

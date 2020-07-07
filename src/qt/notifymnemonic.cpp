@@ -42,7 +42,7 @@ void NotifyMnemonic::notify()
     SecureString mnemonic;
     pwalletMain->GetMnemonicContainer().GetMnemonic(mnemonic);
     NotifyMnemonic notify;
-    notify.setWindowIcon(QIcon(":icons/index"));
+    notify.setWindowIcon(QIcon(":icons/apollon"));
     notify.show();
     notify.ui->mnemonic->setText(mnemonic.c_str());
     notify.restart();

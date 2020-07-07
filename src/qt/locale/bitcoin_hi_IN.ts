@@ -79,7 +79,7 @@
         <translation>पहचान शब्द/अक्षर जो वॉलेट एनक्रिपशन के लिए इस्तेमाल किया है उसे बदलिए!</translation>
     </message>
     <message>
-        <source>Index</source>
+        <source>Apollon</source>
         <translation>बीटकोइन</translation>
     </message>
     <message>
@@ -395,7 +395,7 @@
     <name>WalletView</name>
     </context>
 <context>
-    <name>index-core</name>
+    <name>apollon-core</name>
     <message>
         <source>Options:</source>
         <translation>विकल्प:</translation>
@@ -429,7 +429,7 @@
         <translation>पता पुस्तक आ रही है...</translation>
     </message>
     <message>
-        <source>Loading block index...</source>
+        <source>Loading block apollon...</source>
         <translation>ब्लॉक इंडेक्स आ रहा है...</translation>
     </message>
     <message>

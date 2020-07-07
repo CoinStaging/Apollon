@@ -482,7 +482,7 @@ base64cmp(const cdline_t *hash1, const cdline_t *hash2)
     return 1;
   }
 
-  /* Don't index with a char; char may be signed. */
+  /* Don't apollon with a char; char may be signed. */
   const unsigned char *a = (unsigned char*)hash1->s;
   const unsigned char *b = (unsigned char*)hash2->s;
   const unsigned char *a_end = a + hash1->len;
@@ -535,9 +535,9 @@ typedef struct router_id_iterator_t {
  */
 #define ROUTER_ID_ITERATOR_INIT { { NULL, 0 }, { NULL, 0 } }
 
-/** Given an index *<b>idxp</b> into the consensus at <b>cons</b>, advance
- * the index to the next router line ("r ...") in the consensus, or to
- * an index one after the end of the list if there is no such line.
+/** Given an apollon *<b>idxp</b> into the consensus at <b>cons</b>, advance
+ * the apollon to the next router line ("r ...") in the consensus, or to
+ * an apollon one after the end of the list if there is no such line.
  *
  * Use <b>iter</b> to record the hash of the found router line, if any,
  * and to enforce ordering on the hashes.  If the hashes are mis-ordered,
@@ -579,12 +579,12 @@ static cdline_t *
 preprocess_consensus(memarea_t *area,
                      smartlist_t *cons)
 {
-  int idx;
+  int xap;
   int dirsig_idx = -1;
-  for (idx = 0; idx < smartlist_len(cons); ++idx) {
-    cdline_t *line = smartlist_get(cons, idx);
+  for (xap = 0; xap < smartlist_len(cons); ++xap) {
+    cdline_t *line = smartlist_get(cons, xap);
     if (line_starts_with_str(line, START_OF_SIGNATURES_SECTION)) {
-      dirsig_idx = idx;
+      dirsig_idx = xap;
       break;
     }
   }

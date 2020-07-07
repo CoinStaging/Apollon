@@ -128,7 +128,7 @@ namespace libzerocoin {
 ///
 /// Returns the hash of the value.
 
-    arith_uint256 calculateGeneratorSeed(arith_uint256 seed, arith_uint256 pSeed, arith_uint256 qSeed, string label, uint32_t index, uint32_t count) {
+    arith_uint256 calculateGeneratorSeed(arith_uint256 seed, arith_uint256 pSeed, arith_uint256 qSeed, string label, uint32_t apollon, uint32_t count) {
         CHashWriter hasher(0, 0);
         arith_uint256 hash;
 
@@ -142,7 +142,7 @@ namespace libzerocoin {
         hasher << string("||");
         hasher << label;
         hasher << string("||");
-        hasher << index;
+        hasher << apollon;
         hasher << string("||");
         hasher << count;
 
@@ -254,8 +254,8 @@ namespace libzerocoin {
 
         // Calculate the generators "g", "h" using the process described in
         // NIST FIPS 186-3, Appendix A.2.3. This algorithm takes ("p", "q",
-        // "domain_parameter_seed", "index"). We use "index" value 1
-        // to generate "g" and "index" value 2 to generate "h".
+        // "domain_parameter_seed", "apollon"). We use "apollon" value 1
+        // to generate "g" and "apollon" value 2 to generate "h".
         result.g = calculateGroupGenerator(seed, pSeed, qSeed, result.modulus, result.groupOrder, 1);
         result.h = calculateGroupGenerator(seed, pSeed, qSeed, result.modulus, result.groupOrder, 2);
 
@@ -305,8 +305,8 @@ namespace libzerocoin {
                 //
                 // Calculate the generators "g", "h" using the process described in
                 // NIST FIPS 186-3, Appendix A.2.3. This algorithm takes ("p", "q",
-                // "domain_parameter_seed", "index"). We use "index" value 1
-                // to generate "g" and "index" value 2 to generate "h".
+                // "domain_parameter_seed", "apollon"). We use "apollon" value 1
+                // to generate "g" and "apollon" value 2 to generate "h".
                 arith_uint256 seed = calculateSeed(groupOrder, "", 128, "");
                 arith_uint256 pSeed = calculateHash(seed);
                 arith_uint256 qSeed = calculateHash(pSeed);
@@ -440,7 +440,7 @@ namespace libzerocoin {
 /// \param qSeed                        A third seed for the process.
 /// \param modulus                      Proposed prime modulus for the field.
 /// \param groupOrder                   Proposed order of the group.
-/// \param index                        Index value, selects which generator you're building.
+/// \param apollon                        Apollon value, selects which generator you're building.
 /// \return                             The resulting generator.
 /// \throws                             A ZerocoinException if error.
 ///
@@ -448,12 +448,12 @@ namespace libzerocoin {
 /// Uses the algorithm described in FIPS 186-3 Appendix A.2.3.
 
     Bignum calculateGroupGenerator(arith_uint256 seed, arith_uint256 pSeed, arith_uint256 qSeed, Bignum modulus,
-                                   Bignum groupOrder, uint32_t index) {
+                                   Bignum groupOrder, uint32_t apollon) {
         Bignum result;
 
-        // Verify that 0 <= index < 256
-        if (index > 255) {
-            throw ZerocoinException("Invalid index for group generation");
+        // Verify that 0 <= apollon < 256
+        if (apollon > 255) {
+            throw ZerocoinException("Invalid apollon for group generation");
         }
 
         // Compute e = (modulus - 1) / groupOrder
@@ -461,8 +461,8 @@ namespace libzerocoin {
 
         // Loop until we find a generator
         for (uint32_t count = 1; count < MAX_GENERATOR_ATTEMPTS; count++) {
-            // hash = Hash(seed || pSeed || qSeed || “ggen” || index || count
-            arith_uint256 hash = calculateGeneratorSeed(seed, pSeed, qSeed, "ggen", index, count);
+            // hash = Hash(seed || pSeed || qSeed || “ggen” || apollon || count
+            arith_uint256 hash = calculateGeneratorSeed(seed, pSeed, qSeed, "ggen", apollon, count);
             Bignum W(hash);
 
             // Compute result = W^e mod p

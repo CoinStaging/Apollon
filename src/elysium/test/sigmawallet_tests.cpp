@@ -268,7 +268,7 @@ BOOST_AUTO_TEST_CASE(verify_mintpool_on_fresh_startup)
 
     std::vector<uint32_t> mintPoolIndexs;
     for (auto const &mint : mints) {
-        mintPoolIndexs.push_back(mint.index);
+        mintPoolIndexs.push_back(mint.apollon);
     }
 
     // generate sequence
@@ -329,7 +329,7 @@ BOOST_AUTO_TEST_CASE(tryrecover_mintpool_coin)
         std::equal(mintPool.begin() + 1, mintPool.end(), mintPoolAfter.begin()));
 
     BOOST_CHECK_EQUAL(20, mintPoolAfter.size()); // ensure mint pool is refilled
-    BOOST_CHECK_EQUAL(20, mintPoolAfter.back().index); // make sure new coin contain next index
+    BOOST_CHECK_EQUAL(20, mintPoolAfter.back().apollon); // make sure new coin contain next apollon
     BOOST_CHECK_EQUAL(true, wallet->HasMint(id));
 }
 
@@ -486,16 +486,16 @@ BOOST_AUTO_TEST_CASE(fill_mint_pool)
 
     auto indexLess = [](
         MintPoolEntry const &a, MintPoolEntry const &b) -> bool {
-            return a.index < b.index;
+            return a.apollon < b.apollon;
     };
 
     // last coin should be 19
     BOOST_CHECK_EQUAL(
         19,
-        std::max_element(mintPool.begin(), mintPool.end(), indexLess)->index
+        std::max_element(mintPool.begin(), mintPool.end(), indexLess)->apollon
     );
 
-    // erase index 0, 10 and 15
+    // erase apollon 0, 10 and 15
     mintPool.erase(mintPool.find(0));
     mintPool.erase(mintPool.find(10));
     mintPool.erase(mintPool.find(15));
@@ -514,7 +514,7 @@ BOOST_AUTO_TEST_CASE(fill_mint_pool)
     // last coin should be 22
     BOOST_CHECK_EQUAL(
         22,
-        std::max_element(mintPool.begin(), mintPool.end(), indexLess)->index
+        std::max_element(mintPool.begin(), mintPool.end(), indexLess)->apollon
     );
 
     // 20, 21, 22 should be added

@@ -86,20 +86,20 @@ create2_cell_body_getlen_handshake_data(const create2_cell_body_t *inp)
 }
 
 uint8_t
-create2_cell_body_get_handshake_data(create2_cell_body_t *inp, size_t idx)
+create2_cell_body_get_handshake_data(create2_cell_body_t *inp, size_t xap)
 {
-  return TRUNNEL_DYNARRAY_GET(&inp->handshake_data, idx);
+  return TRUNNEL_DYNARRAY_GET(&inp->handshake_data, xap);
 }
 
 uint8_t
-create2_cell_body_getconst_handshake_data(const create2_cell_body_t *inp, size_t idx)
+create2_cell_body_getconst_handshake_data(const create2_cell_body_t *inp, size_t xap)
 {
-  return create2_cell_body_get_handshake_data((create2_cell_body_t*)inp, idx);
+  return create2_cell_body_get_handshake_data((create2_cell_body_t*)inp, xap);
 }
 int
-create2_cell_body_set_handshake_data(create2_cell_body_t *inp, size_t idx, uint8_t elt)
+create2_cell_body_set_handshake_data(create2_cell_body_t *inp, size_t xap, uint8_t elt)
 {
-  TRUNNEL_DYNARRAY_SET(&inp->handshake_data, idx, elt);
+  TRUNNEL_DYNARRAY_SET(&inp->handshake_data, xap, elt);
   return 0;
 }
 int
@@ -372,22 +372,22 @@ ed25519_cert_extension_getlen_un_signing_key(const ed25519_cert_extension_t *inp
 }
 
 uint8_t
-ed25519_cert_extension_get_un_signing_key(ed25519_cert_extension_t *inp, size_t idx)
+ed25519_cert_extension_get_un_signing_key(ed25519_cert_extension_t *inp, size_t xap)
 {
-  trunnel_assert(idx < 32);
-  return inp->un_signing_key[idx];
+  trunnel_assert(xap < 32);
+  return inp->un_signing_key[xap];
 }
 
 uint8_t
-ed25519_cert_extension_getconst_un_signing_key(const ed25519_cert_extension_t *inp, size_t idx)
+ed25519_cert_extension_getconst_un_signing_key(const ed25519_cert_extension_t *inp, size_t xap)
 {
-  return ed25519_cert_extension_get_un_signing_key((ed25519_cert_extension_t*)inp, idx);
+  return ed25519_cert_extension_get_un_signing_key((ed25519_cert_extension_t*)inp, xap);
 }
 int
-ed25519_cert_extension_set_un_signing_key(ed25519_cert_extension_t *inp, size_t idx, uint8_t elt)
+ed25519_cert_extension_set_un_signing_key(ed25519_cert_extension_t *inp, size_t xap, uint8_t elt)
 {
-  trunnel_assert(idx < 32);
-  inp->un_signing_key[idx] = elt;
+  trunnel_assert(xap < 32);
+  inp->un_signing_key[xap] = elt;
   return 0;
 }
 
@@ -408,20 +408,20 @@ ed25519_cert_extension_getlen_un_unparsed(const ed25519_cert_extension_t *inp)
 }
 
 uint8_t
-ed25519_cert_extension_get_un_unparsed(ed25519_cert_extension_t *inp, size_t idx)
+ed25519_cert_extension_get_un_unparsed(ed25519_cert_extension_t *inp, size_t xap)
 {
-  return TRUNNEL_DYNARRAY_GET(&inp->un_unparsed, idx);
+  return TRUNNEL_DYNARRAY_GET(&inp->un_unparsed, xap);
 }
 
 uint8_t
-ed25519_cert_extension_getconst_un_unparsed(const ed25519_cert_extension_t *inp, size_t idx)
+ed25519_cert_extension_getconst_un_unparsed(const ed25519_cert_extension_t *inp, size_t xap)
 {
-  return ed25519_cert_extension_get_un_unparsed((ed25519_cert_extension_t*)inp, idx);
+  return ed25519_cert_extension_get_un_unparsed((ed25519_cert_extension_t*)inp, xap);
 }
 int
-ed25519_cert_extension_set_un_unparsed(ed25519_cert_extension_t *inp, size_t idx, uint8_t elt)
+ed25519_cert_extension_set_un_unparsed(ed25519_cert_extension_t *inp, size_t xap, uint8_t elt)
 {
-  TRUNNEL_DYNARRAY_SET(&inp->un_unparsed, idx, elt);
+  TRUNNEL_DYNARRAY_SET(&inp->un_unparsed, xap, elt);
   return 0;
 }
 int
@@ -761,22 +761,22 @@ extend1_cell_body_getlen_onionskin(const extend1_cell_body_t *inp)
 }
 
 uint8_t
-extend1_cell_body_get_onionskin(extend1_cell_body_t *inp, size_t idx)
+extend1_cell_body_get_onionskin(extend1_cell_body_t *inp, size_t xap)
 {
-  trunnel_assert(idx < 186);
-  return inp->onionskin[idx];
+  trunnel_assert(xap < 186);
+  return inp->onionskin[xap];
 }
 
 uint8_t
-extend1_cell_body_getconst_onionskin(const extend1_cell_body_t *inp, size_t idx)
+extend1_cell_body_getconst_onionskin(const extend1_cell_body_t *inp, size_t xap)
 {
-  return extend1_cell_body_get_onionskin((extend1_cell_body_t*)inp, idx);
+  return extend1_cell_body_get_onionskin((extend1_cell_body_t*)inp, xap);
 }
 int
-extend1_cell_body_set_onionskin(extend1_cell_body_t *inp, size_t idx, uint8_t elt)
+extend1_cell_body_set_onionskin(extend1_cell_body_t *inp, size_t xap, uint8_t elt)
 {
-  trunnel_assert(idx < 186);
-  inp->onionskin[idx] = elt;
+  trunnel_assert(xap < 186);
+  inp->onionskin[xap] = elt;
   return 0;
 }
 
@@ -797,22 +797,22 @@ extend1_cell_body_getlen_identity(const extend1_cell_body_t *inp)
 }
 
 uint8_t
-extend1_cell_body_get_identity(extend1_cell_body_t *inp, size_t idx)
+extend1_cell_body_get_identity(extend1_cell_body_t *inp, size_t xap)
 {
-  trunnel_assert(idx < 20);
-  return inp->identity[idx];
+  trunnel_assert(xap < 20);
+  return inp->identity[xap];
 }
 
 uint8_t
-extend1_cell_body_getconst_identity(const extend1_cell_body_t *inp, size_t idx)
+extend1_cell_body_getconst_identity(const extend1_cell_body_t *inp, size_t xap)
 {
-  return extend1_cell_body_get_identity((extend1_cell_body_t*)inp, idx);
+  return extend1_cell_body_get_identity((extend1_cell_body_t*)inp, xap);
 }
 int
-extend1_cell_body_set_identity(extend1_cell_body_t *inp, size_t idx, uint8_t elt)
+extend1_cell_body_set_identity(extend1_cell_body_t *inp, size_t xap, uint8_t elt)
 {
-  trunnel_assert(idx < 20);
-  inp->identity[idx] = elt;
+  trunnel_assert(xap < 20);
+  inp->identity[xap] = elt;
   return 0;
 }
 
@@ -1066,22 +1066,22 @@ link_specifier_getlen_un_ipv6_addr(const link_specifier_t *inp)
 }
 
 uint8_t
-link_specifier_get_un_ipv6_addr(link_specifier_t *inp, size_t idx)
+link_specifier_get_un_ipv6_addr(link_specifier_t *inp, size_t xap)
 {
-  trunnel_assert(idx < 16);
-  return inp->un_ipv6_addr[idx];
+  trunnel_assert(xap < 16);
+  return inp->un_ipv6_addr[xap];
 }
 
 uint8_t
-link_specifier_getconst_un_ipv6_addr(const link_specifier_t *inp, size_t idx)
+link_specifier_getconst_un_ipv6_addr(const link_specifier_t *inp, size_t xap)
 {
-  return link_specifier_get_un_ipv6_addr((link_specifier_t*)inp, idx);
+  return link_specifier_get_un_ipv6_addr((link_specifier_t*)inp, xap);
 }
 int
-link_specifier_set_un_ipv6_addr(link_specifier_t *inp, size_t idx, uint8_t elt)
+link_specifier_set_un_ipv6_addr(link_specifier_t *inp, size_t xap, uint8_t elt)
 {
-  trunnel_assert(idx < 16);
-  inp->un_ipv6_addr[idx] = elt;
+  trunnel_assert(xap < 16);
+  inp->un_ipv6_addr[xap] = elt;
   return 0;
 }
 
@@ -1113,22 +1113,22 @@ link_specifier_getlen_un_legacy_id(const link_specifier_t *inp)
 }
 
 uint8_t
-link_specifier_get_un_legacy_id(link_specifier_t *inp, size_t idx)
+link_specifier_get_un_legacy_id(link_specifier_t *inp, size_t xap)
 {
-  trunnel_assert(idx < 20);
-  return inp->un_legacy_id[idx];
+  trunnel_assert(xap < 20);
+  return inp->un_legacy_id[xap];
 }
 
 uint8_t
-link_specifier_getconst_un_legacy_id(const link_specifier_t *inp, size_t idx)
+link_specifier_getconst_un_legacy_id(const link_specifier_t *inp, size_t xap)
 {
-  return link_specifier_get_un_legacy_id((link_specifier_t*)inp, idx);
+  return link_specifier_get_un_legacy_id((link_specifier_t*)inp, xap);
 }
 int
-link_specifier_set_un_legacy_id(link_specifier_t *inp, size_t idx, uint8_t elt)
+link_specifier_set_un_legacy_id(link_specifier_t *inp, size_t xap, uint8_t elt)
 {
-  trunnel_assert(idx < 20);
-  inp->un_legacy_id[idx] = elt;
+  trunnel_assert(xap < 20);
+  inp->un_legacy_id[xap] = elt;
   return 0;
 }
 
@@ -1149,22 +1149,22 @@ link_specifier_getlen_un_ed25519_id(const link_specifier_t *inp)
 }
 
 uint8_t
-link_specifier_get_un_ed25519_id(link_specifier_t *inp, size_t idx)
+link_specifier_get_un_ed25519_id(link_specifier_t *inp, size_t xap)
 {
-  trunnel_assert(idx < 32);
-  return inp->un_ed25519_id[idx];
+  trunnel_assert(xap < 32);
+  return inp->un_ed25519_id[xap];
 }
 
 uint8_t
-link_specifier_getconst_un_ed25519_id(const link_specifier_t *inp, size_t idx)
+link_specifier_getconst_un_ed25519_id(const link_specifier_t *inp, size_t xap)
 {
-  return link_specifier_get_un_ed25519_id((link_specifier_t*)inp, idx);
+  return link_specifier_get_un_ed25519_id((link_specifier_t*)inp, xap);
 }
 int
-link_specifier_set_un_ed25519_id(link_specifier_t *inp, size_t idx, uint8_t elt)
+link_specifier_set_un_ed25519_id(link_specifier_t *inp, size_t xap, uint8_t elt)
 {
-  trunnel_assert(idx < 32);
-  inp->un_ed25519_id[idx] = elt;
+  trunnel_assert(xap < 32);
+  inp->un_ed25519_id[xap] = elt;
   return 0;
 }
 
@@ -1185,20 +1185,20 @@ link_specifier_getlen_un_unrecognized(const link_specifier_t *inp)
 }
 
 uint8_t
-link_specifier_get_un_unrecognized(link_specifier_t *inp, size_t idx)
+link_specifier_get_un_unrecognized(link_specifier_t *inp, size_t xap)
 {
-  return TRUNNEL_DYNARRAY_GET(&inp->un_unrecognized, idx);
+  return TRUNNEL_DYNARRAY_GET(&inp->un_unrecognized, xap);
 }
 
 uint8_t
-link_specifier_getconst_un_unrecognized(const link_specifier_t *inp, size_t idx)
+link_specifier_getconst_un_unrecognized(const link_specifier_t *inp, size_t xap)
 {
-  return link_specifier_get_un_unrecognized((link_specifier_t*)inp, idx);
+  return link_specifier_get_un_unrecognized((link_specifier_t*)inp, xap);
 }
 int
-link_specifier_set_un_unrecognized(link_specifier_t *inp, size_t idx, uint8_t elt)
+link_specifier_set_un_unrecognized(link_specifier_t *inp, size_t xap, uint8_t elt)
 {
-  TRUNNEL_DYNARRAY_SET(&inp->un_unrecognized, idx, elt);
+  TRUNNEL_DYNARRAY_SET(&inp->un_unrecognized, xap, elt);
   return 0;
 }
 int
@@ -1595,9 +1595,9 @@ ed25519_cert_clear(ed25519_cert_t *obj)
   (void) obj;
   {
 
-    unsigned idx;
-    for (idx = 0; idx < TRUNNEL_DYNARRAY_LEN(&obj->ext); ++idx) {
-      ed25519_cert_extension_free(TRUNNEL_DYNARRAY_GET(&obj->ext, idx));
+    unsigned xap;
+    for (xap = 0; xap < TRUNNEL_DYNARRAY_LEN(&obj->ext); ++xap) {
+      ed25519_cert_extension_free(TRUNNEL_DYNARRAY_GET(&obj->ext, xap));
     }
   }
   TRUNNEL_DYNARRAY_WIPE(&obj->ext);
@@ -1669,22 +1669,22 @@ ed25519_cert_getlen_certified_key(const ed25519_cert_t *inp)
 }
 
 uint8_t
-ed25519_cert_get_certified_key(ed25519_cert_t *inp, size_t idx)
+ed25519_cert_get_certified_key(ed25519_cert_t *inp, size_t xap)
 {
-  trunnel_assert(idx < 32);
-  return inp->certified_key[idx];
+  trunnel_assert(xap < 32);
+  return inp->certified_key[xap];
 }
 
 uint8_t
-ed25519_cert_getconst_certified_key(const ed25519_cert_t *inp, size_t idx)
+ed25519_cert_getconst_certified_key(const ed25519_cert_t *inp, size_t xap)
 {
-  return ed25519_cert_get_certified_key((ed25519_cert_t*)inp, idx);
+  return ed25519_cert_get_certified_key((ed25519_cert_t*)inp, xap);
 }
 int
-ed25519_cert_set_certified_key(ed25519_cert_t *inp, size_t idx, uint8_t elt)
+ed25519_cert_set_certified_key(ed25519_cert_t *inp, size_t xap, uint8_t elt)
 {
-  trunnel_assert(idx < 32);
-  inp->certified_key[idx] = elt;
+  trunnel_assert(xap < 32);
+  inp->certified_key[xap] = elt;
   return 0;
 }
 
@@ -1716,28 +1716,28 @@ ed25519_cert_getlen_ext(const ed25519_cert_t *inp)
 }
 
 struct ed25519_cert_extension_st *
-ed25519_cert_get_ext(ed25519_cert_t *inp, size_t idx)
+ed25519_cert_get_ext(ed25519_cert_t *inp, size_t xap)
 {
-  return TRUNNEL_DYNARRAY_GET(&inp->ext, idx);
+  return TRUNNEL_DYNARRAY_GET(&inp->ext, xap);
 }
 
  const struct ed25519_cert_extension_st *
-ed25519_cert_getconst_ext(const ed25519_cert_t *inp, size_t idx)
+ed25519_cert_getconst_ext(const ed25519_cert_t *inp, size_t xap)
 {
-  return ed25519_cert_get_ext((ed25519_cert_t*)inp, idx);
+  return ed25519_cert_get_ext((ed25519_cert_t*)inp, xap);
 }
 int
-ed25519_cert_set_ext(ed25519_cert_t *inp, size_t idx, struct ed25519_cert_extension_st * elt)
+ed25519_cert_set_ext(ed25519_cert_t *inp, size_t xap, struct ed25519_cert_extension_st * elt)
 {
-  ed25519_cert_extension_t *oldval = TRUNNEL_DYNARRAY_GET(&inp->ext, idx);
+  ed25519_cert_extension_t *oldval = TRUNNEL_DYNARRAY_GET(&inp->ext, xap);
   if (oldval && oldval != elt)
     ed25519_cert_extension_free(oldval);
-  return ed25519_cert_set0_ext(inp, idx, elt);
+  return ed25519_cert_set0_ext(inp, xap, elt);
 }
 int
-ed25519_cert_set0_ext(ed25519_cert_t *inp, size_t idx, struct ed25519_cert_extension_st * elt)
+ed25519_cert_set0_ext(ed25519_cert_t *inp, size_t xap, struct ed25519_cert_extension_st * elt)
 {
-  TRUNNEL_DYNARRAY_SET(&inp->ext, idx, elt);
+  TRUNNEL_DYNARRAY_SET(&inp->ext, xap, elt);
   return 0;
 }
 int
@@ -1791,22 +1791,22 @@ ed25519_cert_getlen_signature(const ed25519_cert_t *inp)
 }
 
 uint8_t
-ed25519_cert_get_signature(ed25519_cert_t *inp, size_t idx)
+ed25519_cert_get_signature(ed25519_cert_t *inp, size_t xap)
 {
-  trunnel_assert(idx < 64);
-  return inp->signature[idx];
+  trunnel_assert(xap < 64);
+  return inp->signature[xap];
 }
 
 uint8_t
-ed25519_cert_getconst_signature(const ed25519_cert_t *inp, size_t idx)
+ed25519_cert_getconst_signature(const ed25519_cert_t *inp, size_t xap)
 {
-  return ed25519_cert_get_signature((ed25519_cert_t*)inp, idx);
+  return ed25519_cert_get_signature((ed25519_cert_t*)inp, xap);
 }
 int
-ed25519_cert_set_signature(ed25519_cert_t *inp, size_t idx, uint8_t elt)
+ed25519_cert_set_signature(ed25519_cert_t *inp, size_t xap, uint8_t elt)
 {
-  trunnel_assert(idx < 64);
-  inp->signature[idx] = elt;
+  trunnel_assert(xap < 64);
+  inp->signature[xap] = elt;
   return 0;
 }
 
@@ -1832,9 +1832,9 @@ ed25519_cert_check(const ed25519_cert_t *obj)
   {
     const char *msg;
 
-    unsigned idx;
-    for (idx = 0; idx < TRUNNEL_DYNARRAY_LEN(&obj->ext); ++idx) {
-      if (NULL != (msg = ed25519_cert_extension_check(TRUNNEL_DYNARRAY_GET(&obj->ext, idx))))
+    unsigned xap;
+    for (xap = 0; xap < TRUNNEL_DYNARRAY_LEN(&obj->ext); ++xap) {
+      if (NULL != (msg = ed25519_cert_extension_check(TRUNNEL_DYNARRAY_GET(&obj->ext, xap))))
         return msg;
     }
   }
@@ -1873,9 +1873,9 @@ ed25519_cert_encoded_len(const ed25519_cert_t *obj)
   /* Length of struct ed25519_cert_extension ext[n_extensions] */
   {
 
-    unsigned idx;
-    for (idx = 0; idx < TRUNNEL_DYNARRAY_LEN(&obj->ext); ++idx) {
-      result += ed25519_cert_extension_encoded_len(TRUNNEL_DYNARRAY_GET(&obj->ext, idx));
+    unsigned xap;
+    for (xap = 0; xap < TRUNNEL_DYNARRAY_LEN(&obj->ext); ++xap) {
+      result += ed25519_cert_extension_encoded_len(TRUNNEL_DYNARRAY_GET(&obj->ext, xap));
     }
   }
 
@@ -1953,10 +1953,10 @@ ed25519_cert_encode(uint8_t *output, const size_t avail, const ed25519_cert_t *o
   /* Encode struct ed25519_cert_extension ext[n_extensions] */
   {
 
-    unsigned idx;
-    for (idx = 0; idx < TRUNNEL_DYNARRAY_LEN(&obj->ext); ++idx) {
+    unsigned xap;
+    for (xap = 0; xap < TRUNNEL_DYNARRAY_LEN(&obj->ext); ++xap) {
       trunnel_assert(written <= avail);
-      result = ed25519_cert_extension_encode(ptr, avail - written, TRUNNEL_DYNARRAY_GET(&obj->ext, idx));
+      result = ed25519_cert_extension_encode(ptr, avail - written, TRUNNEL_DYNARRAY_GET(&obj->ext, xap));
       if (result < 0)
         goto fail; /* XXXXXXX !*/
       written += result; ptr += result;
@@ -2040,8 +2040,8 @@ ed25519_cert_parse_into(ed25519_cert_t *obj, const uint8_t *input, const size_t 
   TRUNNEL_DYNARRAY_EXPAND(ed25519_cert_extension_t *, &obj->ext, obj->n_extensions, {});
   {
     ed25519_cert_extension_t * elt;
-    unsigned idx;
-    for (idx = 0; idx < obj->n_extensions; ++idx) {
+    unsigned xap;
+    for (xap = 0; xap < obj->n_extensions; ++xap) {
       result = ed25519_cert_extension_parse(&elt, ptr, remaining);
       if (result < 0)
         goto relay_fail;
@@ -2101,9 +2101,9 @@ extend2_cell_body_clear(extend2_cell_body_t *obj)
   (void) obj;
   {
 
-    unsigned idx;
-    for (idx = 0; idx < TRUNNEL_DYNARRAY_LEN(&obj->ls); ++idx) {
-      link_specifier_free(TRUNNEL_DYNARRAY_GET(&obj->ls, idx));
+    unsigned xap;
+    for (xap = 0; xap < TRUNNEL_DYNARRAY_LEN(&obj->ls); ++xap) {
+      link_specifier_free(TRUNNEL_DYNARRAY_GET(&obj->ls, xap));
     }
   }
   TRUNNEL_DYNARRAY_WIPE(&obj->ls);
@@ -2140,28 +2140,28 @@ extend2_cell_body_getlen_ls(const extend2_cell_body_t *inp)
 }
 
 struct link_specifier_st *
-extend2_cell_body_get_ls(extend2_cell_body_t *inp, size_t idx)
+extend2_cell_body_get_ls(extend2_cell_body_t *inp, size_t xap)
 {
-  return TRUNNEL_DYNARRAY_GET(&inp->ls, idx);
+  return TRUNNEL_DYNARRAY_GET(&inp->ls, xap);
 }
 
  const struct link_specifier_st *
-extend2_cell_body_getconst_ls(const extend2_cell_body_t *inp, size_t idx)
+extend2_cell_body_getconst_ls(const extend2_cell_body_t *inp, size_t xap)
 {
-  return extend2_cell_body_get_ls((extend2_cell_body_t*)inp, idx);
+  return extend2_cell_body_get_ls((extend2_cell_body_t*)inp, xap);
 }
 int
-extend2_cell_body_set_ls(extend2_cell_body_t *inp, size_t idx, struct link_specifier_st * elt)
+extend2_cell_body_set_ls(extend2_cell_body_t *inp, size_t xap, struct link_specifier_st * elt)
 {
-  link_specifier_t *oldval = TRUNNEL_DYNARRAY_GET(&inp->ls, idx);
+  link_specifier_t *oldval = TRUNNEL_DYNARRAY_GET(&inp->ls, xap);
   if (oldval && oldval != elt)
     link_specifier_free(oldval);
-  return extend2_cell_body_set0_ls(inp, idx, elt);
+  return extend2_cell_body_set0_ls(inp, xap, elt);
 }
 int
-extend2_cell_body_set0_ls(extend2_cell_body_t *inp, size_t idx, struct link_specifier_st * elt)
+extend2_cell_body_set0_ls(extend2_cell_body_t *inp, size_t xap, struct link_specifier_st * elt)
 {
-  TRUNNEL_DYNARRAY_SET(&inp->ls, idx, elt);
+  TRUNNEL_DYNARRAY_SET(&inp->ls, xap, elt);
   return 0;
 }
 int
@@ -2241,9 +2241,9 @@ extend2_cell_body_check(const extend2_cell_body_t *obj)
   {
     const char *msg;
 
-    unsigned idx;
-    for (idx = 0; idx < TRUNNEL_DYNARRAY_LEN(&obj->ls); ++idx) {
-      if (NULL != (msg = link_specifier_check(TRUNNEL_DYNARRAY_GET(&obj->ls, idx))))
+    unsigned xap;
+    for (xap = 0; xap < TRUNNEL_DYNARRAY_LEN(&obj->ls); ++xap) {
+      if (NULL != (msg = link_specifier_check(TRUNNEL_DYNARRAY_GET(&obj->ls, xap))))
         return msg;
     }
   }
@@ -2272,9 +2272,9 @@ extend2_cell_body_encoded_len(const extend2_cell_body_t *obj)
   /* Length of struct link_specifier ls[n_spec] */
   {
 
-    unsigned idx;
-    for (idx = 0; idx < TRUNNEL_DYNARRAY_LEN(&obj->ls); ++idx) {
-      result += link_specifier_encoded_len(TRUNNEL_DYNARRAY_GET(&obj->ls, idx));
+    unsigned xap;
+    for (xap = 0; xap < TRUNNEL_DYNARRAY_LEN(&obj->ls); ++xap) {
+      result += link_specifier_encoded_len(TRUNNEL_DYNARRAY_GET(&obj->ls, xap));
     }
   }
 
@@ -2317,10 +2317,10 @@ extend2_cell_body_encode(uint8_t *output, const size_t avail, const extend2_cell
   /* Encode struct link_specifier ls[n_spec] */
   {
 
-    unsigned idx;
-    for (idx = 0; idx < TRUNNEL_DYNARRAY_LEN(&obj->ls); ++idx) {
+    unsigned xap;
+    for (xap = 0; xap < TRUNNEL_DYNARRAY_LEN(&obj->ls); ++xap) {
       trunnel_assert(written <= avail);
-      result = link_specifier_encode(ptr, avail - written, TRUNNEL_DYNARRAY_GET(&obj->ls, idx));
+      result = link_specifier_encode(ptr, avail - written, TRUNNEL_DYNARRAY_GET(&obj->ls, xap));
       if (result < 0)
         goto fail; /* XXXXXXX !*/
       written += result; ptr += result;
@@ -2378,8 +2378,8 @@ extend2_cell_body_parse_into(extend2_cell_body_t *obj, const uint8_t *input, con
   TRUNNEL_DYNARRAY_EXPAND(link_specifier_t *, &obj->ls, obj->n_spec, {});
   {
     link_specifier_t * elt;
-    unsigned idx;
-    for (idx = 0; idx < obj->n_spec; ++idx) {
+    unsigned xap;
+    for (xap = 0; xap < obj->n_spec; ++xap) {
       result = link_specifier_parse(&elt, ptr, remaining);
       if (result < 0)
         goto relay_fail;
@@ -2438,9 +2438,9 @@ link_specifier_list_clear(link_specifier_list_t *obj)
   (void) obj;
   {
 
-    unsigned idx;
-    for (idx = 0; idx < TRUNNEL_DYNARRAY_LEN(&obj->spec); ++idx) {
-      link_specifier_free(TRUNNEL_DYNARRAY_GET(&obj->spec, idx));
+    unsigned xap;
+    for (xap = 0; xap < TRUNNEL_DYNARRAY_LEN(&obj->spec); ++xap) {
+      link_specifier_free(TRUNNEL_DYNARRAY_GET(&obj->spec, xap));
     }
   }
   TRUNNEL_DYNARRAY_WIPE(&obj->spec);
@@ -2475,28 +2475,28 @@ link_specifier_list_getlen_spec(const link_specifier_list_t *inp)
 }
 
 struct link_specifier_st *
-link_specifier_list_get_spec(link_specifier_list_t *inp, size_t idx)
+link_specifier_list_get_spec(link_specifier_list_t *inp, size_t xap)
 {
-  return TRUNNEL_DYNARRAY_GET(&inp->spec, idx);
+  return TRUNNEL_DYNARRAY_GET(&inp->spec, xap);
 }
 
  const struct link_specifier_st *
-link_specifier_list_getconst_spec(const link_specifier_list_t *inp, size_t idx)
+link_specifier_list_getconst_spec(const link_specifier_list_t *inp, size_t xap)
 {
-  return link_specifier_list_get_spec((link_specifier_list_t*)inp, idx);
+  return link_specifier_list_get_spec((link_specifier_list_t*)inp, xap);
 }
 int
-link_specifier_list_set_spec(link_specifier_list_t *inp, size_t idx, struct link_specifier_st * elt)
+link_specifier_list_set_spec(link_specifier_list_t *inp, size_t xap, struct link_specifier_st * elt)
 {
-  link_specifier_t *oldval = TRUNNEL_DYNARRAY_GET(&inp->spec, idx);
+  link_specifier_t *oldval = TRUNNEL_DYNARRAY_GET(&inp->spec, xap);
   if (oldval && oldval != elt)
     link_specifier_free(oldval);
-  return link_specifier_list_set0_spec(inp, idx, elt);
+  return link_specifier_list_set0_spec(inp, xap, elt);
 }
 int
-link_specifier_list_set0_spec(link_specifier_list_t *inp, size_t idx, struct link_specifier_st * elt)
+link_specifier_list_set0_spec(link_specifier_list_t *inp, size_t xap, struct link_specifier_st * elt)
 {
-  TRUNNEL_DYNARRAY_SET(&inp->spec, idx, elt);
+  TRUNNEL_DYNARRAY_SET(&inp->spec, xap, elt);
   return 0;
 }
 int
@@ -2553,9 +2553,9 @@ link_specifier_list_check(const link_specifier_list_t *obj)
   {
     const char *msg;
 
-    unsigned idx;
-    for (idx = 0; idx < TRUNNEL_DYNARRAY_LEN(&obj->spec); ++idx) {
-      if (NULL != (msg = link_specifier_check(TRUNNEL_DYNARRAY_GET(&obj->spec, idx))))
+    unsigned xap;
+    for (xap = 0; xap < TRUNNEL_DYNARRAY_LEN(&obj->spec); ++xap) {
+      if (NULL != (msg = link_specifier_check(TRUNNEL_DYNARRAY_GET(&obj->spec, xap))))
         return msg;
     }
   }
@@ -2579,9 +2579,9 @@ link_specifier_list_encoded_len(const link_specifier_list_t *obj)
   /* Length of struct link_specifier spec[n_spec] */
   {
 
-    unsigned idx;
-    for (idx = 0; idx < TRUNNEL_DYNARRAY_LEN(&obj->spec); ++idx) {
-      result += link_specifier_encoded_len(TRUNNEL_DYNARRAY_GET(&obj->spec, idx));
+    unsigned xap;
+    for (xap = 0; xap < TRUNNEL_DYNARRAY_LEN(&obj->spec); ++xap) {
+      result += link_specifier_encoded_len(TRUNNEL_DYNARRAY_GET(&obj->spec, xap));
     }
   }
   return result;
@@ -2621,10 +2621,10 @@ link_specifier_list_encode(uint8_t *output, const size_t avail, const link_speci
   /* Encode struct link_specifier spec[n_spec] */
   {
 
-    unsigned idx;
-    for (idx = 0; idx < TRUNNEL_DYNARRAY_LEN(&obj->spec); ++idx) {
+    unsigned xap;
+    for (xap = 0; xap < TRUNNEL_DYNARRAY_LEN(&obj->spec); ++xap) {
       trunnel_assert(written <= avail);
-      result = link_specifier_encode(ptr, avail - written, TRUNNEL_DYNARRAY_GET(&obj->spec, idx));
+      result = link_specifier_encode(ptr, avail - written, TRUNNEL_DYNARRAY_GET(&obj->spec, xap));
       if (result < 0)
         goto fail; /* XXXXXXX !*/
       written += result; ptr += result;
@@ -2675,8 +2675,8 @@ link_specifier_list_parse_into(link_specifier_list_t *obj, const uint8_t *input,
   TRUNNEL_DYNARRAY_EXPAND(link_specifier_t *, &obj->spec, obj->n_spec, {});
   {
     link_specifier_t * elt;
-    unsigned idx;
-    for (idx = 0; idx < obj->n_spec; ++idx) {
+    unsigned xap;
+    for (xap = 0; xap < obj->n_spec; ++xap) {
       result = link_specifier_parse(&elt, ptr, remaining);
       if (result < 0)
         goto relay_fail;

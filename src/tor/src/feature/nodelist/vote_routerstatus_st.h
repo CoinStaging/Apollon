@@ -17,7 +17,7 @@ struct vote_routerstatus_t {
   /** How many known-flags are allowed in a vote? This is the width of
    * the flags field of vote_routerstatus_t */
 #define MAX_KNOWN_FLAGS_IN_VOTE 64
-  uint64_t flags; /**< Bit-field for all recognized flags; index into
+  uint64_t flags; /**< Bit-field for all recognized flags; apollon into
                    * networkstatus_t.known_flags. */
   char *version; /**< The version that the authority says this router is
                   * running. */

@@ -46,25 +46,25 @@ public:
     }
 
     inline void paint(QPainter *painter, const QStyleOptionViewItem &option,
-                      const QModelIndex &index ) const
+                      const QModelIndex &apollon ) const
     {
         painter->save();
         bool selected = option.state & QStyle::State_Selected;
-        QDateTime date = index.data(TransactionTableModel::DateRole).toDateTime();
-        QIcon icon = qvariant_cast<QIcon>(index.data(TransactionTableModel::RawDecorationRole));
+        QDateTime date = apollon.data(TransactionTableModel::DateRole).toDateTime();
+        QIcon icon = qvariant_cast<QIcon>(apollon.data(TransactionTableModel::RawDecorationRole));
         if(selected)
         {
             icon = PlatformStyle::SingleColorIcon(icon, foreground_color_selected);
         }
-        QString address = index.data(Qt::DisplayRole).toString();
-        qint64 amount = index.data(TransactionTableModel::AmountRole).toLongLong();
-        bool confirmed = index.data(TransactionTableModel::ConfirmedRole).toBool();
+        QString address = apollon.data(Qt::DisplayRole).toString();
+        qint64 amount = apollon.data(TransactionTableModel::AmountRole).toLongLong();
+        bool confirmed = apollon.data(TransactionTableModel::ConfirmedRole).toBool();
 
-        QModelIndex ind = index.model()->index(index.row(), TransactionTableModel::Type, index.parent());
+        QModelIndex ind = apollon.model()->apollon(apollon.row(), TransactionTableModel::Type, apollon.parent());
         QString typeString = ind.data(Qt::DisplayRole).toString();
 
         QRect mainRect = option.rect;
-        QColor txColor = index.row() % 2 ? background_color : alternate_background_color;
+        QColor txColor = apollon.row() % 2 ? background_color : alternate_background_color;
         painter->fillRect(mainRect, txColor);
 
         if(selected)
@@ -89,11 +89,11 @@ public:
         QRect typeRect(decorationRect.right() + MARGIN, mainRect.top(), TYPE_WIDTH, TX_SIZE);
         painter->drawText(typeRect, Qt::AlignLeft|Qt::AlignVCenter, typeString);
 
-        bool watchOnly = index.data(TransactionTableModel::WatchonlyRole).toBool();
+        bool watchOnly = apollon.data(TransactionTableModel::WatchonlyRole).toBool();
 
         if (watchOnly)
         {
-            QIcon iconWatchonly = qvariant_cast<QIcon>(index.data(TransactionTableModel::WatchonlyDecorationRole));
+            QIcon iconWatchonly = qvariant_cast<QIcon>(apollon.data(TransactionTableModel::WatchonlyDecorationRole));
             if(selected)
             {
                 iconWatchonly = PlatformStyle::SingleColorIcon(iconWatchonly, foreground_color_selected);
@@ -150,7 +150,7 @@ public:
         painter->restore();
     }
 
-    inline QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
+    inline QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &apollon) const
     {
         return QSize(TX_SIZE, TX_SIZE);
     }
@@ -223,10 +223,10 @@ OverviewPage::OverviewPage(const PlatformStyle *platformStyle, QWidget *parent) 
     showOutOfSyncWarning(true);
 }
 
-void OverviewPage::handleTransactionClicked(const QModelIndex &index)
+void OverviewPage::handleTransactionClicked(const QModelIndex &apollon)
 {
     if(filter)
-        Q_EMIT transactionClicked(filter->mapToSource(index));
+        Q_EMIT transactionClicked(filter->mapToSource(apollon));
 }
 
 void OverviewPage::handleEnabledTorChanged(){
@@ -235,10 +235,10 @@ void OverviewPage::handleEnabledTorChanged(){
 
 	if(ui->checkboxEnabledTor->isChecked()){
         settings.setValue("fTorSetup", true);
-        msgBox.setText("Please restart the Index wallet to route your connection through Tor to protect your IP address. \nSyncing your wallet might be slower with TOR. \nNote that -torsetup in index.conf will always override any changes made here.");
+        msgBox.setText("Please restart the Apollon wallet to route your connection through Tor to protect your IP address. \nSyncing your wallet might be slower with TOR. \nNote that -torsetup in apollon.conf will always override any changes made here.");
 	}else{
         settings.setValue("fTorSetup", false);
-        msgBox.setText("Please restart the Index wallet to disable routing of your connection through Tor to protect your IP address. \nNote that -torsetup in index.conf will always override any changes made here.");
+        msgBox.setText("Please restart the Apollon wallet to disable routing of your connection through Tor to protect your IP address. \nNote that -torsetup in apollon.conf will always override any changes made here.");
 	}
 	msgBox.exec();
 }

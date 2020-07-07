@@ -22,7 +22,7 @@ depending on the speed of your machine.
 Incompatible Changes
 --------------------
 
-This release no longer maintains a full index of historical transaction ids
+This release no longer maintains a full apollon of historical transaction ids
 by default, so looking up an arbitrary transaction using the getrawtransaction
 RPC call will not work. If you need that functionality, you must run once
 with -txindex=1 -reindex=1 to rebuild block-chain indices (see below for more
@@ -69,7 +69,7 @@ dbcache : controls LevelDB memory usage.
 par : controls how many threads to use to validate transactions. Defaults to the number
 of CPUs on your machine, use -par=1 to limit to a single CPU.
 
-txindex : maintains an extra index of old, spent transaction ids so they will be found
+txindex : maintains an extra apollon of old, spent transaction ids so they will be found
 by the getrawtransaction JSON-RPC method.
 
 reindex : rebuild block and transaction indices from the downloaded block data.

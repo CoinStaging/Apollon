@@ -126,7 +126,7 @@
         <translation>Оношилгоо ба засварын консолыг онгойлго</translation>
     </message>
     <message>
-        <source>Index</source>
+        <source>Apollon</source>
         <translation>Биткойн</translation>
     </message>
     <message>
@@ -536,7 +536,7 @@
     <name>WalletView</name>
     </context>
 <context>
-    <name>index-core</name>
+    <name>apollon-core</name>
     <message>
         <source>Options:</source>
         <translation>Сонголтууд:</translation>
@@ -562,7 +562,7 @@
         <translation>Таны дансны үлдэгдэл хүрэлцэхгүй байна</translation>
     </message>
     <message>
-        <source>Loading block index...</source>
+        <source>Loading block apollon...</source>
         <translation>Блокийн индексүүдийг ачааллаж байна...</translation>
     </message>
     <message>

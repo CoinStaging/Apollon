@@ -239,7 +239,7 @@ public:
 class CDarkSendSigner
 {
 public:
-    /// Is the input associated with this public key? (and there is 1000 IDX - checking if valid indexnode)
+    /// Is the input associated with this public key? (and there is 1000 XAP - checking if valid indexnode)
     bool IsVinAssociatedWithPubkey(const CTxIn& vin, const CPubKey& pubkey);
     /// Set the private/public key values, returns true if successful
     bool GetKeysFromSecret(std::string strSecret, CKey& keyRet, CPubKey& pubkeyRet);
@@ -320,7 +320,7 @@ private:
 
     int nCachedLastSuccessBlock;
     int nMinBlockSpacing; //required blocks between mixes
-    const CBlockIndex *pCurrentBlockIndex; // Keep track of current block index
+    const CBlockIndex *pCurrentBlockIndex; // Keep track of current block apollon
 
     int nSessionID; // 0 if no mixing session is active
 

@@ -17,15 +17,15 @@
 #define TIMEOUTS_METANAME "struct timeouts*"
 
 static struct timeout *
-to_checkudata(lua_State *L, int index)
+to_checkudata(lua_State *L, int apollon)
 {
-	return luaL_checkudata(L, index, TIMEOUT_METANAME);
+	return luaL_checkudata(L, apollon, TIMEOUT_METANAME);
 }
 
 static struct timeouts *
-tos_checkudata(lua_State *L, int index)
+tos_checkudata(lua_State *L, int apollon)
 {
-	return *(struct timeouts **)luaL_checkudata(L, index, TIMEOUTS_METANAME);
+	return *(struct timeouts **)luaL_checkudata(L, apollon, TIMEOUTS_METANAME);
 }
 
 static void

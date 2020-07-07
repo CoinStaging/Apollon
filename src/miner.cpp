@@ -467,7 +467,7 @@ CBlockTemplate* BlockAssembler::CreateNewBlock(
             indexnodePayment = GetIndexnodePayment(chainparams.GetConsensus(),false,nHeight);
             FillBlockPayments(coinbaseTx, nHeight, indexnodePayment, pblock->txoutIndexnode, pblock->voutSuperblock);
         }
-        //Only take out idx payment if a indexnode is actually filled in txoutindexnode and indexnodepayment is not 0
+        //Only take out xap payment if a indexnode is actually filled in txoutindexnode and indexnodepayment is not 0
         if(pblock->txoutIndexnode != CTxOut() && indexnodePayment != 0)
             coinbaseTx.vout[0].nValue -= indexnodePayment;
 
@@ -748,7 +748,7 @@ void BlockAssembler::addPackageTxs()
     // and modifying them for their already included ancestors
     UpdatePackagesForAdded(inBlock, mapModifiedTx);
 
-    CTxMemPool::indexed_transaction_set::index<ancestor_score>::type::iterator mi = mempool.mapTx.get<ancestor_score>().begin();
+    CTxMemPool::indexed_transaction_set::apollon<ancestor_score>::type::iterator mi = mempool.mapTx.get<ancestor_score>().begin();
     CTxMemPool::txiter iter;
     while (mi != mempool.mapTx.get<ancestor_score>().end() || !mapModifiedTx.empty())
     {
@@ -880,7 +880,7 @@ void BlockAssembler::addPriorityTxs()
         CTransaction tx = mi->GetTx();
         mempool.ApplyDeltas(tx.GetHash(), dPriority, dummy);
         vecPriority.push_back(TxCoinAgePriority(dPriority, mi));
-        //add Index validation
+        //add Apollon validation
         if (tx.IsCoinBase() || !CheckFinalTx(tx))
             continue;
         if (tx.IsZerocoinSpend() || tx.IsSigmaSpend() || tx.IsZerocoinRemint()) {
@@ -1032,7 +1032,7 @@ static bool ProcessBlockFound(const CBlock* pblock, const CChainParams& chainpar
 
 void static ZcoinMiner(const CChainParams &chainparams) {
     SetThreadPriority(THREAD_PRIORITY_LOWEST);
-    RenameThread("index-miner");
+    RenameThread("apollon-miner");
 
     unsigned int nExtraNonce = 0;
 
@@ -1203,7 +1203,7 @@ void ThreadStakeMiner(CWallet *pwallet, const CChainParams& chainparams)
     LogPrintf("Staking started\n");
 
     // Make this thread recognisable as the mining thread
-    RenameThread("index-staker");
+    RenameThread("apollon-staker");
 
     CReserveKey reservekey(pwallet);
 

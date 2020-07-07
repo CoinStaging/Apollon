@@ -224,8 +224,8 @@ UniValue setting(Type type, const UniValue& data, const UniValue& auth, bool fHe
             UniValue result(UniValue::VOBJ);
             UniValue names(UniValue::VARR);
             names = find_value(data, "settings").get_array();
-            for(size_t index=0; index<names.size();index++){
-                string name = names[index].get_str();
+            for(size_t apollon=0; apollon<names.size();apollon++){
+                string name = names[apollon].get_str();
                 if(!SettingExists(settingsData, name)){
                     throw JSONAPIError(API_INVALID_PARAMETER, "Invalid, missing or duplicate parameter");
                 }

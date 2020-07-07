@@ -69,7 +69,7 @@ BOOST_AUTO_TEST_CASE(dbindexhelper_coinbase)
             BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[i].first.hashBytes == key);
             BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[i].first.type == type);
             BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[i].first.txhash == tx.GetHash());
-            BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[i].first.index == i);
+            BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[i].first.apollon == i);
 
             BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[i].second.blockHeight == 7980);
             BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[i].second.satoshis == amounts[i]*100000);
@@ -97,7 +97,7 @@ BOOST_AUTO_TEST_CASE(dbindexhelper_coinbase)
             BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[i].first.hashBytes == key);
             BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[i].first.type == type);
             BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[i].first.txhash == tx.GetHash());
-            BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[i].first.index == outNum-1-i);
+            BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[i].first.apollon == outNum-1-i);
 
             BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[i].second.blockHeight == 0);
             BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[i].second.satoshis == -1);
@@ -217,7 +217,7 @@ BOOST_AUTO_TEST_CASE(dbindexhelper_zeromint)
             BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[i].first.hashBytes == key);
             BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[i].first.type == type);
             BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[i].first.txhash == in0prevtx.GetHash());
-            BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[i].first.index == 0);
+            BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[i].first.apollon == 0);
 
             BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[i].second.blockHeight == 0);
             BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[i].second.satoshis == -1);
@@ -246,7 +246,7 @@ BOOST_AUTO_TEST_CASE(dbindexhelper_zeromint)
         BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[1].first.hashBytes == key);
         BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[1].first.type == type);
         BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[1].first.txhash == tx.GetHash());
-        BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[1].first.index == 1);
+        BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[1].first.apollon == 1);
 
         BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[1].second.blockHeight == txHeight);
         BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[1].second.satoshis == out_amounts[1] * 1e+5);
@@ -293,7 +293,7 @@ BOOST_AUTO_TEST_CASE(dbindexhelper_zerospend)
         BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[0].first.hashBytes == key);
         BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[0].first.type == type);
         BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[0].first.txhash == tx.GetHash());
-        BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[0].first.index == 0);
+        BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[0].first.apollon == 0);
 
         BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[0].second.blockHeight == txHeight);
         BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[0].second.satoshis == out_amounts[0] * 1e+5);
@@ -322,7 +322,7 @@ BOOST_AUTO_TEST_CASE(dbindexhelper_zerospend)
         BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[0].first.hashBytes == key);
         BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[0].first.type == type);
         BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[0].first.txhash == tx.GetHash());
-        BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[0].first.index == 0);
+        BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[0].first.apollon == 0);
 
         BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[0].second.blockHeight == 0);
         BOOST_CHECK(dbIndexHelper.getAddressUnspentIndex()[0].second.satoshis == -1);

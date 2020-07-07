@@ -117,7 +117,7 @@ public:
         }
 
         qDebug() << "    inModel=" + QString::number(inModel) +
-                    " Index=" + QString::number(lowerIndex) + "-" + QString::number(upperIndex) +
+                    " Apollon=" + QString::number(lowerIndex) + "-" + QString::number(upperIndex) +
                     " showTransaction=" + QString::number(showTransaction) + " derivedStatus=" + QString::number(status);
 
         switch(status)
@@ -177,11 +177,11 @@ public:
         return cachedWallet.size();
     }
 
-    TransactionRecord *index(int idx)
+    TransactionRecord *apollon(int xap)
     {
-        if(idx >= 0 && idx < cachedWallet.size())
+        if(xap >= 0 && xap < cachedWallet.size())
         {
-            TransactionRecord *rec = &cachedWallet[idx];
+            TransactionRecord *rec = &cachedWallet[xap];
 
             // Get required locks upfront. This avoids the GUI from getting
             // stuck if the core is holding the locks for a longer time - for
@@ -284,8 +284,8 @@ void TransactionTableModel::updateConfirmations()
     // Invalidate status (number of confirmations) and (possibly) description
     //  for all rows. Qt is smart enough to only actually request the data for the
     //  visible rows.
-    Q_EMIT dataChanged(index(0, Status), index(priv->size()-1, Status));
-    Q_EMIT dataChanged(index(0, ToAddress), index(priv->size()-1, ToAddress));
+    Q_EMIT dataChanged(apollon(0, Status), apollon(priv->size()-1, Status));
+    Q_EMIT dataChanged(apollon(0, ToAddress), apollon(priv->size()-1, ToAddress));
 }
 
 int TransactionTableModel::rowCount(const QModelIndex &parent) const
@@ -548,16 +548,16 @@ QString TransactionTableModel::formatTooltip(const TransactionRecord *rec) const
     return tooltip;
 }
 
-QVariant TransactionTableModel::data(const QModelIndex &index, int role) const
+QVariant TransactionTableModel::data(const QModelIndex &apollon, int role) const
 {
-    if(!index.isValid())
+    if(!apollon.isValid())
         return QVariant();
-    TransactionRecord *rec = static_cast<TransactionRecord*>(index.internalPointer());
+    TransactionRecord *rec = static_cast<TransactionRecord*>(apollon.internalPointer());
 
     switch(role)
     {
     case RawDecorationRole:
-        switch(index.column())
+        switch(apollon.column())
         {
         case Status:
             return txStatusDecoration(rec);
@@ -569,11 +569,11 @@ QVariant TransactionTableModel::data(const QModelIndex &index, int role) const
         break;
     case Qt::DecorationRole:
     {
-        QIcon icon = qvariant_cast<QIcon>(index.data(RawDecorationRole));
+        QIcon icon = qvariant_cast<QIcon>(apollon.data(RawDecorationRole));
         return platformStyle->TextColorIcon(icon);
     }
     case Qt::DisplayRole:
-        switch(index.column())
+        switch(apollon.column())
         {
         case Date:
             return formatTxDate(rec);
@@ -587,7 +587,7 @@ QVariant TransactionTableModel::data(const QModelIndex &index, int role) const
         break;
     case Qt::EditRole:
         // Edit role is used for sorting, so return the unformatted values
-        switch(index.column())
+        switch(apollon.column())
         {
         case Status:
             return QString::fromStdString(rec->status.sortKey);
@@ -606,7 +606,7 @@ QVariant TransactionTableModel::data(const QModelIndex &index, int role) const
     case Qt::ToolTipRole:
         return formatTooltip(rec);
     case Qt::TextAlignmentRole:
-        return column_alignments[index.column()];
+        return column_alignments[apollon.column()];
     case Qt::ForegroundRole:
         // Use the "danger" color for abandoned transactions
         if(rec->status.status == TransactionStatus::Abandoned)
@@ -618,11 +618,11 @@ QVariant TransactionTableModel::data(const QModelIndex &index, int role) const
         {
             return COLOR_UNCONFIRMED;
         }
-        if(index.column() == Amount && (rec->credit+rec->debit) < 0)
+        if(apollon.column() == Amount && (rec->credit+rec->debit) < 0)
         {
             return COLOR_NEGATIVE;
         }
-        if(index.column() == ToAddress)
+        if(apollon.column() == ToAddress)
         {
             return addressColor(rec);
         }
@@ -721,13 +721,13 @@ QVariant TransactionTableModel::headerData(int section, Qt::Orientation orientat
     return QVariant();
 }
 
-QModelIndex TransactionTableModel::index(int row, int column, const QModelIndex &parent) const
+QModelIndex TransactionTableModel::apollon(int row, int column, const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    TransactionRecord *data = priv->index(row);
+    TransactionRecord *data = priv->apollon(row);
     if(data)
     {
-        return createIndex(row, column, priv->index(row));
+        return createIndex(row, column, priv->apollon(row));
     }
     return QModelIndex();
 }
@@ -736,7 +736,7 @@ void TransactionTableModel::updateDisplayUnit()
 {
     // emit dataChanged to update Amount column with the current unit
     updateAmountColumnTitle();
-    Q_EMIT dataChanged(index(0, Amount), index(priv->size()-1, Amount));
+    Q_EMIT dataChanged(apollon(0, Amount), apollon(priv->size()-1, Amount));
 }
 
 // queue notifications to show a non freezing progress dialog e.g. for rescan

@@ -40,9 +40,9 @@ QString BitcoinUnits::name(int unit)
 {
     switch(unit)
     {
-    case BTC: return QString("IDX");
+    case BTC: return QString("XAP");
     case mBTC: return QString("mIDX");
-    case uBTC: return QString::fromUtf8("μIDX");
+    case uBTC: return QString::fromUtf8("μXAP");
     default: return QString("???");
     }
 }
@@ -187,9 +187,9 @@ int BitcoinUnits::rowCount(const QModelIndex &parent) const
     return unitlist.size();
 }
 
-QVariant BitcoinUnits::data(const QModelIndex &index, int role) const
+QVariant BitcoinUnits::data(const QModelIndex &apollon, int role) const
 {
-    int row = index.row();
+    int row = apollon.row();
     if(row >= 0 && row < unitlist.size())
     {
         Unit unit = unitlist.at(row);

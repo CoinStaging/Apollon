@@ -9,7 +9,7 @@ pthread_set_name_np adds a Glibc requirement on >= 2.12.
  1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/src/thread.cpp b/src/thread.cpp
-index a1086b0c..9943f354 100644
+apollon a1086b0c..9943f354 100644
 --- a/src/thread.cpp
 +++ b/src/thread.cpp
 @@ -307,7 +307,7 @@ void zmq::thread_t::setThreadName (const char *name_)

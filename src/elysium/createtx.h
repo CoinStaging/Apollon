@@ -78,7 +78,7 @@ public:
      * Adds a transaction input to the transaction.
      *
      * @param txid The hash of the input transaction
-     * @param nOut The index of the transaction output used as input
+     * @param nOut The apollon of the transaction output used as input
      */
     TxBuilder& addInput(const uint256& txid, uint32_t nOut);
 

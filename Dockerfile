@@ -41,16 +41,16 @@ RUN curl -L https://github.com/zeromq/libzmq/releases/download/v4.3.1/zeromq-4.3
 # Create user to run daemon
 RUN useradd -m -U indexd
 
-# Build Index
-COPY . /tmp/index/
+# Build Apollon
+COPY . /tmp/apollon/
 
-RUN cd /tmp/index && \
+RUN cd /tmp/apollon && \
     ./autogen.sh && \
     ./configure --without-gui --prefix=/usr && \
     make -j$(nproc) && \
     make check && \
     make install && \
-    cd / && rm -rf /tmp/index
+    cd / && rm -rf /tmp/apollon
 
 # Remove unused packages
 RUN apt-get remove -y \
@@ -65,7 +65,7 @@ RUN apt-get remove -y \
     libzmq3-dev \
     make
 
-# Start Index Daemon
+# Start Apollon Daemon
 USER indexd
 
 RUN mkdir /home/indexd/.IndexChain

@@ -173,7 +173,7 @@ private:
     // ... but at least nMinBlocksToStore (payments blocks)
     const int nMinBlocksToStore;
 
-    // Keep track of current block index
+    // Keep track of current block apollon
     const CBlockIndex *pCurrentBlockIndex;
 
 public:

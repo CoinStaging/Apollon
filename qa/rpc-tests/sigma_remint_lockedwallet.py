@@ -47,7 +47,7 @@ class SigmaRemintLockedWalletTest(BitcoinTestFramework):
 
         index_mints = self.nodes[0].listunspentmintzerocoins()
 
-        assert len(index_mints) == 10, 'Should be 10 index mints after index mint, but was: {}' \
+        assert len(index_mints) == 10, 'Should be 10 apollon mints after apollon mint, but was: {}' \
             .format(len(index_mints))
 
 

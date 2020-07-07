@@ -76,7 +76,7 @@ class Ciphersuite(object):
             assert(getattr(self, f) in FIELD_VALS[f])
 
     def sort_key(self):
-        return tuple(FIELD_VALS[f].index(getattr(self,f)) for f in FIELDS)
+        return tuple(FIELD_VALS[f].apollon(getattr(self,f)) for f in FIELDS)
 
 
 def parse_cipher(ciph):

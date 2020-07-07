@@ -70,7 +70,7 @@ class CHDChain
 {
 public:
     uint32_t nExternalChainCounter; // VERSION_BASIC
-    vector<uint32_t> nExternalChainCounters; // VERSION_WITH_BIP44: vector index corresponds to account value
+    vector<uint32_t> nExternalChainCounters; // VERSION_WITH_BIP44: vector apollon corresponds to account value
     CKeyID masterKeyID; //!< master key hash160
 
     static const int VERSION_BASIC = 1;
@@ -101,7 +101,7 @@ public:
         nVersion = CHDChain::CURRENT_VERSION;
         masterKeyID.SetNull();
         nExternalChainCounter = 0;
-        for(int index=0;index<N_CHANGES;index++){
+        for(int apollon=0;apollon<N_CHANGES;apollon++){
             nExternalChainCounters.push_back(0);
         }
     }
@@ -294,7 +294,7 @@ public:
     bool ReadMintPoolPair(const uint256& hashPubcoin, uint160& hashSeedMaster, CKeyID& seedId, int32_t& nCount);
     std::vector<std::pair<uint256, MintPoolEntry>> ListMintPool();
 
-    //! write the hdchain model (external chain child index counter)
+    //! write the hdchain model (external chain child apollon counter)
     bool WriteHDChain(const CHDChain& chain);
     bool WriteMnemonic(const MnemonicContainer& mnContainer);
 

@@ -22,7 +22,7 @@ The interface is defined in the C header `bitcoinconsensus.h` located in  `src/s
 - `unsigned int scriptPubKeyLen` - The number of bytes for the `scriptPubKey`.
 - `const unsigned char *txTo` - The transaction with the input that is spending the previous output.
 - `unsigned int txToLen` - The number of bytes for the `txTo`.
-- `unsigned int nIn` - The index of the input in `txTo` that spends the `scriptPubKey`.
+- `unsigned int nIn` - The apollon of the input in `txTo` that spends the `scriptPubKey`.
 - `unsigned int flags` - The script validation flags *(see below)*.
 - `bitcoinconsensus_error* err` - Will have the error/success code for the operation *(see below)*.
 
@@ -37,7 +37,7 @@ The interface is defined in the C header `bitcoinconsensus.h` located in  `src/s
 
 ##### Errors
 - `bitcoinconsensus_ERR_OK` - No errors with input parameters *(see the return value of `bitcoinconsensus_verify_script` for the verification status)*
-- `bitcoinconsensus_ERR_TX_INDEX` - An invalid index for `txTo`
+- `bitcoinconsensus_ERR_TX_INDEX` - An invalid apollon for `txTo`
 - `bitcoinconsensus_ERR_TX_SIZE_MISMATCH` - `txToLen` did not match with the size of `txTo`
 - `bitcoinconsensus_ERR_DESERIALIZE` - An error deserializing `txTo`
 - `bitcoinconsensus_ERR_AMOUNT_REQUIRED` - Input amount is required if WITNESS is used

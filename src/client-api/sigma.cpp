@@ -155,8 +155,8 @@ bool createSigmaSpendAPITransaction(CWalletTx& wtx,
         throw JSONAPIError(API_INVALID_PARAMETER, "Required at least an address to send");
     }
     UniValue output(UniValue::VOBJ);
-    for(size_t index=0; index<outputs.size(); index++){
-        output = outputs[index];
+    for(size_t apollon=0; apollon<outputs.size(); apollon++){
+        output = outputs[apollon];
         std::string strAddr = find_value(output, "address").get_str();
         // satoshi amount
         CAmount nAmount = find_value(output, "amount").get_int64();
@@ -219,11 +219,11 @@ UniValue GetDenominations(){
 
     // Add denominations to map
     BOOST_FOREACH(CMintMeta &mintMeta, listMints) {
-        std::string index = DenominationToString(mintMeta.denom);
+        std::string apollon = DenominationToString(mintMeta.denom);
         if (mintMeta.nHeight==-1 || chainActive.Height() < (mintMeta.nHeight + (ZC_MINT_CONFIRMATIONS-1)))
-            denominationsMap[index][MintStatus.UNCONFIRMED]++;
+            denominationsMap[apollon][MintStatus.UNCONFIRMED]++;
         else
-            denominationsMap[index][MintStatus.CONFIRMED]++;
+            denominationsMap[apollon][MintStatus.CONFIRMED]++;
     }
 
     // Add map to UniValue object
@@ -346,7 +346,7 @@ UniValue sendprivate(Type type, const UniValue& data, const UniValue& auth, bool
 
             // publish spent mint data to API
             UniValue mintUpdates(UniValue::VOBJ);
-            unsigned int index;
+            unsigned int apollon;
             string txid;
 
             BOOST_FOREACH(CSigmaEntry coin, coins){
@@ -354,11 +354,11 @@ UniValue sendprivate(Type type, const UniValue& data, const UniValue& auth, bool
                 if(!sigma::GetOutPoint(outpoint, coin.value))
                     throw runtime_error("Mint tx not found!");
                 txid = outpoint.hash.ToString();
-                index = outpoint.n;
-                string key = txid + to_string(index);
+                apollon = outpoint.n;
+                string key = txid + to_string(apollon);
                 UniValue entry(UniValue::VOBJ);
                 entry.push_back(Pair("txid", txid));
-                entry.push_back(Pair("index", to_string(index)));
+                entry.push_back(Pair("apollon", to_string(apollon)));
                 entry.push_back(Pair("available", false));
                 mintUpdates.push_back(Pair(key, entry));
             }

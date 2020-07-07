@@ -199,7 +199,7 @@ UniValue getrawtransaction(const UniValue& params, bool fHelp)
             "getrawtransaction \"txid\" ( verbose )\n"
             "\nNOTE: By default this function only works sometimes. This is when the tx is in the mempool\n"
             "or there is an unspent output in the utxo for this transaction. To make it always work,\n"
-            "you need to maintain a transaction index, using the -txindex command line option.\n"
+            "you need to maintain a transaction apollon, using the -txindex command line option.\n"
             "\nReturn the raw transaction data.\n"
             "\nIf verbose=0, returns a string that is serialized, hex-encoded data for 'txid'.\n"
             "If verbose is non-zero, returns an Object with information about 'txid'.\n"
@@ -236,14 +236,14 @@ UniValue getrawtransaction(const UniValue& params, bool fHelp)
             "  \"vout\" : [              (array of json objects)\n"
             "     {\n"
             "       \"value\" : x.xxx,            (numeric) The value in " + CURRENCY_UNIT + "\n"
-            "       \"n\" : n,                    (numeric) index\n"
+            "       \"n\" : n,                    (numeric) apollon\n"
             "       \"scriptPubKey\" : {          (json object)\n"
             "         \"asm\" : \"asm\",          (string) the asm\n"
             "         \"hex\" : \"hex\",          (string) the hex\n"
             "         \"reqSigs\" : n,            (numeric) The required sigs\n"
             "         \"type\" : \"pubkeyhash\",  (string) The type, eg 'pubkeyhash'\n"
             "         \"addresses\" : [           (json array of string)\n"
-            "           \"indexaddress\"        (string) Index address\n"
+            "           \"indexaddress\"        (string) Apollon address\n"
             "           ,...\n"
             "         ]\n"
             "       }\n"
@@ -294,7 +294,7 @@ UniValue gettxoutproof(const UniValue& params, bool fHelp)
             "\nReturns a hex-encoded proof that \"txid\" was included in a block.\n"
             "\nNOTE: By default this function only works sometimes. This is when there is an\n"
             "unspent output in the utxo for this transaction. To make it always work,\n"
-            "you need to maintain a transaction index, using the -txindex command line option or\n"
+            "you need to maintain a transaction apollon, using the -txindex command line option or\n"
             "specify the block in which the transaction is included manually (by blockhash).\n"
             "\nReturn the raw transaction data.\n"
             "\nArguments:\n"
@@ -311,8 +311,8 @@ UniValue gettxoutproof(const UniValue& params, bool fHelp)
     set<uint256> setTxids;
     uint256 oneTxid;
     UniValue txids = params[0].get_array();
-    for (unsigned int idx = 0; idx < txids.size(); idx++) {
-        const UniValue& txid = txids[idx];
+    for (unsigned int xap = 0; xap < txids.size(); xap++) {
+        const UniValue& txid = txids[xap];
         if (txid.get_str().length() != 64 || !IsHex(txid.get_str()))
             throw JSONRPCError(RPC_INVALID_PARAMETER, string("Invalid txid ")+txid.get_str());
         uint256 hash(uint256S(txid.get_str()));
@@ -345,7 +345,7 @@ UniValue gettxoutproof(const UniValue& params, bool fHelp)
         if (!GetTransaction(oneTxid, tx, Params().GetConsensus(), hashBlock, false) || hashBlock.IsNull())
             throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Transaction not yet in block");
         if (!mapBlockIndex.count(hashBlock))
-            throw JSONRPCError(RPC_INTERNAL_ERROR, "Transaction index corrupt");
+            throw JSONRPCError(RPC_INTERNAL_ERROR, "Transaction apollon corrupt");
         pblockindex = mapBlockIndex[hashBlock];
     }
 
@@ -424,7 +424,7 @@ UniValue createrawtransaction(const UniValue& params, bool fHelp)
             "     ]\n"
             "2. \"outputs\"             (string, required) a json object with outputs\n"
             "    {\n"
-            "      \"address\": x.xxx   (numeric or string, required) The key is the Index address, the numeric value (can be string) is the " + CURRENCY_UNIT + " amount\n"
+            "      \"address\": x.xxx   (numeric or string, required) The key is the Apollon address, the numeric value (can be string) is the " + CURRENCY_UNIT + " amount\n"
             "      \"data\": \"hex\",     (string, required) The key is \"data\", the value is hex encoded data\n"
             "      ...\n"
             "    }\n"
@@ -455,8 +455,8 @@ UniValue createrawtransaction(const UniValue& params, bool fHelp)
         rawTx.nLockTime = nLockTime;
     }
 
-    for (unsigned int idx = 0; idx < inputs.size(); idx++) {
-        const UniValue& input = inputs[idx];
+    for (unsigned int xap = 0; xap < inputs.size(); xap++) {
+        const UniValue& input = inputs[xap];
         const UniValue& o = input.get_obj();
 
         uint256 txid = ParseHashO(o, "txid");
@@ -497,7 +497,7 @@ UniValue createrawtransaction(const UniValue& params, bool fHelp)
         } else {
             CBitcoinAddress address(name_);
             if (!address.IsValid())
-                throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, string("Invalid Index address: ")+name_);
+                throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, string("Invalid Apollon address: ")+name_);
 
             if (setAddress.count(address))
                 throw JSONRPCError(RPC_INVALID_PARAMETER, string("Invalid parameter, duplicated address: ")+name_);
@@ -548,14 +548,14 @@ UniValue decoderawtransaction(const UniValue& params, bool fHelp)
             "  \"vout\" : [             (array of json objects)\n"
             "     {\n"
             "       \"value\" : x.xxx,            (numeric) The value in " + CURRENCY_UNIT + "\n"
-            "       \"n\" : n,                    (numeric) index\n"
+            "       \"n\" : n,                    (numeric) apollon\n"
             "       \"scriptPubKey\" : {          (json object)\n"
             "         \"asm\" : \"asm\",          (string) the asm\n"
             "         \"hex\" : \"hex\",          (string) the hex\n"
             "         \"reqSigs\" : n,            (numeric) The required sigs\n"
             "         \"type\" : \"pubkeyhash\",  (string) The type, eg 'pubkeyhash'\n"
             "         \"addresses\" : [           (json array of string)\n"
-            "           \"aGoK6MF87K2SgT7cnJFhSWt7u2cAS5m18p\"   (string) Index address\n"
+            "           \"aGoK6MF87K2SgT7cnJFhSWt7u2cAS5m18p\"   (string) Apollon address\n"
             "           ,...\n"
             "         ]\n"
             "       }\n"
@@ -598,7 +598,7 @@ UniValue decodescript(const UniValue& params, bool fHelp)
             "  \"type\":\"type\", (string) The output type\n"
             "  \"reqSigs\": n,    (numeric) The required signatures\n"
             "  \"addresses\": [   (json array of string)\n"
-            "     \"address\"     (string) Index address\n"
+            "     \"address\"     (string) Apollon address\n"
             "     ,...\n"
             "  ],\n"
             "  \"p2sh\",\"address\" (string) address of P2SH script wrapping this redeem script (not returned if the script is already a P2SH).\n"
@@ -691,7 +691,7 @@ UniValue signrawtransaction(const UniValue& params, bool fHelp)
             "  \"errors\" : [                 (json array of objects) Script verification errors (if there are any)\n"
             "    {\n"
             "      \"txid\" : \"hash\",           (string) The hash of the referenced, previous transaction\n"
-            "      \"vout\" : n,                (numeric) The index of the output to spent and used as input\n"
+            "      \"vout\" : n,                (numeric) The apollon of the output to spent and used as input\n"
             "      \"scriptSig\" : \"hex\",       (string) The hex-encoded signature script\n"
             "      \"sequence\" : n,            (numeric) Script sequence number\n"
             "      \"error\" : \"text\"           (string) Verification or signing error related to the input\n"
@@ -756,8 +756,8 @@ UniValue signrawtransaction(const UniValue& params, bool fHelp)
     if (params.size() > 2 && !params[2].isNull()) {
         fGivenKeys = true;
         UniValue keys = params[2].get_array();
-        for (unsigned int idx = 0; idx < keys.size(); idx++) {
-            UniValue k = keys[idx];
+        for (unsigned int xap = 0; xap < keys.size(); xap++) {
+            UniValue k = keys[xap];
             CBitcoinSecret vchSecret;
             bool fGood = vchSecret.SetString(k.get_str());
             if (!fGood)
@@ -776,8 +776,8 @@ UniValue signrawtransaction(const UniValue& params, bool fHelp)
     // Add previous txouts given in the RPC call:
     if (params.size() > 1 && !params[1].isNull()) {
         UniValue prevTxs = params[1].get_array();
-        for (unsigned int idx = 0; idx < prevTxs.size(); idx++) {
-            const UniValue& p = prevTxs[idx];
+        for (unsigned int xap = 0; xap < prevTxs.size(); xap++) {
+            const UniValue& p = prevTxs[xap];
             if (!p.isObject())
                 throw JSONRPCError(RPC_DESERIALIZATION_ERROR, "expected object with {\"txid'\",\"vout\",\"scriptPubKey\"}");
 

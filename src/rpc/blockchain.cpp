@@ -31,8 +31,8 @@ using namespace std;
 extern void TxToJSON(const CTransaction& tx, const uint256 hashBlock, UniValue& entry);
 void ScriptPubKeyToJSON(const CScript& scriptPubKey, UniValue& out, bool fIncludeHex);
 
-/* Calculate the difficulty for a given block index,
- * or the block index of the given chain.
+/* Calculate the difficulty for a given block apollon,
+ * or the block apollon of the given chain.
  */
 double GetDifficulty(const CChain& chain, const CBlockIndex* blockindex)
 {
@@ -608,10 +608,10 @@ UniValue getblockhash(const UniValue& params, bool fHelp)
 {
     if (fHelp || params.size() != 1)
         throw runtime_error(
-            "getblockhash index\n"
-            "\nReturns hash of block in best-block-chain at index provided.\n"
+            "getblockhash apollon\n"
+            "\nReturns hash of block in best-block-chain at apollon provided.\n"
             "\nArguments:\n"
-            "1. index         (numeric, required) The block index\n"
+            "1. apollon         (numeric, required) The block apollon\n"
             "\nResult:\n"
             "\"hash\"         (string) The block hash\n"
             "\nExamples:\n"
@@ -643,7 +643,7 @@ UniValue getblockheader(const UniValue& params, bool fHelp)
             "{\n"
             "  \"hash\" : \"hash\",     (string) the block hash (same as provided)\n"
             "  \"confirmations\" : n,   (numeric) The number of confirmations, or -1 if the block is not on the main chain\n"
-            "  \"height\" : n,          (numeric) The block height or index\n"
+            "  \"height\" : n,          (numeric) The block height or apollon\n"
             "  \"version\" : n,         (numeric) The block version\n"
             "  \"versionHex\" : \"00000000\", (string) The block version formatted in hexadecimal\n"
             "  \"merkleroot\" : \"xxxx\", (string) The merkle root\n"
@@ -707,7 +707,7 @@ UniValue getblock(const UniValue& params, bool fHelp)
             "  \"size\" : n,            (numeric) The block size\n"
             "  \"strippedsize\" : n,    (numeric) The block size excluding witness data\n"
             "  \"weight\" : n           (numeric) The block weight (BIP 141)\n"
-            "  \"height\" : n,          (numeric) The block height or index\n"
+            "  \"height\" : n,          (numeric) The block height or apollon\n"
             "  \"version\" : n,         (numeric) The block version\n"
             "  \"versionHex\" : \"00000000\", (string) The block version formatted in hexadecimal\n"
             "  \"merkleroot\" : \"xxxx\", (string) The merkle root\n"
@@ -826,7 +826,7 @@ UniValue gettxoutsetinfo(const UniValue& params, bool fHelp)
             "Note this call may take some time.\n"
             "\nResult:\n"
             "{\n"
-            "  \"height\":n,     (numeric) The current block height (index)\n"
+            "  \"height\":n,     (numeric) The current block height (apollon)\n"
             "  \"bestblock\": \"hex\",   (string) the best block hash hex\n"
             "  \"transactions\": n,      (numeric) The number of transactions\n"
             "  \"txouts\": n,            (numeric) The number of output transactions\n"
@@ -877,8 +877,8 @@ UniValue gettxout(const UniValue& params, bool fHelp)
             "     \"hex\" : \"hex\",        (string) \n"
             "     \"reqSigs\" : n,          (numeric) Number of required signatures\n"
             "     \"type\" : \"pubkeyhash\", (string) The type, eg pubkeyhash\n"
-            "     \"addresses\" : [          (array of string) array of Index addresses\n"
-            "        \"indexaddress\"     (string) Index address\n"
+            "     \"addresses\" : [          (array of string) array of Apollon addresses\n"
+            "        \"indexaddress\"     (string) Apollon address\n"
             "        ,...\n"
             "     ]\n"
             "  },\n"
@@ -1034,10 +1034,10 @@ UniValue getblockchaininfo(const UniValue& params, bool fHelp)
             "{\n"
             "  \"chain\": \"xxxx\",        (string) current network name as defined in BIP70 (main, test, regtest)\n"
             "  \"blocks\": xxxxxx,         (numeric) the current number of blocks processed in the server\n"
-            "  \"lastpowblock\": xxxxxx,   (numeric) The last PoW Block in Block index\n"
-            "  \"lastpowdiff\": xxxxxx,    (numeric) The last PoW Block difficulty in Block index\n"
-            "  \"lastposblock\": xxxxxx,   (numeric) The last PoS Block in Block index\n"
-            "  \"lastposdiff\": xxxxxx,    (numeric) The last PoS Block difficulty in Block index\n"
+            "  \"lastpowblock\": xxxxxx,   (numeric) The last PoW Block in Block apollon\n"
+            "  \"lastpowdiff\": xxxxxx,    (numeric) The last PoW Block difficulty in Block apollon\n"
+            "  \"lastposblock\": xxxxxx,   (numeric) The last PoS Block in Block apollon\n"
+            "  \"lastposdiff\": xxxxxx,    (numeric) The last PoS Block difficulty in Block apollon\n"
             "  \"headers\": xxxxxx,        (numeric) the current number of headers we have validated\n"
             "  \"bestblockhash\": \"...\", (string) the hash of the currently best block\n"
             "  \"difficulty\": xxxxxx,     (numeric) the current difficulty\n"

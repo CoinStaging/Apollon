@@ -2,7 +2,7 @@
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-bin_PROGRAMS += qt/index-qt
+bin_PROGRAMS += qt/apollon-qt
 EXTRA_LIBRARIES += qt/libindexqt.a
 
 # bitcoin qt core #
@@ -298,7 +298,7 @@ RES_ICONS = \
   qt/res/icons/bitcoin.ico \
   qt/res/icons/bitcoin_testnet.ico \
   qt/res/icons/bitcoin.png \
-  qt/res/icons/index.png \
+  qt/res/icons/apollon.png \
   qt/res/icons/zerocoin.png \
   qt/res/icons/sigma.png \
   qt/res/icons/indexnodes.png \
@@ -695,9 +695,9 @@ CLEAN_QT = $(nodist_qt_libindexqt_a_SOURCES) $(QT_QM) $(QT_FORMS_H) qt/*.gcda qt
 CLEANFILES += $(CLEAN_QT)
 
 index_qt_clean: FORCE
-	rm -f $(CLEAN_QT) $(qt_libindexqt_a_OBJECTS) $(qt_index_qt_OBJECTS) qt/index-qt$(EXEEXT) $(LIBBITCOINQT)
+	rm -f $(CLEAN_QT) $(qt_libindexqt_a_OBJECTS) $(qt_index_qt_OBJECTS) qt/apollon-qt$(EXEEXT) $(LIBBITCOINQT)
 
-index_qt : qt/index-qt$(EXEEXT)
+index_qt : qt/apollon-qt$(EXEEXT)
 
 ui_%.h: %.ui
 	@test -f $(UIC)

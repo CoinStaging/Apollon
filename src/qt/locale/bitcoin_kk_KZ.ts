@@ -70,7 +70,7 @@
         <translation>Құпия сөзді өзгерту</translation>
     </message>
     <message>
-        <source>Index</source>
+        <source>Apollon</source>
         <translation>Биткоин</translation>
     </message>
     <message>
@@ -320,7 +320,7 @@
     <name>WalletView</name>
     </context>
 <context>
-    <name>index-core</name>
+    <name>apollon-core</name>
     <message>
         <source>Information</source>
         <translation>Информация</translation>

@@ -59,10 +59,10 @@ struct {
 
 CBlockIndex CreateBlockIndex(int nHeight)
 {
-    CBlockIndex index;
-    index.nHeight = nHeight;
-    index.pprev = chainActive.Tip();
-    return index;
+    CBlockIndex apollon;
+    apollon.nHeight = nHeight;
+    apollon.pprev = chainActive.Tip();
+    return apollon;
 }
 
 bool TestSequenceLocks(const CTransaction &tx, int flags)
@@ -209,7 +209,7 @@ BOOST_AUTO_TEST_CASE(CreateNewBlock_validity)
         pblock->nVersion = 1;
         pblock->nTime = chainActive.Tip()->GetMedianTimePast()+1;
         if(i == 0)
-            pblock->nTime = 1475020801;//Index limitation
+            pblock->nTime = 1475020801;//Apollon limitation
         CMutableTransaction txCoinbase(pblock->vtx[0]);
         txCoinbase.nVersion = 1;
         txCoinbase.vin[0].scriptSig = CScript();

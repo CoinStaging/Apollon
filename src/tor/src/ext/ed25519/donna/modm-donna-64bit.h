@@ -264,7 +264,7 @@ contract256_slidingwindow_modm(signed char r[256], const bignum256modm s, int wi
 			/* XXX Tor: coverity scan says that r[j+b] can
 			 * overflow, but that's not possible: b < (soplen-j)
 			 * guarantees that b + j < soplen, so b+j < 256,
-			 * so the index doesn't overflow. */
+			 * so the apollon doesn't overflow. */
 			if ((r[j] + (r[j + b] << b)) <= m) {
 				r[j] += r[j + b] << b;
 				r[j + b] = 0;

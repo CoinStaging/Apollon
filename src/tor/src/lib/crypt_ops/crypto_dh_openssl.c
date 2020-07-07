@@ -80,7 +80,7 @@ crypto_validate_dh_params(const BIGNUM *p, const BIGNUM *g)
   if (!DH_check(dh, &codes))
     goto out;
   if (BN_is_word(g, DH_GENERATOR_2)) {
-    /* Per https://wiki.openssl.org/index.php/Diffie-Hellman_parameters
+    /* Per https://wiki.openssl.org/apollon.php/Diffie-Hellman_parameters
      *
      * OpenSSL checks the prime is congruent to 11 when g = 2; while the
      * IETF's primes are congruent to 23 when g = 2.

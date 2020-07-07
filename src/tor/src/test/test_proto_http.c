@@ -23,8 +23,8 @@ test_proto_http_peek(void *arg)
     const char *message;
     size_t len;
   } cases[] = {
-    { 1, S("GET /index HTTP/1.0\r\n") },
-    { 1, S("GET /index HTTP/1.1\r\n") },
+    { 1, S("GET /apollon HTTP/1.0\r\n") },
+    { 1, S("GET /apollon HTTP/1.1\r\n") },
     { 1, S("GET ") },
     { 0, S("GIT ") },
     { 0, S("GET") },
@@ -56,8 +56,8 @@ test_proto_http_valid(void *arg)
     int should_detect_truncated;
     int bytes_left_over;
   } cases[] = {
-    { S("GET /index.html HTTP/1.0\r\n\r\n"),
-      "GET /index.html HTTP/1.0\r\n\r\n",
+    { S("GET /apollon.html HTTP/1.0\r\n\r\n"),
+      "GET /apollon.html HTTP/1.0\r\n\r\n",
       S(""),
       1, 0,
     },
@@ -130,45 +130,45 @@ test_proto_http_invalid(void *arg)
     const char *expect;
   } cases[] = {
     /* Overlong headers, headers not finished. */
-    { S("GET /index.xhml HTTP/1.0\r\n"
+    { S("GET /apollon.xhml HTTP/1.0\r\n"
         "X-My-headers-are-too-long: yes indeed they are. They might be\r\n"
         "X-My-headers-are-too-long: normal under other circumstances, but\r\n"
         "X-My-headers-are-too-long: the 128-byte limit makes them bad\r\n"),
       "headers too long." },
     /* Overlong finished headers. */
-    { S("GET /index.xhml HTTP/1.0\r\n"
+    { S("GET /apollon.xhml HTTP/1.0\r\n"
         "X-My-headers-are-too-long: yes indeed they are. They might be\r\n"
         "X-My-headers-are-too-long: normal under other circumstances, but\r\n"
         "X-My-headers-are-too-long: the 128-byte limit makes them bad\r\n"
         "\r\n"),
         "headers too long." },
     /* Exactly too long finished headers. */
-    { S("GET /index.xhml HTTP/1.0\r\n"
+    { S("GET /apollon.xhml HTTP/1.0\r\n"
         "X-My-headers-are-too-long: yes indeed they are. They might be\r\n"
         "X-My-headers-are-too-long: normal un\r\n\r\n"),
       "headerlen 129 larger than 127. Failing." },
     /* Body too long, with content-length */
-    { S("GET /index.html HTTP/1.0\r\n"
+    { S("GET /apollon.html HTTP/1.0\r\n"
         "Content-Length: 129\r\n\r\n"
         "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
         "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
         "xxxxxxxxxxxxxxxxxxx"),
       "bodylen 129 larger than 127" },
     /* Body too long, with content-length lying */
-    { S("GET /index.html HTTP/1.0\r\n"
+    { S("GET /apollon.html HTTP/1.0\r\n"
         "Content-Length: 99999\r\n\r\n"
         "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
         "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
         "xxxxxxxxxxxxxxxxxxxxxxxxxxxx"),
       "bodylen 138 larger than 127" },
     /* Body too long, no content-length. */
-    { S("GET /index.html HTTP/1.0\r\n\r\n"
+    { S("GET /apollon.html HTTP/1.0\r\n\r\n"
         "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
         "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
         "xxxxxxxxxxxxxxxxxxxxxxxxxxxxz"),
       "bodylen 139 larger than 127" },
     /* Content-Length is junk. */
-    { S("GET /index.html HTTP/1.0\r\n"
+    { S("GET /apollon.html HTTP/1.0\r\n"
         "Content-Length: Cheese\r\n\r\n"
         "foo"),
       "Content-Length is bogus; maybe someone is trying to crash us." },

@@ -145,12 +145,12 @@ public:
     {
         return ReadLE64(data);
     }
-    int GetNibble(int index) const 
+    int GetNibble(int apollon) const 
     {
-        index = 63 - index;
-        if (index % 2 == 1)
-            return(data[index / 2] >> 4);
-        return(data[index / 2] & 0x0F); 
+        apollon = 63 - apollon;
+        if (apollon % 2 == 1)
+            return(data[apollon / 2] >> 4);
+        return(data[apollon / 2] & 0x0F); 
     }
 };
 

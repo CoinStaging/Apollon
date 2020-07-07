@@ -4,20 +4,20 @@ namespace elysium {
 
 // SigmaMintChainState Implementation.
 
-SigmaMintChainState::SigmaMintChainState() noexcept : block(-1), group(0), index(0)
+SigmaMintChainState::SigmaMintChainState() noexcept : block(-1), group(0), apollon(0)
 {
 }
 
-SigmaMintChainState::SigmaMintChainState(int block, SigmaMintGroup group, SigmaMintIndex index) noexcept :
+SigmaMintChainState::SigmaMintChainState(int block, SigmaMintGroup group, SigmaMintIndex apollon) noexcept :
     block(block),
     group(group),
-    index(index)
+    apollon(apollon)
 {
 }
 
 bool SigmaMintChainState::operator==(const SigmaMintChainState& other) const noexcept
 {
-    return block == other.block && group == other.group && index == other.index;
+    return block == other.block && group == other.group && apollon == other.apollon;
 }
 
 bool SigmaMintChainState::operator!=(const SigmaMintChainState& other) const noexcept
@@ -29,7 +29,7 @@ void SigmaMintChainState::Clear() noexcept
 {
     block = -1;
     group = 0;
-    index = 0;
+    apollon = 0;
 }
 
 // SigmaMint Implementation.

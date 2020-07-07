@@ -23,7 +23,7 @@ namespace zerocoin_tests3_v3 { class zerocoin_mintspend_v3; }
 namespace sigma {
 
 // Zerocoin transaction info, added to the CBlock to ensure zerocoin mint/spend transactions got their info stored into
-// index
+// apollon
 class CSigmaTxInfo {
 public:
     // all the zerocoin transactions encountered so far
@@ -75,7 +75,7 @@ bool ConnectBlockSigma(
   bool fJustCheck=false);
 
 /*
- * Get COutPoint(txHash, index) from the chain using pubcoin value alone.
+ * Get COutPoint(txHash, apollon) from the chain using pubcoin value alone.
  */
 bool GetOutPointFromBlock(COutPoint& outPoint, const GroupElement &pubCoinValue, const CBlock &block);
 bool GetOutPoint(COutPoint& outPoint, const sigma::PublicCoin &pubCoin);
@@ -88,7 +88,7 @@ Scalar GetSigmaSpendSerialNumber(const CTransaction &tx, const CTxIn &txin);
 CAmount GetSigmaSpendInput(const CTransaction &tx);
 
 /*
- * State of minted/spent coins as extracted from the index
+ * State of minted/spent coins as extracted from the apollon
  */
 class CSigmaState {
 friend bool BuildSigmaStateFromIndex(CChain *, set<CBlockIndex *> &);
@@ -116,16 +116,16 @@ public:
     CSigmaState();
 
     // Add mins in block, automatically assigning id to it
-    void AddMintsToStateAndBlockIndex(CBlockIndex *index, const CBlock* pblock);
+    void AddMintsToStateAndBlockIndex(CBlockIndex *apollon, const CBlock* pblock);
 
     // Add serial to the list of used ones
     void AddSpend(const Scalar &serial, CoinDenomination denom, int coinGroupId);
 
     // Add everything from the block to the state
-    void AddBlock(CBlockIndex *index);
+    void AddBlock(CBlockIndex *apollon);
 
     // Disconnect block from the chain rolling back mints and spends
-    void RemoveBlock(CBlockIndex *index);
+    void RemoveBlock(CBlockIndex *apollon);
 
     // Query coin group with given denomination and id
     bool GetCoinGroupInfo(sigma::CoinDenomination denomination,

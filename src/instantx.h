@@ -38,7 +38,7 @@ class CInstantSend
 private:
     static const int ORPHAN_VOTE_SECONDS            = 60;
 
-    // Keep track of current block index
+    // Keep track of current block apollon
     const CBlockIndex *pCurrentBlockIndex;
 
     // maps for AlreadyHave

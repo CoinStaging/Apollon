@@ -62,12 +62,12 @@
         <translation>Ontvangstadressen</translation>
     </message>
     <message>
-        <source>These are your Index addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
+        <source>These are your Apollon addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
         <translation>Dit zijn uw Zcoinadressen om betalingen mee te verzenden. Controleer altijd het bedrag en het ontvangstadres voordat u uw indexs verzendt.</translation>
     </message>
     <message>
-        <source>These are your Index addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
-        <translation>Dit zijn uw Index-adressen waarmee u betalingen kunt ontvangen. We raden u aan om een nieuw ontvangstadres voor elke transactie te gebruiken.</translation>
+        <source>These are your Apollon addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
+        <translation>Dit zijn uw Apollon-adressen waarmee u betalingen kunt ontvangen. We raden u aan om een nieuw ontvangstadres voor elke transactie te gebruiken.</translation>
     </message>
     <message>
         <source>&amp;Copy Address</source>
@@ -322,7 +322,7 @@
         <translation>Bezig met herindexeren van blokken op harde schijf...</translation>
     </message>
     <message>
-        <source>Send coins to a Index address</source>
+        <source>Send coins to a Apollon address</source>
         <translation>Verstuur munten naar een Zcoinadres</translation>
     </message>
     <message>
@@ -346,8 +346,8 @@
         <translation>&amp;Verifiëer bericht...</translation>
     </message>
     <message>
-        <source>Index</source>
-        <translation>Index</translation>
+        <source>Apollon</source>
+        <translation>Apollon</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -374,11 +374,11 @@
         <translation>Versleutel de geheime sleutels die bij uw portemonnee horen</translation>
     </message>
     <message>
-        <source>Sign messages with your Index addresses to prove you own them</source>
+        <source>Sign messages with your Apollon addresses to prove you own them</source>
         <translation>Onderteken berichten met uw Zcoinadressen om te bewijzen dat u deze adressen bezit</translation>
     </message>
     <message>
-        <source>Verify messages to ensure they were signed with specified Index addresses</source>
+        <source>Verify messages to ensure they were signed with specified Apollon addresses</source>
         <translation>Verifiëer handtekeningen om zeker te zijn dat de berichten zijn ondertekend met de gespecificeerde Zcoinadressen</translation>
     </message>
     <message>
@@ -398,8 +398,8 @@
         <translation>Tab-werkbalk</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and index: URIs)</source>
-        <translation>Vraag betaling aan (genereert QR-codes en index: URI's)</translation>
+        <source>Request payments (generates QR codes and apollon: URIs)</source>
+        <translation>Vraag betaling aan (genereert QR-codes en apollon: URI's)</translation>
     </message>
     <message>
         <source>Show the list of used sending addresses and labels</source>
@@ -410,15 +410,15 @@
         <translation>Toon de lijst met gebruikte ontvangst adressen en labels</translation>
     </message>
     <message>
-        <source>Open a index: URI or payment request</source>
-        <translation>Open een index: URI of betalingsverzoek</translation>
+        <source>Open a apollon: URI or payment request</source>
+        <translation>Open een apollon: URI of betalingsverzoek</translation>
     </message>
     <message>
         <source>&amp;Command-line options</source>
         <translation>&amp;Opdrachtregelopties</translation>
     </message>
     <message numerus="yes">
-        <source>%n active connection(s) to Index network</source>
+        <source>%n active connection(s) to Apollon network</source>
         <translation><numerusform>%n actieve verbinding met Zcoinnetwerk</numerusform><numerusform>%n actieve verbindingen met Zcoinnetwerk</numerusform></translation>
     </message>
     <message>
@@ -486,8 +486,8 @@
         <translation>Bijgewerkt</translation>
     </message>
     <message>
-        <source>Show the %1 help message to get a list with possible Index command-line options</source>
-        <translation>Toon het %1 hulpbericht om een lijst te krijgen met mogelijke Index commandoregelopties</translation>
+        <source>Show the %1 help message to get a list with possible Apollon command-line options</source>
+        <translation>Toon het %1 hulpbericht om een lijst te krijgen met mogelijke Apollon commandoregelopties</translation>
     </message>
     <message>
         <source>%1 client</source>
@@ -806,7 +806,7 @@
         <translation>Bewerk verzendadres</translation>
     </message>
     <message>
-        <source>The entered address "%1" is not a valid Index address.</source>
+        <source>The entered address "%1" is not a valid Apollon address.</source>
         <translation>Het opgegeven adres "%1" is een ongeldig Zcoinadres.</translation>
     </message>
     <message>
@@ -915,8 +915,8 @@
         <translation>Omdat dit de eerste keer is dat het programma gestart is, kunt u nu kiezen waar %1 de data moet opslaan.</translation>
     </message>
     <message>
-        <source>%1 will download and store a copy of the Index block chain. At least %2GB of data will be stored in this directory, and it will grow over time. The wallet will also be stored in this directory.</source>
-        <translation>%1 zal een kopie van de Index blokketen downloaden en opslaan. Tenminste %2 GB aan data wordt opgeslagen in deze map en het zal groeien in de tijd. De portemonnee wordt ook in deze map opgeslagen.</translation>
+        <source>%1 will download and store a copy of the Apollon block chain. At least %2GB of data will be stored in this directory, and it will grow over time. The wallet will also be stored in this directory.</source>
+        <translation>%1 zal een kopie van de Apollon blokketen downloaden en opslaan. Tenminste %2 GB aan data wordt opgeslagen in deze map en het zal groeien in de tijd. De portemonnee wordt ook in deze map opgeslagen.</translation>
     </message>
     <message>
         <source>Use the default data directory</source>
@@ -1061,7 +1061,7 @@
         <translation>&amp;Spendeer onbevestigd wisselgeld</translation>
     </message>
     <message>
-        <source>Automatically open the Index client port on the router. This only works when your router supports UPnP and it is enabled.</source>
+        <source>Automatically open the Apollon client port on the router. This only works when your router supports UPnP and it is enabled.</source>
         <translation>Open de Zcoinpoort automatisch op de router. Dit werkt alleen als de router UPnP ondersteunt en het aanstaat.</translation>
     </message>
     <message>
@@ -1069,7 +1069,7 @@
         <translation>Portmapping via &amp;UPnP</translation>
     </message>
     <message>
-        <source>Connect to the Index network through a SOCKS5 proxy.</source>
+        <source>Connect to the Apollon network through a SOCKS5 proxy.</source>
         <translation>Verbind met het Zcoinnetwerk via een SOCKS5 proxy.</translation>
     </message>
     <message>
@@ -1109,7 +1109,7 @@
         <translation>Tor</translation>
     </message>
     <message>
-        <source>Connect to the Index network through a separate SOCKS5 proxy for Tor hidden services.</source>
+        <source>Connect to the Apollon network through a separate SOCKS5 proxy for Tor hidden services.</source>
         <translation>Maak verbinding met Zcoinnetwerk door een aparte SOCKS5-proxy voor verborgen diensten van Tor.</translation>
     </message>
     <message>
@@ -1208,7 +1208,7 @@
         <translation>Vorm</translation>
     </message>
     <message>
-        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Index network after a connection is established, but this process has not completed yet.</source>
+        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Apollon network after a connection is established, but this process has not completed yet.</source>
         <translation>De weergegeven informatie kan verouderd zijn. Uw portemonnee synchroniseert automatisch met het Zcoinnetwerk nadat een verbinding is gelegd, maar dit proces is nog niet voltooid.</translation>
     </message>
     <message>
@@ -1283,8 +1283,8 @@
         <translation>Fout bij betalingsverzoek</translation>
     </message>
     <message>
-        <source>Cannot start index: click-to-pay handler</source>
-        <translation>Kan index niet starten: click-to-pay handler</translation>
+        <source>Cannot start apollon: click-to-pay handler</source>
+        <translation>Kan apollon niet starten: click-to-pay handler</translation>
     </message>
     <message>
         <source>URI handling</source>
@@ -1299,8 +1299,8 @@
         <translation>Ongeldig betalingsadres %1</translation>
     </message>
     <message>
-        <source>URI cannot be parsed! This can be caused by an invalid Index address or malformed URI parameters.</source>
-        <translation>URI kan niet verwerkt worden! Dit kan het gevolg zijn van een ongeldig Index adres of misvormde URI parameters.</translation>
+        <source>URI cannot be parsed! This can be caused by an invalid Apollon address or malformed URI parameters.</source>
+        <translation>URI kan niet verwerkt worden! Dit kan het gevolg zijn van een ongeldig Apollon adres of misvormde URI parameters.</translation>
     </message>
     <message>
         <source>Payment request file handling</source>
@@ -1389,7 +1389,7 @@
         <translation>Bedrag</translation>
     </message>
     <message>
-        <source>Enter a Index address (e.g. %1)</source>
+        <source>Enter a Apollon address (e.g. %1)</source>
         <translation>Voer een Zcoinadres in (bijv. %1)</translation>
     </message>
     <message>
@@ -1754,7 +1754,7 @@
         <translation>H&amp;ergebruik en bestaand ontvangstadres (niet aanbevolen)</translation>
     </message>
     <message>
-        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the Index network.</source>
+        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the Apollon network.</source>
         <translation>Een optioneel bericht om bij te voegen aan het betalingsverzoek, welke zal getoond worden wanneer het verzoek is geopend. Opmerking: Het bericht zal niet worden verzonden met de betaling over het Zcoinnetwerk.</translation>
     </message>
     <message>
@@ -1987,8 +1987,8 @@
         <translation>totaal ten minste</translation>
     </message>
     <message>
-        <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks. But be aware that this can end up in a never confirming transaction once there is more demand for index transactions than the network can process.</source>
-        <translation>De minimale toeslag betalen is prima mits het transactievolume kleiner is dan de ruimte in de blokken. Let wel op dat dit tot gevolg kan hebben dat een transactie nooit wordt bevestigd als er meer vraag is naar index transacties dan het netwerk kan verwerken.</translation>
+        <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks. But be aware that this can end up in a never confirming transaction once there is more demand for apollon transactions than the network can process.</source>
+        <translation>De minimale toeslag betalen is prima mits het transactievolume kleiner is dan de ruimte in de blokken. Let wel op dat dit tot gevolg kan hebben dat een transactie nooit wordt bevestigd als er meer vraag is naar apollon transacties dan het netwerk kan verwerken.</translation>
     </message>
     <message>
         <source>(read the tooltip)</source>
@@ -2143,7 +2143,7 @@
         <translation>Betaal alleen de verplichte transactiekosten van %1</translation>
     </message>
     <message>
-        <source>Warning: Invalid Index address</source>
+        <source>Warning: Invalid Apollon address</source>
         <translation>Waarschuwing: Ongeldig Zcoinadres</translation>
     </message>
     <message>
@@ -2178,7 +2178,7 @@
         <translation>Dit is een normale betaling.</translation>
     </message>
     <message>
-        <source>The Index address to send the payment to</source>
+        <source>The Apollon address to send the payment to</source>
         <translation>Het Zcoinadres om betaling aan te versturen</translation>
     </message>
     <message>
@@ -2222,8 +2222,8 @@
         <translation>Vul een label voor dit adres in om het aan de lijst met gebruikte adressen toe te voegen</translation>
     </message>
     <message>
-        <source>A message that was attached to the index: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Index network.</source>
-        <translation>Een bericht dat werd toegevoegd aan de index: URI welke wordt opgeslagen met de transactie ter referentie. Opmerking: Dit bericht zal niet worden verzonden over het Zcoinnetwerk.</translation>
+        <source>A message that was attached to the apollon: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Apollon network.</source>
+        <translation>Een bericht dat werd toegevoegd aan de apollon: URI welke wordt opgeslagen met de transactie ter referentie. Opmerking: Dit bericht zal niet worden verzonden over het Zcoinnetwerk.</translation>
     </message>
     <message>
         <source>Pay To:</source>
@@ -2271,7 +2271,7 @@
         <translation>U kunt berichten/overeenkomsten ondertekenen met uw adres om te bewijzen dat u indexs kunt versturen. Wees voorzichtig met het ondertekenen van iets vaags of willekeurigs, omdat phishingaanvallen u kunnen proberen te misleiden tot het ondertekenen van overeenkomsten om uw identiteit aan hen toe te vertrouwen. Onderteken alleen volledig gedetailleerde verklaringen voordat u akkoord gaat.</translation>
     </message>
     <message>
-        <source>The Index address to sign the message with</source>
+        <source>The Apollon address to sign the message with</source>
         <translation>Het Zcoinadres om bericht mee te ondertekenen</translation>
     </message>
     <message>
@@ -2303,7 +2303,7 @@
         <translation>Kopieer de huidige handtekening naar het systeemklembord</translation>
     </message>
     <message>
-        <source>Sign the message to prove you own this Index address</source>
+        <source>Sign the message to prove you own this Apollon address</source>
         <translation>Onderteken een bericht om te bewijzen dat u een bepaald Zcoinadres bezit</translation>
     </message>
     <message>
@@ -2327,11 +2327,11 @@
         <translation>Voer het adres van de ontvanger in, bericht (zorg ervoor dat de regeleinden, spaties, tabs etc. precies kloppen) en onderteken onderaan om het bericht te verifiëren. Wees voorzicht om niet meer in de ondertekening te lezen dan in het getekende bericht zelf, om te voorkomen dat je wordt aangevallen met een man-in-the-middle attack. Houd er mee rekening dat dit alleen de ondertekende partij bewijst met het ontvangen adres, er kan niet bewezen worden dat er een transactie heeft plaatsgevonden!</translation>
     </message>
     <message>
-        <source>The Index address the message was signed with</source>
+        <source>The Apollon address the message was signed with</source>
         <translation>Het Zcoinadres waarmee het bericht ondertekend is</translation>
     </message>
     <message>
-        <source>Verify the message to ensure it was signed with the specified Index address</source>
+        <source>Verify the message to ensure it was signed with the specified Apollon address</source>
         <translation>Controleer een bericht om te verifiëren dat het gespecificeerde Zcoinadres het bericht heeft ondertekend.</translation>
     </message>
     <message>
@@ -2544,8 +2544,8 @@
         <translation>Transactie-ID</translation>
     </message>
     <message>
-        <source>Output index</source>
-        <translation>Output index</translation>
+        <source>Output apollon</source>
+        <translation>Output apollon</translation>
     </message>
     <message>
         <source>Merchant</source>
@@ -2918,7 +2918,7 @@
     </message>
 </context>
 <context>
-    <name>index-core</name>
+    <name>apollon-core</name>
     <message>
         <source>Options:</source>
         <translation>Opties:</translation>
@@ -2984,8 +2984,8 @@
         <translation>Accepteer verbindingen van buitenaf (standaard: 1 als geen -proxy of -connect is opgegeven)</translation>
     </message>
     <message>
-        <source>Index Core</source>
-        <translation>Index Core</translation>
+        <source>Apollon Core</source>
+        <translation>Apollon Core</translation>
     </message>
     <message>
         <source>-fallbackfee is set very high! This is the transaction fee you may pay when fee estimates are not available.</source>
@@ -3108,7 +3108,7 @@
         <translation>Kan -%s adres niet herleiden: '%s'</translation>
     </message>
     <message>
-        <source>Change index out of range</source>
+        <source>Change apollon out of range</source>
         <translation>Wijzigingsindex buiten bereik</translation>
     </message>
     <message>
@@ -3260,8 +3260,8 @@
         <translation>Snoeimodus is niet-compatibel met -txindex</translation>
     </message>
     <message>
-        <source>Rebuild chain state and block index from the blk*.dat files on disk</source>
-        <translation>Herbouw ketenstaat en block index met behulp van de blk*.dat bestanden op de hardeschijf</translation>
+        <source>Rebuild chain state and block apollon from the blk*.dat files on disk</source>
+        <translation>Herbouw ketenstaat en block apollon met behulp van de blk*.dat bestanden op de hardeschijf</translation>
     </message>
     <message>
         <source>Rebuild chain state from the currently indexed blocks</source>
@@ -3608,7 +3608,7 @@
         <translation>Hoe grondig de blokverificatie van -checkblocks is (0-4, standaard: %u)</translation>
     </message>
     <message>
-        <source>Maintain a full transaction index, used by the getrawtransaction rpc call (default: %u)</source>
+        <source>Maintain a full transaction apollon, used by the getrawtransaction rpc call (default: %u)</source>
         <translation>Onderhoud een volledige transactieindex, gebruikt door de getrawtransaction rpc call (standaard: %u)</translation>
     </message>
     <message>
@@ -3748,7 +3748,7 @@
         <translation>Ontoereikend saldo</translation>
     </message>
     <message>
-        <source>Loading block index...</source>
+        <source>Loading block apollon...</source>
         <translation>Blokindex aan het laden...</translation>
     </message>
     <message>

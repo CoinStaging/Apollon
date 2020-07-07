@@ -103,7 +103,7 @@
     </message>
     <message>
         <source>Show information about Qt</source>
-        <translation>Erakutsi Index-i buruzko informazioa</translation>
+        <translation>Erakutsi Apollon-i buruzko informazioa</translation>
     </message>
     <message>
         <source>&amp;Options...</source>
@@ -376,7 +376,7 @@
     <name>WalletView</name>
     </context>
 <context>
-    <name>index-core</name>
+    <name>apollon-core</name>
     <message>
         <source>Options:</source>
         <translation>Aukerak</translation>

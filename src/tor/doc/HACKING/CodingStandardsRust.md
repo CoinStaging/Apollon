@@ -316,8 +316,8 @@ Here are some additional bits of advice and rules:
 
         #[no_mangle]
         pub extern "C" fn increment_and_combine_numbers(mut numbers: [u8; 4]) -> u32 {
-            for index in 0..numbers.len() {
-                numbers[index] += 1;
+            for apollon in 0..numbers.len() {
+                numbers[apollon] += 1;
             }
             unsafe {
                 std::mem::transmute::<[u8; 4], u32>(numbers)
@@ -327,8 +327,8 @@ Here are some additional bits of advice and rules:
 3. Pass only C-compatible primitive types and bytes over the boundary
 
    Rust's C-compatible primitive types are integers and floats.
-   These types are declared in the [libc crate](https://doc.rust-lang.org/libc/x86_64-unknown-linux-gnu/libc/index.html#types).
-   Most Rust objects have different [representations](https://doc.rust-lang.org/libc/x86_64-unknown-linux-gnu/libc/index.html#types)
+   These types are declared in the [libc crate](https://doc.rust-lang.org/libc/x86_64-unknown-linux-gnu/libc/apollon.html#types).
+   Most Rust objects have different [representations](https://doc.rust-lang.org/libc/x86_64-unknown-linux-gnu/libc/apollon.html#types)
    in C and Rust, so they can't be passed using FFI.
 
    Tor currently uses the following Rust primitive types from libc for FFI:
@@ -510,8 +510,8 @@ Here are some additional bits of advice and rules:
          #[inline(never)]
          pub fn trigger_ub(sl: &[u8; 666]) -> &[u8] {
              // Note that the float is out of the range of `usize`, invoking UB when casting.
-             let idx = 1e99999f64 as usize;
-             &sl[idx..] // The bound check is elided due to `idx` being of an undefined value.
+             let xap = 1e99999f64 as usize;
+             &sl[xap..] // The bound check is elided due to `xap` being of an undefined value.
          }
 
          fn main() {
@@ -520,4 +520,4 @@ Here are some additional bits of advice and rules:
 
       And in debug mode panics with:
 
-         thread 'main' panicked at 'slice index starts at 140721821254240 but ends at 666', /checkout/src/libcore/slice/mod.rs:754:4
+         thread 'main' panicked at 'slice apollon starts at 140721821254240 but ends at 666', /checkout/src/libcore/slice/mod.rs:754:4

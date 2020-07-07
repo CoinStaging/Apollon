@@ -166,8 +166,8 @@
         <translation>Ladataan lohkoindeksiä...</translation>
     </message>
     <message>
-        <source>Send coins to a Index address</source>
-        <translation>Lähetä kolikoita Index-osoitteeseen</translation>
+        <source>Send coins to a Apollon address</source>
+        <translation>Lähetä kolikoita Apollon-osoitteeseen</translation>
     </message>
     <message>
         <source>Backup wallet to another location</source>
@@ -190,8 +190,8 @@
         <translation>Varmista &amp;viesti...</translation>
     </message>
     <message>
-        <source>Index</source>
-        <translation>Index</translation>
+        <source>Apollon</source>
+        <translation>Apollon</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -211,19 +211,19 @@
     </message>
     <message>
         <source>Show or hide the main Window</source>
-        <translation>Näytä tai piilota Index-ikkuna</translation>
+        <translation>Näytä tai piilota Apollon-ikkuna</translation>
     </message>
     <message>
         <source>Encrypt the private keys that belong to your wallet</source>
         <translation>Suojaa yksityiset avaimet, jotka kuuluvat lompakkoosi</translation>
     </message>
     <message>
-        <source>Sign messages with your Index addresses to prove you own them</source>
-        <translation>Allekirjoita viestisi omalla Index -osoitteellasi todistaaksesi, että omistat ne</translation>
+        <source>Sign messages with your Apollon addresses to prove you own them</source>
+        <translation>Allekirjoita viestisi omalla Apollon -osoitteellasi todistaaksesi, että omistat ne</translation>
     </message>
     <message>
-        <source>Verify messages to ensure they were signed with specified Index addresses</source>
-        <translation>Varmista, että viestisi on allekirjoitettu määritetyllä Index -osoitteella</translation>
+        <source>Verify messages to ensure they were signed with specified Apollon addresses</source>
+        <translation>Varmista, että viestisi on allekirjoitettu määritetyllä Apollon -osoitteella</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -242,8 +242,8 @@
         <translation>Välilehtipalkki</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and index: URIs)</source>
-        <translation>Pyydä maksuja (Luo QR koodit ja index: URIt)</translation>
+        <source>Request payments (generates QR codes and apollon: URIs)</source>
+        <translation>Pyydä maksuja (Luo QR koodit ja apollon: URIt)</translation>
     </message>
     <message>
         <source>Show the list of used sending addresses and labels</source>
@@ -254,16 +254,16 @@
         <translation>Näytä vastaanottamiseen käytettyjen osoitteiden ja nimien lista</translation>
     </message>
     <message>
-        <source>Open a index: URI or payment request</source>
-        <translation>Avaa index: URI tai maksupyyntö</translation>
+        <source>Open a apollon: URI or payment request</source>
+        <translation>Avaa apollon: URI tai maksupyyntö</translation>
     </message>
     <message>
         <source>&amp;Command-line options</source>
         <translation>&amp;Komentorivin valinnat</translation>
     </message>
     <message numerus="yes">
-        <source>%n active connection(s) to Index network</source>
-        <translation><numerusform>%n aktiivinen yhteys Index-verkkoon</numerusform><numerusform>%n aktiivista yhteyttä Index-verkkoon</numerusform></translation>
+        <source>%n active connection(s) to Apollon network</source>
+        <translation><numerusform>%n aktiivinen yhteys Apollon-verkkoon</numerusform><numerusform>%n aktiivista yhteyttä Apollon-verkkoon</numerusform></translation>
     </message>
     <message>
         <source>Indexing blocks on disk...</source>
@@ -330,7 +330,7 @@
         <translation>Rahansiirtohistoria on ajan tasalla</translation>
     </message>
     <message>
-        <source>Show the %1 help message to get a list with possible Index command-line options</source>
+        <source>Show the %1 help message to get a list with possible Apollon command-line options</source>
         <translation>Näytä %1 ohjeet saadaksesi listan mahdollisista Zcoinin komentorivivalinnoista</translation>
     </message>
     <message>
@@ -583,7 +583,7 @@
         <translation>Tämä on ensimmäinen kerta, kun %1 on käynnistetty, joten voit valita data-hakemiston paikan.</translation>
     </message>
     <message>
-        <source>%1 will download and store a copy of the Index block chain. At least %2GB of data will be stored in this directory, and it will grow over time. The wallet will also be stored in this directory.</source>
+        <source>%1 will download and store a copy of the Apollon block chain. At least %2GB of data will be stored in this directory, and it will grow over time. The wallet will also be stored in this directory.</source>
         <translation>%1 lataa ja tallentaa kopion Zcoinin lohkoketjusta. Vähintään %2Gt dataa tullaan tallentamaan tähän hakemistoon, ja tarve kasvaa ajan myötä. Lompakko tullaan myös tallentamaan tähän hakemistoon.</translation>
     </message>
     <message>
@@ -725,16 +725,16 @@
         <translation>&amp;Käytä varmistamattomia vaihtorahoja</translation>
     </message>
     <message>
-        <source>Automatically open the Index client port on the router. This only works when your router supports UPnP and it is enabled.</source>
-        <translation>Avaa Index-asiakasohjelman portti reitittimellä automaattisesti. Tämä toimii vain, jos reitittimesi tukee UPnP:tä ja se on käytössä.</translation>
+        <source>Automatically open the Apollon client port on the router. This only works when your router supports UPnP and it is enabled.</source>
+        <translation>Avaa Apollon-asiakasohjelman portti reitittimellä automaattisesti. Tämä toimii vain, jos reitittimesi tukee UPnP:tä ja se on käytössä.</translation>
     </message>
     <message>
         <source>Map port using &amp;UPnP</source>
         <translation>Portin uudelleenohjaus &amp;UPnP:llä</translation>
     </message>
     <message>
-        <source>Connect to the Index network through a SOCKS5 proxy.</source>
-        <translation>Yhdistä Index-verkkoon SOCKS5-välityspalvelimen kautta.</translation>
+        <source>Connect to the Apollon network through a SOCKS5 proxy.</source>
+        <translation>Yhdistä Apollon-verkkoon SOCKS5-välityspalvelimen kautta.</translation>
     </message>
     <message>
         <source>&amp;Connect through SOCKS5 proxy (default proxy):</source>
@@ -773,8 +773,8 @@
         <translation>Tor</translation>
     </message>
     <message>
-        <source>Connect to the Index network through a separate SOCKS5 proxy for Tor hidden services.</source>
-        <translation>Yhdistä Index-verkkoon erillisen SOCKS5-välityspalvelimen kautta piilotettuja Tor-palveluja varten.</translation>
+        <source>Connect to the Apollon network through a separate SOCKS5 proxy for Tor hidden services.</source>
+        <translation>Yhdistä Apollon-verkkoon erillisen SOCKS5-välityspalvelimen kautta piilotettuja Tor-palveluja varten.</translation>
     </message>
     <message>
         <source>Use separate SOCKS5 proxy to reach peers via Tor hidden services:</source>
@@ -810,11 +810,11 @@
     </message>
     <message>
         <source>&amp;Unit to show amounts in:</source>
-        <translation>Yksikkö jona index-määrät näytetään</translation>
+        <translation>Yksikkö jona apollon-määrät näytetään</translation>
     </message>
     <message>
         <source>Choose the default subdivision unit to show in the interface and when sending coins.</source>
-        <translation>Valitse mitä yksikköä käytetään ensisijaisesti index-määrien näyttämiseen.</translation>
+        <translation>Valitse mitä yksikköä käytetään ensisijaisesti apollon-määrien näyttämiseen.</translation>
     </message>
     <message>
         <source>Whether to show coin control features or not.</source>
@@ -864,8 +864,8 @@
         <translation>Lomake</translation>
     </message>
     <message>
-        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Index network after a connection is established, but this process has not completed yet.</source>
-        <translation>Näytetyt tiedot eivät välttämättä ole ajantasalla. Lompakkosi synkronoituu index-verkon kanssa automaattisesti yhteyden muodostamisen jälkeen, mutta synkronointi on vielä meneillään.</translation>
+        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Apollon network after a connection is established, but this process has not completed yet.</source>
+        <translation>Näytetyt tiedot eivät välttämättä ole ajantasalla. Lompakkosi synkronoituu apollon-verkon kanssa automaattisesti yhteyden muodostamisen jälkeen, mutta synkronointi on vielä meneillään.</translation>
     </message>
     <message>
         <source>Watch-only:</source>
@@ -957,8 +957,8 @@
         <translation>Määrä</translation>
     </message>
     <message>
-        <source>Enter a Index address (e.g. %1)</source>
-        <translation>Syötä Index-osoite (esim. %1)</translation>
+        <source>Enter a Apollon address (e.g. %1)</source>
+        <translation>Syötä Apollon-osoite (esim. %1)</translation>
     </message>
     <message>
         <source>%1 d</source>
@@ -1302,8 +1302,8 @@
         <translation>&amp;Uudelleenkäytä vastaanotto-osoitetta (ei suositella)</translation>
     </message>
     <message>
-        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the Index network.</source>
-        <translation>Valinnainen viesti liitetään maksupyyntöön ja näytetään avattaessa. Viestiä ei lähetetä Index-verkkoon.</translation>
+        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the Apollon network.</source>
+        <translation>Valinnainen viesti liitetään maksupyyntöön ja näytetään avattaessa. Viestiä ei lähetetä Apollon-verkkoon.</translation>
     </message>
     <message>
         <source>An optional label to associate with the new receiving address.</source>
@@ -1538,8 +1538,8 @@
         <translation>Tämä on normaali maksu.</translation>
     </message>
     <message>
-        <source>The Index address to send the payment to</source>
-        <translation>Index-osoite johon maksu lähetetään</translation>
+        <source>The Apollon address to send the payment to</source>
+        <translation>Apollon-osoite johon maksu lähetetään</translation>
     </message>
     <message>
         <source>Alt+A</source>
@@ -1582,8 +1582,8 @@
         <translation>Aseta nimi tälle osoitteelle lisätäksesi sen käytettyjen osoitteiden listalle.</translation>
     </message>
     <message>
-        <source>A message that was attached to the index: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Index network.</source>
-        <translation>Viesti joka liitettiin index: URI:iin tallennetaan rahansiirtoon viitteeksi. Tätä viestiä ei lähetetä Index-verkkoon.</translation>
+        <source>A message that was attached to the apollon: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Apollon network.</source>
+        <translation>Viesti joka liitettiin apollon: URI:iin tallennetaan rahansiirtoon viitteeksi. Tätä viestiä ei lähetetä Apollon-verkkoon.</translation>
     </message>
     <message>
         <source>Pay To:</source>
@@ -1619,8 +1619,8 @@
         <translation>&amp;Allekirjoita viesti</translation>
     </message>
     <message>
-        <source>The Index address to sign the message with</source>
-        <translation>Index-osoite jolla viesti allekirjoitetaan</translation>
+        <source>The Apollon address to sign the message with</source>
+        <translation>Apollon-osoite jolla viesti allekirjoitetaan</translation>
     </message>
     <message>
         <source>Choose previously used address</source>
@@ -1651,8 +1651,8 @@
         <translation>Kopioi tämänhetkinen allekirjoitus leikepöydälle</translation>
     </message>
     <message>
-        <source>Sign the message to prove you own this Index address</source>
-        <translation>Allekirjoita viesti todistaaksesi, että omistat tämän Index-osoitteen</translation>
+        <source>Sign the message to prove you own this Apollon address</source>
+        <translation>Allekirjoita viesti todistaaksesi, että omistat tämän Apollon-osoitteen</translation>
     </message>
     <message>
         <source>Sign &amp;Message</source>
@@ -1671,12 +1671,12 @@
         <translation>&amp;Varmista viesti</translation>
     </message>
     <message>
-        <source>The Index address the message was signed with</source>
-        <translation>Index-osoite jolla viesti on allekirjoitettu</translation>
+        <source>The Apollon address the message was signed with</source>
+        <translation>Apollon-osoite jolla viesti on allekirjoitettu</translation>
     </message>
     <message>
-        <source>Verify the message to ensure it was signed with the specified Index address</source>
-        <translation>Tarkista viestin allekirjoitus varmistaaksesi, että se allekirjoitettiin tietyllä Index-osoitteella</translation>
+        <source>Verify the message to ensure it was signed with the specified Apollon address</source>
+        <translation>Tarkista viestin allekirjoitus varmistaaksesi, että se allekirjoitettiin tietyllä Apollon-osoitteella</translation>
     </message>
     <message>
         <source>Verify &amp;Message</source>
@@ -1734,7 +1734,7 @@
     <name>WalletView</name>
     </context>
 <context>
-    <name>index-core</name>
+    <name>apollon-core</name>
     <message>
         <source>Options:</source>
         <translation>Asetukset:</translation>
@@ -1800,8 +1800,8 @@
         <translation>Hyväksy yhteyksiä ulkopuolelta (vakioasetus: 1 jos -proxy tai -connect ei määritelty)</translation>
     </message>
     <message>
-        <source>Index Core</source>
-        <translation>Index-ydin</translation>
+        <source>Apollon Core</source>
+        <translation>Apollon-ydin</translation>
     </message>
     <message>
         <source>The %s developers</source>
@@ -2352,7 +2352,7 @@
         <translation>Lompakon saldo ei riitä</translation>
     </message>
     <message>
-        <source>Loading block index...</source>
+        <source>Loading block apollon...</source>
         <translation>Ladataan lohkoindeksiä...</translation>
     </message>
     <message>

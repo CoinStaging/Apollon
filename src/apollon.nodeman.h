@@ -15,13 +15,13 @@ class CIndexnodeMan;
 extern CIndexnodeMan mnodeman;
 
 /**
- * Provides a forward and reverse index between MN vin's and integers.
+ * Provides a forward and reverse apollon between MN vin's and integers.
  *
  * This mapping is normally add-only and is expected to be permanent
- * It is only rebuilt if the size of the index exceeds the expected maximum number
+ * It is only rebuilt if the size of the apollon exceeds the expected maximum number
  * of MN's and the current number of known MN's.
  *
- * The external interface to this index is provided via delegation by CIndexnodeMan
+ * The external interface to this apollon is provided via delegation by CIndexnodeMan
  */
 class CIndexnodeIndex
 {
@@ -52,10 +52,10 @@ public:
         return nSize;
     }
 
-    /// Retrieve indexnode vin by index
+    /// Retrieve indexnode vin by apollon
     bool Get(int nIndex, CTxIn& vinIndexnode) const;
 
-    /// Get index of a indexnode vin
+    /// Get apollon of a indexnode vin
     int GetIndexnodeIndex(const CTxIn& vinIndexnode) const;
 
     void AddIndexnodeVIN(const CTxIn& vinIndexnode);
@@ -90,7 +90,7 @@ public:
 private:
     static const int MAX_EXPECTED_INDEX_SIZE = 30000;
 
-    /// Only allow 1 index rebuild per hour
+    /// Only allow 1 apollon rebuild per hour
     static const int64_t MIN_INDEX_REBUILD_TIME = 3600;
 
     static const std::string SERIALIZATION_VERSION_STRING;
@@ -114,7 +114,7 @@ private:
     // critical section to protect the inner data structures
     mutable CCriticalSection cs;
 
-    // Keep track of current block index
+    // Keep track of current block apollon
     const CBlockIndex *pCurrentBlockIndex;
 
     // map to hold all MNs
@@ -139,7 +139,7 @@ private:
 
     CIndexnodeIndex indexIndexnodesOld;
 
-    /// Set when index has been rebuilt, clear when read
+    /// Set when apollon has been rebuilt, clear when read
     bool fIndexRebuilt;
 
     /// Set when indexnodes are added, cleared when CGovernanceManager is notified
@@ -236,7 +236,7 @@ public:
     bool Get(const CPubKey& pubKeyIndexnode, CIndexnode& indexnode);
     bool Get(const CTxIn& vin, CIndexnode& indexnode);
 
-    /// Retrieve indexnode vin by index
+    /// Retrieve indexnode vin by apollon
     bool Get(int nIndex, CTxIn& vinIndexnode, bool& fIndexRebuiltOut) {
         LOCK(cs);
         fIndexRebuiltOut = fIndexRebuilt;
@@ -248,25 +248,25 @@ public:
         return fIndexRebuilt;
     }
 
-    /// Get index of a indexnode vin
+    /// Get apollon of a indexnode vin
     int GetIndexnodeIndex(const CTxIn& vinIndexnode) {
         LOCK(cs);
         return indexIndexnodes.GetIndexnodeIndex(vinIndexnode);
     }
 
-    /// Get old index of a indexnode vin
+    /// Get old apollon of a indexnode vin
     int GetIndexnodeIndexOld(const CTxIn& vinIndexnode) {
         LOCK(cs);
         return indexIndexnodesOld.GetIndexnodeIndex(vinIndexnode);
     }
 
-    /// Get indexnode VIN for an old index value
+    /// Get indexnode VIN for an old apollon value
     bool GetIndexnodeVinForIndexOld(int nIndexnodeIndex, CTxIn& vinIndexnodeOut) {
         LOCK(cs);
         return indexIndexnodesOld.Get(nIndexnodeIndex, vinIndexnodeOut);
     }
 
-    /// Get index of a indexnode vin, returning rebuild flag
+    /// Get apollon of a indexnode vin, returning rebuild flag
     int GetIndexnodeIndex(const CTxIn& vinIndexnode, bool& fIndexRebuiltOut) {
         LOCK(cs);
         fIndexRebuiltOut = fIndexRebuilt;
@@ -361,7 +361,7 @@ public:
     void UpdatedBlockTip(const CBlockIndex *pindex);
 
     /**
-     * Called to notify CGovernanceManager that the indexnode index has been updated.
+     * Called to notify CGovernanceManager that the indexnode apollon has been updated.
      * Must be called while not holding the CIndexnodeMan::cs mutex
      */
     void NotifyIndexnodeUpdates();

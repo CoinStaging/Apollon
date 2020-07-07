@@ -84,7 +84,7 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
             sub.involvesWatchAddress = involvesWatchAddress;
             sub.type = TransactionRecord::SpendToSelf;
             sub.address = addresses;
-            sub.idx = parts.size();
+            sub.xap = parts.size();
             sub.debit = -nTxFee;
             parts.append(sub);
         } else {
@@ -96,7 +96,7 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
 
                 TransactionRecord sub(hash, nTime);
                 CTxDestination address;
-                sub.idx = parts.size();
+                sub.xap = parts.size();
                 if (mine) {
                     sub.involvesWatchAddress = mine & ISMINE_WATCH_ONLY;
                     if (ExtractDestination(txout.scriptPubKey, address) && IsMine(*wallet, address)) {
@@ -125,10 +125,10 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
         CAmount txAmount = 0;
         for (const CTxOut &txout: wtx.vout)
             txAmount += txout.nValue;
-        sub.idx = parts.size();
+        sub.xap = parts.size();
         sub.debit = -txAmount;
         sub.credit = txAmount;
-        sub.address = QCoreApplication::translate("index-core", "Zerocoin->Sigma remint").toStdString();
+        sub.address = QCoreApplication::translate("apollon-core", "Zerocoin->Sigma remint").toStdString();
         parts.append(sub);
     }
     else if (nNet > 0 || wtx.IsCoinBase() || wtx.IsCoinStake())
@@ -143,7 +143,7 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
             {
                 TransactionRecord sub(hash, nTime);
                 CTxDestination address;
-                sub.idx = parts.size(); // sequence number
+                sub.xap = parts.size(); // sequence number
                 sub.credit = txout.nValue;
                 sub.involvesWatchAddress = mine & ISMINE_WATCH_ONLY;
 
@@ -249,7 +249,7 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
             {
                 const CTxOut& txout = wtx.vout[nOut];
                 TransactionRecord sub(hash, nTime);
-                sub.idx = parts.size();
+                sub.xap = parts.size();
                 sub.involvesWatchAddress = involvesWatchAddress;
 
                 if(wallet->IsMine(txout))
@@ -318,7 +318,7 @@ void TransactionRecord::updateStatus(const CWalletTx &wtx)
         (pindex ? pindex->nHeight : std::numeric_limits<int>::max()),
         (wtx.IsCoinBase() || wtx.IsCoinStake() ? 1 : 0),
         wtx.nTimeReceived,
-        idx);
+        xap);
     status.countsForBalance = wtx.IsTrusted() && !(wtx.GetBlocksToMaturity() > 0);
     status.depth = wtx.GetDepthInMainChain();
     status.cur_num_blocks = chainActive.Height();
@@ -402,5 +402,5 @@ QString TransactionRecord::getTxID() const
 
 int TransactionRecord::getOutputIndex() const
 {
-    return idx;
+    return xap;
 }

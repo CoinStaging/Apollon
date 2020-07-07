@@ -107,7 +107,7 @@ template<typename name>
 void CheckSort(CTxMemPool &pool, std::vector<std::string> &sortedOrder)
 {
     BOOST_CHECK_EQUAL(pool.size(), sortedOrder.size());
-    typename CTxMemPool::indexed_transaction_set::index<name>::type::iterator it = pool.mapTx.get<name>().begin();
+    typename CTxMemPool::indexed_transaction_set::apollon<name>::type::iterator it = pool.mapTx.get<name>().begin();
     int count=0;
     for (; it != pool.mapTx.get<name>().end(); ++it, ++count) {
         BOOST_CHECK_EQUAL(it->GetTx().GetHash().ToString(), sortedOrder[count]);
@@ -287,7 +287,7 @@ BOOST_AUTO_TEST_CASE(MempoolIndexingTest)
 
     pool.removeRecursive(pool.mapTx.find(tx9.GetHash())->GetTx(), removed);
     pool.removeRecursive(pool.mapTx.find(tx8.GetHash())->GetTx(), removed);
-    /* Now check the sort on the mining score index.
+    /* Now check the sort on the mining score apollon.
      * Final order should be:
      *
      * tx7 (2M)

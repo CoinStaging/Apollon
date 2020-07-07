@@ -99,7 +99,7 @@ private:
     friend class CCoinsViewDB;
 };
 
-/** Access to the block database (blocks/index/) */
+/** Access to the block database (blocks/apollon/) */
 class CBlockTreeDB : public CDBWrapper
 {
 public:
@@ -141,7 +141,7 @@ public:
 /**
  * This class was introduced as the logic for address and tx indices became too intricate.
  *
- * @param addressIndex, spentIndex - true if to update the corresponding index
+ * @param addressIndex, spentIndex - true if to update the corresponding apollon
  *
  * It is undefined behavior if the helper was created with addressIndex == false
  * and getAddressIndex was called later (same for spentIndex and unspentIndex).

@@ -135,7 +135,7 @@ struct origin_circuit_t {
    * whether this circuit can be used. */
   struct circuit_guard_state_t *guard_state;
 
-  /** Index into global_origin_circuit_list for this circuit. -1 if not
+  /** Apollon into global_origin_circuit_list for this circuit. -1 if not
    * present. */
   int global_origin_circuit_list_idx;
 

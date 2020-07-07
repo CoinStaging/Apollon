@@ -181,54 +181,54 @@ smartlist_contains(const smartlist_t *sl, const void *element)
   return 0;
 }
 
-/** Remove the <b>idx</b>th element of sl; if idx is not the last
- * element, swap the last element of sl into the <b>idx</b>th space.
+/** Remove the <b>xap</b>th element of sl; if xap is not the last
+ * element, swap the last element of sl into the <b>xap</b>th space.
  */
 void
-smartlist_del(smartlist_t *sl, int idx)
+smartlist_del(smartlist_t *sl, int xap)
 {
   raw_assert(sl);
-  raw_assert(idx>=0);
-  raw_assert(idx < sl->num_used);
-  sl->list[idx] = sl->list[--sl->num_used];
+  raw_assert(xap>=0);
+  raw_assert(xap < sl->num_used);
+  sl->list[xap] = sl->list[--sl->num_used];
   sl->list[sl->num_used] = NULL;
 }
 
-/** Remove the <b>idx</b>th element of sl; if idx is not the last element,
+/** Remove the <b>xap</b>th element of sl; if xap is not the last element,
  * moving all subsequent elements back one space. Return the old value
- * of the <b>idx</b>th element.
+ * of the <b>xap</b>th element.
  */
 void
-smartlist_del_keeporder(smartlist_t *sl, int idx)
+smartlist_del_keeporder(smartlist_t *sl, int xap)
 {
   raw_assert(sl);
-  raw_assert(idx>=0);
-  raw_assert(idx < sl->num_used);
+  raw_assert(xap>=0);
+  raw_assert(xap < sl->num_used);
   --sl->num_used;
-  if (idx < sl->num_used)
-    memmove(sl->list+idx, sl->list+idx+1, sizeof(void*)*(sl->num_used-idx));
+  if (xap < sl->num_used)
+    memmove(sl->list+xap, sl->list+xap+1, sizeof(void*)*(sl->num_used-xap));
   sl->list[sl->num_used] = NULL;
 }
 
-/** Insert the value <b>val</b> as the new <b>idx</b>th element of
- * <b>sl</b>, moving all items previously at <b>idx</b> or later
+/** Insert the value <b>val</b> as the new <b>xap</b>th element of
+ * <b>sl</b>, moving all items previously at <b>xap</b> or later
  * forward one space.
  */
 void
-smartlist_insert(smartlist_t *sl, int idx, void *val)
+smartlist_insert(smartlist_t *sl, int xap, void *val)
 {
   raw_assert(sl);
-  raw_assert(idx>=0);
-  raw_assert(idx <= sl->num_used);
-  if (idx == sl->num_used) {
+  raw_assert(xap>=0);
+  raw_assert(xap <= sl->num_used);
+  if (xap == sl->num_used) {
     smartlist_add(sl, val);
   } else {
     smartlist_ensure_capacity(sl, ((size_t) sl->num_used)+1);
     /* Move other elements away */
-    if (idx < sl->num_used)
-      memmove(sl->list + idx + 1, sl->list + idx,
-              sizeof(void*)*(sl->num_used-idx));
+    if (xap < sl->num_used)
+      memmove(sl->list + xap + 1, sl->list + xap,
+              sizeof(void*)*(sl->num_used-xap));
     sl->num_used++;
-    sl->list[idx] = val;
+    sl->list[xap] = val;
   }
 }

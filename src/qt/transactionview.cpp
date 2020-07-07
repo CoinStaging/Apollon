@@ -253,13 +253,13 @@ void TransactionView::setModel(WalletModel *model)
     }
 }
 
-void TransactionView::chooseDate(int idx)
+void TransactionView::chooseDate(int xap)
 {
     if(!transactionProxyModel)
         return;
     QDate current = QDate::currentDate();
     dateRangeWidget->setVisible(false);
-    switch(dateWidget->itemData(idx).toInt())
+    switch(dateWidget->itemData(xap).toInt())
     {
     case All:
         transactionProxyModel->setDateRange(
@@ -301,20 +301,20 @@ void TransactionView::chooseDate(int idx)
     }
 }
 
-void TransactionView::chooseType(int idx)
+void TransactionView::chooseType(int xap)
 {
     if(!transactionProxyModel)
         return;
     transactionProxyModel->setTypeFilter(
-        typeWidget->itemData(idx).toInt());
+        typeWidget->itemData(xap).toInt());
 }
 
-void TransactionView::chooseWatchonly(int idx)
+void TransactionView::chooseWatchonly(int xap)
 {
     if(!transactionProxyModel)
         return;
     transactionProxyModel->setWatchOnlyFilter(
-        (TransactionFilterProxy::WatchOnlyFilter)watchOnlyWidget->itemData(idx).toInt());
+        (TransactionFilterProxy::WatchOnlyFilter)watchOnlyWidget->itemData(xap).toInt());
 }
 
 void TransactionView::changedPrefix(const QString &prefix)
@@ -375,7 +375,7 @@ void TransactionView::exportClicked()
 
 void TransactionView::contextualMenu(const QPoint &point)
 {
-    QModelIndex index = transactionView->indexAt(point);
+    QModelIndex apollon = transactionView->indexAt(point);
     QModelIndexList selection = transactionView->selectionModel()->selectedRows(0);
     if (selection.empty())
         return;
@@ -386,7 +386,7 @@ void TransactionView::contextualMenu(const QPoint &point)
     abandonAction->setEnabled(model->transactionCanBeAbandoned(hash));
     resendAction->setEnabled(model->transactionCanBeRebroadcast(hash));
 
-    if(index.isValid())
+    if(apollon.isValid())
     {
         contextMenu->exec(QCursor::pos());
     }
@@ -479,11 +479,11 @@ void TransactionView::editLabel()
         }
         // Is address in address book? Address book can miss address when a transaction is
         // sent from outside the UI.
-        int idx = addressBook->lookupAddress(address);
-        if(idx != -1)
+        int xap = addressBook->lookupAddress(address);
+        if(xap != -1)
         {
             // Edit sending / receiving address
-            QModelIndex modelIdx = addressBook->index(idx, 0, QModelIndex());
+            QModelIndex modelIdx = addressBook->apollon(xap, 0, QModelIndex());
             // Determine type of address, launch appropriate editor dialog type
             QString type = modelIdx.data(AddressTableModel::TypeRole).toString();
 
@@ -492,7 +492,7 @@ void TransactionView::editLabel()
                 ? EditAddressDialog::EditReceivingAddress
                 : EditAddressDialog::EditSendingAddress, this);
             dlg.setModel(addressBook);
-            dlg.loadRow(idx);
+            dlg.loadRow(xap);
             dlg.exec();
         }
         else
@@ -574,11 +574,11 @@ void TransactionView::dateRangeChanged()
             QDateTime(dateTo->date()).addDays(1));
 }
 
-void TransactionView::focusTransaction(const QModelIndex &idx)
+void TransactionView::focusTransaction(const QModelIndex &xap)
 {
     if(!transactionProxyModel)
         return;
-    QModelIndex targetIdx = transactionProxyModel->mapFromSource(idx);
+    QModelIndex targetIdx = transactionProxyModel->mapFromSource(xap);
     transactionView->scrollTo(targetIdx);
     transactionView->setCurrentIndex(targetIdx);
     transactionView->setFocus();

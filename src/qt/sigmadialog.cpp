@@ -209,7 +209,7 @@ void SigmaDialog::on_mintButton_clicked()
 
     if (amount < smallestDenominationValue) {
         QMessageBox::critical(this, tr("Amount too small to mint"),
-            tr("Amount to mint must not be lower than %1 IDX.").arg(formatAmount(smallestDenominationValue)),
+            tr("Amount to mint must not be lower than %1 XAP.").arg(formatAmount(smallestDenominationValue)),
             QMessageBox::Ok, QMessageBox::Ok);
         return;
     }
@@ -218,7 +218,7 @@ void SigmaDialog::on_mintButton_clicked()
         amount -= amount % smallestDenominationValue;
         auto reply = QMessageBox::question(
             this, tr("Unable to mint."),
-            tr("Amount to mint must be a multiple of 0.05 IDX. Do you want to spend %1 IDX?"
+            tr("Amount to mint must be a multiple of 0.05 XAP. Do you want to spend %1 XAP?"
             ).arg(formatAmount(amount)));
 
         if (reply == QMessageBox::No) {
@@ -656,7 +656,7 @@ void SigmaDialog::coinControlChangeEdited(const QString& text)
         }
         else if (!addr.IsValid()) // Invalid address
         {
-            ui->labelCoinControlChangeLabel->setText(tr("Warning: Invalid Index address"));
+            ui->labelCoinControlChangeLabel->setText(tr("Warning: Invalid Apollon address"));
         }
         else // Valid address
         {
@@ -753,7 +753,7 @@ void SigmaDialog::processSpendCoinsReturn(const WalletModel::SendCoinsReturn &se
         msgParams.second = CClientUIInterface::MSG_ERROR;
         break;
     case WalletModel::ExceedLimit:
-        msgParams.first = tr("Transaction exceeds max number of spends (35) or value (500 IDX per transaction), please reduce the amount you wish to spend.");
+        msgParams.first = tr("Transaction exceeds max number of spends (35) or value (500 XAP per transaction), please reduce the amount you wish to spend.");
         msgParams.second = CClientUIInterface::MSG_ERROR;
         break;
     // included to prevent a compiler warning.

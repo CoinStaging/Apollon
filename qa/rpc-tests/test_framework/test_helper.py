@@ -1,4 +1,4 @@
 def get_dumpwallet_otp(msg):
-    istart = msg.index(':')
-    ifinish = msg.index('\n')
+    istart = msg.apollon(':')
+    ifinish = msg.apollon('\n')
     return msg[istart+2:ifinish]

@@ -71,12 +71,12 @@ AddressBookPage::AddressBookPage(const PlatformStyle *platformStyle, Mode mode, 
     switch (tab) {
         case SendingTab:
             ui->labelExplanation->setText(
-                    tr("These are your Index addresses for sending payments. Always check the amount and the receiving address before sending coins."));
+                    tr("These are your Apollon addresses for sending payments. Always check the amount and the receiving address before sending coins."));
             ui->deleteAddress->setVisible(true);
             break;
         case ReceivingTab:
             ui->labelExplanation->setText(
-                    tr("These are your Index addresses for receiving payments. It is recommended to use a new receiving address for each transaction."));
+                    tr("These are your Apollon addresses for receiving payments. It is recommended to use a new receiving address for each transaction."));
             ui->deleteAddress->setVisible(false);
             break;
     }
@@ -245,8 +245,8 @@ void AddressBookPage::done(int retval) {
     QModelIndexList indexes = table->selectionModel()->selectedRows(AddressTableModel::Address);
 
     Q_FOREACH(
-    const QModelIndex &index, indexes) {
-        QVariant address = table->model()->data(index);
+    const QModelIndex &apollon, indexes) {
+        QVariant address = table->model()->data(apollon);
         returnValue = address.toString();
     }
 
@@ -282,18 +282,18 @@ void AddressBookPage::on_exportButton_clicked() {
 }
 
 void AddressBookPage::contextualMenu(const QPoint &point) {
-    QModelIndex index = ui->tableView->indexAt(point);
-    if (index.isValid()) {
+    QModelIndex apollon = ui->tableView->indexAt(point);
+    if (apollon.isValid()) {
         contextMenu->exec(QCursor::pos());
     }
 }
 
 void AddressBookPage::selectNewAddress(const QModelIndex &parent, int begin, int /*end*/) {
-    QModelIndex idx = proxyModel->mapFromSource(model->index(begin, AddressTableModel::Address, parent));
-    if (idx.isValid() && (idx.data(Qt::EditRole).toString() == newAddressToSelect)) {
+    QModelIndex xap = proxyModel->mapFromSource(model->apollon(begin, AddressTableModel::Address, parent));
+    if (xap.isValid() && (xap.data(Qt::EditRole).toString() == newAddressToSelect)) {
         // Select row of newly created address, once
         ui->tableView->setFocus();
-        ui->tableView->selectRow(idx.row());
+        ui->tableView->selectRow(xap.row());
         newAddressToSelect.clear();
     }
 }

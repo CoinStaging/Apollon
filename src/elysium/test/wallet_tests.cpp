@@ -256,16 +256,16 @@ BOOST_AUTO_TEST_CASE(sigma_mint_chainstate_owned)
 {
     auto id = wallet->CreateSigmaMint(1, 0);
     SigmaMintGroup group;
-    SigmaMintIndex index;
+    SigmaMintIndex apollon;
     SigmaMint mint;
 
     // Add.
-    std::tie(group, index) = sigmaDb->RecordMint(1, 0, id.pubKey, 100);
+    std::tie(group, apollon) = sigmaDb->RecordMint(1, 0, id.pubKey, 100);
     mint = wallet->GetSigmaMint(id);
 
     BOOST_CHECK_EQUAL(mint.chainState.block, 100);
     BOOST_CHECK_EQUAL(mint.chainState.group, group);
-    BOOST_CHECK_EQUAL(mint.chainState.index, index);
+    BOOST_CHECK_EQUAL(mint.chainState.apollon, apollon);
 
     // Remove.
     sigmaDb->DeleteAll(100);
@@ -279,9 +279,9 @@ BOOST_AUTO_TEST_CASE(sigma_mint_chainstate_not_owned)
     // Add our mint first so we can test if the other mint does not alter our mint state.
     auto id = wallet->CreateSigmaMint(1, 0);
     SigmaMintGroup group;
-    SigmaMintIndex index;
+    SigmaMintIndex apollon;
 
-    std::tie(group, index) = sigmaDb->RecordMint(1, 0, id.pubKey, 100);
+    std::tie(group, apollon) = sigmaDb->RecordMint(1, 0, id.pubKey, 100);
 
     // Add other mint.
     SigmaPrivateKey otherPriv;
@@ -299,7 +299,7 @@ BOOST_AUTO_TEST_CASE(sigma_mint_chainstate_not_owned)
 
     BOOST_CHECK_EQUAL(mint.chainState.block, 100);
     BOOST_CHECK_EQUAL(mint.chainState.group, group);
-    BOOST_CHECK_EQUAL(mint.chainState.index, index);
+    BOOST_CHECK_EQUAL(mint.chainState.apollon, apollon);
 
     // Other mint should not added to our wallet.
     BOOST_CHECK_THROW(
@@ -314,7 +314,7 @@ BOOST_AUTO_TEST_CASE(sigma_mint_chainstate_not_owned)
 
     BOOST_CHECK_EQUAL(mint.chainState.block, 100);
     BOOST_CHECK_EQUAL(mint.chainState.group, group);
-    BOOST_CHECK_EQUAL(mint.chainState.index, index);
+    BOOST_CHECK_EQUAL(mint.chainState.apollon, apollon);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

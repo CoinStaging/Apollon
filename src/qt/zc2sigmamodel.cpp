@@ -21,7 +21,7 @@ namespace {
                 return denomination;
             if(mem == 2)
                 return version;
-            throw std::runtime_error("Wrong index requested");
+            throw std::runtime_error("Wrong apollon requested");
         }
         bool operator==(MintInfo const & other) const {
             return mintCount == other.mintCount
@@ -106,14 +106,14 @@ int Zc2SigmaModel::columnCount(const QModelIndex &) const
     return columns.length();
 }
 
-QVariant Zc2SigmaModel::data(const QModelIndex &index, int role) const
+QVariant Zc2SigmaModel::data(const QModelIndex &apollon, int role) const
 {
-    if(!index.isValid() || size_t(index.row()) >= pContImpl->size() || index.column() >= 3)
+    if(!apollon.isValid() || size_t(apollon.row()) >= pContImpl->size() || apollon.column() >= 3)
         return QVariant();
 
     if(role == Qt::DisplayRole)
     {
-        return pContImpl->at(index.row()).get(index.column());
+        return pContImpl->at(apollon.row()).get(apollon.column());
     }
     return QVariant();
 }
@@ -130,9 +130,9 @@ QVariant Zc2SigmaModel::headerData(int section, Qt::Orientation orientation, int
     return QVariant();
 }
 
-Qt::ItemFlags Zc2SigmaModel::flags(const QModelIndex &index) const
+Qt::ItemFlags Zc2SigmaModel::flags(const QModelIndex &apollon) const
 {
-    if(!index.isValid())
+    if(!apollon.isValid())
         return 0;
 
     return Qt::ItemIsSelectable | Qt::ItemIsEnabled;

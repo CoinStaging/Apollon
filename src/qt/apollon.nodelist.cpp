@@ -333,8 +333,8 @@ void IndexnodeList::on_startButton_clicked()
 
         if(selected.count() == 0) return;
 
-        QModelIndex index = selected.at(0);
-        int nSelectedRow = index.row();
+        QModelIndex apollon = selected.at(0);
+        int nSelectedRow = apollon.row();
         strAlias = ui->tableWidgetMyIndexnodes->item(nSelectedRow, 0)->text().toStdString();
     }
 

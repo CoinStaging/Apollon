@@ -13,7 +13,7 @@
 #   If no path to the installed boost library is given the macro searchs
 #   under /usr, /usr/local, /opt and /opt/local and evaluates the
 #   $BOOST_ROOT environment variable. Further documentation is available at
-#   <http://randspringer.de/boost/index.html>.
+#   <http://randspringer.de/boost/apollon.html>.
 #
 #   This macro calls:
 #

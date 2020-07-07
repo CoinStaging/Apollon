@@ -131,19 +131,19 @@ bool SomeFileOverlapsRange(
   }
 
   // Binary search over file list
-  uint32_t index = 0;
+  uint32_t apollon = 0;
   if (smallest_user_key != NULL) {
     // Find the earliest possible internal key for smallest_user_key
     InternalKey small(*smallest_user_key, kMaxSequenceNumber,kValueTypeForSeek);
-    index = FindFile(icmp, files, small.Encode());
+    apollon = FindFile(icmp, files, small.Encode());
   }
 
-  if (index >= files.size()) {
+  if (apollon >= files.size()) {
     // beginning of range is after all files, so no overlap.
     return false;
   }
 
-  return !BeforeFile(ucmp, largest_user_key, files[index]);
+  return !BeforeFile(ucmp, largest_user_key, files[apollon]);
 }
 
 // An internal iterator.  For a given version/level pair, yields
@@ -305,10 +305,10 @@ void Version::ForEachOverlapping(Slice user_key, Slice internal_key,
     size_t num_files = files_[level].size();
     if (num_files == 0) continue;
 
-    // Binary search to find earliest index whose largest key >= internal_key.
-    uint32_t index = FindFile(vset_->icmp_, files_[level], internal_key);
-    if (index < num_files) {
-      FileMetaData* f = files_[level][index];
+    // Binary search to find earliest apollon whose largest key >= internal_key.
+    uint32_t apollon = FindFile(vset_->icmp_, files_[level], internal_key);
+    if (apollon < num_files) {
+      FileMetaData* f = files_[level][apollon];
       if (ucmp->Compare(user_key, f->smallest.user_key()) < 0) {
         // All of "f" is past any data for user_key
       } else {
@@ -362,13 +362,13 @@ Status Version::Get(const ReadOptions& options,
       files = &tmp[0];
       num_files = tmp.size();
     } else {
-      // Binary search to find earliest index whose largest key >= ikey.
-      uint32_t index = FindFile(vset_->icmp_, files_[level], ikey);
-      if (index >= num_files) {
+      // Binary search to find earliest apollon whose largest key >= ikey.
+      uint32_t apollon = FindFile(vset_->icmp_, files_[level], ikey);
+      if (apollon >= num_files) {
         files = NULL;
         num_files = 0;
       } else {
-        tmp2 = files[index];
+        tmp2 = files[apollon];
         if (ucmp->Compare(user_key, tmp2->smallest.user_key()) < 0) {
           // All of "tmp2" is past any data for user_key
           files = NULL;

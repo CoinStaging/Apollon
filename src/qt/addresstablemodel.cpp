@@ -98,7 +98,7 @@ public:
                                   QString::fromStdString(strName),
                                   QString::fromStdString(address.ToString())));
             }
-            //[index] add load pubcoin
+            //[apollon] add load pubcoin
             std::list<CZerocoinEntry> listPubcoin;
             CWalletDB(wallet->strWalletFile).ListPubCoin(listPubcoin);
             BOOST_FOREACH(const CZerocoinEntry& item, listPubcoin)
@@ -167,7 +167,7 @@ public:
             break;
         }
     }
-    //[index] updateEntry
+    //[apollon] updateEntry
     void updateEntry(const QString &pubCoin, const QString &isUsed, int status)
     {
         // Find address / label in model
@@ -209,11 +209,11 @@ public:
         return cachedAddressTable.size();
     }
 
-    AddressTableEntry *index(int idx)
+    AddressTableEntry *apollon(int xap)
     {
-        if(idx >= 0 && idx < cachedAddressTable.size())
+        if(xap >= 0 && xap < cachedAddressTable.size())
         {
-            return &cachedAddressTable[idx];
+            return &cachedAddressTable[xap];
         }
         else
         {
@@ -247,16 +247,16 @@ int AddressTableModel::columnCount(const QModelIndex &parent) const
     return columns.length();
 }
 
-QVariant AddressTableModel::data(const QModelIndex &index, int role) const
+QVariant AddressTableModel::data(const QModelIndex &apollon, int role) const
 {
-    if(!index.isValid())
+    if(!apollon.isValid())
         return QVariant();
 
-    AddressTableEntry *rec = static_cast<AddressTableEntry*>(index.internalPointer());
+    AddressTableEntry *rec = static_cast<AddressTableEntry*>(apollon.internalPointer());
 
     if(role == Qt::DisplayRole || role == Qt::EditRole)
     {
-        switch(index.column())
+        switch(apollon.column())
         {
         case Label:
             if(rec->label.isEmpty() && role == Qt::DisplayRole)
@@ -274,7 +274,7 @@ QVariant AddressTableModel::data(const QModelIndex &index, int role) const
     else if (role == Qt::FontRole)
     {
         QFont font;
-        if(index.column() == Address)
+        if(apollon.column() == Address)
         {
             font = GUIUtil::fixedPitchFont();
         }
@@ -296,11 +296,11 @@ QVariant AddressTableModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-bool AddressTableModel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool AddressTableModel::setData(const QModelIndex &apollon, const QVariant &value, int role)
 {
-    if(!index.isValid())
+    if(!apollon.isValid())
         return false;
-    AddressTableEntry *rec = static_cast<AddressTableEntry*>(index.internalPointer());
+    AddressTableEntry *rec = static_cast<AddressTableEntry*>(apollon.internalPointer());
     std::string strPurpose = (rec->type == AddressTableEntry::Sending ? "send" : "receive");
     editStatus = OK;
 
@@ -308,7 +308,7 @@ bool AddressTableModel::setData(const QModelIndex &index, const QVariant &value,
     {
         LOCK(wallet->cs_wallet); /* For SetAddressBook / DelAddressBook */
         CTxDestination curAddress = CBitcoinAddress(rec->address.toStdString()).Get();
-        if(index.column() == Label)
+        if(apollon.column() == Label)
         {
             // Do nothing, if old label == new label
             if(rec->label == value.toString())
@@ -317,7 +317,7 @@ bool AddressTableModel::setData(const QModelIndex &index, const QVariant &value,
                 return false;
             }
             wallet->SetAddressBook(curAddress, value.toString().toStdString(), strPurpose);
-        } else if(index.column() == Address) {
+        } else if(apollon.column() == Address) {
             CTxDestination newAddress = CBitcoinAddress(value.toString().toStdString()).Get();
             // Refuse to set invalid address, set error status and return false
             if(boost::get<CNoDestination>(&newAddress))
@@ -364,30 +364,30 @@ QVariant AddressTableModel::headerData(int section, Qt::Orientation orientation,
     return QVariant();
 }
 
-Qt::ItemFlags AddressTableModel::flags(const QModelIndex &index) const
+Qt::ItemFlags AddressTableModel::flags(const QModelIndex &apollon) const
 {
-    if(!index.isValid())
+    if(!apollon.isValid())
         return 0;
-    AddressTableEntry *rec = static_cast<AddressTableEntry*>(index.internalPointer());
+    AddressTableEntry *rec = static_cast<AddressTableEntry*>(apollon.internalPointer());
 
     Qt::ItemFlags retval = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
     // Can edit address and label for sending addresses,
     // and only label for receiving addresses.
     if(rec->type == AddressTableEntry::Sending ||
-      (rec->type == AddressTableEntry::Receiving && index.column()==Label))
+      (rec->type == AddressTableEntry::Receiving && apollon.column()==Label))
     {
         retval |= Qt::ItemIsEditable;
     }
     return retval;
 }
 
-QModelIndex AddressTableModel::index(int row, int column, const QModelIndex &parent) const
+QModelIndex AddressTableModel::apollon(int row, int column, const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    AddressTableEntry *data = priv->index(row);
+    AddressTableEntry *data = priv->apollon(row);
     if(data)
     {
-        return createIndex(row, column, priv->index(row));
+        return createIndex(row, column, priv->apollon(row));
     }
     else
     {
@@ -402,7 +402,7 @@ void AddressTableModel::updateEntry(const QString &address,
     priv->updateEntry(address, label, isMine, purpose, status);
 }
 
-//[index] AddressTableModel.updateEntry()
+//[apollon] AddressTableModel.updateEntry()
 void AddressTableModel::updateEntry(const QString &pubCoin, const QString &isUsed, int status)
 {
     // Update stealth address book model from Bitcoin core
@@ -471,7 +471,7 @@ QString AddressTableModel::addRow(const QString &type, const QString &label, con
 bool AddressTableModel::removeRows(int row, int count, const QModelIndex &parent)
 {
     Q_UNUSED(parent);
-    AddressTableEntry *rec = priv->index(row);
+    AddressTableEntry *rec = priv->apollon(row);
     if(count != 1 || !rec || rec->type == AddressTableEntry::Receiving)
     {
         // Can only remove one row at a time, and cannot remove rows not in model.
@@ -503,7 +503,7 @@ QString AddressTableModel::labelForAddress(const QString &address) const
 
 int AddressTableModel::lookupAddress(const QString &address) const
 {
-    QModelIndexList lst = match(index(0, Address, QModelIndex()),
+    QModelIndexList lst = match(apollon(0, Address, QModelIndex()),
                                 Qt::EditRole, address, 1, Qt::MatchExactly);
     if(lst.isEmpty())
     {
@@ -515,9 +515,9 @@ int AddressTableModel::lookupAddress(const QString &address) const
     }
 }
 
-void AddressTableModel::emitDataChanged(int idx)
+void AddressTableModel::emitDataChanged(int xap)
 {
-    Q_EMIT dataChanged(index(idx, 0, QModelIndex()), index(idx, columns.length()-1, QModelIndex()));
+    Q_EMIT dataChanged(apollon(xap, 0, QModelIndex()), apollon(xap, columns.length()-1, QModelIndex()));
 }
 
 bool AddressTableModel::zerocoinMint(string &stringError, string denomAmount)

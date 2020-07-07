@@ -71,10 +71,10 @@ class BlockStore(object):
                 break
         headersList = headersList[:maxheaders] # truncate if we have too many
         hashList = [x.sha256 for x in headersList]
-        index = len(headersList)
+        apollon = len(headersList)
         if (hash_stop in hashList):
-            index = hashList.index(hash_stop)+1
-        response.headers = headersList[:index]
+            apollon = hashList.apollon(hash_stop)+1
+        response.headers = headersList[:apollon]
         return response
 
     def add_block(self, block):

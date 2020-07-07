@@ -67,7 +67,7 @@
  *
  * <code>sphlib</code> is a library which contains implementations of
  * various cryptographic hash functions. These pages have been generated
- * with <a href="http://www.doxygen.org/index.html">doxygen</a> and
+ * with <a href="http://www.doxygen.org/apollon.html">doxygen</a> and
  * document the API for the C implementations.
  *
  * The API is described in appropriate header files, which are available
@@ -1320,9 +1320,9 @@ sph_bswap64(sph_u64 x)
 #define SPH_SPARCV9_RESET_ASI  \
 	__asm__ __volatile__ ("wr %%g0,%0,%%asi" : : "r" (sph_sparcv9_asi));
 
-#define SPH_SPARCV9_DEC32LE(base, idx)   ({ \
+#define SPH_SPARCV9_DEC32LE(base, xap)   ({ \
 		sph_u32 sph_sparcv9_tmp; \
-		__asm__ __volatile__ ("lda [%1+" #idx "*4]%%asi,%0" \
+		__asm__ __volatile__ ("lda [%1+" #xap "*4]%%asi,%0" \
 			: "=r" (sph_sparcv9_tmp) : "r" (base)); \
 		sph_sparcv9_tmp; \
 	})

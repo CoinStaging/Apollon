@@ -28,8 +28,8 @@ SigmaWallet::MintPoolEntry::MintPoolEntry()
 {
 }
 
-SigmaWallet::MintPoolEntry::MintPoolEntry(SigmaPublicKey const &key, CKeyID const &seedId, uint32_t index)
-    : key(key), seedId(seedId), index(index)
+SigmaWallet::MintPoolEntry::MintPoolEntry(SigmaPublicKey const &key, CKeyID const &seedId, uint32_t apollon)
+    : key(key), seedId(seedId), apollon(apollon)
 {
 }
 
@@ -37,7 +37,7 @@ bool SigmaWallet::MintPoolEntry::operator==(MintPoolEntry const &another) const
 {
     return key == another.key &&
         seedId == another.seedId &&
-        index == another.index;
+        apollon == another.apollon;
 }
 
 bool SigmaWallet::MintPoolEntry::operator!=(MintPoolEntry const &another) const
@@ -113,12 +113,12 @@ namespace {
 
 uint32_t GetBIP44AddressIndex(std::string const &path, uint32_t &change)
 {
-    uint32_t index;
-    if (sscanf(path.data(), "m/44'/%*u'/%*u'/%u/%u", &change, &index) != 2) {
+    uint32_t apollon;
+    if (sscanf(path.data(), "m/44'/%*u'/%*u'/%u/%u", &change, &apollon) != 2) {
         throw std::runtime_error("Fail to match BIP44 path");
     }
 
-    return index;
+    return apollon;
 }
 
 }
@@ -131,7 +131,7 @@ uint32_t SigmaWallet::GetSeedIndex(CKeyID const &seedId, uint32_t &change)
         throw std::runtime_error("key not found");
     }
 
-    // parse last index
+    // parse last apollon
     try {
         return GetBIP44AddressIndex(it->second.hdKeypath, change);
     } catch (std::runtime_error const &e) {
@@ -371,13 +371,13 @@ void SigmaWallet::DeleteUnconfirmedMint(SigmaMintId const &id)
     SigmaPublicKey pubKey(GeneratePrivateKey(mint.seedId), DefaultSigmaParams);
 
     uint32_t change;
-    auto index = GetSeedIndex(mint.seedId, change);
+    auto apollon = GetSeedIndex(mint.seedId, change);
 
     if (change != BIP44ChangeIndex()) {
         throw std::invalid_argument("Try to delete invalid seed id mint");
     }
 
-    mintPool.insert(MintPoolEntry(pubKey, mint.seedId, index));
+    mintPool.insert(MintPoolEntry(pubKey, mint.seedId, apollon));
     SaveMintPool();
 
     if (!database->EraseMint(id)) {
@@ -417,11 +417,11 @@ size_t SigmaWallet::FillMintPool()
         CKeyID seedId;
         uint512 seed;
 
-        auto index = GenerateNewSeed(seedId, seed);
+        auto apollon = GenerateNewSeed(seedId, seed);
         auto privKey = GeneratePrivateKey(seed);
 
         SigmaPublicKey pubKey(privKey, DefaultSigmaParams);
-        mintPool.insert(MintPoolEntry(pubKey, seedId, index));
+        mintPool.insert(MintPoolEntry(pubKey, seedId, apollon));
 
         generatedCoins++;
     }

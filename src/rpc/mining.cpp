@@ -187,7 +187,7 @@ UniValue generatetoaddress(const UniValue& params, bool fHelp)
             "\nMine blocks immediately to a specified address (before the RPC call returns)\n"
             "\nArguments:\n"
             "1. numblocks    (numeric, required) How many blocks are generated immediately.\n"
-            "2. address    (string, required) The address to send the newly generated index to.\n"
+            "2. address    (string, required) The address to send the newly generated apollon to.\n"
             "3. maxtries     (numeric, optional) How many iterations to try (default = 1000000).\n"
             "\nResult\n"
             "[ blockhashes ]     (array) hashes of blocks generated\n"
@@ -469,7 +469,7 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp)
             "         \"txid\" : \"xxxx\",             (string) transaction id encoded in little-endian hexadecimal\n"
             "         \"hash\" : \"xxxx\",             (string) hash encoded in little-endian hexadecimal (including witness data)\n"
             "         \"depends\" : [                (array) array of numbers \n"
-            "             n                          (numeric) transactions before this one (by 1-based index in 'transactions' list) that must be present in the final block if this one is\n"
+            "             n                          (numeric) transactions before this one (by 1-based apollon in 'transactions' list) that must be present in the final block if this one is\n"
             "             ,...\n"
             "         ],\n"
             "         \"fee\": n,                    (numeric) difference in value between transaction inputs and outputs (in Satoshis); for coinbase transactions, this is a negative Number of the total collected block fees (ie, not including the block subsidy); if key is not present, fee is unknown and clients MUST NOT assume there isn't one\n"
@@ -580,12 +580,12 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp)
         throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid mode");
 
     if (vNodes.empty() && chainActive.Tip()->nHeight > 100)
-        throw JSONRPCError(RPC_CLIENT_NOT_CONNECTED, "Index is not connected!");
+        throw JSONRPCError(RPC_CLIENT_NOT_CONNECTED, "Apollon is not connected!");
     if (IsInitialBlockDownload())
-        throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "Index is downloading blocks...");
+        throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "Apollon is downloading blocks...");
 
     if (!indexnodeSync.IsSynced() && chainActive.Tip()->nHeight > 500)
-        throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "Index Core is syncing with network...");
+        throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "Apollon Core is syncing with network...");
 
     static unsigned int nTransactionsUpdatedLast;
     if (!lpval.isNull())

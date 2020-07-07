@@ -17,13 +17,13 @@ function clean_up {
    done
 }
 
-WORKINGDIR="/tmp/index"
+WORKINGDIR="/tmp/apollon"
 TMPFILE="hashes.tmp"
 
 SIGNATUREFILENAME="SHA256SUMS.asc"
 RCSUBDIR="test/"
 BASEDIR="https://bitcoin.org/bin/"
-VERSIONPREFIX="index-core-"
+VERSIONPREFIX="apollon-core-"
 RCVERSIONSTRING="rc"
 
 if [ ! -d "$WORKINGDIR" ]; then

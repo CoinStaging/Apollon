@@ -45,7 +45,7 @@ public:
     int sortColumn;
     /** Order (ascending or descending) to sort nodes by */
     Qt::SortOrder sortOrder;
-    /** Index of rows by node ID */
+    /** Apollon of rows by node ID */
     std::map<NodeId, int> mapNodeRows;
 
     /** Pull a full list of peers from vNodes into our cache */
@@ -88,7 +88,7 @@ public:
             // sort cacheNodeStats (use stable sort to prevent rows jumping around unnecessarily)
             qStableSort(cachedNodeStats.begin(), cachedNodeStats.end(), NodeLessThan(sortColumn, sortOrder));
 
-        // build index map
+        // build apollon map
         mapNodeRows.clear();
         int row = 0;
         Q_FOREACH (const CNodeCombinedStats& stats, cachedNodeStats)
@@ -100,10 +100,10 @@ public:
         return cachedNodeStats.size();
     }
 
-    CNodeCombinedStats *index(int idx)
+    CNodeCombinedStats *apollon(int xap)
     {
-        if (idx >= 0 && idx < cachedNodeStats.size())
-            return &cachedNodeStats[idx];
+        if (xap >= 0 && xap < cachedNodeStats.size())
+            return &cachedNodeStats[xap];
 
         return 0;
     }
@@ -155,15 +155,15 @@ int PeerTableModel::columnCount(const QModelIndex &parent) const
     return columns.length();
 }
 
-QVariant PeerTableModel::data(const QModelIndex &index, int role) const
+QVariant PeerTableModel::data(const QModelIndex &apollon, int role) const
 {
-    if(!index.isValid())
+    if(!apollon.isValid())
         return QVariant();
 
-    CNodeCombinedStats *rec = static_cast<CNodeCombinedStats*>(index.internalPointer());
+    CNodeCombinedStats *rec = static_cast<CNodeCombinedStats*>(apollon.internalPointer());
 
     if (role == Qt::DisplayRole) {
-        switch(index.column())
+        switch(apollon.column())
         {
         case Address:
             return QString::fromStdString(rec->nodeStats.addrName);
@@ -173,7 +173,7 @@ QVariant PeerTableModel::data(const QModelIndex &index, int role) const
             return GUIUtil::formatPingTime(rec->nodeStats.dPingTime);
         }
     } else if (role == Qt::TextAlignmentRole) {
-        if (index.column() == Ping)
+        if (apollon.column() == Ping)
             return (QVariant)(Qt::AlignRight | Qt::AlignVCenter);
     }
 
@@ -192,28 +192,28 @@ QVariant PeerTableModel::headerData(int section, Qt::Orientation orientation, in
     return QVariant();
 }
 
-Qt::ItemFlags PeerTableModel::flags(const QModelIndex &index) const
+Qt::ItemFlags PeerTableModel::flags(const QModelIndex &apollon) const
 {
-    if(!index.isValid())
+    if(!apollon.isValid())
         return 0;
 
     Qt::ItemFlags retval = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
     return retval;
 }
 
-QModelIndex PeerTableModel::index(int row, int column, const QModelIndex &parent) const
+QModelIndex PeerTableModel::apollon(int row, int column, const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    CNodeCombinedStats *data = priv->index(row);
+    CNodeCombinedStats *data = priv->apollon(row);
 
     if (data)
         return createIndex(row, column, data);
     return QModelIndex();
 }
 
-const CNodeCombinedStats *PeerTableModel::getNodeStats(int idx)
+const CNodeCombinedStats *PeerTableModel::getNodeStats(int xap)
 {
-    return priv->index(idx);
+    return priv->apollon(xap);
 }
 
 void PeerTableModel::refresh()

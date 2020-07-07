@@ -834,7 +834,7 @@ buf_peek_startswith(const buf_t *buf, const char *cmd)
   return fast_memeq(tmp, cmd, clen);
 }
 
-/** Return the index within <b>buf</b> at which <b>ch</b> first appears,
+/** Return the apollon within <b>buf</b> at which <b>ch</b> first appears,
  * or -1 if <b>ch</b> does not appear on buf. */
 static off_t
 buf_find_offset_of_char(buf_t *buf, char ch)

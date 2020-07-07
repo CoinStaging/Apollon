@@ -112,7 +112,7 @@ void LookupSPDialog::searchSP()
     catch(const boost::bad_lexical_cast &e) { }
     if (searchParamType == 1 && 0 >= searchPropertyId) searchParamType = 0; // we got a number but it's <=0
 
-    // next if not positive numerical, lets see if the string is a valid Index address for issuer search
+    // next if not positive numerical, lets see if the string is a valid Apollon address for issuer search
     if (searchParamType == 0)
     {
         CBitcoinAddress address;
@@ -416,7 +416,7 @@ void LookupSPDialog::searchButtonClicked()
     searchSP();
 }
 
-void LookupSPDialog::matchingComboBoxChanged(int idx)
+void LookupSPDialog::matchingComboBoxChanged(int xap)
 {
     updateDisplayedProperty();
 }
@@ -436,12 +436,12 @@ public:
 
 void LookupSPDialog::addDenominationRow(uint8_t id, const std::string& value)
 {
-    int index = ui->denominationTable->rowCount();
-    ui->denominationTable->insertRow(index);
+    int apollon = ui->denominationTable->rowCount();
+    ui->denominationTable->insertRow(apollon);
     NumericalCmpWidgetItem *idCell = new NumericalCmpWidgetItem(QString::fromStdString(std::to_string(id)));
     NumericalCmpWidgetItem *valuCell = new NumericalCmpWidgetItem(QString::fromStdString(value));
     idCell->setTextAlignment(Qt::AlignCenter);
     valuCell->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    ui->denominationTable->setItem(index, 0, idCell);
-    ui->denominationTable->setItem(index, 1, valuCell);
+    ui->denominationTable->setItem(apollon, 0, idCell);
+    ui->denominationTable->setItem(apollon, 1, valuCell);
 }

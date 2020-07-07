@@ -3,7 +3,7 @@ Release Process
 
 Before every release candidate:
 
-* Update translations (ping wumpus on IRC) see [translation_process.md](https://github.com/IndexChain/Index/blob/master/doc/translation_process.md#synchronising-translations).
+* Update translations (ping wumpus on IRC) see [translation_process.md](https://github.com/IndexChain/Apollon/blob/master/doc/translation_process.md#synchronising-translations).
 
 Before every minor and major release:
 
@@ -24,7 +24,7 @@ Check out the source code in the following directory hierarchy.
     git clone https://github.com/bitcoin-core/gitian.sigs.git
     git clone https://github.com/bitcoin-core/bitcoin-detached-sigs.git
     git clone https://github.com/devrandom/gitian-builder.git
-    git clone https://github.com/IndexChain/Index
+    git clone https://github.com/IndexChain/Apollon
 
 ### Bitcoin maintainers/release engineers, update version in sources
 
@@ -63,7 +63,7 @@ Tag version (or release candidate) in git
 
 Setup Gitian descriptors:
 
-    pushd ./index
+    pushd ./apollon
     export SIGNER=(your Gitian key, ie bluematt, sipa, etc)
     export VERSION=(new version, e.g. 0.13.2.x)
     git fetch
@@ -97,7 +97,7 @@ Create the OS X SDK tarball, see the [OS X readme](README_osx.md) for details, a
 By default, Gitian will fetch source files as needed. To cache them ahead of time:
 
     pushd ./gitian-builder
-    make -C ../index/depends download SOURCES_PATH=`pwd`/cache/common
+    make -C ../apollon/depends download SOURCES_PATH=`pwd`/cache/common
     popd
 
 Only missing files will be fetched, so this is safe to re-run for each build.
@@ -105,35 +105,35 @@ Only missing files will be fetched, so this is safe to re-run for each build.
 NOTE: Offline builds must use the --url flag to ensure Gitian fetches only from local URLs. For example:
 
     pushd ./gitian-builder
-    ./bin/gbuild --url index=/path/to/index,signature=/path/to/sigs {rest of arguments}
+    ./bin/gbuild --url apollon=/path/to/apollon,signature=/path/to/sigs {rest of arguments}
     popd
 
 The gbuild invocations below <b>DO NOT DO THIS</b> by default.
 
-### Build and sign Index Core for Linux, Windows, and OS X:
+### Build and sign Apollon Core for Linux, Windows, and OS X:
 
     pushd ./gitian-builder
-    ./bin/gbuild --memory 3000 --commit index=v${VERSION} ../index/contrib/gitian-descriptors/gitian-linux.yml
+    ./bin/gbuild --memory 3000 --commit apollon=v${VERSION} ../apollon/contrib/gitian-descriptors/gitian-linux.yml
     ./bin/gsign --signer $SIGNER --release ${VERSION}-linux --destination ../gitian.sigs/ ../bitcoin/contrib/gitian-descriptors/gitian-linux.yml
-    mv build/out/index-*.tar.gz build/out/src/index-*.tar.gz ../
+    mv build/out/apollon-*.tar.gz build/out/src/apollon-*.tar.gz ../
 
-    ./bin/gbuild --memory 3000 --commit index=v${VERSION} ../index/contrib/gitian-descriptors/gitian-win.yml
+    ./bin/gbuild --memory 3000 --commit apollon=v${VERSION} ../apollon/contrib/gitian-descriptors/gitian-win.yml
     ./bin/gsign --signer $SIGNER --release ${VERSION}-win-unsigned --destination ../gitian.sigs/ ../bitcoin/contrib/gitian-descriptors/gitian-win.yml
-    mv build/out/index-*-win-unsigned.tar.gz inputs/index-win-unsigned.tar.gz
-    mv build/out/index-*.zip build/out/bitcoin-*.exe ../
+    mv build/out/apollon-*-win-unsigned.tar.gz inputs/apollon-win-unsigned.tar.gz
+    mv build/out/apollon-*.zip build/out/bitcoin-*.exe ../
 
-    ./bin/gbuild --memory 3000 --commit index=v${VERSION} ../index/contrib/gitian-descriptors/gitian-osx.yml
+    ./bin/gbuild --memory 3000 --commit apollon=v${VERSION} ../apollon/contrib/gitian-descriptors/gitian-osx.yml
     ./bin/gsign --signer $SIGNER --release ${VERSION}-osx-unsigned --destination ../gitian.sigs/ ../bitcoin/contrib/gitian-descriptors/gitian-osx.yml
-    mv build/out/index-*-osx-unsigned.tar.gz inputs/index-osx-unsigned.tar.gz
-    mv build/out/index-*.tar.gz build/out/index-*.dmg ../
+    mv build/out/apollon-*-osx-unsigned.tar.gz inputs/apollon-osx-unsigned.tar.gz
+    mv build/out/apollon-*.tar.gz build/out/apollon-*.dmg ../
     popd
 
 Build output expected:
 
-  1. source tarball (`index-${VERSION}.tar.gz`)
-  2. linux 32-bit and 64-bit dist tarballs (index-${VERSION}-linux[32|64].tar.gz`)
-  3. windows 32-bit and 64-bit unsigned installers and dist zips (`index-${VERSION}-win[32|64]-setup-unsigned.exe`, `index-${VERSION}-win[32|64].zip`)
-  4. OS X unsigned installer and dist tarball (`index-${VERSION}-osx-unsigned.dmg`, `index-${VERSION}-osx64.tar.gz`)
+  1. source tarball (`apollon-${VERSION}.tar.gz`)
+  2. linux 32-bit and 64-bit dist tarballs (apollon-${VERSION}-linux[32|64].tar.gz`)
+  3. windows 32-bit and 64-bit unsigned installers and dist zips (`apollon-${VERSION}-win[32|64]-setup-unsigned.exe`, `apollon-${VERSION}-win[32|64].zip`)
+  4. OS X unsigned installer and dist tarball (`apollon-${VERSION}-osx-unsigned.dmg`, `apollon-${VERSION}-osx64.tar.gz`)
   5. Gitian signatures (in `gitian.sigs/${VERSION}-<linux|{win,osx}-unsigned>/(your Gitian key)/`)
 
 ### Verify other gitian builders signatures to your own. (Optional)
@@ -145,9 +145,9 @@ Add other gitian builders keys to your gpg keyring
 Verify the signatures
 
     pushd ./gitian-builder
-    ./bin/gverify -v -d ../gitian.sigs/ -r ${VERSION}-linux ../index/contrib/gitian-descriptors/gitian-linux.yml
-    ./bin/gverify -v -d ../gitian.sigs/ -r ${VERSION}-win-unsigned ../index/contrib/gitian-descriptors/gitian-win.yml
-    ./bin/gverify -v -d ../gitian.sigs/ -r ${VERSION}-osx-unsigned ../index/contrib/gitian-descriptors/gitian-osx.yml
+    ./bin/gverify -v -d ../gitian.sigs/ -r ${VERSION}-linux ../apollon/contrib/gitian-descriptors/gitian-linux.yml
+    ./bin/gverify -v -d ../gitian.sigs/ -r ${VERSION}-win-unsigned ../apollon/contrib/gitian-descriptors/gitian-win.yml
+    ./bin/gverify -v -d ../gitian.sigs/ -r ${VERSION}-osx-unsigned ../apollon/contrib/gitian-descriptors/gitian-osx.yml
     popd
 
 ### Next steps:
@@ -170,20 +170,20 @@ Wait for Windows/OS X detached signatures:
 Create (and optionally verify) the signed OS X binary:
 
     pushd ./gitian-builder
-    ./bin/gbuild -i --commit signature=v${VERSION} ../index/contrib/gitian-descriptors/gitian-osx-signer.yml
-    ./bin/gsign --signer $SIGNER --release ${VERSION}-osx-signed --destination ../gitian.sigs/ ../index/contrib/gitian-descriptors/gitian-osx-signer.yml
-    ./bin/gverify -v -d ../gitian.sigs/ -r ${VERSION}-osx-signed ../index/contrib/gitian-descriptors/gitian-osx-signer.yml
-    mv build/out/index-osx-signed.dmg ../index-${VERSION}-osx.dmg
+    ./bin/gbuild -i --commit signature=v${VERSION} ../apollon/contrib/gitian-descriptors/gitian-osx-signer.yml
+    ./bin/gsign --signer $SIGNER --release ${VERSION}-osx-signed --destination ../gitian.sigs/ ../apollon/contrib/gitian-descriptors/gitian-osx-signer.yml
+    ./bin/gverify -v -d ../gitian.sigs/ -r ${VERSION}-osx-signed ../apollon/contrib/gitian-descriptors/gitian-osx-signer.yml
+    mv build/out/apollon-osx-signed.dmg ../apollon-${VERSION}-osx.dmg
     popd
 
 Create (and optionally verify) the signed Windows binaries:
 
     pushd ./gitian-builder
-    ./bin/gbuild -i --commit signature=v${VERSION} ../index/contrib/gitian-descriptors/gitian-win-signer.yml
-    ./bin/gsign --signer $SIGNER --release ${VERSION}-win-signed --destination ../gitian.sigs/ ../index/contrib/gitian-descriptors/gitian-win-signer.yml
-    ./bin/gverify -v -d ../gitian.sigs/ -r ${VERSION}-win-signed ../index/contrib/gitian-descriptors/gitian-win-signer.yml
-    mv build/out/index-*win64-setup.exe ../index-${VERSION}-win64-setup.exe
-    mv build/out/index-*win32-setup.exe ../index-${VERSION}-win32-setup.exe
+    ./bin/gbuild -i --commit signature=v${VERSION} ../apollon/contrib/gitian-descriptors/gitian-win-signer.yml
+    ./bin/gsign --signer $SIGNER --release ${VERSION}-win-signed --destination ../gitian.sigs/ ../apollon/contrib/gitian-descriptors/gitian-win-signer.yml
+    ./bin/gverify -v -d ../gitian.sigs/ -r ${VERSION}-win-signed ../apollon/contrib/gitian-descriptors/gitian-win-signer.yml
+    mv build/out/apollon-*win64-setup.exe ../apollon-${VERSION}-win64-setup.exe
+    mv build/out/apollon-*win32-setup.exe ../apollon-${VERSION}-win32-setup.exe
     popd
 
 Commit your signature for the signed OS X/Windows binaries:
@@ -205,17 +205,17 @@ sha256sum * > SHA256SUMS
 
 The list of files should be:
 ```
-index-${VERSION}-aarch64-linux-gnu.tar.gz
-index-${VERSION}-arm-linux-gnueabihf.tar.gz
-index-${VERSION}-i686-pc-linux-gnu.tar.gz
-index-${VERSION}-x86_64-linux-gnu.tar.gz
-index-${VERSION}-osx64.tar.gz
-index-${VERSION}-osx.dmg
-index-${VERSION}.tar.gz
-index-${VERSION}-win32-setup.exe
-index-${VERSION}-win32.zip
-index-${VERSION}-win64-setup.exe
-index-${VERSION}-win64.zip
+apollon-${VERSION}-aarch64-linux-gnu.tar.gz
+apollon-${VERSION}-arm-linux-gnueabihf.tar.gz
+apollon-${VERSION}-i686-pc-linux-gnu.tar.gz
+apollon-${VERSION}-x86_64-linux-gnu.tar.gz
+apollon-${VERSION}-osx64.tar.gz
+apollon-${VERSION}-osx.dmg
+apollon-${VERSION}.tar.gz
+apollon-${VERSION}-win32-setup.exe
+apollon-${VERSION}-win32.zip
+apollon-${VERSION}-win64-setup.exe
+apollon-${VERSION}-win64.zip
 ```
 The `*-debug*` files generated by the gitian build contain debug symbols
 for troubleshooting by developers. It is assumed that anyone that is interested
@@ -232,7 +232,7 @@ rm SHA256SUMS
 Note: check that SHA256SUMS itself doesn't end up in SHA256SUMS, which is a spurious/nonsensical entry.
 
 - Upload zips and installers, as well as `SHA256SUMS.asc` from last step, to the indexnode.io server
-  into `/var/www/bin/index-core-${VERSION}`
+  into `/var/www/bin/apollon-core-${VERSION}`
 
 - A `.torrent` will appear in the directory after a few minutes. Optionally help seed this torrent. To get the `magnet:` URI use:
 ```bash
@@ -262,7 +262,7 @@ bitcoin.org (see below for bitcoin.org update instructions).
 
   - bitcoin-dev and bitcoin-core-dev mailing list
 
-  - Index Core announcements list https://bitcoincore.org/en/list/announcements/join/
+  - Apollon Core announcements list https://bitcoincore.org/en/list/announcements/join/
 
   - bitcoincore.org blog post
 

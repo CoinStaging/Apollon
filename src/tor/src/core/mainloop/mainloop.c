@@ -822,7 +822,7 @@ connection_stop_reading_from_linked_conn(connection_t *conn)
 
   if (conn->active_on_link) {
     conn->active_on_link = 0;
-    /* FFFF We could keep an index here so we can smartlist_del
+    /* FFFF We could keep an apollon here so we can smartlist_del
      * cleanly.  On the other hand, this doesn't show up on profiles,
      * so let's leave it alone for now. */
     smartlist_remove(active_linked_connection_lst, conn);

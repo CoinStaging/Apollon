@@ -14,11 +14,11 @@ RUN apt-get update && apt-get install -y \
 RUN pip install ez_setup
 
 # create user to use
-RUN useradd -m -U index-builder
+RUN useradd -m -U apollon-builder
 
 # create a volume for home directory
-VOLUME [ "/home/index-builder" ]
+VOLUME [ "/home/apollon-builder" ]
 
 # start shell with created user
-USER index-builder
-WORKDIR /home/index-builder
+USER apollon-builder
+WORKDIR /home/apollon-builder

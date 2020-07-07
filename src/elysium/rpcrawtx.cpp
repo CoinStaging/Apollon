@@ -192,7 +192,7 @@ UniValue elysium_createrawtx_input(const UniValue& params, bool fHelp)
             "\nArguments:\n"
             "1. rawtx                (string, required) the raw transaction to extend (can be null)\n"
             "2. txid                 (string, required) the hash of the input transaction\n"
-            "3. n                    (number, required) the index of the transaction output used as input\n"
+            "3. n                    (number, required) the apollon of the transaction output used as input\n"
 
             "\nResult:\n"
             "\"rawtx\"                 (string) the hex-encoded modified raw transaction\n"

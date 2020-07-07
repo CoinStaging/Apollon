@@ -52,7 +52,7 @@ class Footer {
   const BlockHandle& metaindex_handle() const { return metaindex_handle_; }
   void set_metaindex_handle(const BlockHandle& h) { metaindex_handle_ = h; }
 
-  // The block handle for the index block of the table
+  // The block handle for the apollon block of the table
   const BlockHandle& index_handle() const {
     return index_handle_;
   }

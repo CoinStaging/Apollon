@@ -118,13 +118,13 @@ WalletView::~WalletView()
 
 void WalletView::setupTransactionPage()
 {
-    // Create Index transactions list
+    // Create Apollon transactions list
     indexTransactionList = new TransactionView(platformStyle);
 
     connect(indexTransactionList, SIGNAL(doubleClicked(QModelIndex)), indexTransactionList, SLOT(showDetails()));
     connect(indexTransactionList, SIGNAL(message(QString, QString, unsigned int)), this, SIGNAL(message(QString, QString, unsigned int)));
 
-    // Create export panel for Index transactions
+    // Create export panel for Apollon transactions
     auto exportButton = new QPushButton(tr("&Export"));
 
     exportButton->setToolTip(tr("Export the data in the current tab to a file"));
@@ -153,7 +153,7 @@ void WalletView::setupTransactionPage()
         elysiumTransactionsView = new TXHistoryDialog();
 
         transactionTabs = new QTabWidget();
-        transactionTabs->addTab(indexTransactionsView, tr("Index"));
+        transactionTabs->addTab(indexTransactionsView, tr("Apollon"));
         transactionTabs->addTab(elysiumTransactionsView, tr("Elysium"));
     }
 #endif
@@ -183,7 +183,7 @@ void WalletView::setupSendCoinPage()
         sendElysiumView = new SendMPDialog(platformStyle);
 
         sendCoinsTabs = new QTabWidget();
-        sendCoinsTabs->addTab(sendZcoinView, tr("Index"));
+        sendCoinsTabs->addTab(sendZcoinView, tr("Apollon"));
         sendCoinsTabs->addTab(sendElysiumView, tr("Elysium"));
     }
 #endif
@@ -348,12 +348,12 @@ void WalletView::processNewTransaction(const QModelIndex& parent, int start, int
     if (!ttm || ttm->processingQueuedTransactions())
         return;
 
-    QString date = ttm->index(start, TransactionTableModel::Date, parent).data().toString();
-    qint64 amount = ttm->index(start, TransactionTableModel::Amount, parent).data(Qt::EditRole).toULongLong();
-    QString type = ttm->index(start, TransactionTableModel::Type, parent).data().toString();
-    QModelIndex index = ttm->index(start, 0, parent);
-    QString address = ttm->data(index, TransactionTableModel::AddressRole).toString();
-    QString label = ttm->data(index, TransactionTableModel::LabelRole).toString();
+    QString date = ttm->apollon(start, TransactionTableModel::Date, parent).data().toString();
+    qint64 amount = ttm->apollon(start, TransactionTableModel::Amount, parent).data(Qt::EditRole).toULongLong();
+    QString type = ttm->apollon(start, TransactionTableModel::Type, parent).data().toString();
+    QModelIndex apollon = ttm->apollon(start, 0, parent);
+    QString address = ttm->data(apollon, TransactionTableModel::AddressRole).toString();
+    QString label = ttm->data(apollon, TransactionTableModel::LabelRole).toString();
 
     Q_EMIT incomingTransaction(date, walletModel->getOptionsModel()->getDisplayUnit(), amount, type, address, label);
 }
@@ -410,10 +410,10 @@ void WalletView::focusElysiumTransaction(const uint256& txid)
 }
 #endif
 
-void WalletView::focusBitcoinHistoryTab(const QModelIndex &idx)
+void WalletView::focusBitcoinHistoryTab(const QModelIndex &xap)
 {
     gotoBitcoinHistoryTab();
-    indexTransactionList->focusTransaction(idx);
+    indexTransactionList->focusTransaction(xap);
 }
 
 void WalletView::gotoIndexnodePage()

@@ -1,7 +1,7 @@
 [source]
 
 @RUST_DL@ [source.crates-io]
-@RUST_DL@ registry = 'https://github.com/rust-lang/crates.io-index'
+@RUST_DL@ registry = 'https://github.com/rust-lang/crates.io-apollon'
 @RUST_DL@ replace-with = 'vendored-sources'
 
 @RUST_DL@ [source.vendored-sources]

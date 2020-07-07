@@ -54,7 +54,7 @@ Status Table::Open(const Options& options,
   s = footer.DecodeFrom(&footer_input);
   if (!s.ok()) return s;
 
-  // Read the index block
+  // Read the apollon block
   BlockContents contents;
   Block* index_block = NULL;
   if (s.ok()) {
@@ -69,7 +69,7 @@ Status Table::Open(const Options& options,
   }
 
   if (s.ok()) {
-    // We've successfully read the footer and the index block: we're
+    // We've successfully read the footer and the apollon block: we're
     // ready to serve requests.
     Rep* rep = new Table::Rep;
     rep->options = options;
@@ -159,7 +159,7 @@ static void ReleaseBlock(void* arg, void* h) {
   cache->Release(handle);
 }
 
-// Convert an index iterator value (i.e., an encoded BlockHandle)
+// Convert an apollon iterator value (i.e., an encoded BlockHandle)
 // into an iterator over the contents of the corresponding block.
 Iterator* Table::BlockReader(void* arg,
                              const ReadOptions& options,
@@ -267,7 +267,7 @@ uint64_t Table::ApproximateOffsetOf(const Slice& key) const {
     if (s.ok()) {
       result = handle.offset();
     } else {
-      // Strange: we can't decode the block handle in the index block.
+      // Strange: we can't decode the block handle in the apollon block.
       // We'll just return the offset of the metaindex block, which is
       // close to the whole file size for this case.
       result = rep_->metaindex_handle.offset();

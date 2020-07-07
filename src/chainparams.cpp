@@ -151,7 +151,7 @@ public:
          * The characters are rarely used upper ASCII, not valid as UTF-8, and produce
        `  * a large 32-bit integer with any alignment.
          */
-        //btzc: update index pchMessage
+        //btzc: update apollon pchMessage
         pchMessageStart[0] = 0xe5;
         pchMessageStart[1] = 0xd3;
         pchMessageStart[2] = 0xf7;
@@ -178,7 +178,7 @@ public:
         vSeeds.push_back(CDNSSeedData("207.148.96.237", "207.148.96.237", false));
 
         // Note that of those with the service bits flag, most only support a subset of possible options
-        base58Prefixes[PUBKEY_ADDRESS] = std::vector < unsigned char > (1, 102);//Index address starts with 'i'
+        base58Prefixes[PUBKEY_ADDRESS] = std::vector < unsigned char > (1, 102);//Apollon address starts with 'i'
         base58Prefixes[SCRIPT_ADDRESS] = std::vector < unsigned char > (1, 7);
         base58Prefixes[SECRET_KEY] = std::vector < unsigned char > (1, 210);
         base58Prefixes[EXT_PUBLIC_KEY] = boost::assign::list_of(0x04)(0x88)(0xB2)(0x1E).convert_to_container < std::vector < unsigned char > > ();
@@ -373,9 +373,9 @@ public:
         // std::cout << "Genesis Merkle " << genesis.hashMerkleRoot.GetHex() << std::endl;
         // std::cout << "ENDTEST\n";
         // std::exit(0);
-        // std::cout << "index testnet genesisBlock hash: " << consensus.hashGenesisBlock.ToString() << std::endl;
-        // std::cout << "index testnet hashMerkleRoot hash: " << genesis.hashMerkleRoot.ToString() << std::endl;
-        // //btzc: update testnet index hashGenesisBlock and hashMerkleRoot
+        // std::cout << "apollon testnet genesisBlock hash: " << consensus.hashGenesisBlock.ToString() << std::endl;
+        // std::cout << "apollon testnet hashMerkleRoot hash: " << genesis.hashMerkleRoot.ToString() << std::endl;
+        // //btzc: update testnet apollon hashGenesisBlock and hashMerkleRoot
         
         assert(consensus.hashGenesisBlock ==
                 uint256S("0x00000bab1c62ca4063a0b1c2f0562cf6427e047333359106b8799cfa923c79f3"));
@@ -384,7 +384,7 @@ public:
         vFixedSeeds.clear();
         vSeeds.clear();
         // nodes with support for servicebits filtering should be at the top
-        // index test seeds
+        // apollon test seeds
         // vSeeds.push_back(CDNSSeedData("beta1.indexchain.org", "beta1.indexchain.org", false));
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector < unsigned char > (1, 65);
@@ -556,10 +556,10 @@ public:
         // std::cout << "REGTEST Genesis Merkle " << genesis.hashMerkleRoot.GetHex() << std::endl;
         // std::cout << "\n";
         //    exit(0);
-        //btzc: update regtest index hashGenesisBlock and hashMerkleRoot
-    //    std::cout << "index regtest genesisBlock hash: " << consensus.hashGenesisBlock.ToString() << std::endl;
-    //    std::cout << "index regtest hashMerkleRoot hash: " << genesis.hashMerkleRoot.ToString() << std::endl;
-        //btzc: update testnet index hashGenesisBlock and hashMerkleRoot
+        //btzc: update regtest apollon hashGenesisBlock and hashMerkleRoot
+    //    std::cout << "apollon regtest genesisBlock hash: " << consensus.hashGenesisBlock.ToString() << std::endl;
+    //    std::cout << "apollon regtest hashMerkleRoot hash: " << genesis.hashMerkleRoot.ToString() << std::endl;
+        //btzc: update testnet apollon hashGenesisBlock and hashMerkleRoot
         assert(consensus.hashGenesisBlock ==
               uint256S("0x5b3c937d388c0d1682d5ce5a6483a0f4cdd5c398346432ad6a4a54f6e4cb084d"));
         assert(genesis.hashMerkleRoot ==

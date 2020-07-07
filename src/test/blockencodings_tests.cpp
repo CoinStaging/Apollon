@@ -213,7 +213,7 @@ BOOST_AUTO_TEST_CASE(SufficientPreforwardRTTest)
         TestHeaderAndShortIDs shortIDs(block);
         shortIDs.prefilledtxn.resize(2);
         shortIDs.prefilledtxn[0] = {0, block.vtx[0]};
-        shortIDs.prefilledtxn[1] = {1, block.vtx[2]}; // id == 1 as it is 1 after index 1
+        shortIDs.prefilledtxn[1] = {1, block.vtx[2]}; // id == 1 as it is 1 after apollon 1
         shortIDs.shorttxids.resize(1);
         shortIDs.shorttxids[0] = shortIDs.GetShortID(block.vtx[1].GetHash());
 

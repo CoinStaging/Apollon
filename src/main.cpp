@@ -80,7 +80,7 @@
 using namespace std;
 
 #if defined(NDEBUG)
-# error "Index cannot be compiled without assertions."
+# error "Apollon cannot be compiled without assertions."
 #endif
 
 /**
@@ -120,7 +120,7 @@ CTxMemPool mempool(::minRelayTxFee);
 FeeFilterRounder filterRounder(::minRelayTxFee);
 CTxMemPool stempool(::minRelayTxFee);
 
-// Index indexnode
+// Apollon indexnode
 map <uint256, int64_t> mapRejectedBlocks GUARDED_BY(cs_main);
 
 struct IteratorComparator {
@@ -153,7 +153,7 @@ static void CheckBlockIndex(const Consensus::Params &consensusParams);
 /** Constant stuff for coinbase transactions we create: */
 CScript COINBASE_FLAGS;
 
-const string strMessageMagic = "Index Signed Message:\n";
+const string strMessageMagic = "Apollon Signed Message:\n";
 
 // Internal stuff
 namespace {
@@ -256,7 +256,7 @@ namespace {
     /** Number of preferable block download peers. */
     int nPreferredDownload = 0;
 
-    /** Dirty block index entries. */
+    /** Dirty block apollon entries. */
     set<CBlockIndex *> setDirtyBlockIndex;
 
     /** Dirty block file entries. */
@@ -768,7 +768,7 @@ bool AddOrphanTx(const CTransaction &tx, NodeId peer) EXCLUSIVE_LOCKS_REQUIRED(c
     // it will rebroadcast it later, after the parent transaction(s)
     // have been mined or received.
     // 100 orphans, each of which is at most 99,999 bytes big is
-    // at most 10 megabytes of orphans and somewhat more byprev index (in the worst case):
+    // at most 10 megabytes of orphans and somewhat more byprev apollon (in the worst case):
     unsigned int sz = GetTransactionWeight(tx);
     if (sz >= MAX_STANDARD_TX_WEIGHT) {
         LogPrint("mempool", "ignoring large orphan tx (size: %u, hash: %s)\n", sz, hash.ToString());
@@ -1008,15 +1008,15 @@ bool CheckSequenceLocks(
     AssertLockHeld(pool.cs);
 
     CBlockIndex *tip = chainActive.Tip();
-    CBlockIndex index;
-    index.pprev = tip;
+    CBlockIndex apollon;
+    apollon.pprev = tip;
     // CheckSequenceLocks() uses chainActive.Height()+1 to evaluate
     // height based locks because when SequenceLocks() is called within
     // ConnectBlock(), the height of the block *being*
     // evaluated is what is used.
     // Thus if we want to know if a transaction can be part of the
     // *next* block, we need to use one more than chainActive.Height()
-    index.nHeight = tip->nHeight + 1;
+    apollon.nHeight = tip->nHeight + 1;
 
     std::pair<int, int64_t> lockPair;
     if (useExistingLockPoints) {
@@ -1041,7 +1041,7 @@ bool CheckSequenceLocks(
                 prevheights[txinIndex] = coins.nHeight;
             }
         }
-        lockPair = CalculateSequenceLocks(tx, flags, &prevheights, index);
+        lockPair = CalculateSequenceLocks(tx, flags, &prevheights, apollon);
         if (lp) {
             lp->height = lockPair.first;
             lp->time = lockPair.second;
@@ -1069,7 +1069,7 @@ bool CheckSequenceLocks(
             lp->maxInputBlock = tip->GetAncestor(maxInputHeight);
         }
     }
-    return EvaluateSequenceLocks(index, lockPair);
+    return EvaluateSequenceLocks(apollon, lockPair);
 }
 
 
@@ -1724,7 +1724,7 @@ bool AcceptToMemoryPoolWorker(
                         if (pool.mapTx.find(tx.vin[j].prevout.hash) != pool.mapTx.end())
                             return state.DoS(0, false,
                                              REJECT_NONSTANDARD, "replacement-adds-unconfirmed", false,
-                                             strprintf("replacement %s adds unconfirmed input, idx %d",
+                                             strprintf("replacement %s adds unconfirmed input, xap %d",
                                                        hash.ToString(), j));
                     }
                 }
@@ -1803,12 +1803,12 @@ bool AcceptToMemoryPoolWorker(
             // Store transaction in memory
             pool.addUnchecked(hash, entry, setAncestors, !IsInitialBlockDownload());
 
-            // Add memory address index
+            // Add memory address apollon
             if (fAddressIndex) {
                 pool.addAddressIndex(entry, view);
             }
 
-            // Add memory spent index
+            // Add memory spent apollon
             if (fSpentIndex) {
                 pool.addSpentIndex(entry, view);
             }
@@ -1974,7 +1974,7 @@ GetTransaction(const uint256 &hash, CTransaction &txOut, const Consensus::Params
 bool GetTimestampIndex(const unsigned int &high, const unsigned int &low, std::vector<uint256> &hashes)
 {
     if (!fTimestampIndex)
-        return error("Timestamp index not enabled");
+        return error("Timestamp apollon not enabled");
 
     if (!pblocktree->ReadTimestampIndex(high, low, hashes))
         return error("Unable to get hashes for timestamps");
@@ -2001,7 +2001,7 @@ bool GetAddressIndex(uint160 addressHash, AddressType type,
                      std::vector<std::pair<CAddressIndexKey, CAmount> > &addressIndex, int start, int end)
 {
     if (!fAddressIndex)
-        return error("address index not enabled");
+        return error("address apollon not enabled");
 
     if (!pblocktree->ReadAddressIndex(addressHash, type, addressIndex, start, end))
         return error("unable to get txids for address");
@@ -2013,7 +2013,7 @@ bool GetAddressUnspent(uint160 addressHash, AddressType type,
                        std::vector<std::pair<CAddressUnspentKey, CAddressUnspentValue> > &unspentOutputs)
 {
     if (!fAddressIndex)
-        return error("address index not enabled");
+        return error("address apollon not enabled");
 
     if (!pblocktree->ReadAddressUnspentIndex(addressHash, type, unspentOutputs))
         return error("unable to get txids for address");
@@ -2034,7 +2034,7 @@ bool WriteBlockToDisk(const CBlock &block, CDiskBlockPos &pos, const CMessageHea
     if (fileout.IsNull())
         return error("WriteBlockToDisk: OpenBlockFile failed");
 
-    // Write index header
+    // Write apollon header
     unsigned int nSize = fileout.GetSerializeSize(block);
     fileout << FLATDATA(messageStart) << nSize;
 
@@ -2080,7 +2080,7 @@ bool ReadBlockFromDisk(CBlock &block, const CBlockIndex *pindex, const Consensus
         return false;
 
     if (block.GetHash() != pindex->GetBlockHash()) {
-        return error("ReadBlockFromDisk(CBlock&, CBlockIndex*): GetHash() doesn't match index for %s at %s",
+        return error("ReadBlockFromDisk(CBlock&, CBlockIndex*): GetHash() doesn't match apollon for %s at %s",
                      pindex->ToString(), pindex->GetBlockPos().ToString());
     }
     return true;
@@ -2548,7 +2548,7 @@ namespace {
         if (fileout.IsNull())
             return error("%s: OpenUndoFile failed", __func__);
 
-        // Write index header
+        // Write apollon header
         unsigned int nSize = fileout.GetSerializeSize(blockundo);
         fileout << FLATDATA(messageStart) << nSize;
 
@@ -2724,12 +2724,12 @@ bool DisconnectBlock(const CBlock &block, CValidationState &state, const CBlockI
     if(!pfClean) {
         if (fAddressIndex) {
             if (!pblocktree->EraseAddressIndex(dbIndexHelper.getAddressIndex())) {
-                AbortNode(state, "Failed to delete address index");
-                return error("Failed to delete address index");
+                AbortNode(state, "Failed to delete address apollon");
+                return error("Failed to delete address apollon");
             }
             if (!pblocktree->UpdateAddressUnspentIndex(dbIndexHelper.getAddressUnspentIndex())) {
-                AbortNode(state, "Failed to write address unspent index");
-                return error("Failed to write address unspent index");
+                AbortNode(state, "Failed to write address unspent apollon");
+                return error("Failed to write address unspent apollon");
             }
             if (!pblocktree->AddTotalSupply(-(block.vtx[0].GetValueOut() - nFees))) {
                 AbortNode(state, "Failed to write total supply");
@@ -3151,7 +3151,7 @@ bool ConnectBlock(const CBlock &block, CValidationState &state, CBlockIndex *pin
             if (!UndoWriteToDisk(blockundo, pos, pindex->pprev->GetBlockHash(), chainparams.MessageStart()))
                 return AbortNode(state, "Failed to write undo data");
 
-            // update nUndoPos in block index
+            // update nUndoPos in block apollon
             pindex->nUndoPos = pos.nPos;
             pindex->nStatus |= BLOCK_HAVE_UNDO;
         }
@@ -3162,13 +3162,13 @@ bool ConnectBlock(const CBlock &block, CValidationState &state, CBlockIndex *pin
 
     if (fTxIndex)
         if (!pblocktree->WriteTxIndex(vPos))
-            return AbortNode(state, "Failed to write transaction index");
+            return AbortNode(state, "Failed to write transaction apollon");
     if (fAddressIndex) {
         if (!pblocktree->WriteAddressIndex(dbIndexHelper.getAddressIndex()))
-            return AbortNode(state, "Failed to write address index");
+            return AbortNode(state, "Failed to write address apollon");
 
         if (!pblocktree->UpdateAddressUnspentIndex(dbIndexHelper.getAddressUnspentIndex()))
-            return AbortNode(state, "Failed to write address unspent index");
+            return AbortNode(state, "Failed to write address unspent apollon");
 
         if (!pblocktree->AddTotalSupply(block.vtx[0].GetValueOut() - nFees))
             return AbortNode(state, "Failed to write total supply");
@@ -3176,19 +3176,19 @@ bool ConnectBlock(const CBlock &block, CValidationState &state, CBlockIndex *pin
 
     if (fSpentIndex)
         if (!pblocktree->UpdateSpentIndex(dbIndexHelper.getSpentIndex()))
-            return AbortNode(state, "Failed to write transaction index");
+            return AbortNode(state, "Failed to write transaction apollon");
 
 
     if (fTimestampIndex)
         if (!pblocktree->WriteTimestampIndex(CTimestampIndexKey(pindex->nTime, pindex->GetBlockHash())))
-            return AbortNode(state, "Failed to write timestamp index");
+            return AbortNode(state, "Failed to write timestamp apollon");
 
     // add this block to the view's block chain
     view.SetBestBlock(pindex->GetBlockHash());
 
     int64_t nTime5 = GetTimeMicros();
     nTimeIndex += nTime5 - nTime4;
-    LogPrint("bench", "    - Index writing: %.2fms [%.2fs]\n", 0.001 * (nTime5 - nTime4), nTimeIndex * 0.000001);
+    LogPrint("bench", "    - Apollon writing: %.2fms [%.2fs]\n", 0.001 * (nTime5 - nTime4), nTimeIndex * 0.000001);
 
     // Watch for changes to the previous coinbase transaction.
     static uint256 hashPrevBestCoinBase;
@@ -3318,7 +3318,7 @@ bool static FlushStateToDisk(CValidationState &state, FlushStateMode mode) {
         bool fCacheLarge = mode == FLUSH_STATE_PERIODIC && cacheSize * (10.0 / 9) > nCoinCacheUsage;
         // The cache is over the limit, we have to write now.
         bool fCacheCritical = mode == FLUSH_STATE_IF_NEEDED && cacheSize > nCoinCacheUsage;
-        // It's been a while since we wrote the block index to disk. Do this frequently, so we don't need to redownload after a crash.
+        // It's been a while since we wrote the block apollon to disk. Do this frequently, so we don't need to redownload after a crash.
         bool fPeriodicWrite =
                 mode == FLUSH_STATE_PERIODIC && nNow > nLastWrite + (int64_t) DATABASE_WRITE_INTERVAL * 1000000;
         // It's been very long since we flushed the cache. Do this infrequently, to optimize cache usage.
@@ -3327,9 +3327,9 @@ bool static FlushStateToDisk(CValidationState &state, FlushStateMode mode) {
         // Combine all conditions that result in a full cache flush.
         bool fDoFullFlush =
                 (mode == FLUSH_STATE_ALWAYS) || fCacheLarge || fCacheCritical || fPeriodicFlush || fFlushForPrune;
-        // Write blocks and block index to disk.
+        // Write blocks and block apollon to disk.
         if (fDoFullFlush || fPeriodicWrite) {
-            // Depend on nMinDiskSpace to ensure we can write block index
+            // Depend on nMinDiskSpace to ensure we can write block apollon
             if (!CheckDiskSpace(0))
                 return state.Error("out of disk space");
             // First make sure all block and undo data is flushed to disk.
@@ -3349,7 +3349,7 @@ bool static FlushStateToDisk(CValidationState &state, FlushStateMode mode) {
                     setDirtyBlockIndex.erase(it++);
                 }
                 if (!pblocktree->WriteBatchSync(vFiles, nLastBlockFile, vBlocks)) {
-                    return AbortNode(state, "Files to write to block index database");
+                    return AbortNode(state, "Files to write to block apollon database");
                 }
             }
             // Finally remove any pruned files
@@ -3357,7 +3357,7 @@ bool static FlushStateToDisk(CValidationState &state, FlushStateMode mode) {
                 UnlinkPrunedFiles(setFilesToPrune);
             nLastWrite = nNow;
         }
-        // Flush best chain related state. This can only be done if the blocks / block index write was also done.
+        // Flush best chain related state. This can only be done if the blocks / block apollon write was also done.
         if (fDoFullFlush) {
             // Typical CCoins structures on disk are around 128 bytes in size.
             // Pushing a new one to the database can cause it to be written
@@ -3366,7 +3366,7 @@ bool static FlushStateToDisk(CValidationState &state, FlushStateMode mode) {
             // overwrite one. Still, use a conservative safety factor of 2.
             if (!CheckDiskSpace(128 * 2 * 2 * pcoinsTip->GetCacheSize()))
                 return state.Error("out of disk space");
-            // Flush the chainstate (which may refer to block index entries).
+            // Flush the chainstate (which may refer to block apollon entries).
             if (!pcoinsTip->Flush())
                 return AbortNode(state, "Failed to write to coin database");
             nLastFlush = nNow;
@@ -3683,7 +3683,7 @@ ConnectTip(CValidationState &state, const CChainParams &chainparams, CBlockIndex
 #ifdef ENABLE_ELYSIUM
         //! Elysium: new confirmed transaction notification
         if (fElysium) {
-            LogPrint("handler", "Elysium handler: new confirmed transaction [height: %d, idx: %u]\n", GetHeight(), nTxIdx);
+            LogPrint("handler", "Elysium handler: new confirmed transaction [height: %d, xap: %u]\n", GetHeight(), nTxIdx);
             if (elysium_handler_tx(tx, GetHeight(), nTxIdx++, pindexNew)) ++nNumMetaTxs;
         }
 #endif
@@ -4241,7 +4241,7 @@ CBlockIndex *AddToBlockIndex(const CBlockHeader &block) {
     if (it != mapBlockIndex.end())
         return it->second;
 
-    // Construct new block index object
+    // Construct new block apollon object
     CBlockIndex *pindexNew = new CBlockIndex(block);
     assert(pindexNew);
     // We assign the sequence id to blocks only when the full data is available,
@@ -4585,14 +4585,14 @@ bool CheckBlock(const CBlock &block, CValidationState &state,
                         instantsend.Relay(hashLocked);
                         LOCK(cs_main);
                         mapRejectedBlocks.insert(make_pair(block.GetHash(), GetTime()));
-                        return state.DoS(0, error("CheckBlock(IDX): transaction %s conflicts with transaction lock %s",
+                        return state.DoS(0, error("CheckBlock(XAP): transaction %s conflicts with transaction lock %s",
                                                   tx.GetHash().ToString(), hashLocked.ToString()),
                                          REJECT_INVALID, "conflict-tx-lock");
                     }
                 }
             }
         } else {
-            LogPrintf("CheckBlock(IDX): spork is off, skipping transaction locking checks\n");
+            LogPrintf("CheckBlock(XAP): spork is off, skipping transaction locking checks\n");
         }
 
         // Check transactions
@@ -5004,7 +5004,7 @@ static bool AcceptBlockHeader(const CBlockHeader &block, CValidationState &state
 //        int64_t end = std::chrono::duration_cast<std::chrono::milliseconds>(
 //                std::chrono::system_clock::now().time_since_epoch()).count();
 //        std::cout << "AcceptBlockHeader->CheckBlockHeader nHeight=" << nHeight << " done in= " << (end - start) << " miliseconds" << std::endl;
-        // Get prev block index
+        // Get prev block apollon
         CBlockIndex *pindexPrev = NULL;
         BlockMap::iterator mi = mapBlockIndex.find(block.hashPrevBlock);
         if (mi == mapBlockIndex.end()) {
@@ -5446,21 +5446,21 @@ bool static LoadBlockIndexDB() {
     pblocktree->ReadReindexing(fReindexing);
     fReindex |= fReindexing;
 
-    // Check whether we have a transaction index
+    // Check whether we have a transaction apollon
     pblocktree->ReadFlag("txindex", fTxIndex);
-    LogPrintf("%s: transaction index %s\n", __func__, fTxIndex ? "enabled" : "disabled");
+    LogPrintf("%s: transaction apollon %s\n", __func__, fTxIndex ? "enabled" : "disabled");
 
-    // Check whether we have an address index
+    // Check whether we have an address apollon
     pblocktree->ReadFlag("addressindex", fAddressIndex);
-    LogPrintf("%s: address index %s\n", __func__, fAddressIndex ? "enabled" : "disabled");
+    LogPrintf("%s: address apollon %s\n", __func__, fAddressIndex ? "enabled" : "disabled");
 
-    // Check whether we have a timestamp index
+    // Check whether we have a timestamp apollon
     pblocktree->ReadFlag("timestampindex", fTimestampIndex);
-    LogPrintf("%s: timestamp index %s\n", __func__, fTimestampIndex ? "enabled" : "disabled");
+    LogPrintf("%s: timestamp apollon %s\n", __func__, fTimestampIndex ? "enabled" : "disabled");
 
-    // Check whether we have a spent index
+    // Check whether we have a spent apollon
     pblocktree->ReadFlag("spentindex", fSpentIndex);
-    LogPrintf("%s: spent index %s\n", __func__, fSpentIndex ? "enabled" : "disabled");
+    LogPrintf("%s: spent apollon %s\n", __func__, fSpentIndex ? "enabled" : "disabled");
 
 
     // Load pointer to end of best chain
@@ -5473,7 +5473,7 @@ bool static LoadBlockIndexDB() {
 
     PruneBlockIndexCandidates();
 
-    // some blocks in index can change as a result of ZerocoinBuildStateFromIndex() call
+    // some blocks in apollon can change as a result of ZerocoinBuildStateFromIndex() call
     set<CBlockIndex *> changes;
     ZerocoinBuildStateFromIndex(&chainActive, changes);
     sigma::BuildSigmaStateFromIndex(&chainActive);
@@ -5728,7 +5728,7 @@ void UnloadBlockIndex() {
 }
 
 bool LoadBlockIndex() {
-    // Load block index from databases
+    // Load block apollon from databases
     if (!fReindex && !LoadBlockIndexDB())
         return false;
     return true;
@@ -5944,7 +5944,7 @@ void static CheckBlockIndex(const Consensus::Params &consensusParams) {
             NULL);
     CBlockIndex *pindex = rangeGenesis.first->second;
     rangeGenesis.first++;
-    assert(rangeGenesis.first == rangeGenesis.second); // There is only one index entry with parent NULL.
+    assert(rangeGenesis.first == rangeGenesis.second); // There is only one apollon entry with parent NULL.
 
     // Iterate over the entire block tree, using depth-first search.
     // Along the way, remember whether there are blocks on the path from genesis
@@ -6212,7 +6212,7 @@ bool static AlreadyHave(const CInv &inv) EXCLUSIVE_LOCKS_REQUIRED(cs_main) {
             return false;
 
         /*
-            Index Related Inventory Messages
+            Apollon Related Inventory Messages
 
             --
 
@@ -7350,7 +7350,7 @@ bool static ProcessMessage(CNode *pfrom, string strCommand,
             BOOST_FOREACH(uint256
             hash, vEraseQueue)
             EraseOrphanTx(hash);
-            //btzc: index condition
+            //btzc: apollon condition
         } else if (
             !AlreadyHave(inv) && tx.IsZerocoinSpend() && !tx.IsSigmaSpend() &&
             AcceptToMemoryPool(mempool, state, tx, false, true, &fMissingInputsZerocoin, false, 0, true)) {
@@ -7724,7 +7724,7 @@ bool static ProcessMessage(CNode *pfrom, string strCommand,
             // invalid (we don't require all the stateless checks to have
             // been run).  This is handled below, so just treat this as
             // though the block was successfully read, and rely on the
-            // handling in ProcessNewBlock to ensure the block index is
+            // handling in ProcessNewBlock to ensure the block apollon is
             // updated, reject messages go out, etc.
             CValidationState state;
             // BIP 152 permits peers to relay compact blocks after validating
@@ -8681,7 +8681,7 @@ bool SendMessages(CNode *pto) {
             {
                 pto->filterInventoryKnown.insert(inv.hash);
 
-                LogPrint("net", "SendMessages -- queued inv: %s  index=%d peer=%d\n", inv.ToString(), vInv.size(), pto->id);
+                LogPrint("net", "SendMessages -- queued inv: %s  apollon=%d peer=%d\n", inv.ToString(), vInv.size(), pto->id);
                 vInv.push_back(inv);
                 if (vInv.size() >= 1000)
                 {

@@ -187,10 +187,10 @@ bool UniValue::erase(const UniValue& key)
     if (typ != VOBJ)
         return false;
 
-    int index = findKey(key.get_str());
-    if(!(index == -1)){
-        keys.erase(keys.begin() + index);
-        values.erase(values.begin() + index);
+    int apollon = findKey(key.get_str());
+    if(!(apollon == -1)){
+        keys.erase(keys.begin() + apollon);
+        values.erase(values.begin() + apollon);
     }
     else return false;
     
@@ -202,10 +202,10 @@ bool UniValue::replace(const UniValue& key, const UniValue& value)
     if (typ != VOBJ)
         return false;
 
-    int index = findKey(key.get_str());
-    if(!(index == -1)){
-        keys.erase(keys.begin() + index);
-        values.erase(values.begin() + index);
+    int apollon = findKey(key.get_str());
+    if(!(apollon == -1)){
+        keys.erase(keys.begin() + apollon);
+        values.erase(values.begin() + apollon);
     }
     
     pushKV(key.get_str(), value);
@@ -259,11 +259,11 @@ bool UniValue::checkObject(const std::map<std::string,UniValue::VType>& t)
 {
     for (std::map<std::string,UniValue::VType>::const_iterator it = t.begin();
          it != t.end(); it++) {
-        int idx = findKey(it->first);
-        if (idx < 0)
+        int xap = findKey(it->first);
+        if (xap < 0)
             return false;
 
-        if (values.at(idx).getType() != it->second)
+        if (values.at(xap).getType() != it->second)
             return false;
     }
 
@@ -275,21 +275,21 @@ const UniValue& UniValue::operator[](const std::string& key) const
     if (typ != VOBJ)
         return NullUniValue;
 
-    int index = findKey(key);
-    if (index < 0)
+    int apollon = findKey(key);
+    if (apollon < 0)
         return NullUniValue;
 
-    return values.at(index);
+    return values.at(apollon);
 }
 
-const UniValue& UniValue::operator[](unsigned int index) const
+const UniValue& UniValue::operator[](unsigned int apollon) const
 {
     if (typ != VOBJ && typ != VARR)
         return NullUniValue;
-    if (index >= values.size())
+    if (apollon >= values.size())
         return NullUniValue;
 
-    return values.at(index);
+    return values.at(apollon);
 }
 
 const char *uvTypeName(UniValue::VType t)

@@ -17,7 +17,7 @@ public:
     // Merkle branch with root vchAux
     // root must be present inside the coinbase
     std::vector <uint256> vChainMerkleBranch;
-    // Index of chain in chains merkle tree
+    // Apollon of chain in chains merkle tree
     unsigned int nChainIndex;
     CBlockHeader parentBlockHeader;
     ADD_SERIALIZE_METHODS;

@@ -55,8 +55,8 @@ def check_fpr(fpr)
 end
 
 def parse_fprline(fprline)
-	n = fprline[0 ... fprline.index(' ')]
-	f = fprline[fprline.index(' ') + 1 .. -1 ]
+	n = fprline[0 ... fprline.apollon(' ')]
+	f = fprline[fprline.apollon(' ') + 1 .. -1 ]
 	unless check_nick(n) and check_fpr(f)
 		STDERR.puts "Invalid fpr syntax '#{fprline}'"
 		exit 1
@@ -76,7 +76,7 @@ mysys("co -l #{BINDING}")
 
 print "Operator: "
 @operator = readline.chop
-unless @operator.index('@')
+unless @operator.apollon('@')
 	STDERR.puts "ERROR: No @ found"
 	exit 1
 end

@@ -770,18 +770,18 @@ class CAlert(object):
 
 
 class PrefilledTransaction(object):
-    def __init__(self, index=0, tx = None):
-        self.index = index
+    def __init__(self, apollon=0, tx = None):
+        self.apollon = apollon
         self.tx = tx
 
     def deserialize(self, f):
-        self.index = deser_compact_size(f)
+        self.apollon = deser_compact_size(f)
         self.tx = CTransaction()
         self.tx.deserialize(f)
 
     def serialize(self, with_witness=False):
         r = b""
-        r += ser_compact_size(self.index)
+        r += ser_compact_size(self.apollon)
         if with_witness:
             r += self.tx.serialize_with_witness()
         else:
@@ -792,7 +792,7 @@ class PrefilledTransaction(object):
         return self.serialize(with_witness=True)
 
     def __repr__(self):
-        return "PrefilledTransaction(index=%d, tx=%s)" % (self.index, repr(self.tx))
+        return "PrefilledTransaction(apollon=%d, tx=%s)" % (self.apollon, repr(self.tx))
 
 # This is what we send on the wire, in a cmpctblock message.
 class P2PHeaderAndShortIDs(object):
@@ -861,8 +861,8 @@ class HeaderAndShortIDs(object):
             self.shortids = p2pheaders_and_shortids.shortids
             last_index = -1
             for x in p2pheaders_and_shortids.prefilled_txn:
-                self.prefilled_txn.append(PrefilledTransaction(x.index + last_index + 1, x.tx))
-                last_index = self.prefilled_txn[-1].index
+                self.prefilled_txn.append(PrefilledTransaction(x.apollon + last_index + 1, x.tx))
+                last_index = self.prefilled_txn[-1].apollon
 
     def to_p2p(self):
         if self.use_witness:
@@ -877,8 +877,8 @@ class HeaderAndShortIDs(object):
         ret.prefilled_txn = []
         last_index = -1
         for x in self.prefilled_txn:
-            ret.prefilled_txn.append(PrefilledTransaction(x.index - last_index - 1, x.tx))
-            last_index = x.index
+            ret.prefilled_txn.append(PrefilledTransaction(x.apollon - last_index - 1, x.tx))
+            last_index = x.apollon
         return ret
 
     def get_siphash_keys(self):

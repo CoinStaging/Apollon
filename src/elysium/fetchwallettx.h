@@ -8,7 +8,7 @@ class uint256;
 
 namespace elysium
 {
-/** Gets the byte offset of a transaction from the transaction index. */
+/** Gets the byte offset of a transaction from the transaction apollon. */
 unsigned int GetTransactionByteOffset(const uint256& txid);
 
 /** Returns an ordered list of Elysium transactions that are relevant to the wallet. */

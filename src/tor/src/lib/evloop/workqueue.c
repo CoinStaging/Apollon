@@ -128,7 +128,7 @@ struct replyqueue_s {
 /** A worker thread represents a single thread in a thread pool. */
 typedef struct workerthread_s {
   /** Which thread it this?  In range 0..in_pool->n_threads-1 */
-  int index;
+  int apollon;
   /** The pool this thread is a part of. */
   struct threadpool_s *in_pool;
   /** User-supplied state field that we pass to the worker functions of each
@@ -275,8 +275,8 @@ worker_thread_main(void *thread_)
     while (worker_thread_has_work(thread)) {
       /* lock must be held at this point. */
       if (thread->in_pool->generation != thread->generation) {
-        void *arg = thread->in_pool->update_args[thread->index];
-        thread->in_pool->update_args[thread->index] = NULL;
+        void *arg = thread->in_pool->update_args[thread->apollon];
+        thread->in_pool->update_args[thread->apollon] = NULL;
         workqueue_reply_t (*update_fn)(void*,void*) =
             thread->in_pool->update_fn;
         thread->generation = thread->in_pool->generation;
@@ -525,7 +525,7 @@ threadpool_start_threads(threadpool_t *pool, int n)
       return -1;
       //LCOV_EXCL_STOP
     }
-    thr->index = pool->n_threads;
+    thr->apollon = pool->n_threads;
     pool->threads[pool->n_threads++] = thr;
   }
   tor_mutex_release(&pool->lock);

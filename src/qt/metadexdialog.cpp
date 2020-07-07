@@ -122,7 +122,7 @@ void MetaDExDialog::setClientModel(ClientModel *model)
 
 void MetaDExDialog::setWalletModel(WalletModel *model)
 {
-    // use wallet model to get visibility into IDX balance changes for fees
+    // use wallet model to get visibility into XAP balance changes for fees
     this->walletModel = model;
     if (model != NULL) {
        connect(model, SIGNAL(balanceChanged(CAmount,CAmount,CAmount,CAmount,CAmount,CAmount,CAmount)), this, SLOT(UpdateBalances()));
@@ -148,8 +148,8 @@ void MetaDExDialog::PopulateAddresses()
                 }
             }
         }
-        int idx = ui->comboAddress->findText(currentSetAddress);
-        if (idx != -1) { ui->comboAddress->setCurrentIndex(idx); }
+        int xap = ui->comboAddress->findText(currentSetAddress);
+        if (xap != -1) { ui->comboAddress->setCurrentIndex(xap); }
     }
     UpdateBalance();
 }

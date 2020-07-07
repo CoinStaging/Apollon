@@ -38,10 +38,10 @@ class BitcoinRPC:
 		return resp_obj
 
 	@staticmethod
-	def build_request(idx, method, params):
+	def build_request(xap, method, params):
 		obj = { 'version' : '1.1',
 			'method' : method,
-			'id' : idx }
+			'id' : xap }
 		if params is None:
 			obj['params'] = []
 		else:

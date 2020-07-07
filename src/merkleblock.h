@@ -75,7 +75,7 @@ protected:
 
     /**
      * recursive function that traverses tree nodes, consuming the bits and hashes produced by TraverseAndBuild.
-     * it returns the hash of the respective node and its respective index.
+     * it returns the hash of the respective node and its respective apollon.
      */
     uint256 TraverseAndExtract(int height, unsigned int pos, unsigned int &nBitsUsed, unsigned int &nHashUsed, std::vector<uint256> &vMatch, std::vector<unsigned int> &vnIndex);
 

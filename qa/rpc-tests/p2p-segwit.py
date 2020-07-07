@@ -1357,7 +1357,7 @@ class SegWitTest(BitcoinTestFramework):
         # Randomly choose up to 10 to spend, sign with different hashtypes, and
         # output to a random number of outputs.  Repeat NUM_TESTS times.
         # Ensure that we've tested a situation where we use SIGHASH_SINGLE with
-        # an input index > number of outputs.
+        # an input apollon > number of outputs.
         NUM_TESTS = 500
         temp_utxos = []
         tx = CTransaction()
@@ -1418,7 +1418,7 @@ class SegWitTest(BitcoinTestFramework):
                 block = self.build_next_block()
 
         if (not used_sighash_single_out_of_bounds):
-            print("WARNING: this test run didn't attempt SIGHASH_SINGLE with out-of-bounds index value")
+            print("WARNING: this test run didn't attempt SIGHASH_SINGLE with out-of-bounds apollon value")
         # Test the transactions we've added to the block
         if (len(block.vtx) > 1):
             self.update_witness_block_with_transactions(block, [])
@@ -1461,7 +1461,7 @@ class SegWitTest(BitcoinTestFramework):
         # Update self.utxos for later tests. Just spend everything in
         # temp_utxos to a corresponding entry in self.utxos
         tx = CTransaction()
-        index = 0
+        apollon = 0
         for i in temp_utxos:
             # Just spend to our usual anyone-can-spend output
             # Use SIGHASH_SINGLE|SIGHASH_ANYONECANPAY so we can build up
@@ -1469,8 +1469,8 @@ class SegWitTest(BitcoinTestFramework):
             tx.vin.append(CTxIn(COutPoint(i.sha256, i.n), b""))
             tx.vout.append(CTxOut(i.nValue, CScript([OP_TRUE])))
             tx.wit.vtxinwit.append(CTxInWitness())
-            sign_P2PK_witness_input(witness_program, tx, index, SIGHASH_SINGLE|SIGHASH_ANYONECANPAY, i.nValue, key)
-            index += 1
+            sign_P2PK_witness_input(witness_program, tx, apollon, SIGHASH_SINGLE|SIGHASH_ANYONECANPAY, i.nValue, key)
+            apollon += 1
         block = self.build_next_block()
         self.update_witness_block_with_transactions(block, [tx])
         self.test_node.test_witness_block(block, accepted=True)

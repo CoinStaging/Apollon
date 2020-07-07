@@ -463,7 +463,7 @@ class Benchmark {
       ExecErrorCheck(status, err_msg);
     }
 
-    // Change locking mode to exclusive and create tables/index for database
+    // Change locking mode to exclusive and create tables/apollon for database
     std::string locking_stmt = "PRAGMA locking_mode = EXCLUSIVE";
     std::string create_stmt =
           "CREATE TABLE test (key blob, value blob, PRIMARY KEY(key))";

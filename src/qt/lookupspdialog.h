@@ -35,7 +35,7 @@ public:
 
 public Q_SLOTS:
     void searchButtonClicked();
-    void matchingComboBoxChanged(int idx);
+    void matchingComboBoxChanged(int xap);
 
 private:
     Ui::LookupSPDialog *ui;

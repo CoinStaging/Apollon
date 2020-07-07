@@ -108,7 +108,7 @@ UniValue importprivkey(const UniValue& params, bool fHelp)
     const CHDChain& chain = pwalletMain->GetHDChain();
     if(chain.nVersion == chain.VERSION_WITH_BIP39){
         throw JSONRPCError(RPC_WALLET_ERROR, "Importing wallets and private keys is disabled for mnemonic-enabled wallets."
-                                             "To import your dump file, create a non-mnemonic wallet by setting \"usemnemonic=0\" in your index.conf file, after backing up and removing your existing wallet.");
+                                             "To import your dump file, create a non-mnemonic wallet by setting \"usemnemonic=0\" in your apollon.conf file, after backing up and removing your existing wallet.");
     }
 
 
@@ -248,7 +248,7 @@ UniValue importaddress(const UniValue& params, bool fHelp)
         std::vector<unsigned char> data(ParseHex(params[0].get_str()));
         ImportScript(CScript(data.begin(), data.end()), strLabel, fP2SH);
     } else {
-        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Index address or script");
+        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Apollon address or script");
     }
 
     if (fRescan)
@@ -285,7 +285,7 @@ UniValue importprunedfunds(const UniValue& params, bool fHelp)
     CMerkleBlock merkleBlock;
     ssMB >> merkleBlock;
 
-    //Search partial merkle tree in proof for our transaction and index in valid block
+    //Search partial merkle tree in proof for our transaction and apollon in valid block
     vector<uint256> vMatch;
     vector<unsigned int> vIndex;
     unsigned int txnIndex = 0;
@@ -445,7 +445,7 @@ UniValue importwallet(const UniValue& params, bool fHelp)
     const CHDChain& chain = pwalletMain->GetHDChain();
     if(chain.nVersion == chain.VERSION_WITH_BIP39){
         throw JSONRPCError(RPC_WALLET_ERROR, "Importing wallets and private keys is disabled for mnemonic-enabled wallets."
-                                             "To import your dump file, create a non-mnemonic wallet by setting \"usemnemonic=0\" in your index.conf file, after backing up and removing your existing wallet.");
+                                             "To import your dump file, create a non-mnemonic wallet by setting \"usemnemonic=0\" in your apollon.conf file, after backing up and removing your existing wallet.");
     }
 
 
@@ -602,7 +602,7 @@ UniValue dumpprivkey(const UniValue& params, bool fHelp)
             "\nReveals the private key corresponding to 'indexaddress'.\n"
             "Then the importprivkey can be used with this output\n"
             "\nArguments:\n"
-            "1. \"indexaddress\"   (string, required) The Index address for the private key\n"
+            "1. \"indexaddress\"   (string, required) The Apollon address for the private key\n"
             "\nResult:\n"
             "\"key\"                (string) The private key\n"
             "\nExamples:\n"
@@ -618,7 +618,7 @@ UniValue dumpprivkey(const UniValue& params, bool fHelp)
     string strAddress = params[0].get_str();
     CBitcoinAddress address;
     if (!address.SetString(strAddress))
-        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Index address");
+        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Apollon address");
     CKeyID keyID;
     if (!address.GetKeyID(keyID))
         throw JSONRPCError(RPC_TYPE_ERROR, "Address does not refer to a key");
@@ -637,7 +637,7 @@ UniValue dumpprivkey_index(const UniValue& params, bool fHelp)
             "\nReveals the private key corresponding to 'indexaddress'.\n"
             "Then the importprivkey can be used with this output\n"
             "\nArguments:\n"
-            "1. \"indexaddress\"   (string, required) The Index address for the private key\n"
+            "1. \"indexaddress\"   (string, required) The Apollon address for the private key\n"
             "2. \"one-time-auth-code\"   (string, optional) A one time authorization code received from a previous call of dumpprivkey"
             "\nResult:\n"
             "\"key\"                (string) The private key\n"
@@ -655,12 +655,12 @@ UniValue dumpprivkey_index(const UniValue& params, bool fHelp)
             "WARNING! Your one time authorization code is: " + AuthorizationHelper::inst().generateAuthorizationCode(__FUNCTION__ + params[0].get_str()) + "\n"
             "This command exports your wallet private key. Anyone with this key has complete control over your funds. \n"
             "If someone asked you to type in this command, chances are they want to steal your coins. \n"
-            "Index team members will never ask for this command's output and it is not needed for Indexnode setup or diagnosis!\n"
+            "Apollon team members will never ask for this command's output and it is not needed for Indexnode setup or diagnosis!\n"
             "\n"
             " Please seek help on one of our public channels. \n"
             " Telegram: https://t.me/indexproject \n"
             " Discord: https://discordapp.com/invite/4FjnQ2q\n"
-            " Reddit: https://www.reddit.com/r/index/\n"
+            " Reddit: https://www.reddit.com/r/apollon/\n"
             "\n"
             ;
         throw runtime_error(warning);
@@ -716,7 +716,7 @@ UniValue dumpwallet(const UniValue& params, bool fHelp)
     std::sort(vKeyBirth.begin(), vKeyBirth.end());
 
     // produce output
-    file << strprintf("# Wallet dump created by Index %s\n", CLIENT_BUILD);
+    file << strprintf("# Wallet dump created by Apollon %s\n", CLIENT_BUILD);
     file << strprintf("# * Created on %s\n", EncodeDumpTime(GetTime()));
     file << strprintf("# * Best block at time of backup was %i (%s),\n", chainActive.Height(), chainActive.Tip()->GetBlockHash().ToString());
     file << strprintf("#   mined on %s\n", EncodeDumpTime(chainActive.Tip()->GetBlockTime()));
@@ -856,12 +856,12 @@ UniValue dumpwallet_index(const UniValue& params, bool fHelp)
             "WARNING! Your one time authorization code is: " + AuthorizationHelper::inst().generateAuthorizationCode(__FUNCTION__ + params[0].get_str()) + "\n"
             "This command exports all your private keys. Anyone with these keys has complete control over your funds. \n"
             "If someone asked you to type in this command, chances are they want to steal your coins. \n"
-            "Index team members will never ask for this command's output and it is not needed for Indexnode setup or diagnosis!\n"
+            "Apollon team members will never ask for this command's output and it is not needed for Indexnode setup or diagnosis!\n"
             "\n"
             " Please seek help on one of our public channels. \n"
             " Telegram: https://t.me/indexproject \n"
             " Discord: https://discordapp.com/invite/4FjnQ2q\n"
-            " Reddit: https://www.reddit.com/r/index/\n"
+            " Reddit: https://www.reddit.com/r/apollon/\n"
             "\n"
             ;
         throw runtime_error(warning);

@@ -54,7 +54,7 @@
 #include <android/log.h>
 #endif // HAVE_ANDROID_LOG_H.
 
-/** Given a severity, yields an index into log_severity_list_t.masks to use
+/** Given a severity, yields an apollon into log_severity_list_t.masks to use
  * for that severity. */
 #define SEVERITY_MASK_IDX(sev) ((sev) - LOG_ERR)
 

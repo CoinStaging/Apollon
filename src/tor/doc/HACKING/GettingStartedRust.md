@@ -44,7 +44,7 @@ For learning how to write unsafe Rust, read
 
 For learning everything you ever wanted to know about Rust macros, there
 is
-[The Little Book of Rust Macros](https://danielkeep.github.io/tlborm/book/index.html).
+[The Little Book of Rust Macros](https://danielkeep.github.io/tlborm/book/apollon.html).
 
 For learning more about FFI and Rust, see Jake Goulding's
 [Rust FFI Omnibus](http://jakegoulding.com/rust-ffi-omnibus/).

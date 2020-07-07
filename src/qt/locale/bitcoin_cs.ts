@@ -62,11 +62,11 @@
         <translation>Přijímací adresy</translation>
     </message>
     <message>
-        <source>These are your Index addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
+        <source>These are your Apollon addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
         <translation>Tohle jsou tvé Zcoinové adresy pro posílání plateb. Před odesláním mincí si vždy zkontroluj částku a cílovou adresu.</translation>
     </message>
     <message>
-        <source>These are your Index addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
+        <source>These are your Apollon addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
         <translation>Tohle jsou tvé Zcoinové adresy pro příjem plateb. Nezapomeň si pro každou transakci vždy vygenerovat novou adresu.</translation>
     </message>
     <message>
@@ -319,10 +319,10 @@
     </message>
     <message>
         <source>Reindexing blocks on disk...</source>
-        <translation>Vytvářím nový index bloků na disku...</translation>
+        <translation>Vytvářím nový apollon bloků na disku...</translation>
     </message>
     <message>
-        <source>Send coins to a Index address</source>
+        <source>Send coins to a Apollon address</source>
         <translation>Pošli mince na Zcoinovou adresu</translation>
     </message>
     <message>
@@ -346,8 +346,8 @@
         <translation>&amp;Ověř zprávu...</translation>
     </message>
     <message>
-        <source>Index</source>
-        <translation>Index</translation>
+        <source>Apollon</source>
+        <translation>Apollon</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -374,11 +374,11 @@
         <translation>Zašifruj soukromé klíče ve své peněžence</translation>
     </message>
     <message>
-        <source>Sign messages with your Index addresses to prove you own them</source>
+        <source>Sign messages with your Apollon addresses to prove you own them</source>
         <translation>Podepiš zprávy svými Zcoinovými adresami, čímž prokážeš, že jsi jejich vlastníkem</translation>
     </message>
     <message>
-        <source>Verify messages to ensure they were signed with specified Index addresses</source>
+        <source>Verify messages to ensure they were signed with specified Apollon addresses</source>
         <translation>Ověř zprávy, aby ses ujistil, že byly podepsány danými Zcoinovými adresami</translation>
     </message>
     <message>
@@ -398,8 +398,8 @@
         <translation>Panel s listy</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and index: URIs)</source>
-        <translation>Požaduj platby (generuje QR kódy a index: URI)</translation>
+        <source>Request payments (generates QR codes and apollon: URIs)</source>
+        <translation>Požaduj platby (generuje QR kódy a apollon: URI)</translation>
     </message>
     <message>
         <source>Show the list of used sending addresses and labels</source>
@@ -410,20 +410,20 @@
         <translation>Ukaž seznam použitých přijímacích adres a jejich označení</translation>
     </message>
     <message>
-        <source>Open a index: URI or payment request</source>
-        <translation>Načti index: URI nebo platební požadavek</translation>
+        <source>Open a apollon: URI or payment request</source>
+        <translation>Načti apollon: URI nebo platební požadavek</translation>
     </message>
     <message>
         <source>&amp;Command-line options</source>
         <translation>Ar&amp;gumenty příkazové řádky</translation>
     </message>
     <message numerus="yes">
-        <source>%n active connection(s) to Index network</source>
+        <source>%n active connection(s) to Apollon network</source>
         <translation><numerusform>%n aktivní spojení do Zcoinové sítě</numerusform><numerusform>%n aktivní spojení do Zcoinové sítě</numerusform><numerusform>%n aktivních spojení do Zcoinové sítě</numerusform></translation>
     </message>
     <message>
         <source>Indexing blocks on disk...</source>
-        <translation>Vytvářím index bloků na disku...</translation>
+        <translation>Vytvářím apollon bloků na disku...</translation>
     </message>
     <message>
         <source>Processing blocks on disk...</source>
@@ -486,7 +486,7 @@
         <translation>Aktuální</translation>
     </message>
     <message>
-        <source>Show the %1 help message to get a list with possible Index command-line options</source>
+        <source>Show the %1 help message to get a list with possible Apollon command-line options</source>
         <translation>Seznam argumentů Zcoinu pro příkazovou řádku získáš v nápovědě %1</translation>
     </message>
     <message>
@@ -742,7 +742,7 @@
         <translation>Uprav odesílací adresu</translation>
     </message>
     <message>
-        <source>The entered address "%1" is not a valid Index address.</source>
+        <source>The entered address "%1" is not a valid Apollon address.</source>
         <translation>Zadaná adresa „%1“ není platná Zcoinová adresa.</translation>
     </message>
     <message>
@@ -851,7 +851,7 @@
         <translation>Tohle je poprvé, co spouštíš %1, takže si můžeš zvolit, kam bude ukládat svá data.</translation>
     </message>
     <message>
-        <source>%1 will download and store a copy of the Index block chain. At least %2GB of data will be stored in this directory, and it will grow over time. The wallet will also be stored in this directory.</source>
+        <source>%1 will download and store a copy of the Apollon block chain. At least %2GB of data will be stored in this directory, and it will grow over time. The wallet will also be stored in this directory.</source>
         <translation>%1 bude stahovat kopii řetězce bloků. Proto bude potřeba do tohoto adresáře uložit nejméně %2 GB dat – toto číslo bude navíc v průběhu času růst. Tvá peněženka bude rovněž uložena v tomto adresáři.</translation>
     </message>
     <message>
@@ -997,7 +997,7 @@
         <translation>&amp;Utrácet i ještě nepotvrzené drobné</translation>
     </message>
     <message>
-        <source>Automatically open the Index client port on the router. This only works when your router supports UPnP and it is enabled.</source>
+        <source>Automatically open the Apollon client port on the router. This only works when your router supports UPnP and it is enabled.</source>
         <translation>Automaticky otevře potřebný port na routeru. Tohle funguje jen za předpokladu, že tvůj router podporuje UPnP a že je UPnP povolené.</translation>
     </message>
     <message>
@@ -1005,7 +1005,7 @@
         <translation>Namapovat port přes &amp;UPnP</translation>
     </message>
     <message>
-        <source>Connect to the Index network through a SOCKS5 proxy.</source>
+        <source>Connect to the Apollon network through a SOCKS5 proxy.</source>
         <translation>Připojí se do Zcoinové sítě přes SOCKS5 proxy.</translation>
     </message>
     <message>
@@ -1045,7 +1045,7 @@
         <translation>Tor</translation>
     </message>
     <message>
-        <source>Connect to the Index network through a separate SOCKS5 proxy for Tor hidden services.</source>
+        <source>Connect to the Apollon network through a separate SOCKS5 proxy for Tor hidden services.</source>
         <translation>Připojí se do Zcoinové sítě přes SOCKS5 proxy vyhrazenou pro skryté služby v Tor síti.</translation>
     </message>
     <message>
@@ -1144,7 +1144,7 @@
         <translation>Formulář</translation>
     </message>
     <message>
-        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Index network after a connection is established, but this process has not completed yet.</source>
+        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the Apollon network after a connection is established, but this process has not completed yet.</source>
         <translation>Zobrazené informace nemusí být aktuální. Tvá peněženka se automaticky sesynchronizuje s Zcoinovou sítí, jakmile se s ní spojí. Zatím ale ještě není synchronizace dokončena.</translation>
     </message>
     <message>
@@ -1219,8 +1219,8 @@
         <translation>Chyba platebního požadavku</translation>
     </message>
     <message>
-        <source>Cannot start index: click-to-pay handler</source>
-        <translation>Nemůžu spustit index: obsluha click-to-pay</translation>
+        <source>Cannot start apollon: click-to-pay handler</source>
+        <translation>Nemůžu spustit apollon: obsluha click-to-pay</translation>
     </message>
     <message>
         <source>URI handling</source>
@@ -1235,7 +1235,7 @@
         <translation>Neplatná platební adresa %1</translation>
     </message>
     <message>
-        <source>URI cannot be parsed! This can be caused by an invalid Index address or malformed URI parameters.</source>
+        <source>URI cannot be parsed! This can be caused by an invalid Apollon address or malformed URI parameters.</source>
         <translation>Nepodařilo se analyzovat URI! Důvodem může být neplatná Zcoinová adresa nebo poškozené parametry URI.</translation>
     </message>
     <message>
@@ -1325,7 +1325,7 @@
         <translation>Částka</translation>
     </message>
     <message>
-        <source>Enter a Index address (e.g. %1)</source>
+        <source>Enter a Apollon address (e.g. %1)</source>
         <translation>Zadej Zcoinovou adresu (např. %1)</translation>
     </message>
     <message>
@@ -1690,7 +1690,7 @@
         <translation>&amp;Recyklovat již existující adresy (nedoporučeno)</translation>
     </message>
     <message>
-        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the Index network.</source>
+        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the Apollon network.</source>
         <translation>Volitelná zpráva, která se připojí k platebnímu požadavku a která se zobrazí, když se požadavek otevře. Poznámka: tahle zpráva se neposílá s platbou po Zcoinové síti.</translation>
     </message>
     <message>
@@ -1923,7 +1923,7 @@
         <translation>přinejmenším</translation>
     </message>
     <message>
-        <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks. But be aware that this can end up in a never confirming transaction once there is more demand for Index transactions than the network can process.</source>
+        <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks. But be aware that this can end up in a never confirming transaction once there is more demand for Apollon transactions than the network can process.</source>
         <translation>Platit jen minimální poplatek je v pořádku, pokud je zrovna méně transakcí než místa v blocích. Ale počítej s tím, že to také může skončit transakcí, která nikdy nebude potvrzena, pokud je větší poptávka po Zcoinových transakcích, než síť zvládne zpracovat.</translation>
     </message>
     <message>
@@ -2079,7 +2079,7 @@
         <translation><numerusform>Potvrzování by podle odhadu mělo začít během %n bloku.</numerusform><numerusform>Potvrzování by podle odhadu mělo začít během %n bloků.</numerusform><numerusform>Potvrzování by podle odhadu mělo začít během %n bloků.</numerusform></translation>
     </message>
     <message>
-        <source>Warning: Invalid Index address</source>
+        <source>Warning: Invalid Apollon address</source>
         <translation>Upozornění: Neplatná Zcoinová adresa</translation>
     </message>
     <message>
@@ -2114,7 +2114,7 @@
         <translation>Tohle je normální platba.</translation>
     </message>
     <message>
-        <source>The Index address to send the payment to</source>
+        <source>The Apollon address to send the payment to</source>
         <translation>Zcoinová adresa příjemce</translation>
     </message>
     <message>
@@ -2158,8 +2158,8 @@
         <translation>Zadej označení této adresy; obojí se ti pak uloží do adresáře</translation>
     </message>
     <message>
-        <source>A message that was attached to the index: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Index network.</source>
-        <translation>Zpráva, která byla připojena k index: URI a která se ti pro přehled uloží k transakci. Poznámka: Tahle zpráva se neposílá s platbou po Zcoinové síti.</translation>
+        <source>A message that was attached to the apollon: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the Apollon network.</source>
+        <translation>Zpráva, která byla připojena k apollon: URI a která se ti pro přehled uloží k transakci. Poznámka: Tahle zpráva se neposílá s platbou po Zcoinové síti.</translation>
     </message>
     <message>
         <source>Pay To:</source>
@@ -2207,7 +2207,7 @@
         <translation>Podepsáním zprávy/smlouvy svými adresami můžeš prokázat, že jsi na ně schopen přijmout Zcoiny. Buď opatrný a nepodepisuj nic vágního nebo náhodného; například při phishingových útocích můžeš být lákán, abys něco takového podepsal. Podepisuj pouze naprosto úplná a detailní prohlášení, se kterými souhlasíš.</translation>
     </message>
     <message>
-        <source>The Index address to sign the message with</source>
+        <source>The Apollon address to sign the message with</source>
         <translation>Zcoinová adresa, kterou se zpráva podepíše</translation>
     </message>
     <message>
@@ -2239,7 +2239,7 @@
         <translation>Zkopíruj tento podpis do schránky</translation>
     </message>
     <message>
-        <source>Sign the message to prove you own this Index address</source>
+        <source>Sign the message to prove you own this Apollon address</source>
         <translation>Podepiš zprávu, čímž prokážeš, že jsi vlastníkem této Zcoinové adresy</translation>
     </message>
     <message>
@@ -2263,11 +2263,11 @@
         <translation>K ověření podpisu zprávy zadej adresu příjemce, zprávu (ověř si, že správně kopíruješ zalomení řádků, mezery, tabulátory apod.) a podpis. Dávej pozor na to, abys nezkopíroval do podpisu víc, než co je v samotné podepsané zprávě, abys nebyl napálen man-in-the-middle útokem. Poznamenejme však, že takto lze pouze prokázat, že podepisující je schopný na dané adrese přijmout platbu, ale není možnéprokázat, že odeslal jakoukoli transakci!</translation>
     </message>
     <message>
-        <source>The Index address the message was signed with</source>
+        <source>The Apollon address the message was signed with</source>
         <translation>Zcoinová adresa, kterou je zpráva podepsána</translation>
     </message>
     <message>
-        <source>Verify the message to ensure it was signed with the specified Index address</source>
+        <source>Verify the message to ensure it was signed with the specified Apollon address</source>
         <translation>Ověř zprávu, aby ses ujistil, že byla podepsána danou Zcoinovou adresou</translation>
     </message>
     <message>
@@ -2480,7 +2480,7 @@
         <translation>ID transakce</translation>
     </message>
     <message>
-        <source>Output index</source>
+        <source>Output apollon</source>
         <translation>Pořadí výstupu</translation>
     </message>
     <message>
@@ -2854,7 +2854,7 @@
     </message>
 </context>
 <context>
-    <name>index-core</name>
+    <name>apollon-core</name>
     <message>
         <source>Options:</source>
         <translation>Možnosti:</translation>
@@ -2920,8 +2920,8 @@
         <translation>Přijímat spojení zvenčí (výchozí: 1, pokud není zadáno -proxy nebo -connect)</translation>
     </message>
     <message>
-        <source>Index Core</source>
-        <translation>Index Core</translation>
+        <source>Apollon Core</source>
+        <translation>Apollon Core</translation>
     </message>
     <message>
         <source>-fallbackfee is set very high! This is the transaction fee you may pay when fee estimates are not available.</source>
@@ -3156,8 +3156,8 @@
         <translation>Prořezávací režim není kompatibilní s -txindex.</translation>
     </message>
     <message>
-        <source>Rebuild chain state and block index from the blk*.dat files on disk</source>
-        <translation>Při startu znovu vytvořit index řetězce bloků z aktuálních blk*.dat souborů</translation>
+        <source>Rebuild chain state and block apollon from the blk*.dat files on disk</source>
+        <translation>Při startu znovu vytvořit apollon řetězce bloků z aktuálních blk*.dat souborů</translation>
     </message>
     <message>
         <source>Set database cache size in megabytes (%d to %d, default: %d)</source>
@@ -3480,8 +3480,8 @@
         <translation>Jak moc důkladná má být verifikace bloků -checkblocks (0-4, výchozí: %u)</translation>
     </message>
     <message>
-        <source>Maintain a full transaction index, used by the getrawtransaction rpc call (default: %u)</source>
-        <translation>Spravovat úplný index transakcí, který je využíván rpc voláním getrawtransaction (výchozí: %u)</translation>
+        <source>Maintain a full transaction apollon, used by the getrawtransaction rpc call (default: %u)</source>
+        <translation>Spravovat úplný apollon transakcí, který je využíván rpc voláním getrawtransaction (výchozí: %u)</translation>
     </message>
     <message>
         <source>Number of seconds to keep misbehaving peers from reconnecting (default: %u)</source>
@@ -3612,8 +3612,8 @@
         <translation>Nedostatek prostředků</translation>
     </message>
     <message>
-        <source>Loading block index...</source>
-        <translation>Načítám index bloků...</translation>
+        <source>Loading block apollon...</source>
+        <translation>Načítám apollon bloků...</translation>
     </message>
     <message>
         <source>Add a node to connect to and attempt to keep the connection open</source>

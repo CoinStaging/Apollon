@@ -749,7 +749,7 @@ typedef enum {
   SAVED_NOWHERE=0,
   /** The descriptor is stored in the cached_routers file: the
    * signed_descriptor_body is meaningless; the signed_descriptor_len and
-   * saved_offset are used to index into the mmaped cache file. */
+   * saved_offset are used to apollon into the mmaped cache file. */
   SAVED_IN_CACHE,
   /** The descriptor is stored in the cached_routers.new file: the
    * signed_descriptor_body and saved_offset fields are both set. */

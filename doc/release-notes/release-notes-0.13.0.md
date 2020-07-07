@@ -231,7 +231,7 @@ The two phases are distinct in the Bitcoin-Qt GUI. During the first one,
 "Reindexing blocks on disk" is shown. During the second (slower) one,
 "Processing blocks on disk" is shown.
 
-It is possible to only redo validation now, without rebuilding the block index,
+It is possible to only redo validation now, without rebuilding the block apollon,
 using the command line option `-reindex-chainstate` (in addition to
 `-reindex` which does both). This new option is useful when the blocks on disk
 are assumed to be fine, but the chainstate is still corrupted. It is also
@@ -541,7 +541,7 @@ git merge commit are mentioned.
 - #7686 `f034bce` Remove 0-fee from send dialog (MarcoFalke)
 - #7506 `b88e0b0` Use CCoinControl selection in CWallet::FundTransaction (promag)
 - #7732 `0b98dd7` Debug window: replace "Build date" with "Datadir" (jonasschnelli)
-- #7761 `60db51d` remove trailing output-index from transaction-id (jonasschnelli)
+- #7761 `60db51d` remove trailing output-apollon from transaction-id (jonasschnelli)
 - #7772 `6383268` Clear the input line after activating autocomplete (paveljanik)
 - #7925 `f604bf6` Fix out-of-tree GUI builds (laanwj)
 - #7939 `574ddc6` Make it possible to show details for multiple transactions (laanwj)

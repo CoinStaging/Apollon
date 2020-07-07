@@ -16,14 +16,14 @@ BEGIN
     BEGIN
         BLOCK "040904E4" // U.S. English - multilingual (hex)
         BEGIN
-            VALUE "CompanyName",        "Index"
-            VALUE "FileDescription",    "index-cli (JSON-RPC client for " PACKAGE_NAME ")"
+            VALUE "CompanyName",        "Apollon"
+            VALUE "FileDescription",    "apollon-cli (JSON-RPC client for " PACKAGE_NAME ")"
             VALUE "FileVersion",        VER_FILEVERSION_STR
-            VALUE "InternalName",       "index-cli"
+            VALUE "InternalName",       "apollon-cli"
             VALUE "LegalCopyright",     COPYRIGHT_STR
             VALUE "LegalTrademarks1",   "Distributed under the MIT software license, see the accompanying file COPYING or http://www.opensource.org/licenses/mit-license.php."
-            VALUE "OriginalFilename",   "index-cli.exe"
-            VALUE "ProductName",        "index-cli"
+            VALUE "OriginalFilename",   "apollon-cli.exe"
+            VALUE "ProductName",        "apollon-cli"
             VALUE "ProductVersion",     VER_PRODUCTVERSION_STR
         END
     END

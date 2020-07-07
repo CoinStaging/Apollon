@@ -424,17 +424,17 @@ impl ToString for ProtoSet {
 ///
 /// A `bool` indicating whether the list contains a range, starting at the first
 /// in the list, a`Version` of the last integer in the range, and a `usize` of
-/// the index of that version.
+/// the apollon of that version.
 ///
 /// For example, if given vec![1, 2, 3, 5], find_range will return true,
 /// as there is a continuous range, and 3, which is the last number in the
-/// continuous range, and 2 which is the index of 3.
+/// continuous range, and 2 which is the apollon of 3.
 fn find_range(list: &Vec<Version>) -> (bool, Version, usize) {
     if list.len() == 0 {
         return (false, 0, 0);
     }
 
-    let mut index: usize = 0;
+    let mut apollon: usize = 0;
     let mut iterable = list.iter().peekable();
     let mut range_end = match iterable.next() {
         Some(n) => *n,
@@ -451,10 +451,10 @@ fn find_range(list: &Vec<Version>) -> (bool, Version, usize) {
 
         has_range = true;
         range_end = n;
-        index += 1;
+        apollon += 1;
     }
 
-    (has_range, range_end, index)
+    (has_range, range_end, apollon)
 }
 
 impl From<Vec<Version>> for ProtoSet {
@@ -465,32 +465,32 @@ impl From<Vec<Version>> for ProtoSet {
         v.dedup();
 
         'vector: while !v.is_empty() {
-            let (has_range, end, index): (bool, Version, usize) = find_range(&v);
+            let (has_range, end, apollon): (bool, Version, usize) = find_range(&v);
 
             if has_range {
                 let first: Version = match v.first() {
                     Some(x) => *x,
                     None => continue,
                 };
-                let last: Version = match v.get(index) {
+                let last: Version = match v.get(apollon) {
                     Some(x) => *x,
                     None => continue,
                 };
                 debug_assert!(last == end, format!("last = {}, end = {}", last, end));
 
                 version_pairs.push((first, last));
-                v = v.split_off(index + 1);
+                v = v.split_off(apollon + 1);
 
                 if v.len() == 0 {
                     break 'vector;
                 }
             } else {
-                let last: Version = match v.get(index) {
+                let last: Version = match v.get(apollon) {
                     Some(x) => *x,
                     None => continue,
                 };
                 version_pairs.push((last, last));
-                v.remove(index);
+                v.remove(apollon);
             }
         }
         ProtoSet::from_slice(&version_pairs[..]).unwrap_or(ProtoSet::default())

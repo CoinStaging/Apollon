@@ -161,7 +161,7 @@ public:
         auto gs = (params.g * priv.serial).inverse();
         SigmaPublicKey pub(priv, params);
         std::vector<secp_primitives::GroupElement> commits;
-        boost::optional<size_t> index;
+        boost::optional<size_t> apollon;
 
         commits.reserve(std::distance(first, last));
 
@@ -169,13 +169,13 @@ public:
             auto& commit = it->commitment;
 
             if (commit == pub.commitment) {
-                index = std::distance(first, it);
+                apollon = std::distance(first, it);
             }
 
             commits.emplace_back(commit + gs);
         }
 
-        if (!index) {
+        if (!apollon) {
             throw std::invalid_argument("No commitment for private key in the set");
         }
 
@@ -187,7 +187,7 @@ public:
             params.m
         );
 
-        prover.proof(commits, *index, priv.randomness, fPadding, proof);
+        prover.proof(commits, *apollon, priv.randomness, fPadding, proof);
     }
 
 public:

@@ -57,14 +57,14 @@ SecureString Mnemonic::mnemonic_from_data(const SecureVector& data, int len)
     int mlen = len * 3 / 4;
     SecureString mnemonic;
 
-    int i, j, idx;
+    int i, j, xap;
     for (i = 0; i < mlen; i++) {
-        idx = 0;
+        xap = 0;
         for (j = 0; j < 11; j++) {
-            idx <<= 1;
-            idx += (bits[(i * 11 + j) / 8] & (1 << (7 - ((i * 11 + j) % 8)))) > 0;
+            xap <<= 1;
+            xap += (bits[(i * 11 + j) / 8] & (1 << (7 - ((i * 11 + j) % 8)))) > 0;
         }
-        mnemonic.append(wordlist[idx]);
+        mnemonic.append(wordlist[xap]);
         if (i < mlen - 1) {
             mnemonic += ' ';
         }
@@ -112,7 +112,7 @@ bool Mnemonic::mnemonic_check(const SecureString& mnemonic)
             if (!wordlist[nWordIndex]) { // word not found
                 return false;
             }
-            if (ssCurrentWord == wordlist[nWordIndex]) { // word found on index nWordIndex
+            if (ssCurrentWord == wordlist[nWordIndex]) { // word found on apollon nWordIndex
                 for (ki = 0; ki < 11; ki++) {
                     if (nWordIndex & (1 << (10 - ki))) {
                         bits[nBitsCount / 8] |= 1 << (7 - (nBitsCount % 8));

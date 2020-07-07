@@ -153,16 +153,16 @@ TEST(CacheTest, HeavyEntries) {
   const int kLight = 1;
   const int kHeavy = 10;
   int added = 0;
-  int index = 0;
+  int apollon = 0;
   while (added < 2*kCacheSize) {
-    const int weight = (index & 1) ? kLight : kHeavy;
-    Insert(index, 1000+index, weight);
+    const int weight = (apollon & 1) ? kLight : kHeavy;
+    Insert(apollon, 1000+apollon, weight);
     added += weight;
-    index++;
+    apollon++;
   }
 
   int cached_weight = 0;
-  for (int i = 0; i < index; i++) {
+  for (int i = 0; i < apollon; i++) {
     const int weight = (i & 1 ? kLight : kHeavy);
     int r = Lookup(i);
     if (r >= 0) {
