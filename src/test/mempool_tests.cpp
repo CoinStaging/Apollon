@@ -107,14 +107,14 @@ template<typename name>
 void CheckSort(CTxMemPool &pool, std::vector<std::string> &sortedOrder)
 {
     BOOST_CHECK_EQUAL(pool.size(), sortedOrder.size());
-    typename CTxMemPool::indexed_transaction_set::apollon<name>::type::iterator it = pool.mapTx.get<name>().begin();
+    typename CTxMemPool::apolloned_transaction_set::apollon<name>::type::iterator it = pool.mapTx.get<name>().begin();
     int count=0;
     for (; it != pool.mapTx.get<name>().end(); ++it, ++count) {
         BOOST_CHECK_EQUAL(it->GetTx().GetHash().ToString(), sortedOrder[count]);
     }
 }
 
-BOOST_AUTO_TEST_CASE(MempoolIndexingTest)
+BOOST_AUTO_TEST_CASE(MempoolApolloningTest)
 {
     CTxMemPool pool(CFeeRate(0));
     TestMemPoolEntryHelper entry;
@@ -318,7 +318,7 @@ BOOST_AUTO_TEST_CASE(MempoolIndexingTest)
     CheckSort<mining_score>(pool, sortedOrder);
 }
 
-BOOST_AUTO_TEST_CASE(MempoolAncestorIndexingTest)
+BOOST_AUTO_TEST_CASE(MempoolAncestorApolloningTest)
 {
     CTxMemPool pool(CFeeRate(0));
     TestMemPoolEntryHelper entry;

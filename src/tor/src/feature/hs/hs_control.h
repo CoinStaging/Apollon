@@ -33,7 +33,7 @@ void hs_control_desc_event_created(const char *onion_address,
 void hs_control_desc_event_upload(const char *onion_address,
                                   const char *hsdir_id_digest,
                                   const ed25519_public_key_t *blinded_pk,
-                                  const uint8_t *hsdir_index);
+                                  const uint8_t *hsdir_apollon);
 
 /* Event "HS_DESC UPLOADED [...]" */
 void hs_control_desc_event_uploaded(const hs_ident_dir_conn_t *ident,

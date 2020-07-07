@@ -3,7 +3,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "init.h"
-#include "indexnode-payments.h"
+#include "apollonnode-payments.h"
 #include "rpc/server.h"
 #include "util.h"
 #include "wallet/wallet.h"
@@ -163,13 +163,13 @@ UniValue getBlockHeight(const string strHash)
 
     uint256 hash(uint256S(strHash));
 
-    if (mapBlockIndex.count(hash) == 0)
+    if (mapBlockApollon.count(hash) == 0)
         return -1;
 
     CBlock block;
-    CBlockIndex* pblockindex = mapBlockIndex[hash];
+    CBlockApollon* pblockapollon = mapBlockApollon[hash];
 
-    return pblockindex->nHeight;
+    return pblockapollon->nHeight;
 }
 
 void APIWalletTxToJSON(const CWalletTx& wtx, UniValue& entry)
@@ -179,7 +179,7 @@ void APIWalletTxToJSON(const CWalletTx& wtx, UniValue& entry)
     if (confirms > 0)
     {
         entry.push_back(Pair("blockHash", wtx.hashBlock.GetHex()));
-        UniValue blocktime = mapBlockIndex[wtx.hashBlock]->GetBlockTime();
+        UniValue blocktime = mapBlockApollon[wtx.hashBlock]->GetBlockTime();
         entry.push_back(Pair("blockTime", blocktime));
         entry.push_back(Pair("blockHeight", getBlockHeight(wtx.hashBlock.GetHex())));
         UniValue timestamp = getInitialTimestamp(hash);
@@ -227,7 +227,7 @@ void ListAPITransactions(const CWalletTx& wtx, UniValue& ret, const isminefilter
             }
 
             string category;
-            string voutIndex = to_string(s.vout);
+            string voutApollon = to_string(s.vout);
             
             // As outputs take preference, in the case of a Sigma-to-Sigma tx (ie. spend-to-mint), the category will be listed as "mint".
             if(wtx.vout[s.vout].scriptPubKey.IsZerocoinMint() ||
@@ -250,10 +250,10 @@ void ListAPITransactions(const CWalletTx& wtx, UniValue& ret, const isminefilter
                 category = "send";
             }
 
-            string categoryIndex = category + voutIndex;
+            string categoryApollon = category + voutApollon;
             entry.push_back(Pair("category", category));
             entry.push_back(Pair("address", addrStr));
-            entry.push_back(Pair("txIndex", s.vout));
+            entry.push_back(Pair("txApollon", s.vout));
 
             CAmount amount = ValueFromAmount(s.amount).get_real() * COIN;
             entry.push_back(Pair("amount", amount));
@@ -279,8 +279,8 @@ void ListAPITransactions(const CWalletTx& wtx, UniValue& ret, const isminefilter
                 txids = address["txids"];
             }
 
-            if(!txids[categoryIndex].isNull()){
-                vouts = txids[categoryIndex];
+            if(!txids[categoryApollon].isNull()){
+                vouts = txids[categoryApollon];
             }
 
             if(!total[category].isNull()){
@@ -298,7 +298,7 @@ void ListAPITransactions(const CWalletTx& wtx, UniValue& ret, const isminefilter
                 total.replace(category, totalCategory);
             }
             vouts.replace(txid.GetHex(), entry);
-            txids.replace(categoryIndex, vouts);
+            txids.replace(categoryApollon, vouts);
             address.replace("total", total);
             address.replace("txids", txids);
             ret.replace(addrStr, address);
@@ -324,7 +324,7 @@ void ListAPITransactions(const CWalletTx& wtx, UniValue& ret, const isminefilter
 
             uint256 txid = wtx.GetHash();
             string category;
-            string voutIndex = to_string(r.vout);
+            string voutApollon = to_string(r.vout);
 
             if (addr.Set(r.destination)){
                 addrStr = addr.ToString();
@@ -336,8 +336,8 @@ void ListAPITransactions(const CWalletTx& wtx, UniValue& ret, const isminefilter
                 if(txHeight == -1){
                     category = "coinbase";
                 }
-                else if(r.vout==1 && txHeight >= Params().GetConsensus().nIndexnodePaymentsStartBlock){
-                    category = "indexnode";
+                else if(r.vout==1 && txHeight >= Params().GetConsensus().nApollonnodePaymentsStartBlock){
+                    category = "apollonnode";
                 }
                 else {
                     category = "mined";
@@ -350,9 +350,9 @@ void ListAPITransactions(const CWalletTx& wtx, UniValue& ret, const isminefilter
             else {
                 category = "receive";
             }
-            string categoryIndex = category + voutIndex;
+            string categoryApollon = category + voutApollon;
             entry.push_back(Pair("category", category));
-            entry.push_back(Pair("txIndex", r.vout));
+            entry.push_back(Pair("txApollon", r.vout));
 
             CAmount amount = ValueFromAmount(r.amount).get_real() * COIN;
             entry.push_back(Pair("amount", amount));
@@ -371,8 +371,8 @@ void ListAPITransactions(const CWalletTx& wtx, UniValue& ret, const isminefilter
                 txids = address["txids"];
             }
 
-            if(!txids[categoryIndex].isNull()){
-                vouts = txids[categoryIndex];
+            if(!txids[categoryApollon].isNull()){
+                vouts = txids[categoryApollon];
             }
 
             if(!total[category].isNull()){
@@ -391,7 +391,7 @@ void ListAPITransactions(const CWalletTx& wtx, UniValue& ret, const isminefilter
             }
             
             vouts.replace(txid.GetHex(), entry);
-            txids.replace(categoryIndex, vouts);
+            txids.replace(categoryApollon, vouts);
             address.replace("total", total);
             address.replace("txids", txids);
 
@@ -404,17 +404,17 @@ UniValue StateSinceBlock(UniValue& ret, std::string block){
 
     LOCK2(cs_main, pwalletMain->cs_wallet);
 
-    CBlockIndex *pindex = NULL;
+    CBlockApollon *papollon = NULL;
     isminefilter filter = ISMINE_SPENDABLE;
 
     uint256 blockId;
 
     blockId.SetHex(block); //set block hash
-    BlockMap::iterator it = mapBlockIndex.find(blockId);
-    if (it != mapBlockIndex.end())
-        pindex = it->second;
+    BlockMap::iterator it = mapBlockApollon.find(blockId);
+    if (it != mapBlockApollon.end())
+        papollon = it->second;
 
-    int depth = pindex ? (1 + chainActive.Height() - pindex->nHeight) : -1;
+    int depth = papollon ? (1 + chainActive.Height() - papollon->nHeight) : -1;
 
     UniValue transactions(UniValue::VOBJ);
 
@@ -435,22 +435,22 @@ UniValue StateBlock(UniValue& ret, std::string blockhash){
 
     LOCK2(cs_main, pwalletMain->cs_wallet);
 
-    CBlockIndex *pindex = NULL;
+    CBlockApollon *papollon = NULL;
     isminefilter filter = ISMINE_SPENDABLE;
 
     uint256 blockId;
 
     blockId.SetHex(blockhash); //set block hash
-    BlockMap::iterator it = mapBlockIndex.find(blockId);
-    if (it != mapBlockIndex.end())
-        pindex = it->second;
+    BlockMap::iterator it = mapBlockApollon.find(blockId);
+    if (it != mapBlockApollon.end())
+        papollon = it->second;
 
-    if(!pindex){
+    if(!papollon){
         return false;
     }
 
     CBlock block;
-    if(!ReadBlockFromDisk(block, pindex, Params().GetConsensus())){
+    if(!ReadBlockFromDisk(block, papollon, Params().GetConsensus())){
         LogPrintf("can't read block from disk.\n");
     }
 
@@ -683,6 +683,6 @@ static const CAPICommand commands[] =
 };
 void RegisterWalletAPICommands(CAPITable &tableAPI)
 {
-    for (unsigned int vcidx = 0; vcidx < ARRAYLEN(commands); vcidx++)
-        tableAPI.appendCommand(commands[vcidx].collection, &commands[vcidx]);
+    for (unsigned int vcxap = 0; vcxap < ARRAYLEN(commands); vcxap++)
+        tableAPI.appendCommand(commands[vcxap].collection, &commands[vcxap]);
 }

@@ -43,7 +43,7 @@ QT_TRANSLATE_NOOP("apollon-core", ""
 "effective with disabled wallet functionality)"),
 QT_TRANSLATE_NOOP("apollon-core", ""
 "Delete all Sigma mints and only recover those parts of the blockchain "
-"through -reindex on startup"),
+"through -reapollon on startup"),
 QT_TRANSLATE_NOOP("apollon-core", ""
 "Delete all wallet transactions and only recover those parts of the "
 "blockchain through -rescan on startup"),
@@ -51,8 +51,8 @@ QT_TRANSLATE_NOOP("apollon-core", ""
 "Disabled transaction apollon detected.\n"
 "\n"
 "Exodus requires an enabled transaction apollon. To enable transaction "
-"indexing, please use the \"-txindex\" option as command line argument or add "
-"\"txindex=1\" to your client configuration file within your data directory.\n"
+"apolloning, please use the \"-txapollon\" option as command line argument or add "
+"\"txapollon=1\" to your client configuration file within your data directory.\n"
 "\n"
 "Configuration file"),
 QT_TRANSLATE_NOOP("apollon-core", ""
@@ -141,7 +141,7 @@ QT_TRANSLATE_NOOP("apollon-core", ""
 "Maximum size of data in data carrier transactions we relay and mine "
 "(default: %u)"),
 QT_TRANSLATE_NOOP("apollon-core", ""
-"Maximum size of the list of indexes in the block spam filter (default: %u)"),
+"Maximum size of the list of apollones in the block spam filter (default: %u)"),
 QT_TRANSLATE_NOOP("apollon-core", ""
 "Maximum total fees (in %s) to use in a single wallet transaction or raw "
 "transaction; setting this too low may abort large transactions (default: %s)"),
@@ -150,11 +150,11 @@ QT_TRANSLATE_NOOP("apollon-core", ""
 QT_TRANSLATE_NOOP("apollon-core", ""
 "Output debugging information (default: %u, supplying <category> is optional)"),
 QT_TRANSLATE_NOOP("apollon-core", ""
-"Please add txindex=1 to your configuration file manually.\n"
+"Please add txapollon=1 to your configuration file manually.\n"
 "\n"
 "Exodus will now shutdown."),
 QT_TRANSLATE_NOOP("apollon-core", ""
-"Please add txindex=1 to your configuration file manually.\n"
+"Please add txapollon=1 to your configuration file manually.\n"
 "\n"
 "Omni Core will now shutdown."),
 QT_TRANSLATE_NOOP("apollon-core", ""
@@ -170,7 +170,7 @@ QT_TRANSLATE_NOOP("apollon-core", ""
 "Prune configured below the minimum of %d MiB.  Please use a higher number."),
 QT_TRANSLATE_NOOP("apollon-core", ""
 "Prune: last wallet synchronisation goes beyond pruned data. You need to -"
-"reindex (download the whole blockchain again in case of pruned node)"),
+"reapollon (download the whole blockchain again in case of pruned node)"),
 QT_TRANSLATE_NOOP("apollon-core", ""
 "Query for peer addresses via DNS lookup, if low on addresses (default: 1 "
 "unless -connect)"),
@@ -179,11 +179,11 @@ QT_TRANSLATE_NOOP("apollon-core", ""
 "isolation (default: %u)"),
 QT_TRANSLATE_NOOP("apollon-core", ""
 "Reduce storage requirements by pruning (deleting) old blocks. This mode is "
-"incompatible with -txindex and -rescan. Warning: Reverting this setting "
+"incompatible with -txapollon and -rescan. Warning: Reverting this setting "
 "requires re-downloading the entire blockchain. (default: 0 = disable pruning "
 "blocks, >%u = target size in MiB to use for block files)"),
 QT_TRANSLATE_NOOP("apollon-core", ""
-"Rescans are not possible in pruned mode. You will need to use -reindex which "
+"Rescans are not possible in pruned mode. You will need to use -reapollon which "
 "will download the whole blockchain again."),
 QT_TRANSLATE_NOOP("apollon-core", ""
 "Set maximum size of high-priority/low-fee transactions in bytes (default: %d)"),
@@ -293,21 +293,21 @@ QT_TRANSLATE_NOOP("apollon-core", ""
 "Would you like Exodus to attempt to update your configuration file "
 "accordingly?"),
 QT_TRANSLATE_NOOP("apollon-core", ""
-"You must specify a indexnodeprivkey in the configuration. Please see "
+"You must specify a apollonnodeprivkey in the configuration. Please see "
 "documentation for help."),
 QT_TRANSLATE_NOOP("apollon-core", ""
-"You need to rebuild the database using -reindex to go back to unpruned "
+"You need to rebuild the database using -reapollon to go back to unpruned "
 "mode.  This will redownload the entire blockchain"),
 QT_TRANSLATE_NOOP("apollon-core", ""
-"You need to rebuild the database using -reindex-chainstate to change -txindex"),
+"You need to rebuild the database using -reapollon-chainstate to change -txapollon"),
 QT_TRANSLATE_NOOP("apollon-core", ""
 "Your configuration file has been updated.\n"
 "\n"
 "Exodus will now shutdown - please restart the client for your new "
 "configuration to take effect."),
 QT_TRANSLATE_NOOP("apollon-core", ""
-"indexnodeaddr option is deprecated. Please use indexnode.conf to manage your "
-"remote indexnodes."),
+"apollonnodeaddr option is deprecated. Please use apollonnode.conf to manage your "
+"remote apollonnodes."),
 QT_TRANSLATE_NOOP("apollon-core", ""
 "it has to have at least two mint coins with at least 6 confirmation in order "
 "to spend a coin"),
@@ -336,9 +336,9 @@ QT_TRANSLATE_NOOP("apollon-core", "Automatic backups disabled"),
 QT_TRANSLATE_NOOP("apollon-core", "Automatically create Tor hidden service (default: %d)"),
 QT_TRANSLATE_NOOP("apollon-core", "Bad change address"),
 QT_TRANSLATE_NOOP("apollon-core", "Block creation options:"),
-QT_TRANSLATE_NOOP("apollon-core", "Block apollon is outdated, reindex required\n"),
+QT_TRANSLATE_NOOP("apollon-core", "Block apollon is outdated, reapollon required\n"),
 QT_TRANSLATE_NOOP("apollon-core", "Can not choose coins within limit."),
-QT_TRANSLATE_NOOP("apollon-core", "Can't find random Indexnode."),
+QT_TRANSLATE_NOOP("apollon-core", "Can't find random Apollonnode."),
 QT_TRANSLATE_NOOP("apollon-core", "Can't mix while sync in progress."),
 QT_TRANSLATE_NOOP("apollon-core", "Can't mix: no compatible inputs found!"),
 QT_TRANSLATE_NOOP("apollon-core", "Cannot downgrade wallet"),
@@ -352,7 +352,7 @@ QT_TRANSLATE_NOOP("apollon-core", "Connect to a node to retrieve peer addresses,
 QT_TRANSLATE_NOOP("apollon-core", "Connection options:"),
 QT_TRANSLATE_NOOP("apollon-core", "Copyright (C) %i-%i"),
 QT_TRANSLATE_NOOP("apollon-core", "Corrupted block database detected"),
-QT_TRANSLATE_NOOP("apollon-core", "Could not parse indexnode.conf"),
+QT_TRANSLATE_NOOP("apollon-core", "Could not parse apollonnode.conf"),
 QT_TRANSLATE_NOOP("apollon-core", "Debugging/Testing options:"),
 QT_TRANSLATE_NOOP("apollon-core", "Delete blockchain folders and resync from scratch"),
 QT_TRANSLATE_NOOP("apollon-core", "Do not load the wallet and disable wallet RPC calls"),
@@ -365,7 +365,7 @@ QT_TRANSLATE_NOOP("apollon-core", "Enable publish raw block in <address>"),
 QT_TRANSLATE_NOOP("apollon-core", "Enable publish raw transaction in <address>"),
 QT_TRANSLATE_NOOP("apollon-core", "Enable transaction replacement in the memory pool (default: %u)"),
 QT_TRANSLATE_NOOP("apollon-core", "Entries are full."),
-QT_TRANSLATE_NOOP("apollon-core", "Error connecting to Indexnode."),
+QT_TRANSLATE_NOOP("apollon-core", "Error connecting to Apollonnode."),
 QT_TRANSLATE_NOOP("apollon-core", "Error initializing block database"),
 QT_TRANSLATE_NOOP("apollon-core", "Error initializing wallet database environment %s!"),
 QT_TRANSLATE_NOOP("apollon-core", "Error loading %s"),
@@ -397,9 +397,9 @@ QT_TRANSLATE_NOOP("apollon-core", "Include IP addresses in debug output (default
 QT_TRANSLATE_NOOP("apollon-core", "Incompatible mode."),
 QT_TRANSLATE_NOOP("apollon-core", "Incompatible version."),
 QT_TRANSLATE_NOOP("apollon-core", "Incorrect or no genesis block found. Wrong datadir for network?"),
-QT_TRANSLATE_NOOP("apollon-core", "Indexnode cache is empty, skipping payments cache..."),
-QT_TRANSLATE_NOOP("apollon-core", "Indexnode queue is full."),
-QT_TRANSLATE_NOOP("apollon-core", "Indexnode:"),
+QT_TRANSLATE_NOOP("apollon-core", "Apollonnode cache is empty, skipping payments cache..."),
+QT_TRANSLATE_NOOP("apollon-core", "Apollonnode queue is full."),
+QT_TRANSLATE_NOOP("apollon-core", "Apollonnode:"),
 QT_TRANSLATE_NOOP("apollon-core", "Information"),
 QT_TRANSLATE_NOOP("apollon-core", "Initialization sanity check failed. %s is shutting down."),
 QT_TRANSLATE_NOOP("apollon-core", "Input is not valid."),
@@ -413,9 +413,9 @@ QT_TRANSLATE_NOOP("apollon-core", "Invalid amount for -fallbackfee=<amount>: '%s
 QT_TRANSLATE_NOOP("apollon-core", "Invalid amount for -mininput=<amount>: '%s'"),
 QT_TRANSLATE_NOOP("apollon-core", "Invalid amount for -paytxfee=<amount>: '%s' (must be at least %s)"),
 QT_TRANSLATE_NOOP("apollon-core", "Invalid amount"),
-QT_TRANSLATE_NOOP("apollon-core", "Invalid indexnodeprivkey. Please see documentation."),
+QT_TRANSLATE_NOOP("apollon-core", "Invalid apollonnodeprivkey. Please see documentation."),
 QT_TRANSLATE_NOOP("apollon-core", "Invalid netmask specified in -whitelist: '%s'"),
-QT_TRANSLATE_NOOP("apollon-core", "Invalid port detected in indexnode.conf"),
+QT_TRANSLATE_NOOP("apollon-core", "Invalid port detected in apollonnode.conf"),
 QT_TRANSLATE_NOOP("apollon-core", "Invalid script detected."),
 QT_TRANSLATE_NOOP("apollon-core", "Keep at most <n> unconnectable transactions in memory (default: %u)"),
 QT_TRANSLATE_NOOP("apollon-core", "Keep the transaction memory pool below <n> megabytes (default: %u)"),
@@ -425,12 +425,12 @@ QT_TRANSLATE_NOOP("apollon-core", "Last successful PrivateSend action was too re
 QT_TRANSLATE_NOOP("apollon-core", "Line: %d"),
 QT_TRANSLATE_NOOP("apollon-core", "Listen for JSON-RPC connections on <port> (default: %u or testnet: %u)"),
 QT_TRANSLATE_NOOP("apollon-core", "Listen for connections on <port> (default: %u or testnet: %u)"),
-QT_TRANSLATE_NOOP("apollon-core", "Loading Indexnode payment cache..."),
+QT_TRANSLATE_NOOP("apollon-core", "Loading Apollonnode payment cache..."),
 QT_TRANSLATE_NOOP("apollon-core", "Loading addresses..."),
 QT_TRANSLATE_NOOP("apollon-core", "Loading banlist..."),
 QT_TRANSLATE_NOOP("apollon-core", "Loading block apollon..."),
 QT_TRANSLATE_NOOP("apollon-core", "Loading fulfilled requests cache..."),
-QT_TRANSLATE_NOOP("apollon-core", "Loading indexnode cache..."),
+QT_TRANSLATE_NOOP("apollon-core", "Loading apollonnode cache..."),
 QT_TRANSLATE_NOOP("apollon-core", "Loading wallet..."),
 QT_TRANSLATE_NOOP("apollon-core", "Location of the auth cookie (default: data dir)"),
 QT_TRANSLATE_NOOP("apollon-core", "Lock is already in place."),
@@ -441,8 +441,8 @@ QT_TRANSLATE_NOOP("apollon-core", "Maximum per-connection send buffer, <n>*1000 
 QT_TRANSLATE_NOOP("apollon-core", "Missing input transaction information."),
 QT_TRANSLATE_NOOP("apollon-core", "Mixing in progress..."),
 QT_TRANSLATE_NOOP("apollon-core", "Need to specify a port with -whitebind: '%s'"),
-QT_TRANSLATE_NOOP("apollon-core", "No Indexnodes detected."),
-QT_TRANSLATE_NOOP("apollon-core", "No compatible Indexnode found."),
+QT_TRANSLATE_NOOP("apollon-core", "No Apollonnodes detected."),
+QT_TRANSLATE_NOOP("apollon-core", "No compatible Apollonnode found."),
 QT_TRANSLATE_NOOP("apollon-core", "No errors detected."),
 QT_TRANSLATE_NOOP("apollon-core", "No matching denominations found for mixing."),
 QT_TRANSLATE_NOOP("apollon-core", "No recipients"),
@@ -451,7 +451,7 @@ QT_TRANSLATE_NOOP("apollon-core", "Non-standard public key detected."),
 QT_TRANSLATE_NOOP("apollon-core", "Not compatible with existing transactions."),
 QT_TRANSLATE_NOOP("apollon-core", "Not enough file descriptors available."),
 QT_TRANSLATE_NOOP("apollon-core", "Not enough funds to anonymize."),
-QT_TRANSLATE_NOOP("apollon-core", "Not in the Indexnode list."),
+QT_TRANSLATE_NOOP("apollon-core", "Not in the Apollonnode list."),
 QT_TRANSLATE_NOOP("apollon-core", "One of minted coin does not found in the chain"),
 QT_TRANSLATE_NOOP("apollon-core", "One of the minted coin is invalid"),
 QT_TRANSLATE_NOOP("apollon-core", "Only connect to nodes in network <net> (ipv4, ipv6 or onion)"),
@@ -469,11 +469,11 @@ QT_TRANSLATE_NOOP("apollon-core", "PrivateSend request incomplete:"),
 QT_TRANSLATE_NOOP("apollon-core", "Problem with coin selection for re-mint while spending."),
 QT_TRANSLATE_NOOP("apollon-core", "Problem with coin selection for spend."),
 QT_TRANSLATE_NOOP("apollon-core", "Prune cannot be configured with a negative value."),
-QT_TRANSLATE_NOOP("apollon-core", "Prune mode is incompatible with -txindex."),
+QT_TRANSLATE_NOOP("apollon-core", "Prune mode is incompatible with -txapollon."),
 QT_TRANSLATE_NOOP("apollon-core", "Pruning blockstore..."),
 QT_TRANSLATE_NOOP("apollon-core", "RPC server options:"),
 QT_TRANSLATE_NOOP("apollon-core", "Rebuild chain state and block apollon from the blk*.dat files on disk"),
-QT_TRANSLATE_NOOP("apollon-core", "Rebuild chain state from the currently indexed blocks"),
+QT_TRANSLATE_NOOP("apollon-core", "Rebuild chain state from the currently apolloned blocks"),
 QT_TRANSLATE_NOOP("apollon-core", "Recipient %1% has invalid amount"),
 QT_TRANSLATE_NOOP("apollon-core", "Reducing -maxconnections from %d to %d, because of system limitations."),
 QT_TRANSLATE_NOOP("apollon-core", "Relay and mine data carrier transactions (default: %u)"),
@@ -505,20 +505,20 @@ QT_TRANSLATE_NOOP("apollon-core", "Specify wallet file (within data directory)")
 QT_TRANSLATE_NOOP("apollon-core", "Specify your own public address"),
 QT_TRANSLATE_NOOP("apollon-core", "Spend unconfirmed change when sending transactions (default: %u)"),
 QT_TRANSLATE_NOOP("apollon-core", "Starting network threads..."),
-QT_TRANSLATE_NOOP("apollon-core", "Submitted following entries to indexnode: %u / %d"),
-QT_TRANSLATE_NOOP("apollon-core", "Submitted to indexnode, waiting for more entries ( %u / %d ) %s"),
-QT_TRANSLATE_NOOP("apollon-core", "Submitted to indexnode, waiting in queue %s"),
+QT_TRANSLATE_NOOP("apollon-core", "Submitted following entries to apollonnode: %u / %d"),
+QT_TRANSLATE_NOOP("apollon-core", "Submitted to apollonnode, waiting for more entries ( %u / %d ) %s"),
+QT_TRANSLATE_NOOP("apollon-core", "Submitted to apollonnode, waiting in queue %s"),
 QT_TRANSLATE_NOOP("apollon-core", "Synchronization failed"),
 QT_TRANSLATE_NOOP("apollon-core", "Synchronization finished"),
 QT_TRANSLATE_NOOP("apollon-core", "Synchronization pending..."),
-QT_TRANSLATE_NOOP("apollon-core", "Synchronizing indexnode payments..."),
-QT_TRANSLATE_NOOP("apollon-core", "Synchronizing indexnodes..."),
+QT_TRANSLATE_NOOP("apollon-core", "Synchronizing apollonnode payments..."),
+QT_TRANSLATE_NOOP("apollon-core", "Synchronizing apollonnodes..."),
 QT_TRANSLATE_NOOP("apollon-core", "Synchronizing sporks..."),
 QT_TRANSLATE_NOOP("apollon-core", "The source code is available from %s."),
 QT_TRANSLATE_NOOP("apollon-core", "The spend coin transaction failed to verify"),
 QT_TRANSLATE_NOOP("apollon-core", "The transaction amount is too small to pay the fee"),
 QT_TRANSLATE_NOOP("apollon-core", "This is experimental software."),
-QT_TRANSLATE_NOOP("apollon-core", "This is not a Indexnode."),
+QT_TRANSLATE_NOOP("apollon-core", "This is not a Apollonnode."),
 QT_TRANSLATE_NOOP("apollon-core", "Threshold for disconnecting misbehaving peers (default: %u)"),
 QT_TRANSLATE_NOOP("apollon-core", "Too many %f denominations, removing."),
 QT_TRANSLATE_NOOP("apollon-core", "Tor control port password (default: empty)"),

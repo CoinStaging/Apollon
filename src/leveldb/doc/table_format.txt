@@ -9,7 +9,7 @@ File format
   [meta block 1]
   ...
   [meta block K]
-  [metaindex block]
+  [metaapollon block]
   [apollon block]
   [Footer]        (fixed size; starts at file_size - sizeof(Footer))
   <end_of_file>
@@ -32,7 +32,7 @@ supported meta block types are described below.  More meta block types
 may be added in the future.  Each meta block is again formatted using
 block_builder.cc and then optionally compressed.
 
-(3) A "metaindex" block.  It contains one entry for every other meta
+(3) A "metaapollon" block.  It contains one entry for every other meta
 block where the key is the name of the meta block and the value is a
 BlockHandle pointing to that meta block.
 
@@ -42,9 +42,9 @@ the first key in the successive data block.  The value is the
 BlockHandle for the data block.
 
 (6) At the very end of the file is a fixed length footer that contains
-the BlockHandle of the metaindex and apollon blocks as well as a magic number.
-       metaindex_handle: char[p];    // Block handle for metaindex
-       index_handle:     char[q];    // Block handle for apollon
+the BlockHandle of the metaapollon and apollon blocks as well as a magic number.
+       metaapollon_handle: char[p];    // Block handle for metaapollon
+       apollon_handle:     char[q];    // Block handle for apollon
        padding:          char[40-p-q]; // zeroed bytes to make fixed length
                                        // (40==2*BlockHandle::kMaxEncodedLength)
        magic:            fixed64;    // == 0xdb4775248b80fb57 (little-endian)
@@ -53,7 +53,7 @@ the BlockHandle of the metaindex and apollon blocks as well as a magic number.
 -------------------
 
 If a "FilterPolicy" was specified when the database was opened, a
-filter block is stored in each table.  The "metaindex" block contains
+filter block is stored in each table.  The "metaapollon" block contains
 an entry that maps from "filter.<N>" to the BlockHandle for the filter
 block where "<N>" is the string returned by the filter policy's
 "Name()" method.

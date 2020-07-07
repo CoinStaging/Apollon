@@ -22,7 +22,7 @@
 #include <QDebug>
 #include <QTimer>
 
-class CBlockIndex;
+class CBlockApollon;
 
 static const int64_t nClientStartupTime = GetTime();
 static int64_t nLastHeaderTipUpdateNotification = 0;
@@ -101,9 +101,9 @@ size_t ClientModel::getMempoolDynamicUsage() const
     return mempool.DynamicMemoryUsage();
 }
 
-double ClientModel::getVerificationProgress(const CBlockIndex *tipIn) const
+double ClientModel::getVerificationProgress(const CBlockApollon *tipIn) const
 {
-    CBlockIndex *tip = const_cast<CBlockIndex *>(tipIn);
+    CBlockApollon *tip = const_cast<CBlockApollon *>(tipIn);
     if (!tip)
     {
         LOCK(cs_main);
@@ -182,8 +182,8 @@ bool ClientModel::inInitialBlockDownload() const
 
 enum BlockSource ClientModel::getBlockSource() const
 {
-    if (fReindex)
-        return BLOCK_SOURCE_REINDEX;
+    if (fReapollon)
+        return BLOCK_SOURCE_REAPOLLON;
     else if (fImporting)
         return BLOCK_SOURCE_DISK;
     else if (getNumConnections() > 0)
@@ -304,7 +304,7 @@ static void BannedListChanged(ClientModel *clientmodel)
     QMetaObject::invokeMethod(clientmodel, "updateBanlist", Qt::QueuedConnection);
 }
 
-static void BlockTipChanged(ClientModel *clientmodel, bool initialSync, const CBlockIndex *pIndex, bool fHeader)
+static void BlockTipChanged(ClientModel *clientmodel, bool initialSync, const CBlockApollon *pApollon, bool fHeader)
 {
     // lock free async UI updates in case we have a new block tip
     // during initial sync, only update the UI if the last update
@@ -319,9 +319,9 @@ static void BlockTipChanged(ClientModel *clientmodel, bool initialSync, const CB
     if (!initialSync || now - nLastUpdateNotification > MODEL_UPDATE_DELAY) {
         //pass a async signal to the UI thread
         QMetaObject::invokeMethod(clientmodel, "numBlocksChanged", Qt::QueuedConnection,
-                                  Q_ARG(int, pIndex->nHeight),
-                                  Q_ARG(QDateTime, QDateTime::fromTime_t(pIndex->GetBlockTime())),
-                                  Q_ARG(double, clientmodel->getVerificationProgress(pIndex)),
+                                  Q_ARG(int, pApollon->nHeight),
+                                  Q_ARG(QDateTime, QDateTime::fromTime_t(pApollon->GetBlockTime())),
+                                  Q_ARG(double, clientmodel->getVerificationProgress(pApollon)),
                                   Q_ARG(bool, fHeader));
         nLastUpdateNotification = now;
     }

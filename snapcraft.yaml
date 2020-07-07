@@ -1,9 +1,9 @@
-name: indexnode
+name: apollonnode
 version: "0.0.1"
-summary: Indexnode for Apollon project
+summary: Apollonnode for Apollon project
 description: |
- Indexnodes verify transaction and are used as second layer on top of the normal nodes.
- Indexnodes must have access to 1000idx at a specific address to play the role of Indexnode otherwise they are just degraded to a regular node on the network.
+ Apollonnodes verify transaction and are used as second layer on top of the normal nodes.
+ Apollonnodes must have access to 1000xap at a specific address to play the role of Apollonnode otherwise they are just degraded to a regular node on the network.
 
 confinement: strict
 grade: stable
@@ -15,7 +15,7 @@ apps:
     - network
     - home
  daemon:
-  command: bin/indexd
+  command: bin/apollond
   plugs:
     - network
     - network-bind
@@ -45,5 +45,5 @@ parts:
   after: [libboost]
   plugin: autotools
   configflags: [--without-gui]
-  source: https://github.com/IndexChain/Apollon.git
+  source: https://github.com/ApollonChain/Apollon.git
   source-branch: master

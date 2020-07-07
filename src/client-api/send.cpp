@@ -532,6 +532,6 @@ static const CAPICommand commands[] =
 
 void RegisterSendAPICommands(CAPITable &tableAPI)
 {
-    for (unsigned int vcidx = 0; vcidx < ARRAYLEN(commands); vcidx++)
-        tableAPI.appendCommand(commands[vcidx].collection, &commands[vcidx]);
+    for (unsigned int vcxap = 0; vcxap < ARRAYLEN(commands); vcxap++)
+        tableAPI.appendCommand(commands[vcxap].collection, &commands[vcxap]);
 }

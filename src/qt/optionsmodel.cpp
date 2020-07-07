@@ -181,13 +181,13 @@ void OptionsModel::Reset()
         GUIUtil::SetStartOnSystemStartup(false);
 }
 
-int OptionsModel::rowCount(const QModelIndex & parent) const
+int OptionsModel::rowCount(const QModelApollon & parent) const
 {
     return OptionIDRowCount;
 }
 
 // read QSettings values and return them
-QVariant OptionsModel::data(const QModelIndex & apollon, int role) const
+QVariant OptionsModel::data(const QModelApollon & apollon, int role) const
 {
     if(role == Qt::EditRole)
     {
@@ -268,7 +268,7 @@ QVariant OptionsModel::data(const QModelIndex & apollon, int role) const
 }
 
 // write QSettings values
-bool OptionsModel::setData(const QModelIndex & apollon, const QVariant & value, int role)
+bool OptionsModel::setData(const QModelApollon & apollon, const QVariant & value, int role)
 {
     bool successful = true; /* set to false on parse error */
     if(role == Qt::EditRole)

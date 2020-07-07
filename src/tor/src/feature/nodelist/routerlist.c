@@ -913,7 +913,7 @@ signed_descriptor_move(signed_descriptor_t *dest,
   memcpy(dest, src, sizeof(signed_descriptor_t));
   src->signed_descriptor_body = NULL;
   src->signing_key_cert = NULL;
-  dest->routerlist_index = -1;
+  dest->routerlist_apollon = -1;
 }
 
 /** Extract a signed_descriptor_t from a general routerinfo, and free the
@@ -1002,7 +1002,7 @@ routerlist_find_elt_(smartlist_t *sl, void *ri, int xap)
     xap = -1;
     SMARTLIST_FOREACH(sl, routerinfo_t *, r,
                       if (r == ri) {
-                        xap = r_sl_idx;
+                        xap = r_sl_xap;
                         break;
                       });
   } else {
@@ -1026,7 +1026,7 @@ routerlist_insert(routerlist_t *rl, routerinfo_t *ri)
     const routerinfo_t *ri_generated = router_get_my_routerinfo();
     tor_assert(ri_generated != ri);
   }
-  tor_assert(ri->cache_info.routerlist_index == -1);
+  tor_assert(ri->cache_info.routerlist_apollon == -1);
 
   ri_old = rimap_set(rl->identity_map, ri->cache_info.identity_digest, ri);
   tor_assert(!ri_old);
@@ -1035,12 +1035,12 @@ routerlist_insert(routerlist_t *rl, routerinfo_t *ri)
                      ri->cache_info.signed_descriptor_digest,
                      &(ri->cache_info));
   if (sd_old) {
-    int xap = sd_old->routerlist_index;
-    sd_old->routerlist_index = -1;
+    int xap = sd_old->routerlist_apollon;
+    sd_old->routerlist_apollon = -1;
     smartlist_del(rl->old_routers, xap);
     if (xap < smartlist_len(rl->old_routers)) {
        signed_descriptor_t *d = smartlist_get(rl->old_routers, xap);
-       d->routerlist_index = xap;
+       d->routerlist_apollon = xap;
     }
     rl->desc_store.bytes_dropped += sd_old->signed_descriptor_len;
     sdmap_remove(rl->desc_by_eid_map, sd_old->extra_info_digest);
@@ -1051,7 +1051,7 @@ routerlist_insert(routerlist_t *rl, routerinfo_t *ri)
     sdmap_set(rl->desc_by_eid_map, ri->cache_info.extra_info_digest,
               &ri->cache_info);
   smartlist_add(rl->routers, ri);
-  ri->cache_info.routerlist_index = smartlist_len(rl->routers) - 1;
+  ri->cache_info.routerlist_apollon = smartlist_len(rl->routers) - 1;
   nodelist_set_routerinfo(ri, NULL);
   router_dir_info_changed();
 #ifdef DEBUG_ROUTERLIST
@@ -1155,7 +1155,7 @@ routerlist_insert_old(routerlist_t *rl, routerinfo_t *ri)
     const routerinfo_t *ri_generated = router_get_my_routerinfo();
     tor_assert(ri_generated != ri);
   }
-  tor_assert(ri->cache_info.routerlist_index == -1);
+  tor_assert(ri->cache_info.routerlist_apollon == -1);
 
   if (should_cache_old_descriptors() &&
       ri->purpose == ROUTER_PURPOSE_GENERAL &&
@@ -1164,7 +1164,7 @@ routerlist_insert_old(routerlist_t *rl, routerinfo_t *ri)
     signed_descriptor_t *sd = signed_descriptor_from_routerinfo(ri);
     sdmap_set(rl->desc_digest_map, sd->signed_descriptor_digest, sd);
     smartlist_add(rl->old_routers, sd);
-    sd->routerlist_index = smartlist_len(rl->old_routers)-1;
+    sd->routerlist_apollon = smartlist_len(rl->old_routers)-1;
     if (!tor_digest_is_zero(sd->extra_info_digest))
       sdmap_set(rl->desc_by_eid_map, sd->extra_info_digest, sd);
   } else {
@@ -1188,7 +1188,7 @@ routerlist_remove(routerlist_t *rl, routerinfo_t *ri, int make_old, time_t now)
 {
   routerinfo_t *ri_tmp;
   extrainfo_t *ei_tmp;
-  int xap = ri->cache_info.routerlist_index;
+  int xap = ri->cache_info.routerlist_apollon;
   tor_assert(0 <= xap && xap < smartlist_len(rl->routers));
   tor_assert(smartlist_get(rl->routers, xap) == ri);
 
@@ -1197,11 +1197,11 @@ routerlist_remove(routerlist_t *rl, routerinfo_t *ri, int make_old, time_t now)
   /* make sure the rephist module knows that it's not running */
   rep_hist_note_router_unreachable(ri->cache_info.identity_digest, now);
 
-  ri->cache_info.routerlist_index = -1;
+  ri->cache_info.routerlist_apollon = -1;
   smartlist_del(rl->routers, xap);
   if (xap < smartlist_len(rl->routers)) {
     routerinfo_t *r = smartlist_get(rl->routers, xap);
-    r->cache_info.routerlist_index = xap;
+    r->cache_info.routerlist_apollon = xap;
   }
 
   ri_tmp = rimap_remove(rl->identity_map, ri->cache_info.identity_digest);
@@ -1213,7 +1213,7 @@ routerlist_remove(routerlist_t *rl, routerinfo_t *ri, int make_old, time_t now)
     signed_descriptor_t *sd;
     sd = signed_descriptor_from_routerinfo(ri);
     smartlist_add(rl->old_routers, sd);
-    sd->routerlist_index = smartlist_len(rl->old_routers)-1;
+    sd->routerlist_apollon = smartlist_len(rl->old_routers)-1;
     sdmap_set(rl->desc_digest_map, sd->signed_descriptor_digest, sd);
     if (!tor_digest_is_zero(sd->extra_info_digest))
       sdmap_set(rl->desc_by_eid_map, sd->extra_info_digest, sd);
@@ -1249,20 +1249,20 @@ routerlist_remove_old(routerlist_t *rl, signed_descriptor_t *sd, int xap)
   extrainfo_t *ei_tmp;
   desc_store_t *store;
   if (xap == -1) {
-    xap = sd->routerlist_index;
+    xap = sd->routerlist_apollon;
   }
   tor_assert(0 <= xap && xap < smartlist_len(rl->old_routers));
   /* XXXX edmanm's bridge relay triggered the following assert while
    * running 0.2.0.12-alpha.  If anybody triggers this again, see if we
    * can get a backtrace. */
   tor_assert(smartlist_get(rl->old_routers, xap) == sd);
-  tor_assert(xap == sd->routerlist_index);
+  tor_assert(xap == sd->routerlist_apollon);
 
-  sd->routerlist_index = -1;
+  sd->routerlist_apollon = -1;
   smartlist_del(rl->old_routers, xap);
   if (xap < smartlist_len(rl->old_routers)) {
     signed_descriptor_t *d = smartlist_get(rl->old_routers, xap);
-    d->routerlist_index = xap;
+    d->routerlist_apollon = xap;
   }
   sd_tmp = sdmap_remove(rl->desc_digest_map,
                         sd->signed_descriptor_digest);
@@ -1309,9 +1309,9 @@ routerlist_replace(routerlist_t *rl, routerinfo_t *ri_old,
     tor_assert(ri_generated != ri_new);
   }
   tor_assert(ri_old != ri_new);
-  tor_assert(ri_new->cache_info.routerlist_index == -1);
+  tor_assert(ri_new->cache_info.routerlist_apollon == -1);
 
-  xap = ri_old->cache_info.routerlist_index;
+  xap = ri_old->cache_info.routerlist_apollon;
   tor_assert(0 <= xap && xap < smartlist_len(rl->routers));
   tor_assert(smartlist_get(rl->routers, xap) == ri_old);
 
@@ -1324,8 +1324,8 @@ routerlist_replace(routerlist_t *rl, routerinfo_t *ri_old,
   router_dir_info_changed();
   if (xap >= 0) {
     smartlist_set(rl->routers, xap, ri_new);
-    ri_old->cache_info.routerlist_index = -1;
-    ri_new->cache_info.routerlist_index = xap;
+    ri_old->cache_info.routerlist_apollon = -1;
+    ri_new->cache_info.routerlist_apollon = xap;
     /* Check that ri_old is not in rl->routers anymore: */
     tor_assert( routerlist_find_elt_(rl->routers, ri_old, -1) == -1 );
   } else {
@@ -1361,7 +1361,7 @@ routerlist_replace(routerlist_t *rl, routerinfo_t *ri_old,
      * old_routers */
     signed_descriptor_t *sd = signed_descriptor_from_routerinfo(ri_old);
     smartlist_add(rl->old_routers, sd);
-    sd->routerlist_index = smartlist_len(rl->old_routers)-1;
+    sd->routerlist_apollon = smartlist_len(rl->old_routers)-1;
     sdmap_set(rl->desc_digest_map, sd->signed_descriptor_digest, sd);
     if (!tor_digest_is_zero(sd->extra_info_digest))
       sdmap_set(rl->desc_by_eid_map, sd->extra_info_digest, sd);
@@ -1688,18 +1688,18 @@ compare_old_routers_by_identity_(const void **_a, const void **_b)
 /** Internal type used to represent how long an old descriptor was valid,
  * where it appeared in the list of old descriptors, and whether it's extra
  * old. Used only by routerlist_remove_old_cached_routers_with_id(). */
-struct duration_idx_t {
+struct duration_xap_t {
   int duration;
   int xap;
   int old;
 };
 
-/** Sorting helper: compare two duration_idx_t by their duration. */
+/** Sorting helper: compare two duration_xap_t by their duration. */
 static int
-compare_duration_idx_(const void *_d1, const void *_d2)
+compare_duration_xap_(const void *_d1, const void *_d2)
 {
-  const struct duration_idx_t *d1 = _d1;
-  const struct duration_idx_t *d2 = _d2;
+  const struct duration_xap_t *d1 = _d1;
+  const struct duration_xap_t *d2 = _d2;
   return d1->duration - d2->duration;
 }
 
@@ -1718,7 +1718,7 @@ routerlist_remove_old_cached_routers_with_id(time_t now,
 {
   int i, n = hi-lo+1;
   unsigned n_extra, n_rmv = 0;
-  struct duration_idx_t *lifespans;
+  struct duration_xap_t *lifespans;
   uint8_t *rmv, *must_keep;
   smartlist_t *lst = routerlist->old_routers;
 #if 1
@@ -1739,7 +1739,7 @@ routerlist_remove_old_cached_routers_with_id(time_t now,
     n_extra = n - mdpr;
   }
 
-  lifespans = tor_calloc(n, sizeof(struct duration_idx_t));
+  lifespans = tor_calloc(n, sizeof(struct duration_xap_t));
   rmv = tor_calloc(n, sizeof(uint8_t));
   must_keep = tor_calloc(n, sizeof(uint8_t));
   /* Set lifespans to contain the lifespan and apollon of each server. */
@@ -1774,7 +1774,7 @@ routerlist_remove_old_cached_routers_with_id(time_t now,
      * the duration of liveness, and remove the ones we're not already going to
      * remove based on how long they were alive.
      **/
-    qsort(lifespans, n, sizeof(struct duration_idx_t), compare_duration_idx_);
+    qsort(lifespans, n, sizeof(struct duration_xap_t), compare_duration_xap_);
     for (i = 0; i < n && n_rmv < n_extra; ++i) {
       if (!must_keep[lifespans[i].xap-lo] && !lifespans[i].old) {
         rmv[lifespans[i].xap-lo] = 1;
@@ -1893,7 +1893,7 @@ routerlist_remove_old_routers(void)
   /* Fix indices. */
   for (i = 0; i < smartlist_len(routerlist->old_routers); ++i) {
     signed_descriptor_t *r = smartlist_get(routerlist->old_routers, i);
-    r->routerlist_index = i;
+    r->routerlist_apollon = i;
   }
 
   /* Iterate through the list from back to front, so when we remove descriptors
@@ -3096,7 +3096,7 @@ routerlist_assert_ok(const routerlist_t *rl)
     sd2 = sdmap_get(rl->desc_digest_map,
                     r->cache_info.signed_descriptor_digest);
     tor_assert(&(r->cache_info) == sd2);
-    tor_assert(r->cache_info.routerlist_index == r_sl_idx);
+    tor_assert(r->cache_info.routerlist_apollon == r_sl_xap);
     /* XXXX
      *
      *   Hoo boy.  We need to fix this one, and the fix is a bit tricky, so
@@ -3126,7 +3126,7 @@ routerlist_assert_ok(const routerlist_t *rl)
     tor_assert(!r2 || sd != &(r2->cache_info));
     sd2 = sdmap_get(rl->desc_digest_map, sd->signed_descriptor_digest);
     tor_assert(sd == sd2);
-    tor_assert(sd->routerlist_index == sd_sl_idx);
+    tor_assert(sd->routerlist_apollon == sd_sl_xap);
     /* XXXX see above.
     if (!tor_digest_is_zero(sd->extra_info_digest)) {
       signed_descriptor_t *sd3 =

@@ -53,7 +53,7 @@ static void MerkleComputation(const std::vector<uint256>& leaves, uint256* proot
     bool mutated = false;
     // count is the number of leaves processed so far.
     uint32_t count = 0;
-    // inner is an array of eagerly computed subtree hashes, indexed by tree
+    // inner is an array of eagerly computed subtree hashes, apolloned by tree
     // level (0 being the leaves).
     // For example, when count is 25 (11001 in binary), inner[4] is the hash of
     // the first 16 leaves, inner[3] of the next 8 leaves, and inner[0] equal to
@@ -142,15 +142,15 @@ std::vector<uint256> ComputeMerkleBranch(const std::vector<uint256>& leaves, uin
     return ret;
 }
 
-uint256 ComputeMerkleRootFromBranch(const uint256& leaf, const std::vector<uint256>& vMerkleBranch, uint32_t nIndex) {
+uint256 ComputeMerkleRootFromBranch(const uint256& leaf, const std::vector<uint256>& vMerkleBranch, uint32_t nApollon) {
     uint256 hash = leaf;
     for (std::vector<uint256>::const_iterator it = vMerkleBranch.begin(); it != vMerkleBranch.end(); ++it) {
-        if (nIndex & 1) {
+        if (nApollon & 1) {
             hash = Hash(BEGIN(*it), END(*it), BEGIN(hash), END(hash));
         } else {
             hash = Hash(BEGIN(hash), END(hash), BEGIN(*it), END(*it));
         }
-        nIndex >>= 1;
+        nApollon >>= 1;
     }
     return hash;
 }

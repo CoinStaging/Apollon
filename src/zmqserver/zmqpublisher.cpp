@@ -5,7 +5,7 @@
 #include "util.h"
 #include "core_io.h"
 #include "chain.h"
-#include "indexnode-sync.h"
+#include "apollonnode-sync.h"
 
 #include "zmqabstract.h"
 #include "zmqpublisher.h"
@@ -196,7 +196,7 @@ bool CZMQAPIStatusEvent::NotifyAPIStatus()
     return true;
 }
 
-bool CZMQIndexnodeListEvent::NotifyIndexnodeList()
+bool CZMQApollonnodeListEvent::NotifyApollonnodeList()
 {
     request.push_back(Pair("type", "initial"));
     Execute();
@@ -236,18 +236,18 @@ bool CZMQTransactionEvent::NotifyTransaction(const CTransaction &transaction)
     return true;
 }
 
-bool CZMQBlockEvent::NotifyBlock(const CBlockIndex *pindex){
+bool CZMQBlockEvent::NotifyBlock(const CBlockApollon *papollon){
     // We always publish on an update to wallet tx's
     if(topic=="address"){
         CBlock block;
-        if(!ReadBlockFromDisk(block, pindex, Params().GetConsensus())){
+        if(!ReadBlockFromDisk(block, papollon, Params().GetConsensus())){
             throw JSONAPIError(API_INVALID_PARAMETER, "Invalid, missing or duplicate parameter");
         }
         BOOST_FOREACH(const CTransaction&tx, block.vtx)
         {
             const CWalletTx *wtx = pwalletMain->GetWalletTx(tx.GetHash());
             if(wtx){
-                request.replace("data", pindex->ToJSON());
+                request.replace("data", papollon->ToJSON());
                 Execute();
                 return true;
             }
@@ -256,16 +256,16 @@ bool CZMQBlockEvent::NotifyBlock(const CBlockIndex *pindex){
     }
 
     // If synced, always publish, if not, every 100 blocks (for better sync speed).
-    if(indexnodeSync.GetBlockchainSynced() || pindex->nHeight%100==0){
-        request.replace("data", pindex->ToJSON());
+    if(apollonnodeSync.GetBlockchainSynced() || papollon->nHeight%100==0){
+        request.replace("data", papollon->ToJSON());
         Execute();
     }
 
     return true;
 }
 
-bool CZMQIndexnodeEvent::NotifyIndexnodeUpdate(CIndexnode &indexnode){
-    request.replace("data", indexnode.ToJSON());
+bool CZMQApollonnodeEvent::NotifyApollonnodeUpdate(CApollonnode &apollonnode){
+    request.replace("data", apollonnode.ToJSON());
     Execute();
 
     return true;

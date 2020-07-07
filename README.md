@@ -1,19 +1,19 @@
 Apollon
 ===============
 
-[![latest-release](https://img.shields.io/github/release/IndexChain/Apollon)](https://github.com/IndexChain/Apollon/releases)
-[![GitHub last-release](https://img.shields.io/github/release-date/IndexChain/Apollon)](https://github.com/IndexChain/Apollon/releases)
-[![GitHub downloads](https://img.shields.io/github/downloads/IndexChain/Apollon/total)](https://github.com/IndexChain/Apollon/releases)
-[![GitHub commits-since-last-version](https://img.shields.io/github/commits-since/IndexChain/Apollon/latest/master)](https://github.com/IndexChain/Apollon/graphs/commit-activity)
-[![GitHub commits-per-month](https://img.shields.io/github/commit-activity/m/IndexChain/Apollon)](https://github.com/IndexChain/Apollon/graphs/code-frequency)
-[![GitHub last-commit](https://img.shields.io/github/last-commit/IndexChain/Apollon)](https://github.com/IndexChain/Apollon/commits/master)
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/IndexChain/Apollon.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/IndexChain/Apollon/alerts/)
-[![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/IndexChain/Apollon.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/IndexChain/Apollon/context:cpp)
+[![latest-release](https://img.shields.io/github/release/ApollonChain/Apollon)](https://github.com/ApollonChain/Apollon/releases)
+[![GitHub last-release](https://img.shields.io/github/release-date/ApollonChain/Apollon)](https://github.com/ApollonChain/Apollon/releases)
+[![GitHub downloads](https://img.shields.io/github/downloads/ApollonChain/Apollon/total)](https://github.com/ApollonChain/Apollon/releases)
+[![GitHub commits-since-last-version](https://img.shields.io/github/commits-since/ApollonChain/Apollon/latest/master)](https://github.com/ApollonChain/Apollon/graphs/commit-activity)
+[![GitHub commits-per-month](https://img.shields.io/github/commit-activity/m/ApollonChain/Apollon)](https://github.com/ApollonChain/Apollon/graphs/code-frequency)
+[![GitHub last-commit](https://img.shields.io/github/last-commit/ApollonChain/Apollon)](https://github.com/ApollonChain/Apollon/commits/master)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/ApollonChain/Apollon.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/ApollonChain/Apollon/alerts/)
+[![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/ApollonChain/Apollon.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/ApollonChain/Apollon/context:cpp)
 
 What is Apollon Chain?
 --------------
 
-[Apollon Chain](https://indexchain.org) is designed from the ground up with a singular focal point: Privacy.
+[Apollon Chain](https://apollonchain.org) is designed from the ground up with a singular focal point: Privacy.
 
 Utilizing privacy protocols informed by industry experts to create cryptosystems specifically designed to facilitate anonymous transactions! It is powered by the Sigma privacy protocol, based on the academic paper One-Out-Of-Many-Proofs: Or How to Leak a Secret and Spend a Coin (Jens Groth and Markulf Kohlweiss). It replaces the RSA accumulators through Pedersen commitments and eliminates the need for a trusted setup.
 
@@ -37,43 +37,43 @@ Please note that we currently don't support the GUI when running with Docker. Th
 Pull our latest official Docker image:
 
 ```sh
-docker pull IndexChain/Indexd
+docker pull ApollonChain/Apollond
 ```
 
 Start Apollon daemon:
 
 ```sh
-docker run --detach --name indexd IndexChain/Indexd
+docker run --detach --name apollond ApollonChain/Apollond
 ```
 
 View current block count (this might take a while since the daemon needs to find other nodes and download blocks first):
 
 ```sh
-docker exec indexd apollon-cli getblockcount
+docker exec apollond apollon-cli getblockcount
 ```
 
 View connected nodes:
 
 ```sh
-docker exec indexd apollon-cli getpeerinfo
+docker exec apollond apollon-cli getpeerinfo
 ```
 
 Stop daemon:
 
 ```sh
-docker stop indexd
+docker stop apollond
 ```
 
 Backup wallet:
 
 ```sh
-docker cp indexd:/home/indexd/.apollon/wallet.dat .
+docker cp apollond:/home/apollond/.apollon/wallet.dat .
 ```
 
 Start daemon again:
 
 ```sh
-docker start indexd
+docker start apollond
 ```
 
 Linux Build Instructions and Notes
@@ -105,7 +105,7 @@ Build
 ----------------------
 1.  Clone the source:
 
-        git clone https://github.com/IndexChain/Apollon
+        git clone https://github.com/ApollonChain/Apollon
 
 2.  Build Apollon-core:
 

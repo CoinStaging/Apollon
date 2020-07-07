@@ -12,9 +12,9 @@ SigmaWalletV0::SigmaWalletV0() : SigmaWallet(new Database())
 {
 }
 
-uint32_t SigmaWalletV0::BIP44ChangeIndex() const
+uint32_t SigmaWalletV0::BIP44ChangeApollon() const
 {
-    return BIP44_ELYSIUM_MINT_INDEX_V0;
+    return BIP44_ELYSIUM_MINT_APOLLON_V0;
 }
 
 SigmaPrivateKey SigmaWalletV0::GeneratePrivateKey(uint512 const &seed)

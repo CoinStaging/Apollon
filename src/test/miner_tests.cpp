@@ -57,9 +57,9 @@ struct {
     {2, 0xbbbeb305}, {2, 0xfe1c810a},
 };
 
-CBlockIndex CreateBlockIndex(int nHeight)
+CBlockApollon CreateBlockApollon(int nHeight)
 {
-    CBlockIndex apollon;
+    CBlockApollon apollon;
     apollon.nHeight = nHeight;
     apollon.pprev = chainActive.Tip();
     return apollon;
@@ -366,8 +366,8 @@ BOOST_AUTO_TEST_CASE(CreateNewBlock_validity)
     int nHeight = chainActive.Height();
     // Create an actual 304999-long block chain (without valid blocks).
     while (chainActive.Tip()->nHeight < 304999) {
-        CBlockIndex* prev = chainActive.Tip();
-        CBlockIndex* next = new CBlockIndex();
+        CBlockApollon* prev = chainActive.Tip();
+        CBlockApollon* next = new CBlockApollon();
         next->phashBlock = new uint256(GetRandHash());
         pcoinsTip->SetBestBlock(next->GetBlockHash());
         next->pprev = prev;
@@ -379,8 +379,8 @@ BOOST_AUTO_TEST_CASE(CreateNewBlock_validity)
     delete pblocktemplate;
     // Extend to a 305000-long block chain.
     while (chainActive.Tip()->nHeight < 305000) {
-        CBlockIndex* prev = chainActive.Tip();
-        CBlockIndex* next = new CBlockIndex();
+        CBlockApollon* prev = chainActive.Tip();
+        CBlockApollon* next = new CBlockApollon();
         next->phashBlock = new uint256(GetRandHash());
         pcoinsTip->SetBestBlock(next->GetBlockHash());
         next->pprev = prev;
@@ -392,7 +392,7 @@ BOOST_AUTO_TEST_CASE(CreateNewBlock_validity)
     delete pblocktemplate;
     // Delete the dummy blocks again.
     while (chainActive.Tip()->nHeight > nHeight) {
-        CBlockIndex* del = chainActive.Tip();
+        CBlockApollon* del = chainActive.Tip();
         chainActive.SetTip(del->pprev);
         pcoinsTip->SetBestBlock(del->pprev->GetBlockHash());
         delete del->phashBlock;
@@ -422,7 +422,7 @@ BOOST_AUTO_TEST_CASE(CreateNewBlock_validity)
     mempool.addUnchecked(hash, entry.Fee(HIGHFEE).Time(GetTime()).SpendsCoinbase(true).FromTx(tx));
     BOOST_CHECK(CheckFinalTx(tx, flags)); // Locktime passes
     BOOST_CHECK(!TestSequenceLocks(tx, flags)); // Sequence locks fail
-    BOOST_CHECK(SequenceLocks(tx, flags, &prevheights, CreateBlockIndex(chainActive.Tip()->nHeight + 2))); // Sequence locks pass on 2nd block
+    BOOST_CHECK(SequenceLocks(tx, flags, &prevheights, CreateBlockApollon(chainActive.Tip()->nHeight + 2))); // Sequence locks pass on 2nd block
 
     // relative time locked
     tx.vin[0].prevout.hash = txFirst[1]->GetHash();
@@ -433,10 +433,10 @@ BOOST_AUTO_TEST_CASE(CreateNewBlock_validity)
     BOOST_CHECK(CheckFinalTx(tx, flags)); // Locktime passes
     BOOST_CHECK(!TestSequenceLocks(tx, flags)); // Sequence locks fail
 
-    for (int i = 0; i < CBlockIndex::nMedianTimeSpan; i++)
+    for (int i = 0; i < CBlockApollon::nMedianTimeSpan; i++)
         chainActive.Tip()->GetAncestor(chainActive.Tip()->nHeight - i)->nTime += 512; //Trick the MedianTimePast
-    BOOST_CHECK(SequenceLocks(tx, flags, &prevheights, CreateBlockIndex(chainActive.Tip()->nHeight + 1))); // Sequence locks pass 512 seconds later
-    for (int i = 0; i < CBlockIndex::nMedianTimeSpan; i++)
+    BOOST_CHECK(SequenceLocks(tx, flags, &prevheights, CreateBlockApollon(chainActive.Tip()->nHeight + 1))); // Sequence locks pass 512 seconds later
+    for (int i = 0; i < CBlockApollon::nMedianTimeSpan; i++)
         chainActive.Tip()->GetAncestor(chainActive.Tip()->nHeight - i)->nTime -= 512; //undo tricked MTP
 
     // absolute height locked
@@ -484,7 +484,7 @@ BOOST_AUTO_TEST_CASE(CreateNewBlock_validity)
     BOOST_CHECK_EQUAL(pblocktemplate->block.vtx.size(), 3);
     delete pblocktemplate;
     // However if we advance height by 1 and time by 512, all of them should be mined
-    for (int i = 0; i < CBlockIndex::nMedianTimeSpan; i++)
+    for (int i = 0; i < CBlockApollon::nMedianTimeSpan; i++)
         chainActive.Tip()->GetAncestor(chainActive.Tip()->nHeight - i)->nTime += 512; //Trick the MedianTimePast
     chainActive.Tip()->nHeight++;
     SetMockTime(chainActive.Tip()->GetMedianTimePast() + 1);

@@ -52,7 +52,7 @@ class ElysiumSendSpendWalletEncryptionTest(ElysiumTestFramework):
         # encrypt wallet && restart node
         self.nodes[0].encryptwallet(passphase)
         bitcoind_processes[0].wait()
-        self.nodes[0] = start_node(0, self.options.tmpdir, ['-elysium', '-reindex'])
+        self.nodes[0] = start_node(0, self.options.tmpdir, ['-elysium', '-reapollon'])
         while self.nodes[0].getblockcount() < blockcount:
             time.sleep(0.1)
 

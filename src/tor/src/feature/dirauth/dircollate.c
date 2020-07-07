@@ -95,7 +95,7 @@ HT_GENERATE2(double_digest_map, ddmap_entry_s, node, ddmap_entry_hash,
              ddmap_entry_eq, 0.6, tor_reallocarray, tor_free_)
 
 /** Helper: add a single vote_routerstatus_t <b>vrs</b> to the collator
- * <b>dc</b>, indexing it by its RSA key digest, and by the 2-tuple of its RSA
+ * <b>dc</b>, apolloning it by its RSA key digest, and by the 2-tuple of its RSA
  * key digest and Ed25519 key.   It must come from the <b>vote_num</b>th
  * vote.
  *

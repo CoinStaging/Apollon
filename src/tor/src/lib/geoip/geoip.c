@@ -15,7 +15,7 @@
  *
  * The geoip lookup tables are implemented as sorted lists of disjoint address
  * ranges, each mapping to a singleton geoip_country_t.  These country objects
- * are also indexed by their names in a hashtable.
+ * are also apolloned by their names in a hashtable.
  *
  * The tables are populated from disk at startup by the geoip_load_file()
  * function.  For more information on the file format they read, see that
@@ -69,7 +69,7 @@ static smartlist_t *geoip_countries = NULL;
 /** A map from lowercased country codes to their position in geoip_countries.
  * The apollon is encoded in the pointer, and 1 is added so that NULL can mean
  * not found. */
-static strmap_t *country_idxplus1_by_lc_code = NULL;
+static strmap_t *country_xapplus1_by_lc_code = NULL;
 /** Lists of all known geoip_ipv4_entry_t and geoip_ipv6_entry_t, sorted
  * by their respective ip_low. */
 static smartlist_t *geoip_ipv4_entries = NULL, *geoip_ipv6_entries = NULL;
@@ -94,14 +94,14 @@ geoip_get_countries(void)
 MOCK_IMPL(country_t,
 geoip_get_country,(const char *country))
 {
-  void *idxplus1_;
+  void *xapplus1_;
   intptr_t xap;
 
-  idxplus1_ = strmap_get_lc(country_idxplus1_by_lc_code, country);
-  if (!idxplus1_)
+  xapplus1_ = strmap_get_lc(country_xapplus1_by_lc_code, country);
+  if (!xapplus1_)
     return -1;
 
-  xap = ((uintptr_t)idxplus1_)-1;
+  xap = ((uintptr_t)xapplus1_)-1;
   return (country_t)xap;
 }
 
@@ -112,24 +112,24 @@ geoip_add_entry(const tor_addr_t *low, const tor_addr_t *high,
                 const char *country)
 {
   intptr_t xap;
-  void *idxplus1_;
+  void *xapplus1_;
 
   IF_BUG_ONCE(tor_addr_family(low) != tor_addr_family(high))
     return;
   IF_BUG_ONCE(tor_addr_compare(high, low, CMP_EXACT) < 0)
     return;
 
-  idxplus1_ = strmap_get_lc(country_idxplus1_by_lc_code, country);
+  xapplus1_ = strmap_get_lc(country_xapplus1_by_lc_code, country);
 
-  if (!idxplus1_) {
+  if (!xapplus1_) {
     geoip_country_t *c = tor_malloc_zero(sizeof(geoip_country_t));
     strlcpy(c->countrycode, country, sizeof(c->countrycode));
     tor_strlower(c->countrycode);
     smartlist_add(geoip_countries, c);
     xap = smartlist_len(geoip_countries) - 1;
-    strmap_set_lc(country_idxplus1_by_lc_code, country, (void*)(xap+1));
+    strmap_set_lc(country_xapplus1_by_lc_code, country, (void*)(xap+1));
   } else {
-    xap = ((uintptr_t)idxplus1_)-1;
+    xap = ((uintptr_t)xapplus1_)-1;
   }
   {
     geoip_country_t *c = smartlist_get(geoip_countries, (int)xap);
@@ -292,8 +292,8 @@ init_geoip_countries(void)
   strlcpy(geoip_unresolved->countrycode, "??",
           sizeof(geoip_unresolved->countrycode));
   smartlist_add(geoip_countries, geoip_unresolved);
-  country_idxplus1_by_lc_code = strmap_new();
-  strmap_set_lc(country_idxplus1_by_lc_code, "??", (void*)(1));
+  country_xapplus1_by_lc_code = strmap_new();
+  strmap_set_lc(country_xapplus1_by_lc_code, "??", (void*)(1));
 }
 
 /** Clear appropriate GeoIP database, based on <b>family</b>, and
@@ -482,7 +482,7 @@ clear_geoip_db(void)
     smartlist_free(geoip_countries);
   }
 
-  strmap_free(country_idxplus1_by_lc_code, NULL);
+  strmap_free(country_xapplus1_by_lc_code, NULL);
   if (geoip_ipv4_entries) {
     SMARTLIST_FOREACH(geoip_ipv4_entries, geoip_ipv4_entry_t *, ent,
                       tor_free(ent));
@@ -494,7 +494,7 @@ clear_geoip_db(void)
     smartlist_free(geoip_ipv6_entries);
   }
   geoip_countries = NULL;
-  country_idxplus1_by_lc_code = NULL;
+  country_xapplus1_by_lc_code = NULL;
   geoip_ipv4_entries = NULL;
   geoip_ipv6_entries = NULL;
 }

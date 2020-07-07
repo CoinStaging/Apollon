@@ -147,3 +147,17 @@ binaries/
 indexbinaries/
 
 indexbins.zip
+
+.vs/Apollon/v16/.suo
+
+.vs/Apollon/v16/Browse.VC.db
+
+.vs/Apollon/v16/Browse.VC.opendb
+
+.vs/Apollon/v16/ipch/AutoPCH/adda9819ed47f71/CHAINPARAMS.ipch
+
+.vs/ProjectSettings.json
+
+.vs/slnx.sqlite
+
+.vs/VSWorkspaceState.json

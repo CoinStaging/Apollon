@@ -141,36 +141,36 @@ CZMQPublisherInterface* CZMQPublisherInterface::Create()
     std::list<CZMQAbstract*> notifiers;
 
     // Ordering here implies ordering of topic publishing.
-    std::vector<std::string> pubIndexes = {
+    std::vector<std::string> pubApollones = {
         "pubblock", 
         "pubrawtx", 
         "pubblockinfo", 
         "pubbalance", 
-        "pubindexnodeupdate", 
+        "pubapollonnodeupdate", 
         "pubmintstatus", 
         "pubsettings", 
         "pubstatus",
-        "pubindexnodelist",
+        "pubapollonnodelist",
     };
 
     factories["pubblock"] = CZMQAbstract::Create<CZMQBlockDataTopic>;
     factories["pubrawtx"] = CZMQAbstract::Create<CZMQTransactionTopic>;
     factories["pubblockinfo"] = CZMQAbstract::Create<CZMQBlockInfoTopic>;
     factories["pubbalance"] = CZMQAbstract::Create<CZMQBalanceTopic>;
-    factories["pubindexnodeupdate"] = CZMQAbstract::Create<CZMQIndexnodeTopic>;
+    factories["pubapollonnodeupdate"] = CZMQAbstract::Create<CZMQApollonnodeTopic>;
     factories["pubmintstatus"] = CZMQAbstract::Create<CZMQMintStatusTopic>;
     factories["pubsettings"] = CZMQAbstract::Create<CZMQSettingsTopic>;
     factories["pubstatus"] = CZMQAbstract::Create<CZMQAPIStatusTopic>;
-    factories["pubindexnodelist"] = CZMQAbstract::Create<CZMQIndexnodeListTopic>;
+    factories["pubapollonnodelist"] = CZMQAbstract::Create<CZMQApollonnodeListTopic>;
     
-    BOOST_FOREACH(string pubIndex, pubIndexes)
+    BOOST_FOREACH(string pubApollon, pubApollones)
     {
-        CZMQFactory factory = factories[pubIndex];
+        CZMQFactory factory = factories[pubApollon];
         CZMQAbstract *notifier = factory();
         string address = BaseParams().APIAddr();
-        string port = pubIndex=="pubstatus" ? to_string(BaseParams().APIOpenPUBPort()) :
+        string port = pubApollon=="pubstatus" ? to_string(BaseParams().APIOpenPUBPort()) :
                                            to_string(BaseParams().APIAuthPUBPort());
-        notifier->SetType("zmq" + pubIndex);
+        notifier->SetType("zmq" + pubApollon);
         notifier->SetAddress(address);
         notifier->SetPort(port);
         notifier->SetAuthority(address + port);
@@ -224,12 +224,12 @@ void CZMQPublisherInterface::NotifyAPIStatus()
     }
 }
 
-void CZMQPublisherInterface::NotifyIndexnodeList()
+void CZMQPublisherInterface::NotifyApollonnodeList()
 {
     for (std::list<CZMQAbstract*>::iterator i = notifiers.begin(); i!=notifiers.end(); )
     {
         CZMQAbstract *notifier = *i;
-        if (notifier->NotifyIndexnodeList())
+        if (notifier->NotifyApollonnodeList())
         {
             i++;
         }
@@ -258,12 +258,12 @@ void CZMQPublisherInterface::NumConnectionsChanged()
     }
 }
 
-void CZMQPublisherInterface::UpdatedBlockTip(const CBlockIndex *pindex)
+void CZMQPublisherInterface::UpdatedBlockTip(const CBlockApollon *papollon)
 {
     for (std::list<CZMQAbstract*>::iterator i = notifiers.begin(); i!=notifiers.end(); )
     {
         CZMQAbstract *notifier = *i;
-        if (notifier->NotifyBlock(pindex))
+        if (notifier->NotifyBlock(papollon))
         {
             i++;
         }
@@ -292,12 +292,12 @@ void CZMQPublisherInterface::WalletTransaction(const CTransaction& tx)
     }
 }
 
-void CZMQPublisherInterface::UpdatedIndexnode(CIndexnode &indexnode)
+void CZMQPublisherInterface::UpdatedApollonnode(CApollonnode &apollonnode)
 {
     for (std::list<CZMQAbstract*>::iterator i = notifiers.begin(); i!=notifiers.end(); )
     {
         CZMQAbstract *notifier = *i;
-        if (notifier->NotifyIndexnodeUpdate(indexnode))
+        if (notifier->NotifyApollonnodeUpdate(apollonnode))
         {
             i++;
         }

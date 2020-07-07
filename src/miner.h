@@ -11,10 +11,10 @@
 
 #include <stdint.h>
 #include <memory>
-#include "boost/multi_index_container.hpp"
-#include "boost/multi_index/ordered_index.hpp"
+#include "boost/multi_apollon_container.hpp"
+#include "boost/multi_apollon/ordered_apollon.hpp"
 
-class CBlockIndex;
+class CBlockApollon;
 class CChainParams;
 class CReserveKey;
 class CScript;
@@ -55,7 +55,7 @@ struct CTxMemPoolModifiedEntry {
 /** Comparator for CTxMemPool::txiter objects.
  *  It simply compares the internal memory address of the CTxMemPoolEntry object
  *  pointed to. This means it has no meaning, and is only useful for using them
- *  as key in other indexes.
+ *  as key in other apollones.
  */
 struct CompareCTxMemPoolIter {
     bool operator()(const CTxMemPool::txiter& a, const CTxMemPool::txiter& b) const
@@ -99,25 +99,25 @@ struct CompareTxIterByAncestorCount {
     }
 };
 
-typedef boost::multi_index_container<
+typedef boost::multi_apollon_container<
     CTxMemPoolModifiedEntry,
-    boost::multi_index::indexed_by<
-        boost::multi_index::ordered_unique<
+    boost::multi_apollon::apolloned_by<
+        boost::multi_apollon::ordered_unique<
             modifiedentry_iter,
             CompareCTxMemPoolIter
         >,
         // sorted by modified ancestor fee rate
-        boost::multi_index::ordered_non_unique<
+        boost::multi_apollon::ordered_non_unique<
             // Reuse same tag from CTxMemPool's similar apollon
-            boost::multi_index::tag<ancestor_score>,
-            boost::multi_index::identity<CTxMemPoolModifiedEntry>,
+            boost::multi_apollon::tag<ancestor_score>,
+            boost::multi_apollon::identity<CTxMemPoolModifiedEntry>,
             CompareModifiedEntry
         >
     >
-> indexed_modified_transaction_set;
+> apolloned_modified_transaction_set;
 
-typedef indexed_modified_transaction_set::nth_index<0>::type::iterator modtxiter;
-typedef indexed_modified_transaction_set::apollon<ancestor_score>::type::iterator modtxscoreiter;
+typedef apolloned_modified_transaction_set::nth_apollon<0>::type::iterator modtxiter;
+typedef apolloned_modified_transaction_set::apollon<ancestor_score>::type::iterator modtxscoreiter;
 
 struct update_for_parent_inclusion
 {
@@ -201,17 +201,17 @@ private:
     bool TestPackageTransactions(const CTxMemPool::setEntries& package);
     /** Return true if given transaction from mapTx has already been evaluated,
       * or if the transaction's cached data in mapTx is incorrect. */
-    bool SkipMapTxEntry(CTxMemPool::txiter it, indexed_modified_transaction_set &mapModifiedTx, CTxMemPool::setEntries &failedTx);
+    bool SkipMapTxEntry(CTxMemPool::txiter it, apolloned_modified_transaction_set &mapModifiedTx, CTxMemPool::setEntries &failedTx);
     /** Sort the package in an order that is valid to appear in a block */
     void SortForBlock(const CTxMemPool::setEntries& package, CTxMemPool::txiter entry, std::vector<CTxMemPool::txiter>& sortedEntries);
     /** Add descendants of given transactions to mapModifiedTx with ancestor
       * state updated assuming given transactions are inBlock. */
-    void UpdatePackagesForAdded(const CTxMemPool::setEntries& alreadyAdded, indexed_modified_transaction_set &mapModifiedTx);
+    void UpdatePackagesForAdded(const CTxMemPool::setEntries& alreadyAdded, apolloned_modified_transaction_set &mapModifiedTx);
 };
 
 /** Modify the extranonce in a block */
-void IncrementExtraNonce(CBlock* pblock, const CBlockIndex* pindexPrev, unsigned int& nExtraNonce);
-int64_t UpdateTime(CBlockHeader* pblock, const Consensus::Params& consensusParams, const CBlockIndex* pindexPrev);
+void IncrementExtraNonce(CBlock* pblock, const CBlockApollon* papollonPrev, unsigned int& nExtraNonce);
+int64_t UpdateTime(CBlockHeader* pblock, const Consensus::Params& consensusParams, const CBlockApollon* papollonPrev);
 /** Run the miner threads */
 void GenerateBitcoins(bool fGenerate, int nThreads, const CChainParams& chainparams);
 void ThreadStakeMiner(CWallet *pwallet, const CChainParams& chainparams);

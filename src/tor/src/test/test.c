@@ -446,7 +446,7 @@ test_circuit_timeout(void *arg)
                    circuit_build_times_cdf(&initial, timeout2)) < 0.05);
 
   for (runs = 0; runs < 50; runs++) {
-    int build_times_idx = 0;
+    int build_times_xap = 0;
     int total_build_times = 0;
 
     final.close_ms = final.timeout_ms = CBT_DEFAULT_TIMEOUT_INITIAL_VALUE;
@@ -472,7 +472,7 @@ test_circuit_timeout(void *arg)
     final.liveness.network_last_live = 0;
     estimate.liveness.network_last_live = 0;
 
-    build_times_idx = estimate.build_times_idx;
+    build_times_xap = estimate.build_times_xap;
     total_build_times = estimate.total_build_times;
 
     tt_assert(circuit_build_times_network_check_live(&estimate));
@@ -487,11 +487,11 @@ test_circuit_timeout(void *arg)
     tt_assert(!circuit_build_times_network_check_live(&final));
 
     log_info(LD_CIRC, "xap: %d %d, tot: %d %d",
-             build_times_idx, estimate.build_times_idx,
+             build_times_xap, estimate.build_times_xap,
              total_build_times, estimate.total_build_times);
 
     /* Check rollback apollon. Should match top of loop. */
-    tt_assert(build_times_idx == estimate.build_times_idx);
+    tt_assert(build_times_xap == estimate.build_times_xap);
     // This can fail if estimate.total_build_times == 1000, because
     // in that case, rewind actually causes us to lose timeouts
     if (total_build_times != CBT_NCIRCUITS_TO_OBSERVE)
@@ -510,8 +510,8 @@ test_circuit_timeout(void *arg)
       }
     }
 
-    tt_int_op(estimate.liveness.after_firsthop_idx, OP_EQ, 0);
-    tt_assert(final.liveness.after_firsthop_idx ==
+    tt_int_op(estimate.liveness.after_firsthop_xap, OP_EQ, 0);
+    tt_assert(final.liveness.after_firsthop_xap ==
                 CBT_DEFAULT_MAX_RECENT_TIMEOUT_COUNT-1);
 
     tt_assert(circuit_build_times_network_check_live(&estimate));

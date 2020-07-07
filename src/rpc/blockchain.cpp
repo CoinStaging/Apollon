@@ -34,22 +34,22 @@ void ScriptPubKeyToJSON(const CScript& scriptPubKey, UniValue& out, bool fInclud
 /* Calculate the difficulty for a given block apollon,
  * or the block apollon of the given chain.
  */
-double GetDifficulty(const CChain& chain, const CBlockIndex* blockindex)
+double GetDifficulty(const CChain& chain, const CBlockApollon* blockapollon)
 {
-    if (blockindex == nullptr)
+    if (blockapollon == nullptr)
     {
         if (chain.Tip() == nullptr)
             return 1.0;
         else
-            blockindex = GetLastBlockIndex(chain.Tip(), false);
+            blockapollon = GetLastBlockApollon(chain.Tip(), false);
     }
 
-    return blockindex->GetBlockDifficulty();
+    return blockapollon->GetBlockDifficulty();
 }
 
-double GetDifficulty(const CBlockIndex* blockindex)
+double GetDifficulty(const CBlockApollon* blockapollon)
 {
-    return GetDifficulty(chainActive, blockindex);
+    return GetDifficulty(chainActive, blockapollon);
 }
 double GetPoSKernelPS()
 {
@@ -57,23 +57,23 @@ double GetPoSKernelPS()
     double dStakeKernelsTriedAvg = 0;
     int nStakesHandled = 0, nStakesTime = 0;
 
-    CBlockIndex* pindex = chainActive.Tip();;
-    CBlockIndex* pindexPrevStake = NULL;
+    CBlockApollon* papollon = chainActive.Tip();;
+    CBlockApollon* papollonPrevStake = NULL;
 
-    while (pindex && nStakesHandled < nPoSInterval)
+    while (papollon && nStakesHandled < nPoSInterval)
     {
-        if (pindex->IsProofOfStake())
+        if (papollon->IsProofOfStake())
         {
-            if (pindexPrevStake)
+            if (papollonPrevStake)
             {
-                dStakeKernelsTriedAvg += GetDifficulty(pindexPrevStake) * 4294967296.0;
-                nStakesTime += pindexPrevStake->nTime - pindex->nTime;
+                dStakeKernelsTriedAvg += GetDifficulty(papollonPrevStake) * 4294967296.0;
+                nStakesTime += papollonPrevStake->nTime - papollon->nTime;
                 nStakesHandled++;
             }
-            pindexPrevStake = pindex;
+            papollonPrevStake = papollon;
         }
 
-        pindex = pindex->pprev;
+        papollon = papollon->pprev;
     }
 
     double result = 0;
@@ -88,8 +88,8 @@ double GetPoSKernelPS()
 
 //Start Extra Blockinfo code
 CTransaction GetBlockRewardTransaction(const CBlock& block){
-    int RewardTXIndex = block.IsProofOfStake() ? 1:0;
-    return block.vtx[RewardTXIndex];
+    int RewardTXApollon = block.IsProofOfStake() ? 1:0;
+    return block.vtx[RewardTXApollon];
 }
 
 CTxOut GetStakeTXOut(const CTxIn& txin){
@@ -121,53 +121,53 @@ float GetBlockInput(const CBlock& block){
     return nValueIn;
 }
 //End extra block info code
-UniValue blockheaderToJSON(const CBlockIndex* blockindex)
+UniValue blockheaderToJSON(const CBlockApollon* blockapollon)
 {
     UniValue result(UniValue::VOBJ);
-    result.push_back(Pair("hash", blockindex->GetBlockHash().GetHex()));
+    result.push_back(Pair("hash", blockapollon->GetBlockHash().GetHex()));
     int confirmations = -1;
     // Only report confirmations if the block is on the main chain
-    if (chainActive.Contains(blockindex))
-        confirmations = chainActive.Height() - blockindex->nHeight + 1;
+    if (chainActive.Contains(blockapollon))
+        confirmations = chainActive.Height() - blockapollon->nHeight + 1;
     result.push_back(Pair("confirmations", confirmations));
-    result.push_back(Pair("height", blockindex->nHeight));
-    result.push_back(Pair("version", blockindex->nVersion));
-    result.push_back(Pair("versionHex", strprintf("%08x", blockindex->nVersion)));
-    result.push_back(Pair("merkleroot", blockindex->hashMerkleRoot.GetHex()));
-    result.push_back(Pair("time", (int64_t)blockindex->nTime));
-    result.push_back(Pair("mediantime", (int64_t)blockindex->GetMedianTimePast()));
-    result.push_back(Pair("nonce", (uint64_t)blockindex->nNonce));
-    result.push_back(Pair("bits", strprintf("%08x", blockindex->nBits)));
-    result.push_back(Pair("difficulty", GetDifficulty(blockindex)));
-    result.push_back(Pair("chainwork", blockindex->nChainWork.GetHex()));
+    result.push_back(Pair("height", blockapollon->nHeight));
+    result.push_back(Pair("version", blockapollon->nVersion));
+    result.push_back(Pair("versionHex", strprintf("%08x", blockapollon->nVersion)));
+    result.push_back(Pair("merkleroot", blockapollon->hashMerkleRoot.GetHex()));
+    result.push_back(Pair("time", (int64_t)blockapollon->nTime));
+    result.push_back(Pair("mediantime", (int64_t)blockapollon->GetMedianTimePast()));
+    result.push_back(Pair("nonce", (uint64_t)blockapollon->nNonce));
+    result.push_back(Pair("bits", strprintf("%08x", blockapollon->nBits)));
+    result.push_back(Pair("difficulty", GetDifficulty(blockapollon)));
+    result.push_back(Pair("chainwork", blockapollon->nChainWork.GetHex()));
 
-    if (blockindex->pprev)
-        result.push_back(Pair("previousblockhash", blockindex->pprev->GetBlockHash().GetHex()));
-    CBlockIndex *pnext = chainActive.Next(blockindex);
+    if (blockapollon->pprev)
+        result.push_back(Pair("previousblockhash", blockapollon->pprev->GetBlockHash().GetHex()));
+    CBlockApollon *pnext = chainActive.Next(blockapollon);
     if (pnext)
         result.push_back(Pair("nextblockhash", pnext->GetBlockHash().GetHex()));
-    if (blockindex->IsProofOfStake()){
-        result.push_back(Pair("flags", blockindex->IsProofOfStake()? "proof-of-stake" : "proof-of-work"));
-        result.push_back(Pair("modifier", blockindex->nStakeModifier.GetHex()));
+    if (blockapollon->IsProofOfStake()){
+        result.push_back(Pair("flags", blockapollon->IsProofOfStake()? "proof-of-stake" : "proof-of-work"));
+        result.push_back(Pair("modifier", blockapollon->nStakeModifier.GetHex()));
     }
 
     return result;
 }
 
-UniValue blockToJSON(const CBlock& block, const CBlockIndex* blockindex, bool txDetails = false)
+UniValue blockToJSON(const CBlock& block, const CBlockApollon* blockapollon, bool txDetails = false)
 {
     UniValue result(UniValue::VOBJ);
-    result.push_back(Pair("hash", blockindex->GetBlockHash().GetHex()));
+    result.push_back(Pair("hash", blockapollon->GetBlockHash().GetHex()));
     int confirmations = -1;
     float blockInput = 0.0;
     // Only report confirmations if the block is on the main chain
-    if (chainActive.Contains(blockindex))
-        confirmations = chainActive.Height() - blockindex->nHeight + 1;
+    if (chainActive.Contains(blockapollon))
+        confirmations = chainActive.Height() - blockapollon->nHeight + 1;
     result.push_back(Pair("confirmations", confirmations));
     result.push_back(Pair("strippedsize", (int)::GetSerializeSize(block, SER_NETWORK, PROTOCOL_VERSION | SERIALIZE_TRANSACTION_NO_WITNESS)));
     result.push_back(Pair("size", (int)::GetSerializeSize(block, SER_NETWORK, PROTOCOL_VERSION)));
     result.push_back(Pair("weight", (int)::GetBlockWeight(block)));
-    result.push_back(Pair("height", blockindex->nHeight));
+    result.push_back(Pair("height", blockapollon->nHeight));
     result.push_back(Pair("version", block.nVersion));
     result.push_back(Pair("versionHex", strprintf("%08x", block.nVersion)));
     result.push_back(Pair("merkleroot", block.hashMerkleRoot.GetHex()));
@@ -185,14 +185,14 @@ UniValue blockToJSON(const CBlock& block, const CBlockIndex* blockindex, bool tx
     }
     result.push_back(Pair("tx", txs));
     result.push_back(Pair("time", block.GetBlockTime()));
-    result.push_back(Pair("mediantime", (int64_t)blockindex->GetMedianTimePast()));
+    result.push_back(Pair("mediantime", (int64_t)blockapollon->GetMedianTimePast()));
     result.push_back(Pair("nonce", (uint64_t)block.nNonce));
     result.push_back(Pair("bits", strprintf("%08x", block.nBits)));
-    result.push_back(Pair("difficulty", GetDifficulty(blockindex)));
-    result.push_back(Pair("chainwork", blockindex->nChainWork.GetHex()));
-    if (blockindex->pprev)
-        result.push_back(Pair("previousblockhash", blockindex->pprev->GetBlockHash().GetHex()));
-    CBlockIndex *pnext = chainActive.Next(blockindex);
+    result.push_back(Pair("difficulty", GetDifficulty(blockapollon)));
+    result.push_back(Pair("chainwork", blockapollon->nChainWork.GetHex()));
+    if (blockapollon->pprev)
+        result.push_back(Pair("previousblockhash", blockapollon->pprev->GetBlockHash().GetHex()));
+    CBlockApollon *pnext = chainActive.Next(blockapollon);
     if (pnext)
         result.push_back(Pair("nextblockhash", pnext->GetBlockHash().GetHex()));
     result.push_back(Pair("type",block.IsProofOfStake() ? "PoS":"PoW"));
@@ -202,8 +202,8 @@ UniValue blockToJSON(const CBlock& block, const CBlockIndex* blockindex, bool tx
             result.push_back(Pair("inputamount",blockInput));
     result.push_back(Pair("rewardadress",GetBlockRewardWinner(block)));
     if (block.IsProofOfStake()){
-        result.push_back(Pair("modifier", blockindex->nStakeModifier.GetHex()));
-        result.push_back(Pair("signature", HexStr(blockindex->vchBlockSig.begin(), blockindex->vchBlockSig.end())));
+        result.push_back(Pair("modifier", blockapollon->nStakeModifier.GetHex()));
+        result.push_back(Pair("signature", HexStr(blockapollon->vchBlockSig.begin(), blockapollon->vchBlockSig.end())));
     }
 
     return result;
@@ -263,7 +263,7 @@ UniValue getdifficulty(const UniValue& params, bool fHelp)
     
     UniValue obj(UniValue::VOBJ);
     obj.push_back(Pair("proof-of-work",  GetDifficulty()));
-    obj.push_back(Pair("proof-of-stake", GetDifficulty(GetLastBlockIndex(chainActive.Tip(), true))));
+    obj.push_back(Pair("proof-of-stake", GetDifficulty(GetLastBlockApollon(chainActive.Tip(), true))));
     return obj;
 }
 
@@ -591,7 +591,7 @@ UniValue getblockhashes(const UniValue& params, bool fHelp)
     unsigned int high = params[0].get_int();
     unsigned int low = params[1].get_int();
     std::vector<uint256> blockHashes;
-    if (!GetTimestampIndex(high, low, blockHashes)) {
+    if (!GetTimestampApollon(high, low, blockHashes)) {
         throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "No information available for block hashes");
     }
 
@@ -625,8 +625,8 @@ UniValue getblockhash(const UniValue& params, bool fHelp)
     if (nHeight < 0 || nHeight > chainActive.Height())
         throw JSONRPCError(RPC_INVALID_PARAMETER, "Block height out of range");
 
-    CBlockIndex* pblockindex = chainActive[nHeight];
-    return pblockindex->GetBlockHash().GetHex();
+    CBlockApollon* pblockapollon = chainActive[nHeight];
+    return pblockapollon->GetBlockHash().GetHex();
 }
 
 UniValue getblockheader(const UniValue& params, bool fHelp)
@@ -672,22 +672,22 @@ UniValue getblockheader(const UniValue& params, bool fHelp)
     if (params.size() > 1)
         fVerbose = params[1].get_bool();
 
-    if (mapBlockIndex.count(hash) == 0)
+    if (mapBlockApollon.count(hash) == 0)
         throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Block not found");
 
-    CBlockIndex* pblockindex = mapBlockIndex[hash];
+    CBlockApollon* pblockapollon = mapBlockApollon[hash];
 
     if (!fVerbose)
     {
     	CBlock block;
-    	ReadBlockFromDisk(block, pblockindex, Params().GetConsensus());
+    	ReadBlockFromDisk(block, pblockapollon, Params().GetConsensus());
         CDataStream ssBlock(SER_NETWORK, PROTOCOL_VERSION);
         ssBlock << block.GetBlockHeader();
         std::string strHex = HexStr(ssBlock.begin(), ssBlock.end());
         return strHex;
     }
 
-    return blockheaderToJSON(pblockindex);
+    return blockheaderToJSON(pblockapollon);
 }
 
 UniValue getblock(const UniValue& params, bool fHelp)
@@ -740,16 +740,16 @@ UniValue getblock(const UniValue& params, bool fHelp)
     if (params.size() > 1)
         fVerbose = params[1].get_bool();
 
-    if (mapBlockIndex.count(hash) == 0)
+    if (mapBlockApollon.count(hash) == 0)
         throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Block not found");
 
     CBlock block;
-    CBlockIndex* pblockindex = mapBlockIndex[hash];
+    CBlockApollon* pblockapollon = mapBlockApollon[hash];
 
-    if (fHavePruned && !(pblockindex->nStatus & BLOCK_HAVE_DATA) && pblockindex->nTx > 0)
+    if (fHavePruned && !(pblockapollon->nStatus & BLOCK_HAVE_DATA) && pblockapollon->nTx > 0)
         throw JSONRPCError(RPC_INTERNAL_ERROR, "Block not available (pruned data)");
 
-    if(!ReadBlockFromDisk(block, pblockindex, Params().GetConsensus()))
+    if(!ReadBlockFromDisk(block, pblockapollon, Params().GetConsensus()))
         throw JSONRPCError(RPC_INTERNAL_ERROR, "Can't read block from disk");
 
     if (!fVerbose)
@@ -760,7 +760,7 @@ UniValue getblock(const UniValue& params, bool fHelp)
         return strHex;
     }
 
-    return blockToJSON(block, pblockindex);
+    return blockToJSON(block, pblockapollon);
 }
 
 struct CCoinsStats
@@ -785,7 +785,7 @@ static bool GetUTXOStats(CCoinsView *view, CCoinsStats &stats)
     stats.hashBlock = pcursor->GetBestBlock();
     {
         LOCK(cs_main);
-        stats.nHeight = mapBlockIndex.find(stats.hashBlock)->second->nHeight;
+        stats.nHeight = mapBlockApollon.find(stats.hashBlock)->second->nHeight;
     }
     ss << stats.hashBlock;
     CAmount nTotalAmount = 0;
@@ -878,7 +878,7 @@ UniValue gettxout(const UniValue& params, bool fHelp)
             "     \"reqSigs\" : n,          (numeric) Number of required signatures\n"
             "     \"type\" : \"pubkeyhash\", (string) The type, eg pubkeyhash\n"
             "     \"addresses\" : [          (array of string) array of Apollon addresses\n"
-            "        \"indexaddress\"     (string) Apollon address\n"
+            "        \"apollonaddress\"     (string) Apollon address\n"
             "        ,...\n"
             "     ]\n"
             "  },\n"
@@ -920,13 +920,13 @@ UniValue gettxout(const UniValue& params, bool fHelp)
     if (n<0 || (unsigned int)n>=coins.vout.size() || coins.vout[n].IsNull())
         return NullUniValue;
 
-    BlockMap::iterator it = mapBlockIndex.find(pcoinsTip->GetBestBlock());
-    CBlockIndex *pindex = it->second;
-    ret.push_back(Pair("bestblock", pindex->GetBlockHash().GetHex()));
+    BlockMap::iterator it = mapBlockApollon.find(pcoinsTip->GetBestBlock());
+    CBlockApollon *papollon = it->second;
+    ret.push_back(Pair("bestblock", papollon->GetBlockHash().GetHex()));
     if ((unsigned int)coins.nHeight == MEMPOOL_HEIGHT)
         ret.push_back(Pair("confirmations", 0));
     else
-        ret.push_back(Pair("confirmations", pindex->nHeight - coins.nHeight + 1));
+        ret.push_back(Pair("confirmations", papollon->nHeight - coins.nHeight + 1));
     ret.push_back(Pair("value", ValueFromAmount(coins.vout[n].nValue)));
     UniValue o(UniValue::VOBJ);
     ScriptPubKeyToJSON(coins.vout[n].scriptPubKey, o, true);
@@ -966,10 +966,10 @@ UniValue verifychain(const UniValue& params, bool fHelp)
 }
 
 /** Implementation of IsSuperMajority with better feedback */
-static UniValue SoftForkMajorityDesc(int minVersion, CBlockIndex* pindex, int nRequired, const Consensus::Params& consensusParams)
+static UniValue SoftForkMajorityDesc(int minVersion, CBlockApollon* papollon, int nRequired, const Consensus::Params& consensusParams)
 {
     int nFound = 0;
-    CBlockIndex* pstart = pindex;
+    CBlockApollon* pstart = papollon;
     for (int i = 0; i < consensusParams.nMajorityWindow && pstart != NULL; i++)
     {
         if (pstart->nVersion >= minVersion)
@@ -985,13 +985,13 @@ static UniValue SoftForkMajorityDesc(int minVersion, CBlockIndex* pindex, int nR
     return rv;
 }
 
-static UniValue SoftForkDesc(const std::string &name, int version, CBlockIndex* pindex, const Consensus::Params& consensusParams)
+static UniValue SoftForkDesc(const std::string &name, int version, CBlockApollon* papollon, const Consensus::Params& consensusParams)
 {
     UniValue rv(UniValue::VOBJ);
     rv.push_back(Pair("id", name));
     rv.push_back(Pair("version", version));
-    rv.push_back(Pair("enforce", SoftForkMajorityDesc(version, pindex, consensusParams.nMajorityEnforceBlockUpgrade, consensusParams)));
-    rv.push_back(Pair("reject", SoftForkMajorityDesc(version, pindex, consensusParams.nMajorityRejectBlockOutdated, consensusParams)));
+    rv.push_back(Pair("enforce", SoftForkMajorityDesc(version, papollon, consensusParams.nMajorityEnforceBlockUpgrade, consensusParams)));
+    rv.push_back(Pair("reject", SoftForkMajorityDesc(version, papollon, consensusParams.nMajorityRejectBlockOutdated, consensusParams)));
     return rv;
 }
 
@@ -1078,11 +1078,11 @@ UniValue getblockchaininfo(const UniValue& params, bool fHelp)
     UniValue obj(UniValue::VOBJ);
     obj.push_back(Pair("chain",                 Params().NetworkIDString()));
     obj.push_back(Pair("blocks",                (int)chainActive.Height()));
-    obj.push_back(Pair("lastpowblock",          GetLastBlockIndex(chainActive.Tip(), false)->nHeight));
-    obj.push_back(Pair("lastpowdiff",           GetDifficulty(GetLastBlockIndex(chainActive.Tip(), false))));
-    obj.push_back(Pair("lastposblock",          GetLastBlockIndex(chainActive.Tip(), true)->nHeight));
-    obj.push_back(Pair("lastposdiff",           GetDifficulty(GetLastBlockIndex(chainActive.Tip(), true))));
-    obj.push_back(Pair("headers",               pindexBestHeader ? pindexBestHeader->nHeight : -1));
+    obj.push_back(Pair("lastpowblock",          GetLastBlockApollon(chainActive.Tip(), false)->nHeight));
+    obj.push_back(Pair("lastpowdiff",           GetDifficulty(GetLastBlockApollon(chainActive.Tip(), false))));
+    obj.push_back(Pair("lastposblock",          GetLastBlockApollon(chainActive.Tip(), true)->nHeight));
+    obj.push_back(Pair("lastposdiff",           GetDifficulty(GetLastBlockApollon(chainActive.Tip(), true))));
+    obj.push_back(Pair("headers",               papollonBestHeader ? papollonBestHeader->nHeight : -1));
     obj.push_back(Pair("bestblockhash",         chainActive.Tip()->GetBlockHash().GetHex()));
     obj.push_back(Pair("difficulty",            (double)GetDifficulty()));
     obj.push_back(Pair("mediantime",            (int64_t)chainActive.Tip()->GetMedianTimePast()));
@@ -1091,7 +1091,7 @@ UniValue getblockchaininfo(const UniValue& params, bool fHelp)
     obj.push_back(Pair("pruned",                fPruneMode));
 
     const Consensus::Params& consensusParams = Params().GetConsensus();
-    CBlockIndex* tip = chainActive.Tip();
+    CBlockApollon* tip = chainActive.Tip();
     UniValue softforks(UniValue::VARR);
     UniValue bip9_softforks(UniValue::VOBJ);
     softforks.push_back(SoftForkDesc("bip34", 2, tip, consensusParams));
@@ -1104,7 +1104,7 @@ UniValue getblockchaininfo(const UniValue& params, bool fHelp)
 
     if (fPruneMode)
     {
-        CBlockIndex *block = chainActive.Tip();
+        CBlockApollon *block = chainActive.Tip();
         while (block && block->pprev && (block->pprev->nStatus & BLOCK_HAVE_DATA))
             block = block->pprev;
 
@@ -1116,7 +1116,7 @@ UniValue getblockchaininfo(const UniValue& params, bool fHelp)
 /** Comparison function for sorting the getchaintips heads.  */
 struct CompareBlocksByHeight
 {
-    bool operator()(const CBlockIndex* a, const CBlockIndex* b) const
+    bool operator()(const CBlockApollon* a, const CBlockApollon* b) const
     {
         /* Make sure that unequal blocks with the same height do not compare
            equal. Use the pointers themselves to make a distinction. */
@@ -1166,15 +1166,15 @@ UniValue getchaintips(const UniValue& params, bool fHelp)
     /*
      * Idea:  the set of chain tips is chainActive.tip, plus orphan blocks which do not have another orphan building off of them.
      * Algorithm:
-     *  - Make one pass through mapBlockIndex, picking out the orphan blocks, and also storing a set of the orphan block's pprev pointers.
+     *  - Make one pass through mapBlockApollon, picking out the orphan blocks, and also storing a set of the orphan block's pprev pointers.
      *  - Iterate through the orphan blocks. If the block isn't pointed to by another orphan, it is a chain tip.
      *  - add chainActive.Tip()
      */
-    std::set<const CBlockIndex*, CompareBlocksByHeight> setTips;
-    std::set<const CBlockIndex*> setOrphans;
-    std::set<const CBlockIndex*> setPrevs;
+    std::set<const CBlockApollon*, CompareBlocksByHeight> setTips;
+    std::set<const CBlockApollon*> setOrphans;
+    std::set<const CBlockApollon*> setPrevs;
 
-    BOOST_FOREACH(const PAIRTYPE(const uint256, CBlockIndex*)& item, mapBlockIndex)
+    BOOST_FOREACH(const PAIRTYPE(const uint256, CBlockApollon*)& item, mapBlockApollon)
     {
         if (!chainActive.Contains(item.second)) {
             setOrphans.insert(item.second);
@@ -1182,7 +1182,7 @@ UniValue getchaintips(const UniValue& params, bool fHelp)
         }
     }
 
-    for (std::set<const CBlockIndex*>::iterator it = setOrphans.begin(); it != setOrphans.end(); ++it)
+    for (std::set<const CBlockApollon*>::iterator it = setOrphans.begin(); it != setOrphans.end(); ++it)
     {
         if (setPrevs.erase(*it) == 0) {
             setTips.insert(*it);
@@ -1194,7 +1194,7 @@ UniValue getchaintips(const UniValue& params, bool fHelp)
 
     /* Construct the output array.  */
     UniValue res(UniValue::VARR);
-    BOOST_FOREACH(const CBlockIndex* block, setTips)
+    BOOST_FOREACH(const CBlockApollon* block, setTips)
     {
         UniValue obj(UniValue::VOBJ);
         obj.push_back(Pair("height", block->nHeight));
@@ -1286,11 +1286,11 @@ UniValue invalidateblock(const UniValue& params, bool fHelp)
 
     {
         LOCK(cs_main);
-        if (mapBlockIndex.count(hash) == 0)
+        if (mapBlockApollon.count(hash) == 0)
             throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Block not found");
 
-        CBlockIndex* pblockindex = mapBlockIndex[hash];
-        InvalidateBlock(state, Params(), pblockindex);
+        CBlockApollon* pblockapollon = mapBlockApollon[hash];
+        InvalidateBlock(state, Params(), pblockapollon);
     }
 
     if (state.IsValid()) {
@@ -1324,11 +1324,11 @@ UniValue reconsiderblock(const UniValue& params, bool fHelp)
 
     {
         LOCK(cs_main);
-        if (mapBlockIndex.count(hash) == 0)
+        if (mapBlockApollon.count(hash) == 0)
             throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Block not found");
 
-        CBlockIndex* pblockindex = mapBlockIndex[hash];
-        ResetBlockFailureFlags(pblockindex);
+        CBlockApollon* pblockapollon = mapBlockApollon[hash];
+        ResetBlockFailureFlags(pblockapollon);
     }
 
     CValidationState state;
@@ -1370,6 +1370,6 @@ static const CRPCCommand commands[] =
 
 void RegisterBlockchainRPCCommands(CRPCTable &tableRPC)
 {
-    for (unsigned int vcidx = 0; vcidx < ARRAYLEN(commands); vcidx++)
-        tableRPC.appendCommand(commands[vcidx].name, &commands[vcidx]);
+    for (unsigned int vcxap = 0; vcxap < ARRAYLEN(commands); vcxap++)
+        tableRPC.appendCommand(commands[vcxap].name, &commands[vcxap]);
 }

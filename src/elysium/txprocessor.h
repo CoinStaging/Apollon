@@ -15,7 +15,7 @@ public:
     int ProcessTx(CMPTransaction& tx);
 
 public:
-    boost::signals2::signal<void(PropertyId, SigmaDenomination, SigmaMintGroup, SigmaMintIndex, const SigmaPublicKey&)> SimpleMintProcessed;
+    boost::signals2::signal<void(PropertyId, SigmaDenomination, SigmaMintGroup, SigmaMintApollon, const SigmaPublicKey&)> SimpleMintProcessed;
     boost::signals2::signal<void(const CMPTransaction&)> TransactionProcessed;
 
 private:

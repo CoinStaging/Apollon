@@ -78,14 +78,14 @@ struct Params {
     int64_t nPowTargetTimespan;
     int nDgwPastBlocks;
     int nInstantSendKeepLock; // in blocks
-    int nIndexnodeMinimumConfirmations;
-    int nIndexnodePaymentsStartBlock;
+    int nApollonnodeMinimumConfirmations;
+    int nApollonnodePaymentsStartBlock;
     int nDisableZCoinClientCheckTime;
     int nBlacklistEnableHeight;
     int nBlockLimitUpgradeHeight;
 	/** Zerocoin-related block numbers when features are changed */
     int nCheckBugFixedAtBlock;
-    int nIndexnodePaymentsBugFixedAtBlock;
+    int nApollonnodePaymentsBugFixedAtBlock;
 	int nSpendV15StartBlock;
 	int nSpendV2ID_1, nSpendV2ID_10, nSpendV2ID_25, nSpendV2ID_50, nSpendV2ID_100;
 

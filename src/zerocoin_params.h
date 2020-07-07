@@ -12,8 +12,8 @@ static const int64_t DUST_HARD_LIMIT = 1000;   // 0.00001 XAP mininput
 // There were bugs before this block, don't do some checks on early blocks
 #define ZC_CHECK_BUG_FIXED_AT_BLOCK         1
 
-// Before this block we allowed not paying to the indexnodes.
-#define ZC_INDEXNODE_PAYMENT_BUG_FIXED_AT_BLOCK         1
+// Before this block we allowed not paying to the apollonnodes.
+#define ZC_APOLLONNODE_PAYMENT_BUG_FIXED_AT_BLOCK         1
 
 // Do strict check on duplicate minted public coin value after this block
 #define ZC_CHECK_DUPLICATE_MINT_AT_BLOCK    1
@@ -89,7 +89,7 @@ static const int64_t DUST_HARD_LIMIT = 1000;   // 0.00001 XAP mininput
 #define ZC_SPEND_V3_COINSPERID_LIMIT    16000
 
 // Version of apollon that introduced storing accumulators and coin serials
-#define ZC_ADVANCED_INDEX_VERSION           130500
+#define ZC_ADVANCED_APOLLON_VERSION           130500
 // Version of wallet.db entry that introduced storing extra information for mints
 #define ZC_ADVANCED_WALLETDB_MINT_VERSION	130504
 // Version of the block apollon entry that introduces Sigma protocol

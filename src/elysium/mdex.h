@@ -66,7 +66,7 @@ public:
     const std::string& getAddr() const { return addr; }
 
     int getBlock() const { return block; }
-    unsigned int getIdx() const { return xap; }
+    unsigned int getXap() const { return xap; }
 
     int64_t getBlockTime() const;
 
@@ -85,7 +85,7 @@ public:
         amount_remaining(ar), subaction(suba), addr(addr) {}
 
     CMPMetaDEx(const CMPTransaction& tx)
-      : block(tx.block), txid(tx.txid), xap(tx.tx_idx), property(tx.property), amount_forsale(tx.nValue),
+      : block(tx.block), txid(tx.txid), xap(tx.tx_xap), property(tx.property), amount_forsale(tx.nValue),
         desired_property(tx.desired_property), amount_desired(tx.desired_value), amount_remaining(tx.nValue),
         subaction(tx.subaction), addr(tx.sender) {}
 
@@ -122,7 +122,7 @@ extern md_PropertiesMap metadex;
 
 // TODO: explore a property-pair, instead of a single property as map's key........
 md_PricesMap* get_Prices(uint32_t prop);
-md_Set* get_Indexes(md_PricesMap* p, rational_t price);
+md_Set* get_Apollones(md_PricesMap* p, rational_t price);
 // ---------------
 
 int MetaDEx_ADD(const std::string& sender_addr, uint32_t, int64_t, int block, uint32_t property_desired, int64_t amount_desired, const uint256& txid, unsigned int xap);

@@ -229,7 +229,7 @@ test_link_handshake_certs_ok(void *arg)
   c1->base_.address = tor_strdup("C1");
   c1->tls = tor_tls_new(-1, 0);
   c1->link_proto = 4;
-  c1->base_.conn_array_index = -1;
+  c1->base_.conn_array_apollon = -1;
   crypto_pk_get_digest(key2, c1->identity_digest);
 
   if (with_ed) {
@@ -273,7 +273,7 @@ test_link_handshake_certs_ok(void *arg)
   c2->base_.address = tor_strdup("C2");
   c2->tls = tor_tls_new(-1, 1);
   c2->link_proto = 4;
-  c2->base_.conn_array_index = -1;
+  c2->base_.conn_array_apollon = -1;
   crypto_pk_get_digest(key1, c2->identity_digest);
 
   channel_tls_process_certs_cell(cell1, chan2);

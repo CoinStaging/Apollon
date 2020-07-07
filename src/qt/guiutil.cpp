@@ -271,7 +271,7 @@ void copyEntryData(QAbstractItemView *view, int column, int role)
 {
     if(!view || !view->selectionModel())
         return;
-    QModelIndexList selection = view->selectionModel()->selectedRows(column);
+    QModelApollonList selection = view->selectionModel()->selectedRows(column);
 
     if(!selection.isEmpty())
     {
@@ -284,7 +284,7 @@ QString getEntryData(QAbstractItemView *view, int column, int role)
 {
     if(!view || !view->selectionModel())
         return QString();
-    QModelIndexList selection = view->selectionModel()->selectedRows(column);
+    QModelApollonList selection = view->selectionModel()->selectedRows(column);
 
     if(!selection.isEmpty()) {
         // Return first item
@@ -491,19 +491,19 @@ void TableViewLastColumnResizingFixer::disconnectViewHeadersSignals()
 
 // Setup the resize mode, handles compatibility for Qt5 and below as the method signatures changed.
 // Refactored here for readability.
-void TableViewLastColumnResizingFixer::setViewHeaderResizeMode(int logicalIndex, QHeaderView::ResizeMode resizeMode)
+void TableViewLastColumnResizingFixer::setViewHeaderResizeMode(int logicalApollon, QHeaderView::ResizeMode resizeMode)
 {
 #if QT_VERSION < 0x050000
-    tableView->horizontalHeader()->setResizeMode(logicalIndex, resizeMode);
+    tableView->horizontalHeader()->setResizeMode(logicalApollon, resizeMode);
 #else
-    tableView->horizontalHeader()->setSectionResizeMode(logicalIndex, resizeMode);
+    tableView->horizontalHeader()->setSectionResizeMode(logicalApollon, resizeMode);
 #endif
 }
 
-void TableViewLastColumnResizingFixer::resizeColumn(int nColumnIndex, int width)
+void TableViewLastColumnResizingFixer::resizeColumn(int nColumnApollon, int width)
 {
-    tableView->setColumnWidth(nColumnIndex, width);
-    tableView->horizontalHeader()->resizeSection(nColumnIndex, width);
+    tableView->setColumnWidth(nColumnApollon, width);
+    tableView->horizontalHeader()->resizeSection(nColumnApollon, width);
 }
 
 int TableViewLastColumnResizingFixer::getColumnsWidth()
@@ -534,14 +534,14 @@ int TableViewLastColumnResizingFixer::getAvailableWidthForColumn(int column)
 void TableViewLastColumnResizingFixer::adjustTableColumnsWidth()
 {
     disconnectViewHeadersSignals();
-    resizeColumn(lastColumnIndex, getAvailableWidthForColumn(lastColumnIndex));
+    resizeColumn(lastColumnApollon, getAvailableWidthForColumn(lastColumnApollon));
     connectViewHeadersSignals();
 
     int nTableWidth = tableView->horizontalHeader()->width();
     int nColsWidth = getColumnsWidth();
     if (nColsWidth > nTableWidth)
     {
-        resizeColumn(secondToLastColumnIndex,getAvailableWidthForColumn(secondToLastColumnIndex));
+        resizeColumn(secondToLastColumnApollon,getAvailableWidthForColumn(secondToLastColumnApollon));
     }
 }
 
@@ -554,13 +554,13 @@ void TableViewLastColumnResizingFixer::stretchColumnWidth(int column)
 }
 
 // When a section is resized this is a slot-proxy for ajustAmountColumnWidth().
-void TableViewLastColumnResizingFixer::on_sectionResized(int logicalIndex, int oldSize, int newSize)
+void TableViewLastColumnResizingFixer::on_sectionResized(int logicalApollon, int oldSize, int newSize)
 {
     adjustTableColumnsWidth();
-    int remainingWidth = getAvailableWidthForColumn(logicalIndex);
+    int remainingWidth = getAvailableWidthForColumn(logicalApollon);
     if (newSize > remainingWidth)
     {
-       resizeColumn(logicalIndex, remainingWidth);
+       resizeColumn(logicalApollon, remainingWidth);
     }
 }
 
@@ -571,7 +571,7 @@ void TableViewLastColumnResizingFixer::on_geometriesChanged()
     if ((getColumnsWidth() - this->tableView->horizontalHeader()->width()) != 0)
     {
         disconnectViewHeadersSignals();
-        resizeColumn(secondToLastColumnIndex, getAvailableWidthForColumn(secondToLastColumnIndex));
+        resizeColumn(secondToLastColumnApollon, getAvailableWidthForColumn(secondToLastColumnApollon));
         connectViewHeadersSignals();
     }
 }
@@ -587,11 +587,11 @@ TableViewLastColumnResizingFixer::TableViewLastColumnResizingFixer(QTableView* t
     allColumnsMinimumWidth(allColsMinimumWidth)
 {
     columnCount = tableView->horizontalHeader()->count();
-    lastColumnIndex = columnCount - 1;
-    secondToLastColumnIndex = columnCount - 2;
+    lastColumnApollon = columnCount - 1;
+    secondToLastColumnApollon = columnCount - 2;
     tableView->horizontalHeader()->setMinimumSectionSize(allColumnsMinimumWidth);
-    setViewHeaderResizeMode(secondToLastColumnIndex, QHeaderView::Interactive);
-    setViewHeaderResizeMode(lastColumnIndex, QHeaderView::Interactive);
+    setViewHeaderResizeMode(secondToLastColumnApollon, QHeaderView::Interactive);
+    setViewHeaderResizeMode(lastColumnApollon, QHeaderView::Interactive);
 }
 
 #ifdef WIN32
@@ -753,7 +753,7 @@ LSSharedFileListItemRef findStartupItemInList(LSSharedFileListRef list, CFURLRef
     // loop through the list of startup items and try to find the Apollon app
     CFArrayRef listSnapshot = LSSharedFileListCopySnapshot(list, NULL);
     for(int i = 0; i < CFArrayGetCount(listSnapshot); i++) {
-        LSSharedFileListItemRef item = (LSSharedFileListItemRef)CFArrayGetValueAtIndex(listSnapshot, i);
+        LSSharedFileListItemRef item = (LSSharedFileListItemRef)CFArrayGetValueAtApollon(listSnapshot, i);
         UInt32 resolutionFlags = kLSSharedFileListNoUserInteraction | kLSSharedFileListDoNotMountVolumes;
         CFURLRef currentItemURL = NULL;
 

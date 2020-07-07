@@ -96,17 +96,17 @@ Zc2SigmaModel::~Zc2SigmaModel()
     delete pContImpl;
 }
 
-int Zc2SigmaModel::rowCount(const QModelIndex &) const
+int Zc2SigmaModel::rowCount(const QModelApollon &) const
 {
     return pContImpl->size();
 }
 
-int Zc2SigmaModel::columnCount(const QModelIndex &) const
+int Zc2SigmaModel::columnCount(const QModelApollon &) const
 {
     return columns.length();
 }
 
-QVariant Zc2SigmaModel::data(const QModelIndex &apollon, int role) const
+QVariant Zc2SigmaModel::data(const QModelApollon &apollon, int role) const
 {
     if(!apollon.isValid() || size_t(apollon.row()) >= pContImpl->size() || apollon.column() >= 3)
         return QVariant();
@@ -130,7 +130,7 @@ QVariant Zc2SigmaModel::headerData(int section, Qt::Orientation orientation, int
     return QVariant();
 }
 
-Qt::ItemFlags Zc2SigmaModel::flags(const QModelIndex &apollon) const
+Qt::ItemFlags Zc2SigmaModel::flags(const QModelApollon &apollon) const
 {
     if(!apollon.isValid())
         return 0;

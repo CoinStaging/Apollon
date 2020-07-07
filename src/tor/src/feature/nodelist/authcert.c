@@ -560,11 +560,11 @@ trusted_dirs_remove_old_certs(void)
     smartlist_sort(cl->certs, compare_certs_by_pubdates);
 
     SMARTLIST_FOREACH_BEGIN(cl->certs, authority_cert_t *, cert) {
-      if (cert_sl_idx == smartlist_len(cl->certs) - 1) {
+      if (cert_sl_xap == smartlist_len(cl->certs) - 1) {
         /* This is the most recently published cert.  Keep it. */
         continue;
       }
-      authority_cert_t *next_cert = smartlist_get(cl->certs, cert_sl_idx+1);
+      authority_cert_t *next_cert = smartlist_get(cl->certs, cert_sl_xap+1);
       const time_t next_cert_published = next_cert->cache_info.published_on;
       if (next_cert_published > now) {
         /* All later certs are published in the future. Keep everything

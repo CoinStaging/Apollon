@@ -30,7 +30,7 @@ backwards-compatible with pre-0.10 versions of Bitcoin Core or other software:
 
 * Blocks will be stored on disk out of order (in the order they are
 received, really), which makes it incompatible with some tools or
-other programs. Reindexing using earlier versions will also not work
+other programs. Reapolloning using earlier versions will also not work
 anymore as a result of this.
 
 * The block apollon database will now hold headers for which no block is
@@ -40,18 +40,18 @@ If you want to be able to downgrade smoothly, make a backup of your entire data
 directory. Without this your node will need start syncing (or importing from
 bootstrap.dat) anew afterwards. It is possible that the data from a completely
 synchronised 0.10 node may be usable in older versions as-is, but this is not
-supported and may break as soon as the older version attempts to reindex.
+supported and may break as soon as the older version attempts to reapollon.
 
 This does not affect wallet forward or backward compatibility.
 
 ### Downgrade to a version < 0.12.0
 
 Because release 0.12.0 and later will obfuscate the chainstate on every
-fresh sync or reindex, the chainstate is not backwards-compatible with
+fresh sync or reapollon, the chainstate is not backwards-compatible with
 pre-0.12 versions of Bitcoin Core or other software.
 
-If you want to downgrade after you have done a reindex with 0.12.0 or later,
-you will need to reindex when you first start Bitcoin Core version 0.11 or
+If you want to downgrade after you have done a reapollon with 0.12.0 or later,
+you will need to reapollon when you first start Bitcoin Core version 0.11 or
 earlier.
 
 Notable changes
@@ -65,7 +65,7 @@ ECDSA signatures inside Bitcoin transactions now use validation using
 
 Depending on the platform, this means a significant speedup for raw signature
 validation speed. The advantage is largest on x86_64, where validation is over
-five times faster. In practice, this translates to a raw reindexing and new
+five times faster. In practice, this translates to a raw reapolloning and new
 block validation times that are less than half of what it was before.
 
 Libsecp256k1 has undergone very extensive testing and validation.
@@ -559,7 +559,7 @@ git merge commit are mentioned.
 - #6551 `39ddaeb` Handle leveldb::DestroyDB() errors on wipe failure (Adam Weiss)
 - #6654 `b0ce450` Mempool package tracking (Suhas Daftuar)
 - #6715 `82d2aef` Fix mempool packages (Suhas Daftuar)
-- #6680 `4f44530` use CBlockIndex instead of uint256 for UpdatedBlockTip signal (Jonas Schnelli)
+- #6680 `4f44530` use CBlockApollon instead of uint256 for UpdatedBlockTip signal (Jonas Schnelli)
 - #6650 `4fac576` Obfuscate chainstate (James O'Beirne)
 - #6777 `9caaf6e` Unobfuscate chainstate data in CCoinsViewDB::GetStats (James O'Beirne)
 - #6722 `3b20e23` Limit mempool by throwing away the cheapest txn and setting min relay fee to it (Matt Corallo)

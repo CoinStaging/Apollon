@@ -12,7 +12,7 @@ namespace Ui {
 }
 
 QT_BEGIN_NAMESPACE
-class QModelIndex;
+class QModelApollon;
 QT_END_NAMESPACE
 
 /** Dialog showing transaction details. */
@@ -21,7 +21,7 @@ class TransactionDescDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit TransactionDescDialog(const QModelIndex &xap, QWidget *parent = 0);
+    explicit TransactionDescDialog(const QModelApollon &xap, QWidget *parent = 0);
     ~TransactionDescDialog();
 
 private:

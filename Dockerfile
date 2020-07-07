@@ -1,4 +1,4 @@
-# This is a Dockerfile for indexd.
+# This is a Dockerfile for apollond.
 FROM debian:bionic
 
 # Install required system packages
@@ -39,7 +39,7 @@ RUN curl -L https://github.com/zeromq/libzmq/releases/download/v4.3.1/zeromq-4.3
     cd / && rm -rf /tmp/zeromq-4.3.1/
 
 # Create user to run daemon
-RUN useradd -m -U indexd
+RUN useradd -m -U apollond
 
 # Build Apollon
 COPY . /tmp/apollon/
@@ -66,10 +66,10 @@ RUN apt-get remove -y \
     make
 
 # Start Apollon Daemon
-USER indexd
+USER apollond
 
-RUN mkdir /home/indexd/.IndexChain
-VOLUME [ "/home/indexd/.IndexChain" ]
+RUN mkdir /home/apollond/.ApollonChain
+VOLUME [ "/home/apollond/.ApollonChain" ]
 
 # Main network ports
 EXPOSE 7082
@@ -83,4 +83,4 @@ EXPOSE 18888
 EXPOSE 18444
 EXPOSE 28888
 
-ENTRYPOINT [ "/usr/bin/indexd" ]
+ENTRYPOINT [ "/usr/bin/apollond" ]

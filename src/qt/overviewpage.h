@@ -39,7 +39,7 @@ namespace Ui {
 }
 
 QT_BEGIN_NAMESPACE
-class QModelIndex;
+class QModelApollon;
 QT_END_NAMESPACE
 
 /** Overview ("home") page widget */
@@ -64,7 +64,7 @@ public Q_SLOTS:
     //void reinitElysium();
 
 Q_SIGNALS:
-    void transactionClicked(const QModelIndex &apollon);
+    void transactionClicked(const QModelApollon &apollon);
     void enabledTorChanged();
     void elysiumTransactionClicked(const uint256& txid);
 
@@ -89,7 +89,7 @@ private:
 
 private Q_SLOTS:
     void updateDisplayUnit();
-    void handleTransactionClicked(const QModelIndex &apollon);
+    void handleTransactionClicked(const QModelApollon &apollon);
     void handleEnabledTorChanged();
     void updateAlerts(const QString &warnings);
     void updateWatchOnlyLabels(bool showWatchOnly);

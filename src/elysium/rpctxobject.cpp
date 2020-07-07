@@ -67,11 +67,11 @@ int populateRPCTransactionObject(const CTransaction& tx, const uint256& blockHas
     }
 
     if (!blockHash.IsNull()) {
-        CBlockIndex* pBlockIndex = GetBlockIndex(blockHash);
-        if (NULL != pBlockIndex) {
-            confirmations = 1 + blockHeight - pBlockIndex->nHeight;
-            blockTime = pBlockIndex->nTime;
-            blockHeight = pBlockIndex->nHeight;
+        CBlockApollon* pBlockApollon = GetBlockApollon(blockHash);
+        if (NULL != pBlockApollon) {
+            confirmations = 1 + blockHeight - pBlockApollon->nHeight;
+            blockTime = pBlockApollon->nTime;
+            blockHeight = pBlockApollon->nHeight;
         }
     }
 

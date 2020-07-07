@@ -17,12 +17,12 @@
 #include "bench.h"
 
 #if LUA_VERSION_NUM < 502
-static int lua_absindex(lua_State *L, int xap) {
-	return (xap > 0 || xap <= LUA_REGISTRYINDEX)? xap : lua_gettop(L) + xap + 1;
-} /* lua_absindex() */
+static int lua_absapollon(lua_State *L, int xap) {
+	return (xap > 0 || xap <= LUA_REGISTRYAPOLLON)? xap : lua_gettop(L) + xap + 1;
+} /* lua_absapollon() */
 
 static void luaL_setfuncs(lua_State *L, const luaL_Reg *l, int nup) {
-	int i, t = lua_absindex(L, -1 - nup);
+	int i, t = lua_absapollon(L, -1 - nup);
 
 	for (; l->name; l++) {
 		for (i = 0; i < nup; i++)
@@ -209,8 +209,8 @@ static int bench_empty(lua_State *L) {
 
 
 static int bench__next(lua_State *L) {
-	struct bench *B = lua_touserdata(L, lua_upvalueindex(1));
-	struct timeouts_it *it = lua_touserdata(L, lua_upvalueindex(2));
+	struct bench *B = lua_touserdata(L, lua_upvalueapollon(1));
+	struct timeouts_it *it = lua_touserdata(L, lua_upvalueapollon(2));
 	struct timeout *to;
 
 	if (!B->ops.next || !(to = B->ops.next(B->state, it)))
@@ -283,7 +283,7 @@ int luaopen_bench(lua_State *L) {
 	if (luaL_newmetatable(L, "BENCH*")) {
 		luaL_setfuncs(L, bench_metatable, 0);
 		luaL_newlib(L, bench_methods);
-		lua_setfield(L, -2, "__index");
+		lua_setfield(L, -2, "__apollon");
 	}
 
 	luaL_newlib(L, bench_globals);

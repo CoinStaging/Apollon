@@ -49,7 +49,7 @@ struct MintAdded
     PropertyId property;
     SigmaDenomination denomination;
     SigmaMintGroup group;
-    SigmaMintIndex apollon;
+    SigmaMintApollon apollon;
     SigmaPublicKey pubKey;
     int block;
 };
@@ -119,7 +119,7 @@ public:
             PropertyId p,
             SigmaDenomination d,
             SigmaMintGroup g,
-            SigmaMintIndex i,
+            SigmaMintApollon i,
             const SigmaPublicKey& k,
             int b) {
             mintAdded.push_back(MintAdded{
@@ -191,7 +191,7 @@ BOOST_AUTO_TEST_CASE(record_one_coin)
     BOOST_CHECK_EQUAL(0, db->GetNextSequence());
 
     BOOST_CHECK_EQUAL(
-        std::make_pair(SigmaMintGroup(0), SigmaMintIndex(0)),
+        std::make_pair(SigmaMintGroup(0), SigmaMintApollon(0)),
         db->RecordMint(propId, denom, mint, 100)
     );
 

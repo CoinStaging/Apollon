@@ -1,7 +1,7 @@
 #ifndef ELYSIUM_BITCOIN_H
 #define	ELYSIUM_BITCOIN_H
 
-class CBlockIndex;
+class CBlockApollon;
 class uint256;
 
 #include <stdint.h>
@@ -12,8 +12,8 @@ namespace elysium
 int GetHeight();
 /** Returns the timestamp of the latest block. */
 uint32_t GetLatestBlockTime();
-/** Returns the CBlockIndex for a given block hash, or NULL. */
-CBlockIndex* GetBlockIndex(const uint256& hash);
+/** Returns the CBlockApollon for a given block hash, or NULL. */
+CBlockApollon* GetBlockApollon(const uint256& hash);
 
 bool MainNet();
 bool TestNet();

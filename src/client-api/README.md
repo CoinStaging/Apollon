@@ -36,7 +36,7 @@ A function with one or more operations.
 | Collection     | Description      | Port   | Passphrase | Warmup Ok
 | :------------- | :--------------- | :----- | :--------- | :--------- |
 | [apiStatus](#apistatus)           | Initial status of core. | 👁  | – |   ✅   |
-| [backup](#backup)                 | Creates a zip file from wallet.dat and the `persistent/` folder, and stores in the filepath specified, as `index_backup-{TIMESTAMP}.zip`.  | 🔐 | – |  – |
+| [backup](#backup)                 | Creates a zip file from wallet.dat and the `persistent/` folder, and stores in the filepath specified, as `apollon_backup-{TIMESTAMP}.zip`.  | 🔐 | – |  – |
 | [balance](#balance)               | Coin balance of a number of different categories. | 🔐 | – | – |
 | [block](#block)                   | All transaction information from, and including, the blockHash parameter passed. | 🔐 | – | – |
 | [blockchain](#blockchain)         | Information related to chain sync status and tip. | 🔐 | – | – |
@@ -56,9 +56,9 @@ A function with one or more operations.
 | [txFee](#txfee)                   | Gets the transaction fee required for the size of the tx passed + fee per kb. | 🔐 | – | – |
 | [unlockWallet](#unlockwallet)     | Unlock core wallet, should it be encrypted. | 🔐 | – | – |
 | [updateLabels](#updatelabels)     | Update transaction labels stored in the persistent tx metadata file. | 🔐 | – | – |
-| [indexnodeControl](#indexnodecontrol)     | Start/stop Indexnode(s) by alias. | 🔐 | ✅ | – |
-| [indexnodeKey](#indexnodekey)             | Generate a new indexnode key. | 🔐 | - | – |
-| [indexnodeList](#indexnodelist)           | list information related to all Indexnodes. | 🔐 | – | – |
+| [apollonnodeControl](#apollonnodecontrol)     | Start/stop Apollonnode(s) by alias. | 🔐 | ✅ | – |
+| [apollonnodeKey](#apollonnodekey)             | Generate a new apollonnode key. | 🔐 | - | – |
+| [apollonnodeList](#apollonnodelist)           | list information related to all Apollonnodes. | 🔐 | – | – |
 
 ## data
 to be passed with `type` to be performed on `collection`.
@@ -102,14 +102,14 @@ OPTIONAL: not a necessary parameter to pass.
         connections: INT,
         devAuth: BOOL,
         synced: BOOL,
-        reindexing: BOOL,
+        reapolloning: BOOL,
         safeMode: BOOL,
         pid: INT,
         modules: {
             API: BOOL,
-            Indexnode: BOOL
+            Apollonnode: BOOL
         },
-        Indexnode: {
+        Apollonnode: {
             localCount: INT,
             totalCount: INT,
             enabledCount: INT
@@ -214,26 +214,26 @@ OPTIONAL: not a necessary parameter to pass.
                     {
                         STRING: (txid)
                             { 
-                            ["mined"|"send"|"receive"|"indexnode"|"spend"|"mint"]: (category) 
+                            ["mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"]: (category) 
                                  {
                                     address: STRING,
-                                    category: STRING("mined"|"send"|"receive"|"indexnode"|"spend"|"mint"),
+                                    category: STRING("mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"),
                                     amount: INT,
                                     fee: INT(sats),
-                                    label: STRING (VAR : address is part of indexd "account")
+                                    label: STRING (VAR : address is part of apollond "account")
                                     firstSeenAt: INT(secs), 
                                     blockHash: STRING,
                                     blockTime: INT(secs),                            
                                     blockHeight: INT,
                                     txid: STRING
                                 },
-                            ["mined"|"send"|"receive"|"indexnode"|"spend"|"mint"]: (category) 
+                            ["mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"]: (category) 
                                  {
                                     address: STRING,
-                                    category: STRING("mined"|"send"|"receive"|"indexnode"|"spend"|"mint"),
+                                    category: STRING("mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"),
                                     amount: INT,
                                     fee: INT(sats),
-                                    label: STRING (VAR : address is part of indexd "account")
+                                    label: STRING (VAR : address is part of apollond "account")
                                     firstSeenAt: INT(secs), 
                                     blockHash: STRING,
                                     blockTime: INT(secs),                            
@@ -244,26 +244,26 @@ OPTIONAL: not a necessary parameter to pass.
                             },
                         STRING: (txid)
                             { 
-                            ["mined"|"send"|"receive"|"indexnode"|"spend"|"mint"]: (category) 
+                            ["mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"]: (category) 
                                  {
                                     address: STRING,
-                                    category: STRING("mined"|"send"|"receive"|"indexnode"|"spend"|"mint"),
+                                    category: STRING("mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"),
                                     amount: INT,
                                     fee: INT(sats),
-                                    label: STRING (VAR : address is part of indexd "account")
+                                    label: STRING (VAR : address is part of apollond "account")
                                     firstSeenAt: INT(secs), 
                                     blockHash: STRING,
                                     blockTime: INT(secs),                            
                                     blockHeight: INT,
                                     txid: STRING                                    
                                 },
-                            ["mined"|"send"|"receive"|"indexnode"|"spend"|"mint"]: (category) 
+                            ["mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"]: (category) 
                                  {
                                     address: STRING,
-                                    category: STRING("mined"|"send"|"receive"|"indexnode"|"spend"|"mint"),
+                                    category: STRING("mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"),
                                     amount: INT,
                                     fee: INT(sats),
-                                    label: STRING (VAR : address is part of indexd "account")
+                                    label: STRING (VAR : address is part of apollond "account")
                                     firstSeenAt: INT(secs), 
                                     blockHash: STRING,
                                     blockTime: INT(secs),                            
@@ -277,7 +277,7 @@ OPTIONAL: not a necessary parameter to pass.
                 total: 
                     {
                         sent: INT, (VAR : category=="send"|"mint"|"spend")
-                        balance: INT, (VAR: category=="mined"|"indexnode"|"receive"|)
+                        balance: INT, (VAR: category=="mined"|"apollonnode"|"receive"|)
                     } 
             },
         [STRING | "MINT"]: (address)
@@ -286,26 +286,26 @@ OPTIONAL: not a necessary parameter to pass.
                     {
                         STRING: (txid)
                             { 
-                            ["mined"|"send"|"receive"|"indexnode"|"spend"|"mint"]: (category) 
+                            ["mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"]: (category) 
                                  {
                                     address: STRING,
-                                    category: STRING("mined"|"send"|"receive"|"indexnode"|"spend"|"mint"),
+                                    category: STRING("mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"),
                                     amount: INT,
                                     fee: INT(sats),
-                                    label: STRING (VAR : address is part of indexd "account")
+                                    label: STRING (VAR : address is part of apollond "account")
                                     firstSeenAt: INT(secs), 
                                     blockHash: STRING,
                                     blockTime: INT(secs),                            
                                     blockHeight: INT,
                                     txid: STRING 
                                 },
-                            ["mined"|"send"|"receive"|"indexnode"|"spend"|"mint"]: (category) 
+                            ["mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"]: (category) 
                                  {
                                     address: STRING,
-                                    category: STRING("mined"|"send"|"receive"|"indexnode"|"spend"|"mint"),
+                                    category: STRING("mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"),
                                     amount: INT,
                                     fee: INT(sats),
-                                    label: STRING (VAR : address is part of indexd "account")
+                                    label: STRING (VAR : address is part of apollond "account")
                                     firstSeenAt: INT(secs), 
                                     blockHash: STRING,
                                     blockTime: INT(secs),                            
@@ -316,26 +316,26 @@ OPTIONAL: not a necessary parameter to pass.
                             },
                         STRING: (txid)
                             { 
-                            ["mined"|"send"|"receive"|"indexnode"|"spend"|"mint"]: (category) 
+                            ["mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"]: (category) 
                                  {
                                     address: STRING,
-                                    category: STRING("mined"|"send"|"receive"|"indexnode"|"spend"|"mint"),
+                                    category: STRING("mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"),
                                     amount: INT,
                                     fee: INT(sats),
-                                    label: STRING (VAR : address is part of indexd "account")
+                                    label: STRING (VAR : address is part of apollond "account")
                                     firstSeenAt: INT(secs), 
                                     blockHash: STRING,
                                     blockTime: INT(secs),                            
                                     blockHeight: INT,
                                     txid: STRING 
                                 },
-                            ["mined"|"send"|"receive"|"indexnode"|"spend"|"mint"]: (category) 
+                            ["mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"]: (category) 
                                  {
                                     address: STRING,
-                                    category: STRING("mined"|"send"|"receive"|"indexnode"|"spend"|"mint"),
+                                    category: STRING("mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"),
                                     amount: INT,
                                     fee: INT(sats),
-                                    label: STRING (VAR : address is part of indexd "account")
+                                    label: STRING (VAR : address is part of apollond "account")
                                     firstSeenAt: INT(secs), 
                                     blockHash: STRING,
                                     blockTime: INT(secs),                            
@@ -349,7 +349,7 @@ OPTIONAL: not a necessary parameter to pass.
                 total: 
                     {
                         sent: INT, (VAR : category=="send"|"mint"|"spend")
-                        balance: INT, (VAR: category=="mined"|"indexnode"|"receive"|)
+                        balance: INT, (VAR: category=="mined"|"apollonnode"|"receive"|)
                     }  
             },
         ...
@@ -374,7 +374,7 @@ OPTIONAL: not a necessary parameter to pass.
         type: STRING,
         status: {
             isBlockchainSynced: BOOL,
-            isIndexnodeListSynced: BOOL,
+            isApollonnodeListSynced: BOOL,
             isWinnersListSynced: BOOL,
             isSynced: BOOL,
             isFailed: BOOL
@@ -913,26 +913,26 @@ OPTIONAL: not a necessary parameter to pass.
                     {
                         STRING: (txid)
                             { 
-                            ["mined"|"send"|"receive"|"indexnode"|"spend"|"mint"]: (category) 
+                            ["mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"]: (category) 
                                  {
                                     address: STRING,
-                                    category: STRING("mined"|"send"|"receive"|"indexnode"|"spend"|"mint"),
+                                    category: STRING("mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"),
                                     amount: INT,
                                     fee: INT(sats),
-                                    label: STRING (VAR : address is part of indexd "account")
+                                    label: STRING (VAR : address is part of apollond "account")
                                     firstSeenAt: INT(secs), 
                                     blockHash: STRING,
                                     blockTime: INT(secs),                            
                                     blockHeight: INT,
                                     txid: STRING
                                 },
-                            ["mined"|"send"|"receive"|"indexnode"|"spend"|"mint"]: (category) 
+                            ["mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"]: (category) 
                                  {
                                     address: STRING,
-                                    category: STRING("mined"|"send"|"receive"|"indexnode"|"spend"|"mint"),
+                                    category: STRING("mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"),
                                     amount: INT,
                                     fee: INT(sats),
-                                    label: STRING (VAR : address is part of indexd "account")
+                                    label: STRING (VAR : address is part of apollond "account")
                                     firstSeenAt: INT(secs), 
                                     blockHash: STRING,
                                     blockTime: INT(secs),                            
@@ -943,26 +943,26 @@ OPTIONAL: not a necessary parameter to pass.
                             },
                         STRING: (txid)
                             { 
-                            ["mined"|"send"|"receive"|"indexnode"|"spend"|"mint"]: (category) 
+                            ["mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"]: (category) 
                                  {
                                     address: STRING,
-                                    category: STRING("mined"|"send"|"receive"|"indexnode"|"spend"|"mint"),
+                                    category: STRING("mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"),
                                     amount: INT,
                                     fee: INT(sats),
-                                    label: STRING (VAR : address is part of indexd "account")
+                                    label: STRING (VAR : address is part of apollond "account")
                                     firstSeenAt: INT(secs), 
                                     blockHash: STRING,
                                     blockTime: INT(secs),                            
                                     blockHeight: INT,
                                     txid: STRING                                    
                                 },
-                            ["mined"|"send"|"receive"|"indexnode"|"spend"|"mint"]: (category) 
+                            ["mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"]: (category) 
                                  {
                                     address: STRING,
-                                    category: STRING("mined"|"send"|"receive"|"indexnode"|"spend"|"mint"),
+                                    category: STRING("mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"),
                                     amount: INT,
                                     fee: INT(sats),
-                                    label: STRING (VAR : address is part of indexd "account")
+                                    label: STRING (VAR : address is part of apollond "account")
                                     firstSeenAt: INT(secs), 
                                     blockHash: STRING,
                                     blockTime: INT(secs),                            
@@ -976,7 +976,7 @@ OPTIONAL: not a necessary parameter to pass.
                 total: 
                     {
                         sent: INT, (VAR : category=="send"|"mint"|"spend")
-                        balance: INT, (VAR: category=="mined"|"indexnode"|"receive"|)
+                        balance: INT, (VAR: category=="mined"|"apollonnode"|"receive"|)
                     } 
             },
         [STRING | "MINT"]: (address)
@@ -985,26 +985,26 @@ OPTIONAL: not a necessary parameter to pass.
                     {
                         STRING: (txid)
                             { 
-                            ["mined"|"send"|"receive"|"indexnode"|"spend"|"mint"]: (category) 
+                            ["mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"]: (category) 
                                  {
                                     address: STRING,
-                                    category: STRING("mined"|"send"|"receive"|"indexnode"|"spend"|"mint"),
+                                    category: STRING("mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"),
                                     amount: INT,
                                     fee: INT(sats),
-                                    label: STRING (VAR : address is part of indexd "account")
+                                    label: STRING (VAR : address is part of apollond "account")
                                     firstSeenAt: INT(secs), 
                                     blockHash: STRING,
                                     blockTime: INT(secs),                            
                                     blockHeight: INT,
                                     txid: STRING 
                                 },
-                            ["mined"|"send"|"receive"|"indexnode"|"spend"|"mint"]: (category) 
+                            ["mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"]: (category) 
                                  {
                                     address: STRING,
-                                    category: STRING("mined"|"send"|"receive"|"indexnode"|"spend"|"mint"),
+                                    category: STRING("mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"),
                                     amount: INT,
                                     fee: INT(sats),
-                                    label: STRING (VAR : address is part of indexd "account")
+                                    label: STRING (VAR : address is part of apollond "account")
                                     firstSeenAt: INT(secs), 
                                     blockHash: STRING,
                                     blockTime: INT(secs),                            
@@ -1015,26 +1015,26 @@ OPTIONAL: not a necessary parameter to pass.
                             },
                         STRING: (txid)
                             { 
-                            ["mined"|"send"|"receive"|"indexnode"|"spend"|"mint"]: (category) 
+                            ["mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"]: (category) 
                                  {
                                     address: STRING,
-                                    category: STRING("mined"|"send"|"receive"|"indexnode"|"spend"|"mint"),
+                                    category: STRING("mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"),
                                     amount: INT,
                                     fee: INT(sats),
-                                    label: STRING (VAR : address is part of indexd "account")
+                                    label: STRING (VAR : address is part of apollond "account")
                                     firstSeenAt: INT(secs), 
                                     blockHash: STRING,
                                     blockTime: INT(secs),                            
                                     blockHeight: INT,
                                     txid: STRING 
                                 },
-                            ["mined"|"send"|"receive"|"indexnode"|"spend"|"mint"]: (category) 
+                            ["mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"]: (category) 
                                  {
                                     address: STRING,
-                                    category: STRING("mined"|"send"|"receive"|"indexnode"|"spend"|"mint"),
+                                    category: STRING("mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"),
                                     amount: INT,
                                     fee: INT(sats),
-                                    label: STRING (VAR : address is part of indexd "account")
+                                    label: STRING (VAR : address is part of apollond "account")
                                     firstSeenAt: INT(secs), 
                                     blockHash: STRING,
                                     blockTime: INT(secs),                            
@@ -1048,7 +1048,7 @@ OPTIONAL: not a necessary parameter to pass.
                 total: 
                     {
                         sent: INT, (VAR : category=="send"|"mint"|"spend")
-                        balance: INT, (VAR: category=="mined"|"indexnode"|"receive"|)
+                        balance: INT, (VAR: category=="mined"|"apollonnode"|"receive"|)
                     }  
             },
         ...
@@ -1140,7 +1140,7 @@ OPTIONAL: not a necessary parameter to pass.
 }
 ```
 
-### `indexnodeControl`
+### `apollonnodeControl`
 `update`:
 ```
     data: {
@@ -1177,7 +1177,7 @@ OPTIONAL: not a necessary parameter to pass.
 }
 ```
 
-### `indexnodeKey`
+### `apollonnodeKey`
 `create`:
 ```
     data: {
@@ -1195,7 +1195,7 @@ OPTIONAL: not a necessary parameter to pass.
 }
 ```
 
-### `indexnodeList`
+### `apollonnodeList`
 `initial`:
 ```
     data: {
@@ -1205,7 +1205,7 @@ OPTIONAL: not a necessary parameter to pass.
 ```
 {
 
-    data: (VAR: Indexnodes not synced) {
+    data: (VAR: Apollonnodes not synced) {
         nodes: {
             STRING: (txid) {
                 label: STRING,
@@ -1239,7 +1239,7 @@ OPTIONAL: not a necessary parameter to pass.
         total: INT
     },
 
-    data: (VAR: Indexnodes synced) {
+    data: (VAR: Apollonnodes synced) {
         STRING: { (payeeAddress)
             rank: INT,
             outpoint: {
@@ -1322,9 +1322,9 @@ OPTIONAL: not a necessary parameter to pass.
 The publisher module is comprised of various _topics_ that are triggered under specific conditions, called _events_. Both topics and events have a 1 to N relationship with each other; ie. 1 event may trigger 1 to N topics, and 1 topic may be triggered by 1 to N events.
 
 
-|               | _Event_       | NotifyAPIStatus  | SyncTransaction | NumConnectionsChanged | UpdatedBlockTip | UpdatedMintStatus  | UpdatedSettings | UpdatedIndexnode | UpdateSyncStatus |
+|               | _Event_       | NotifyAPIStatus  | SyncTransaction | NumConnectionsChanged | UpdatedBlockTip | UpdatedMintStatus  | UpdatedSettings | UpdatedApollonnode | UpdateSyncStatus |
 | ------------- | ------------- | ---------------  | --------------- | --------------------- | --------------- | -----------------  | --------------- | ------------ | ---------------- |
-| **_Topic_**   | Description   | API status notification | new transactions | indexd peer list updated | blockchain head updated | mint transaction added/up dated | settings changed/updated | Indexnode update | Blockchain sync update
+| **_Topic_**   | Description   | API status notification | new transactions | apollond peer list updated | blockchain head updated | mint transaction added/up dated | settings changed/updated | Apollonnode update | Blockchain sync update
 **address** (triggers [block](#block))                 | block tx data.                            | -  | -  | -  | ✅ | -  | -  | -  | -  |
 **apiStatus** (triggers [apiStatus](#apistatus))       | Status of API                             | ✅ | -  | -  | -  | -  | -  | -  | -  |
 **balance** (triggers [balance](#balance))             | Balance info                              | -  | -  | -  | ✅ | -  | -  | -  | -  |
@@ -1332,7 +1332,7 @@ The publisher module is comprised of various _topics_ that are triggered under s
 **mintStatus** (triggers [mintStatus](#mintstatus))    | status of new mint                        | -  | -  | -  | -  | ✅ | -  | -  | -  |
 **settings** (triggers [readSettings](#readsettings))  | settings changed                          | -  | -  | -  | -  | -  | ✅ | -  | -  |
 **transaction** (triggers [transaction](#transaction)) | new transaction data                      | -  | ✅ | -  | -  | -  | -  | -  | -  |
-**indexnode** (triggers [indexnodeUpdate](#indexnodeupdate))       | update to indexnode                           | -  | -  | -  | -  | -  | -  | ✅ | -  |
+**apollonnode** (triggers [apollonnodeUpdate](#apollonnodeupdate))       | update to apollonnode                           | -  | -  | -  | -  | -  | -  | ✅ | -  |
 
 ## Methods
 
@@ -1401,26 +1401,26 @@ Methods specific to the publisher.
                     {
                         STRING: (txid)
                             { 
-                            ["mined"|"send"|"receive"|"indexnode"|"spend"|"mint"]: (category) 
+                            ["mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"]: (category) 
                                  {
                                     address: STRING,
-                                    category: STRING("mined"|"send"|"receive"|"indexnode"|"spend"|"mint"),
+                                    category: STRING("mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"),
                                     amount: INT,
                                     fee: INT(sats),
-                                    label: STRING (VAR : address is part of indexd "account")
+                                    label: STRING (VAR : address is part of apollond "account")
                                     firstSeenAt: INT(secs), 
                                     blockHash: STRING,
                                     blockTime: INT(secs),                            
                                     blockHeight: INT,
                                     txid: STRING
                                 },
-                            ["mined"|"send"|"receive"|"indexnode"|"spend"|"mint"]: (category) 
+                            ["mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"]: (category) 
                                  {
                                     address: STRING,
-                                    category: STRING("mined"|"send"|"receive"|"indexnode"|"spend"|"mint"),
+                                    category: STRING("mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"),
                                     amount: INT,
                                     fee: INT(sats),
-                                    label: STRING (VAR : address is part of indexd "account")
+                                    label: STRING (VAR : address is part of apollond "account")
                                     firstSeenAt: INT(secs), 
                                     blockHash: STRING,
                                     blockTime: INT(secs),                            
@@ -1431,26 +1431,26 @@ Methods specific to the publisher.
                             },
                         STRING: (txid)
                             { 
-                            ["mined"|"send"|"receive"|"indexnode"|"spend"|"mint"]: (category) 
+                            ["mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"]: (category) 
                                  {
                                     address: STRING,
-                                    category: STRING("mined"|"send"|"receive"|"indexnode"|"spend"|"mint"),
+                                    category: STRING("mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"),
                                     amount: INT,
                                     fee: INT(sats),
-                                    label: STRING (VAR : address is part of indexd "account")
+                                    label: STRING (VAR : address is part of apollond "account")
                                     firstSeenAt: INT(secs), 
                                     blockHash: STRING,
                                     blockTime: INT(secs),                            
                                     blockHeight: INT,
                                     txid: STRING                                    
                                 },
-                            ["mined"|"send"|"receive"|"indexnode"|"spend"|"mint"]: (category) 
+                            ["mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"]: (category) 
                                  {
                                     address: STRING,
-                                    category: STRING("mined"|"send"|"receive"|"indexnode"|"spend"|"mint"),
+                                    category: STRING("mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"),
                                     amount: INT,
                                     fee: INT(sats),
-                                    label: STRING (VAR : address is part of indexd "account")
+                                    label: STRING (VAR : address is part of apollond "account")
                                     firstSeenAt: INT(secs), 
                                     blockHash: STRING,
                                     blockTime: INT(secs),                            
@@ -1464,7 +1464,7 @@ Methods specific to the publisher.
                 total: 
                     {
                         sent: INT, (VAR : category=="send"|"mint"|"spend")
-                        balance: INT, (VAR: category=="mined"|"indexnode"|"receive"|)
+                        balance: INT, (VAR: category=="mined"|"apollonnode"|"receive"|)
                     } 
             },
         [STRING | "MINT"]: (address)
@@ -1473,26 +1473,26 @@ Methods specific to the publisher.
                     {
                         STRING: (txid)
                             { 
-                            ["mined"|"send"|"receive"|"indexnode"|"spend"|"mint"]: (category) 
+                            ["mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"]: (category) 
                                  {
                                     address: STRING,
-                                    category: STRING("mined"|"send"|"receive"|"indexnode"|"spend"|"mint"),
+                                    category: STRING("mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"),
                                     amount: INT,
                                     fee: INT(sats),
-                                    label: STRING (VAR : address is part of indexd "account")
+                                    label: STRING (VAR : address is part of apollond "account")
                                     firstSeenAt: INT(secs), 
                                     blockHash: STRING,
                                     blockTime: INT(secs),                            
                                     blockHeight: INT,
                                     txid: STRING 
                                 },
-                            ["mined"|"send"|"receive"|"indexnode"|"spend"|"mint"]: (category) 
+                            ["mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"]: (category) 
                                  {
                                     address: STRING,
-                                    category: STRING("mined"|"send"|"receive"|"indexnode"|"spend"|"mint"),
+                                    category: STRING("mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"),
                                     amount: INT,
                                     fee: INT(sats),
-                                    label: STRING (VAR : address is part of indexd "account")
+                                    label: STRING (VAR : address is part of apollond "account")
                                     firstSeenAt: INT(secs), 
                                     blockHash: STRING,
                                     blockTime: INT(secs),                            
@@ -1503,26 +1503,26 @@ Methods specific to the publisher.
                             },
                         STRING: (txid)
                             { 
-                            ["mined"|"send"|"receive"|"indexnode"|"spend"|"mint"]: (category) 
+                            ["mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"]: (category) 
                                  {
                                     address: STRING,
-                                    category: STRING("mined"|"send"|"receive"|"indexnode"|"spend"|"mint"),
+                                    category: STRING("mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"),
                                     amount: INT,
                                     fee: INT(sats),
-                                    label: STRING (VAR : address is part of indexd "account")
+                                    label: STRING (VAR : address is part of apollond "account")
                                     firstSeenAt: INT(secs), 
                                     blockHash: STRING,
                                     blockTime: INT(secs),                            
                                     blockHeight: INT,
                                     txid: STRING 
                                 },
-                            ["mined"|"send"|"receive"|"indexnode"|"spend"|"mint"]: (category) 
+                            ["mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"]: (category) 
                                  {
                                     address: STRING,
-                                    category: STRING("mined"|"send"|"receive"|"indexnode"|"spend"|"mint"),
+                                    category: STRING("mined"|"send"|"receive"|"apollonnode"|"spend"|"mint"),
                                     amount: INT,
                                     fee: INT(sats),
-                                    label: STRING (VAR : address is part of indexd "account")
+                                    label: STRING (VAR : address is part of apollond "account")
                                     firstSeenAt: INT(secs), 
                                     blockHash: STRING,
                                     blockTime: INT(secs),                            
@@ -1536,7 +1536,7 @@ Methods specific to the publisher.
                 total: 
                     {
                         sent: INT, (VAR : category=="send"|"mint"|"spend")
-                        balance: INT, (VAR: category=="mined"|"indexnode"|"receive"|)
+                        balance: INT, (VAR: category=="mined"|"apollonnode"|"receive"|)
                     }  
             },
         ...
@@ -1547,7 +1547,7 @@ Methods specific to the publisher.
 }
 ```
 
-### `indexnodeUpdate` 
+### `apollonnodeUpdate` 
 *Returns:*
 ```
 {

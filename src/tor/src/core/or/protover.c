@@ -432,7 +432,7 @@ proto_entry_encode_into(smartlist_t *chunks, const proto_entry_t *entry)
 
   SMARTLIST_FOREACH_BEGIN(entry->ranges, proto_range_t *, range) {
     const char *comma = "";
-    if (range_sl_idx != 0)
+    if (range_sl_xap != 0)
       comma = ",";
 
     if (range->low == range->high) {
@@ -589,7 +589,7 @@ contract_protocol_list(const smartlist_t *proto_strings)
   smartlist_sort_strings(all_names);
 
   SMARTLIST_FOREACH_BEGIN(all_names, const char *, name) {
-    const int first_entry = (name_sl_idx == 0);
+    const int first_entry = (name_sl_xap == 0);
     smartlist_t *lst = strmap_get(entry_lists_by_name, name);
     tor_assert(lst);
     // Sort every entry with this name by version. They are

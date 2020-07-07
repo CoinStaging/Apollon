@@ -142,7 +142,7 @@
         <translation>Malfermi &amp;URI-on...</translation>
     </message>
     <message>
-        <source>Reindexing blocks on disk...</source>
+        <source>Reapolloning blocks on disk...</source>
         <translation>Reindeksado de blokoj sur disko...</translation>
     </message>
     <message>

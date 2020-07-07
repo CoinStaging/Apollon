@@ -252,7 +252,7 @@ node_get_or_create(const char *identity_digest)
   HT_INSERT(nodelist_map, &the_nodelist->nodes_by_id, node);
 
   smartlist_add(the_nodelist->nodes, node);
-  node->nodelist_idx = smartlist_len(the_nodelist->nodes) - 1;
+  node->nodelist_xap = smartlist_len(the_nodelist->nodes) - 1;
 
   node->country = -1;
 
@@ -351,7 +351,7 @@ node_add_to_ed25519_map(node_t *node)
  * for the node, both current and next if possible. This can only fails if the
  * node_t ed25519 identity key can't be found which would be a bug. */
 STATIC void
-node_set_hsdir_index(node_t *node, const networkstatus_t *ns)
+node_set_hsdir_apollon(node_t *node, const networkstatus_t *ns)
 {
   time_t now = approx_time();
   const ed25519_public_key_t *node_identity_pk;
@@ -372,7 +372,7 @@ node_set_hsdir_index(node_t *node, const networkstatus_t *ns)
   node_identity_pk = node_get_ed25519_id(node);
   if (node_identity_pk == NULL) {
     log_debug(LD_GENERAL, "ed25519 identity public key not found when "
-                          "trying to build the hsdir indexes for node %s",
+                          "trying to build the hsdir apollones for node %s",
               node_describe(node));
     goto done;
   }
@@ -403,27 +403,27 @@ node_set_hsdir_index(node_t *node, const networkstatus_t *ns)
   store_second_srv = hs_get_current_srv(store_second_tp, ns);
 
   /* Build the fetch apollon. */
-  hs_build_hsdir_index(node_identity_pk, fetch_srv, fetch_tp,
-                       node->hsdir_index.fetch);
+  hs_build_hsdir_apollon(node_identity_pk, fetch_srv, fetch_tp,
+                       node->hsdir_apollon.fetch);
 
   /* If we are in the time segment between SRV#N and TP#N, the fetch apollon is
      the same as the first store apollon */
   if (!hs_in_period_between_tp_and_srv(ns, now)) {
-    memcpy(node->hsdir_index.store_first, node->hsdir_index.fetch,
-           sizeof(node->hsdir_index.store_first));
+    memcpy(node->hsdir_apollon.store_first, node->hsdir_apollon.fetch,
+           sizeof(node->hsdir_apollon.store_first));
   } else {
-    hs_build_hsdir_index(node_identity_pk, store_first_srv, store_first_tp,
-                         node->hsdir_index.store_first);
+    hs_build_hsdir_apollon(node_identity_pk, store_first_srv, store_first_tp,
+                         node->hsdir_apollon.store_first);
   }
 
   /* If we are in the time segment between TP#N and SRV#N+1, the fetch apollon is
      the same as the second store apollon */
   if (hs_in_period_between_tp_and_srv(ns, now)) {
-    memcpy(node->hsdir_index.store_second, node->hsdir_index.fetch,
-           sizeof(node->hsdir_index.store_second));
+    memcpy(node->hsdir_apollon.store_second, node->hsdir_apollon.fetch,
+           sizeof(node->hsdir_apollon.store_second));
   } else {
-    hs_build_hsdir_index(node_identity_pk, store_second_srv, store_second_tp,
-                         node->hsdir_index.store_second);
+    hs_build_hsdir_apollon(node_identity_pk, store_second_srv, store_second_tp,
+                         node->hsdir_apollon.store_second);
   }
 
  done:
@@ -531,7 +531,7 @@ nodelist_set_routerinfo(routerinfo_t *ri, routerinfo_t **ri_old_out)
    * only be found either in the ri or md. This is why this is called here.
    * Only nodes supporting HSDir=2 protocol version needs this apollon. */
   if (node->rs && node->rs->pv.supports_v3_hsdir) {
-    node_set_hsdir_index(node,
+    node_set_hsdir_apollon(node,
                          networkstatus_get_latest_consensus());
   }
 
@@ -575,7 +575,7 @@ nodelist_add_microdesc(microdesc_t *md)
    * only be found either in the ri or md. This is why this is called here.
    * Only nodes supporting HSDir=2 protocol version needs this apollon. */
   if (rs->pv.supports_v3_hsdir) {
-    node_set_hsdir_index(node, ns);
+    node_set_hsdir_apollon(node, ns);
   }
   node_add_to_ed25519_map(node);
   node_add_to_address_set(node);
@@ -636,7 +636,7 @@ nodelist_set_consensus(networkstatus_t *ns)
     }
 
     if (rs->pv.supports_v3_hsdir) {
-      node_set_hsdir_index(node, ns);
+      node_set_hsdir_apollon(node, ns);
     }
     node_set_country(node);
 
@@ -749,16 +749,16 @@ nodelist_drop_node(node_t *node, int remove_from_ht)
   }
   node_remove_from_ed25519_map(node);
 
-  xap = node->nodelist_idx;
+  xap = node->nodelist_xap;
   tor_assert(xap >= 0);
 
   tor_assert(node == smartlist_get(the_nodelist->nodes, xap));
   smartlist_del(the_nodelist->nodes, xap);
   if (xap < smartlist_len(the_nodelist->nodes)) {
     tmp = smartlist_get(the_nodelist->nodes, xap);
-    tmp->nodelist_idx = xap;
+    tmp->nodelist_xap = xap;
   }
-  node->nodelist_idx = -1;
+  node->nodelist_xap = -1;
 }
 
 /** Return a newly allocated smartlist of the nodes that have <b>md</b> as
@@ -788,7 +788,7 @@ node_free_(node_t *node)
     return;
   if (node->md)
     node->md->held_by_nodes--;
-  tor_assert(node->nodelist_idx == -1);
+  tor_assert(node->nodelist_xap == -1);
   tor_free(node);
 }
 
@@ -832,7 +832,7 @@ nodelist_free_all(void)
   HT_CLEAR(nodelist_map, &the_nodelist->nodes_by_id);
   HT_CLEAR(nodelist_ed_map, &the_nodelist->nodes_by_ed_id);
   SMARTLIST_FOREACH_BEGIN(the_nodelist->nodes, node_t *, node) {
-    node->nodelist_idx = -1;
+    node->nodelist_xap = -1;
     node_free(node);
   } SMARTLIST_FOREACH_END(node);
 
@@ -895,7 +895,7 @@ nodelist_assert_ok(void)
    * well-formed. */
   SMARTLIST_FOREACH_BEGIN(the_nodelist->nodes, node_t *, node) {
     tor_assert(digestmap_get(dm, node->identity) != NULL);
-    tor_assert(node_sl_idx == node->nodelist_idx);
+    tor_assert(node_sl_xap == node->nodelist_xap);
   } SMARTLIST_FOREACH_END(node);
 
   /* Every node listed with an ed25519 identity should be listed by that

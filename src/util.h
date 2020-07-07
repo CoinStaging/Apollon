@@ -51,7 +51,7 @@ public:
     /** Translate a message to the native language of the user. */
     boost::signals2::signal<std::string (const char* psz)> Translate;
 };
-extern bool fIndexNode;
+extern bool fApollonNode;
 extern bool fLiteMode;
 extern int nWalletBackups;
 
@@ -157,7 +157,7 @@ fs::path CreatePaymentRequestFile(bool fNetSpecific=true);
 fs::path CreateZerocoinFile(bool fNetSpecific=true);
 fs::path CreateSettingsFile(bool fNetSpecific=true);
 fs::path CreateTxTimestampFile(bool fNetSpecific=true);
-fs::path GetIndexnodeConfigFile();
+fs::path GetApollonnodeConfigFile();
 fs::path GetPidFile();
 void CreatePidFile(const fs::path &path, pid_t pid);
 

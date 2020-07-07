@@ -152,8 +152,8 @@ void unescape_unicode_test()
 
 int main (int argc, char *argv[])
 {
-    for (unsigned int fidx = 0; fidx < ARRAY_SIZE(filenames); fidx++) {
-        runtest_file(filenames[fidx]);
+    for (unsigned int fxap = 0; fxap < ARRAY_SIZE(filenames); fxap++) {
+        runtest_file(filenames[fxap]);
     }
 
     unescape_unicode_test();

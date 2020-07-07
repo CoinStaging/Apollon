@@ -87,14 +87,14 @@ void SignVerifyMessageDialog::setAddress_VM(const QString &address)
 
 void SignVerifyMessageDialog::showTab_SM(bool fShow)
 {
-    ui->tabWidget->setCurrentIndex(0);
+    ui->tabWidget->setCurrentApollon(0);
     if (fShow)
         this->show();
 }
 
 void SignVerifyMessageDialog::showTab_VM(bool fShow)
 {
-    ui->tabWidget->setCurrentIndex(1);
+    ui->tabWidget->setCurrentApollon(1);
     if (fShow)
         this->show();
 }
@@ -270,7 +270,7 @@ bool SignVerifyMessageDialog::eventFilter(QObject *object, QEvent *event)
 {
     if (event->type() == QEvent::MouseButtonPress || event->type() == QEvent::FocusIn)
     {
-        if (ui->tabWidget->currentIndex() == 0)
+        if (ui->tabWidget->currentApollon() == 0)
         {
             /* Clear status message on focus change */
             ui->statusLabel_SM->clear();
@@ -282,7 +282,7 @@ bool SignVerifyMessageDialog::eventFilter(QObject *object, QEvent *event)
                 return true;
             }
         }
-        else if (ui->tabWidget->currentIndex() == 1)
+        else if (ui->tabWidget->currentApollon() == 1)
         {
             /* Clear status message on focus change */
             ui->statusLabel_VM->clear();

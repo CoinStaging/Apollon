@@ -28,19 +28,19 @@ class RemintSigmaTest(BitcoinTestFramework):
         self.nodes[0].generate(101)
         self.sync_all()
 
-        index_denoms = [1, 10, 25, 50, 100]
-        for denom in index_denoms:
+        apollon_denoms = [1, 10, 25, 50, 100]
+        for denom in apollon_denoms:
             self.nodes[0].mintzerocoin(denom)
             self.nodes[0].mintzerocoin(denom)
 
         self.nodes[0].generate(300)
 
-        index_mint = self.nodes[0].listunspentmintzerocoins()
+        apollon_mint = self.nodes[0].listunspentmintzerocoins()
 
-        assert len(index_mint) == 10, 'Should be 10 apollon mints after apollon mint, but was: {}' \
-                .format(len(index_mint))
+        assert len(apollon_mint) == 10, 'Should be 10 apollon mints after apollon mint, but was: {}' \
+                .format(len(apollon_mint))
         
-        for denom in index_denoms:
+        for denom in apollon_denoms:
             try:
                 self.nodes[0].remintzerocointosigma(denom)
                 self.nodes[0].remintzerocointosigma(denom)
@@ -63,9 +63,9 @@ class RemintSigmaTest(BitcoinTestFramework):
                             '\n Actual: {}, \n expected {}'.format(sigma_mint, expected_mints)
 
         # fee size to extract when spend all coins
-        total_amount_to_spend = -1* len(index_denoms)*0.05*2
+        total_amount_to_spend = -1* len(apollon_denoms)*0.05*2
         
-        for denom in index_denoms:
+        for denom in apollon_denoms:
             total_amount_to_spend +=denom*2
 
         val = {'THAYjKnnCsN5xspnEcb1Ztvw4mSPBuwxzU': total_amount_to_spend}

@@ -23,7 +23,7 @@
 #include "spork.h"
 #ifdef ENABLE_WALLET
 #include "wallet/wallet.h"
-#include "indexnode-sync.h"
+#include "apollonnode-sync.h"
 #endif
 #include "utilstrencodings.h"
 #include "validationinterface.h"
@@ -350,7 +350,7 @@ UniValue getstakinginfo(const UniValue& params, bool fHelp)
     obj.push_back(Pair("currentblocktx", (uint64_t)nLastBlockTx));
     obj.push_back(Pair("pooledtx", (uint64_t)mempool.size()));
 
-    obj.push_back(Pair("difficulty", GetDifficulty(GetLastBlockIndex(chainActive.Tip(), true))));
+    obj.push_back(Pair("difficulty", GetDifficulty(GetLastBlockApollon(chainActive.Tip(), true))));
     obj.push_back(Pair("search-interval", (int)nLastCoinStakeSearchInterval));
 
     obj.push_back(Pair("weight", (uint64_t)nWeight));
@@ -497,13 +497,13 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp)
             "  \"curtime\" : ttt,                  (numeric) current timestamp in seconds since epoch (Jan 1 1970 GMT)\n"
             "  \"bits\" : \"xxxxxxxx\",              (string) compressed target of next block\n"
             "  \"height\" : n                      (numeric) The height of the next block\n"
-            "  \"indexnode\" : {                  (json object) required indexnode payee that must be included in the next block\n"
+            "  \"apollonnode\" : {                  (json object) required apollonnode payee that must be included in the next block\n"
             "      \"payee\" : \"xxxx\",             (string) payee address\n"
             "      \"script\" : \"xxxx\",            (string) payee scriptPubKey\n"
             "      \"amount\": n                   (numeric) required amount to pay\n"
             "  },\n"
-            "  \"indexnode_payments_started\" :  true|false, (boolean) true, if indexnode payments started\n"
-            "  \"indexnode_payments_enforced\" : true|false, (boolean) true, if indexnode payments are enforced\n"
+            "  \"apollonnode_payments_started\" :  true|false, (boolean) true, if apollonnode payments started\n"
+            "  \"apollonnode_payments_enforced\" : true|false, (boolean) true, if apollonnode payments are enforced\n"
             "}\n"
 
             "\nExamples:\n"
@@ -542,22 +542,22 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp)
                 throw JSONRPCError(RPC_DESERIALIZATION_ERROR, "Block decode failed");
 
             uint256 hash = block.GetHash();
-            BlockMap::iterator mi = mapBlockIndex.find(hash);
-            if (mi != mapBlockIndex.end()) {
-                CBlockIndex *pindex = mi->second;
-                if (pindex->IsValid(BLOCK_VALID_SCRIPTS))
+            BlockMap::iterator mi = mapBlockApollon.find(hash);
+            if (mi != mapBlockApollon.end()) {
+                CBlockApollon *papollon = mi->second;
+                if (papollon->IsValid(BLOCK_VALID_SCRIPTS))
                     return "duplicate";
-                if (pindex->nStatus & BLOCK_FAILED_MASK)
+                if (papollon->nStatus & BLOCK_FAILED_MASK)
                     return "duplicate-invalid";
                 return "duplicate-inconclusive";
             }
 
-            CBlockIndex* const pindexPrev = chainActive.Tip();
+            CBlockApollon* const papollonPrev = chainActive.Tip();
             // TestBlockValidity only supports blocks built on the current Tip
-            if (block.hashPrevBlock != pindexPrev->GetBlockHash())
+            if (block.hashPrevBlock != papollonPrev->GetBlockHash())
                 return "inconclusive-not-best-prevblk";
             CValidationState state;
-            TestBlockValidity(state, Params(), block, pindexPrev, false, true);
+            TestBlockValidity(state, Params(), block, papollonPrev, false, true);
             return BIP22ValidationResult(state);
         }
 
@@ -584,7 +584,7 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp)
     if (IsInitialBlockDownload())
         throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "Apollon is downloading blocks...");
 
-    if (!indexnodeSync.IsSynced() && chainActive.Tip()->nHeight > 500)
+    if (!apollonnodeSync.IsSynced() && chainActive.Tip()->nHeight > 500)
         throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "Apollon Core is syncing with network...");
 
     static unsigned int nTransactionsUpdatedLast;
@@ -635,16 +635,16 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp)
     }
 
     // Update block
-    static CBlockIndex* pindexPrev;
+    static CBlockApollon* papollonPrev;
     static int64_t nStart;
     static CBlockTemplate* pblocktemplate;
-    if (pindexPrev != chainActive.Tip() || (mempool.GetTransactionsUpdated() != nTransactionsUpdatedLast && GetTime() - nStart > 5))
+    if (papollonPrev != chainActive.Tip() || (mempool.GetTransactionsUpdated() != nTransactionsUpdatedLast && GetTime() - nStart > 5))
     {
-        // Clear pindexPrev so future calls make a new block, despite any failures from here on
-        pindexPrev = NULL;
-        // Store the pindexBest used before CreateNewBlock, to avoid races
+        // Clear papollonPrev so future calls make a new block, despite any failures from here on
+        papollonPrev = NULL;
+        // Store the papollonBest used before CreateNewBlock, to avoid races
         nTransactionsUpdatedLast = mempool.GetTransactionsUpdated();
-        CBlockIndex* pindexPrevNew = chainActive.Tip();
+        CBlockApollon* papollonPrevNew = chainActive.Tip();
         nStart = GetTime();
         // Create new block
         if(pblocktemplate)
@@ -658,28 +658,28 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp)
             throw JSONRPCError(RPC_OUT_OF_MEMORY, "Out of memory");
 
         // Need to update only after we know CreateNewBlock succeeded
-        pindexPrev = pindexPrevNew;
+        papollonPrev = papollonPrevNew;
     }
     CBlock* pblock = &pblocktemplate->block; // pointer for convenience
     const Consensus::Params& consensusParams = Params().GetConsensus();
 
     // Update nTime
-    UpdateTime(pblock, consensusParams, pindexPrev);
+    UpdateTime(pblock, consensusParams, papollonPrev);
     pblock->nNonce = 0;
 
     // NOTE: If at some point we support pre-segwit miners post-segwit-activation, this needs to take segwit support into consideration
-//    const bool fPreSegWit = (THRESHOLD_ACTIVE != VersionBitsState(pindexPrev, consensusParams, Consensus::DEPLOYMENT_SEGWIT, versionbitscache));
+//    const bool fPreSegWit = (THRESHOLD_ACTIVE != VersionBitsState(papollonPrev, consensusParams, Consensus::DEPLOYMENT_SEGWIT, versionbitscache));
     const bool fPreSegWit = false;
 
     UniValue aCaps(UniValue::VARR); aCaps.push_back("proposal");
 
     UniValue transactions(UniValue::VARR);
-    map<uint256, int64_t> setTxIndex;
+    map<uint256, int64_t> setTxApollon;
     int i = 0;
 
     BOOST_FOREACH (CTransaction& tx, pblock->vtx) {
         uint256 txHash = tx.GetHash();
-        setTxIndex[txHash] = i++;
+        setTxApollon[txHash] = i++;
 
         if (tx.IsCoinBase())
             continue;
@@ -693,14 +693,14 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp)
         UniValue deps(UniValue::VARR);
         BOOST_FOREACH (const CTxIn &in, tx.vin)
         {
-            if (setTxIndex.count(in.prevout.hash))
-                deps.push_back(setTxIndex[in.prevout.hash]);
+            if (setTxApollon.count(in.prevout.hash))
+                deps.push_back(setTxApollon[in.prevout.hash]);
         }
         entry.push_back(Pair("depends", deps));
 
-        int index_in_template = i - 1;
-        entry.push_back(Pair("fee", pblocktemplate->vTxFees[index_in_template]));
-        int64_t nTxSigOps = pblocktemplate->vTxSigOpsCost[index_in_template];
+        int apollon_in_template = i - 1;
+        entry.push_back(Pair("fee", pblocktemplate->vTxFees[apollon_in_template]));
+        int64_t nTxSigOps = pblocktemplate->vTxSigOpsCost[apollon_in_template];
         if (fPreSegWit) {
             assert(nTxSigOps % WITNESS_SCALE_FACTOR == 0);
             nTxSigOps /= WITNESS_SCALE_FACTOR;
@@ -729,7 +729,7 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp)
     for (int i = 0; i < (int)Consensus::MAX_VERSION_BITS_DEPLOYMENTS; ++i) {
 
         Consensus::DeploymentPos pos = Consensus::DeploymentPos(i);
-        ThresholdState state = VersionBitsState(pindexPrev, consensusParams, pos, versionbitscache);
+        ThresholdState state = VersionBitsState(papollonPrev, consensusParams, pos, versionbitscache);
         switch (state) {
             case THRESHOLD_DEFINED:
             case THRESHOLD_FAILED:
@@ -786,7 +786,7 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp)
     result.push_back(Pair("coinbasevalue", (int64_t)pblock->vtx[0].vout[0].nValue));
     result.push_back(Pair("longpollid", chainActive.Tip()->GetBlockHash().GetHex() + i64tostr(nTransactionsUpdatedLast)));
     result.push_back(Pair("target", hashTarget.GetHex()));
-    result.push_back(Pair("mintime", (int64_t)pindexPrev->GetMedianTimePast()+1));
+    result.push_back(Pair("mintime", (int64_t)papollonPrev->GetMedianTimePast()+1));
     result.push_back(Pair("mutable", aMutable));
     result.push_back(Pair("noncerange", "00000000ffffffff"));
     int64_t nSigOpLimit = MAX_BLOCK_SIGOPS_COST;
@@ -799,20 +799,20 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp)
     result.push_back(Pair("weightlimit", (int64_t)MAX_BLOCK_WEIGHT));
     result.push_back(Pair("curtime", pblock->GetBlockTime()));
     result.push_back(Pair("bits", strprintf("%08x", pblock->nBits)));
-    result.push_back(Pair("height", (int64_t)(pindexPrev->nHeight+1)));
+    result.push_back(Pair("height", (int64_t)(papollonPrev->nHeight+1)));
 
-    UniValue indexnodeObj(UniValue::VOBJ);
-    if(pblock->txoutIndexnode != CTxOut()) {
+    UniValue apollonnodeObj(UniValue::VOBJ);
+    if(pblock->txoutApollonnode != CTxOut()) {
         CTxDestination address1;
-        ExtractDestination(pblock->txoutIndexnode.scriptPubKey, address1);
+        ExtractDestination(pblock->txoutApollonnode.scriptPubKey, address1);
         CBitcoinAddress address2(address1);
-        indexnodeObj.push_back(Pair("payee", address2.ToString().c_str()));
-        indexnodeObj.push_back(Pair("script", HexStr(pblock->txoutIndexnode.scriptPubKey.begin(), pblock->txoutIndexnode.scriptPubKey.end())));
-        indexnodeObj.push_back(Pair("amount", pblock->txoutIndexnode.nValue));
+        apollonnodeObj.push_back(Pair("payee", address2.ToString().c_str()));
+        apollonnodeObj.push_back(Pair("script", HexStr(pblock->txoutApollonnode.scriptPubKey.begin(), pblock->txoutApollonnode.scriptPubKey.end())));
+        apollonnodeObj.push_back(Pair("amount", pblock->txoutApollonnode.nValue));
     }
-    result.push_back(Pair("indexnode", indexnodeObj));
-    result.push_back(Pair("indexnode_payments_started", pindexPrev->nHeight + 1 > Params().GetConsensus().nIndexnodePaymentsStartBlock));
-    result.push_back(Pair("indexnode_payments_enforced", sporkManager.IsSporkActive(SPORK_8_INDEXNODE_PAYMENT_ENFORCEMENT)));
+    result.push_back(Pair("apollonnode", apollonnodeObj));
+    result.push_back(Pair("apollonnode_payments_started", papollonPrev->nHeight + 1 > Params().GetConsensus().nApollonnodePaymentsStartBlock));
+    result.push_back(Pair("apollonnode_payments_enforced", sporkManager.IsSporkActive(SPORK_8_APOLLONNODE_PAYMENT_ENFORCEMENT)));
 
     const struct BIP9DeploymentInfo& segwit_info = VersionBitsDeploymentInfo[Consensus::DEPLOYMENT_SEGWIT];
     if (!pblocktemplate->vchCoinbaseCommitment.empty() && setClientRules.find(segwit_info.name) != setClientRules.end()) {
@@ -869,12 +869,12 @@ UniValue submitblock(const UniValue& params, bool fHelp)
     bool fBlockPresent = false;
     {
         LOCK(cs_main);
-        BlockMap::iterator mi = mapBlockIndex.find(hash);
-        if (mi != mapBlockIndex.end()) {
-            CBlockIndex *pindex = mi->second;
-            if (pindex->IsValid(BLOCK_VALID_SCRIPTS))
+        BlockMap::iterator mi = mapBlockApollon.find(hash);
+        if (mi != mapBlockApollon.end()) {
+            CBlockApollon *papollon = mi->second;
+            if (papollon->IsValid(BLOCK_VALID_SCRIPTS))
                 return "duplicate";
-            if (pindex->nStatus & BLOCK_FAILED_MASK)
+            if (papollon->nStatus & BLOCK_FAILED_MASK)
                 return "duplicate-invalid";
             // Otherwise, we might only have the header - process the block before returning
             fBlockPresent = true;
@@ -883,8 +883,8 @@ UniValue submitblock(const UniValue& params, bool fHelp)
 
     {
         LOCK(cs_main);
-        BlockMap::iterator mi = mapBlockIndex.find(block.hashPrevBlock);
-        if (mi != mapBlockIndex.end()) {
+        BlockMap::iterator mi = mapBlockApollon.find(block.hashPrevBlock);
+        if (mi != mapBlockApollon.end()) {
             UpdateUncommittedBlockStructures(block, mi->second, Params().GetConsensus());
         }
     }
@@ -1065,6 +1065,6 @@ static const CRPCCommand commands[] =
 
 void RegisterMiningRPCCommands(CRPCTable &tableRPC)
 {
-    for (unsigned int vcidx = 0; vcidx < ARRAYLEN(commands); vcidx++)
-        tableRPC.appendCommand(commands[vcidx].name, &commands[vcidx]);
+    for (unsigned int vcxap = 0; vcxap < ARRAYLEN(commands); vcxap++)
+        tableRPC.appendCommand(commands[vcxap].name, &commands[vcxap]);
 }

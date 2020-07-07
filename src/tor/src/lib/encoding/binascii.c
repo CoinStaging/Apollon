@@ -221,7 +221,7 @@ base64_encode(char *dest, size_t destlen, const char *src, size_t srclen,
   uint32_t n = 0;
   size_t linelen = 0;
   size_t enclen;
-  int n_idx = 0;
+  int n_xap = 0;
 
   if (!src || !dest)
     return -1;
@@ -264,16 +264,16 @@ base64_encode(char *dest, size_t destlen, const char *src, size_t srclen,
    */
   for ( ; usrc < eous; ++usrc) {
     n = (n << 8) | *usrc;
-    if ((++n_idx) == 3) {
+    if ((++n_xap) == 3) {
       ENCODE_N(0);
       ENCODE_N(1);
       ENCODE_N(2);
       ENCODE_N(3);
-      n_idx = 0;
+      n_xap = 0;
       n = 0;
     }
   }
-  switch (n_idx) {
+  switch (n_xap) {
   case 0:
     /* 0 leftover bits, no pading to add. */
     break;
@@ -298,7 +298,7 @@ base64_encode(char *dest, size_t destlen, const char *src, size_t srclen,
     ENCODE_PAD();
     break;
   // LCOV_EXCL_START -- we can't reach this point, because we enforce
-  // 0 <= ncov_idx < 3 in the loop above.
+  // 0 <= ncov_xap < 3 in the loop above.
   default:
     /* Something went catastrophically wrong. */
     tor_fragile_assert();
@@ -395,7 +395,7 @@ base64_decode(char *dest, size_t destlen, const char *src, size_t srclen)
 {
   const char *eos = src+srclen;
   uint32_t n=0;
-  int n_idx=0;
+  int n_xap=0;
   size_t di = 0;
 
   if (destlen > INT_MAX)
@@ -424,21 +424,21 @@ base64_decode(char *dest, size_t destlen, const char *src, size_t srclen)
       default:
         /* We have an actual 6-bit value.  Append it to the bits in n. */
         n = (n<<6) | v;
-        if ((++n_idx) == 4) {
+        if ((++n_xap) == 4) {
           /* We've accumulated 24 bits in n. Flush them. */
           if (destlen < 3 || di > destlen - 3)
             return -1;
           dest[di++] = (n>>16);
           dest[di++] = (n>>8) & 0xff;
           dest[di++] = (n) & 0xff;
-          n_idx = 0;
+          n_xap = 0;
           n = 0;
         }
     }
   }
  end_of_loop:
   /* If we have leftover bits, we need to cope. */
-  switch (n_idx) {
+  switch (n_xap) {
     case 0:
     default:
       /* No leftover bits.  We win. */

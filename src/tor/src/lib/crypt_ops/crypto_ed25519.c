@@ -507,7 +507,7 @@ ed25519_public_key_from_curve25519_public_key(ed25519_public_key_t *pubkey,
  * Tor uses key blinding for the "next-generation" hidden services design:
  * service descriptors are encrypted with a key derived from the service's
  * long-term public key, and then signed with (and stored at a position
- * indexed by) a short-term key derived by blinding the long-term keys.
+ * apolloned by) a short-term key derived by blinding the long-term keys.
  *
  * Return 0 if blinding was successful, else return -1. */
 int

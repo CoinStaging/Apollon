@@ -1,30 +1,30 @@
 
 #include "netbase.h"
-#include "indexnodeconfig.h"
+#include "apollonnodeconfig.h"
 #include "util.h"
 #include "chainparams.h"
 
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
 
-CIndexnodeConfig indexnodeConfig;
+CApollonnodeConfig apollonnodeConfig;
 
-void CIndexnodeConfig::add(std::string alias, std::string ip, std::string privKey, std::string txHash, std::string outputIndex) {
-    CIndexnodeEntry cme(alias, ip, privKey, txHash, outputIndex);
+void CApollonnodeConfig::add(std::string alias, std::string ip, std::string privKey, std::string txHash, std::string outputApollon) {
+    CApollonnodeEntry cme(alias, ip, privKey, txHash, outputApollon);
     entries.push_back(cme);
 }
 
-bool CIndexnodeConfig::read(std::string& strErr) {
+bool CApollonnodeConfig::read(std::string& strErr) {
     int linenumber = 1;
-    fs::path pathIndexnodeConfigFile = GetIndexnodeConfigFile();
-    fsbridge::ifstream streamConfig(pathIndexnodeConfigFile);
-    LogPrintf("pathIndexnodeConfigFile=%s\n", pathIndexnodeConfigFile);
+    fs::path pathApollonnodeConfigFile = GetApollonnodeConfigFile();
+    fsbridge::ifstream streamConfig(pathApollonnodeConfigFile);
+    LogPrintf("pathApollonnodeConfigFile=%s\n", pathApollonnodeConfigFile);
 
     if (!streamConfig.good()) {
-        FILE* configFile = fopen(pathIndexnodeConfigFile.string().c_str(), "a");
+        FILE* configFile = fopen(pathApollonnodeConfigFile.string().c_str(), "a");
         if (configFile != NULL) {
-            std::string strHeader = "# Indexnode config file\n"
-                          "# Format: alias IP:port indexnode_privatekey collateral_output_txid collateral_output_index\n"
+            std::string strHeader = "# Apollonnode config file\n"
+                          "# Format: alias IP:port apollonnode_privatekey collateral_output_txid collateral_output_apollon\n"
                           "# Example: zn1 127.0.0.1:7082 7Cqyr4U7GU7qVo5TE1nrfA8XPVqh7GXBuEBPYzaWxEhiRRDLZ5c 2bcd3c84c84f87eaa86e4e56834c92927a07f9e18718810b92e0d0324456a67c 1\n";
             fwrite(strHeader.c_str(), std::strlen(strHeader.c_str()), 1, configFile);
             fclose(configFile);
@@ -37,18 +37,18 @@ bool CIndexnodeConfig::read(std::string& strErr) {
         if(line.empty()) continue;
         LogPrintf("Read line=%s\n", line);
         std::istringstream iss(line);
-        std::string comment, alias, ip, privKey, txHash, outputIndex;
+        std::string comment, alias, ip, privKey, txHash, outputApollon;
 
         if (iss >> comment) {
             if(comment.at(0) == '#') continue;
             iss.str(line);
             iss.clear();
         }
-        if (!(iss >> alias >> ip >> privKey >> txHash >> outputIndex)) {
+        if (!(iss >> alias >> ip >> privKey >> txHash >> outputApollon)) {
             iss.str(line);
             iss.clear();
-            if (!(iss >> alias >> ip >> privKey >> txHash >> outputIndex)) {
-                strErr = _("Could not parse indexnode.conf") + "\n" +
+            if (!(iss >> alias >> ip >> privKey >> txHash >> outputApollon)) {
+                strErr = _("Could not parse apollonnode.conf") + "\n" +
                         strprintf(_("Line: %d"), linenumber) + "\n\"" + line + "\"";
                 streamConfig.close();
                 return false;
@@ -70,7 +70,7 @@ bool CIndexnodeConfig::read(std::string& strErr) {
         LogPrintf("CBaseChainParams::MAIN=%s\n", CBaseChainParams::MAIN);
         if(Params().NetworkIDString() == CBaseChainParams::MAIN) {
             if(port != mainnetDefaultPort) {
-                strErr = _("Invalid port detected in indexnode.conf") + "\n" +
+                strErr = _("Invalid port detected in apollonnode.conf") + "\n" +
                         strprintf(_("Port: %d"), port) + "\n" +
                         strprintf(_("Line: %d"), linenumber) + "\n\"" + line + "\"" + "\n" +
                         strprintf(_("(must be %d for mainnet)"), mainnetDefaultPort);
@@ -78,7 +78,7 @@ bool CIndexnodeConfig::read(std::string& strErr) {
                 return false;
             }
         } else if(port == mainnetDefaultPort) {
-            strErr = _("Invalid port detected in indexnode.conf") + "\n" +
+            strErr = _("Invalid port detected in apollonnode.conf") + "\n" +
                     strprintf(_("Line: %d"), linenumber) + "\n\"" + line + "\"" + "\n" +
                     strprintf(_("(%d could be used only on mainnet)"), mainnetDefaultPort);
             streamConfig.close();
@@ -86,7 +86,7 @@ bool CIndexnodeConfig::read(std::string& strErr) {
         }
 
 
-        add(alias, ip, privKey, txHash, outputIndex);
+        add(alias, ip, privKey, txHash, outputApollon);
     }
 
     streamConfig.close();

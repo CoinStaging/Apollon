@@ -1832,6 +1832,6 @@ static const CRPCCommand commands[] =
 
 void RegisterElysiumTransactionCreationRPCCommands(CRPCTable &tableRPC)
 {
-    for (unsigned int vcidx = 0; vcidx < ARRAYLEN(commands); vcidx++)
-        tableRPC.appendCommand(commands[vcidx].name, &commands[vcidx]);
+    for (unsigned int vcxap = 0; vcxap < ARRAYLEN(commands); vcxap++)
+        tableRPC.appendCommand(commands[vcxap].name, &commands[vcxap]);
 }

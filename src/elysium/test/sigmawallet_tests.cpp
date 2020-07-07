@@ -66,9 +66,9 @@ public:
 
 public:
 
-    uint32_t BIP44ChangeIndex() const
+    uint32_t BIP44ChangeApollon() const
     {
-        return BIP44_ELYSIUM_MINT_INDEX_V0;
+        return BIP44_ELYSIUM_MINT_APOLLON_V0;
     }
 
     SigmaPrivateKey GeneratePrivateKeyFromSeed(uint512 const &seed)
@@ -266,18 +266,18 @@ BOOST_AUTO_TEST_CASE(verify_mintpool_on_fresh_startup)
     // get sequence
     auto mints = wallet->GetMintPoolEntry();
 
-    std::vector<uint32_t> mintPoolIndexs;
+    std::vector<uint32_t> mintPoolApollons;
     for (auto const &mint : mints) {
-        mintPoolIndexs.push_back(mint.apollon);
+        mintPoolApollons.push_back(mint.apollon);
     }
 
     // generate sequence
     std::vector<uint32_t> seq;
-    seq.resize(mintPoolIndexs.size());
+    seq.resize(mintPoolApollons.size());
 
     std::generate(seq.begin(), seq.end(), [n = 0] () mutable { return n++; });
 
-    BOOST_CHECK(seq == mintPoolIndexs);
+    BOOST_CHECK(seq == mintPoolApollons);
 }
 
 BOOST_AUTO_TEST_CASE(tryrecover_random_coin)
@@ -484,7 +484,7 @@ BOOST_AUTO_TEST_CASE(fill_mint_pool)
 {
     auto &mintPool = wallet->GetMintPool();
 
-    auto indexLess = [](
+    auto apollonLess = [](
         MintPoolEntry const &a, MintPoolEntry const &b) -> bool {
             return a.apollon < b.apollon;
     };
@@ -492,7 +492,7 @@ BOOST_AUTO_TEST_CASE(fill_mint_pool)
     // last coin should be 19
     BOOST_CHECK_EQUAL(
         19,
-        std::max_element(mintPool.begin(), mintPool.end(), indexLess)->apollon
+        std::max_element(mintPool.begin(), mintPool.end(), apollonLess)->apollon
     );
 
     // erase apollon 0, 10 and 15
@@ -514,7 +514,7 @@ BOOST_AUTO_TEST_CASE(fill_mint_pool)
     // last coin should be 22
     BOOST_CHECK_EQUAL(
         22,
-        std::max_element(mintPool.begin(), mintPool.end(), indexLess)->apollon
+        std::max_element(mintPool.begin(), mintPool.end(), apollonLess)->apollon
     );
 
     // 20, 21, 22 should be added

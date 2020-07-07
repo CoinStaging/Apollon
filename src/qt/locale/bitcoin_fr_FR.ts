@@ -162,8 +162,8 @@
         <translation>Ouvrir &amp;URI</translation>
     </message>
     <message>
-        <source>Reindexing blocks on disk...</source>
-        <translation>Réindexer les blocs sur le disque...</translation>
+        <source>Reapolloning blocks on disk...</source>
+        <translation>Réapolloner les blocs sur le disque...</translation>
     </message>
     <message>
         <source>Send coins to a Apollon address</source>
@@ -258,8 +258,8 @@
         <translation><numerusform>%n connexion active au réseau Apollon</numerusform><numerusform>%n connexions actives au réseau Apollon</numerusform></translation>
     </message>
     <message>
-        <source>Indexing blocks on disk...</source>
-        <translation>Indexation des blocs sur le disque...</translation>
+        <source>Apolloning blocks on disk...</source>
+        <translation>Apollonation des blocs sur le disque...</translation>
     </message>
     <message>
         <source>No block source available...</source>

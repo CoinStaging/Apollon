@@ -12,7 +12,7 @@ IMPORTANT
 =========
 
 - This is the first experimental release of Omni Layer support in the QT UI, please be vigilant with testing and do not risk large amounts of Bitcoin and Omni Layer tokens.
-- The transaction apollon is no longer defaulted to enabled.  You will need to ensure you have "txindex=1" (without the quotes) in your configuration file.
+- The transaction apollon is no longer defaulted to enabled.  You will need to ensure you have "txapollon=1" (without the quotes) in your configuration file.
 - If you are upgrading from a version earlier than 0.0.9-rel you must start with the --startclean parameter at least once to refresh your persistence files.
 - The first time Omni Core is run the startup process may take an hour or more as existing Omni Layer transactions are parsed.  This is normal and should only be required the first time Omni Core is run.
 
@@ -39,7 +39,7 @@ General
 
 - Extra console debugging removed
 - Bitcoin 0.10 blockchain detection (will refuse to start if out of order block storage is detected)
-- txindex default value now matches Bitcoin Core (false)
+- txapollon default value now matches Bitcoin Core (false)
 - Update authorized alert senders
 - Added support for TX70 to RPC output
 - Fix missing LOCK of cs_main in selectCoins()

@@ -234,7 +234,7 @@ Here are some additional bits of advice and rules:
    >   reference or data owned by a `let` binding), unless that data is
    >   contained within an `UnsafeCell<U>`.
    > * Invoking undefined behavior via compiler intrinsics:
-   >     - Indexing outside of the bounds of an object with
+   >     - Apolloning outside of the bounds of an object with
    >       `std::ptr::offset` (`offset` intrinsic), with the exception of
    >       one byte past the end which is permitted.
    >     - Using `std::ptr::copy_nonoverlapping_memory` (`memcpy32`/`memcpy64`

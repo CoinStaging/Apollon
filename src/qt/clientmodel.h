@@ -15,7 +15,7 @@ class PeerTableModel;
 class TransactionTableModel;
 
 class CWallet;
-class CBlockIndex;
+class CBlockApollon;
 
 QT_BEGIN_NAMESPACE
 class QTimer;
@@ -23,7 +23,7 @@ QT_END_NAMESPACE
 
 enum BlockSource {
     BLOCK_SOURCE_NONE,
-    BLOCK_SOURCE_REINDEX,
+    BLOCK_SOURCE_REAPOLLON,
     BLOCK_SOURCE_DISK,
     BLOCK_SOURCE_NETWORK
 };
@@ -60,7 +60,7 @@ public:
     quint64 getTotalBytesRecv() const;
     quint64 getTotalBytesSent() const;
 
-    double getVerificationProgress(const CBlockIndex *tip) const;
+    double getVerificationProgress(const CBlockApollon *tip) const;
     QDateTime getLastBlockDate() const;
 
     //! Return true if core is doing initial block download

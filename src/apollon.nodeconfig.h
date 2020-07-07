@@ -3,37 +3,37 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef SRC_INDEXNODECONFIG_H_
-#define SRC_INDEXNODECONFIG_H_
+#ifndef SRC_APOLLONNODECONFIG_H_
+#define SRC_APOLLONNODECONFIG_H_
 
 #include "fs.h"
 
 #include <univalue.h>
 
-class CIndexnodeConfig;
-extern CIndexnodeConfig indexnodeConfig;
+class CApollonnodeConfig;
+extern CApollonnodeConfig apollonnodeConfig;
 
-class CIndexnodeConfig
+class CApollonnodeConfig
 {
 
 public:
 
-    class CIndexnodeEntry {
+    class CApollonnodeEntry {
 
     private:
         std::string alias;
         std::string ip;
         std::string privKey;
         std::string txHash;
-        std::string outputIndex;
+        std::string outputApollon;
     public:
 
-        CIndexnodeEntry(std::string alias, std::string ip, std::string privKey, std::string txHash, std::string outputIndex) {
+        CApollonnodeEntry(std::string alias, std::string ip, std::string privKey, std::string txHash, std::string outputApollon) {
             this->alias = alias;
             this->ip = ip;
             this->privKey = privKey;
             this->txHash = txHash;
-            this->outputIndex = outputIndex;
+            this->outputApollon = outputApollon;
         }
 
         const std::string& getAlias() const {
@@ -44,12 +44,12 @@ public:
             this->alias = alias;
         }
 
-        const std::string& getOutputIndex() const {
-            return outputIndex;
+        const std::string& getOutputApollon() const {
+            return outputApollon;
         }
 
-        void setOutputIndex(const std::string& outputIndex) {
-            this->outputIndex = outputIndex;
+        void setOutputApollon(const std::string& outputApollon) {
+            this->outputApollon = outputApollon;
         }
 
         const std::string& getPrivKey() const {
@@ -86,7 +86,7 @@ public:
             std::string port = authority.substr(authority.find(":")+1, authority.length());
 
             outpoint.push_back(Pair("txid", getTxHash().substr(0,64)));
-            outpoint.push_back(Pair("apollon", getOutputIndex()));
+            outpoint.push_back(Pair("apollon", getOutputApollon()));
             authorityObj.push_back(Pair("ip", ip));
             authorityObj.push_back(Pair("port", port));
 
@@ -99,15 +99,15 @@ public:
         }
     };
 
-    CIndexnodeConfig() {
-        entries = std::vector<CIndexnodeEntry>();
+    CApollonnodeConfig() {
+        entries = std::vector<CApollonnodeEntry>();
     }
 
     void clear();
     bool read(std::string& strErr);
-    void add(std::string alias, std::string ip, std::string privKey, std::string txHash, std::string outputIndex);
+    void add(std::string alias, std::string ip, std::string privKey, std::string txHash, std::string outputApollon);
 
-    std::vector<CIndexnodeEntry>& getEntries() {
+    std::vector<CApollonnodeEntry>& getEntries() {
         return entries;
     }
 
@@ -116,10 +116,10 @@ public:
     }
 
 private:
-    std::vector<CIndexnodeEntry> entries;
+    std::vector<CApollonnodeEntry> entries;
 
 
 };
 
 
-#endif /* SRC_INDEXNODECONFIG_H_ */
+#endif /* SRC_APOLLONNODECONFIG_H_ */

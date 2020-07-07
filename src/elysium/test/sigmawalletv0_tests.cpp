@@ -92,7 +92,7 @@ struct SigmaWalletV0TestingSetup : WalletTestingSetup
     std::pair<SigmaMintId, SigmaMint> GenerateMint(elysium::PropertyId id, elysium::SigmaDenomination denom)
     {
         LOCK(pwalletMain->cs_wallet);
-        auto seedId = pwalletMain->GenerateNewKey(BIP44_ELYSIUM_MINT_INDEX_V0).GetID();
+        auto seedId = pwalletMain->GenerateNewKey(BIP44_ELYSIUM_MINT_APOLLON_V0).GetID();
 
         auto priv = wallet->GeneratePrivateKey(seedId);
         SigmaPublicKey pub(priv, DefaultSigmaParams);

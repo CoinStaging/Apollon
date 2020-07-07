@@ -138,8 +138,8 @@
         <translation>Abrir URI...</translation>
     </message>
     <message>
-        <source>Reindexing blocks on disk...</source>
-        <translation>Reindexando bloques en disco...</translation>
+        <source>Reapolloning blocks on disk...</source>
+        <translation>Reapollonando bloques en disco...</translation>
     </message>
     <message>
         <source>Send coins to a Apollon address</source>

@@ -38,16 +38,16 @@
 
 /* GCC can check printf and scanf types on arbitrary functions. */
 #ifdef __GNUC__
-#define CHECK_PRINTF(formatIdx, firstArg) \
-   __attribute__ ((format(printf, formatIdx, firstArg)))
+#define CHECK_PRINTF(formatXap, firstArg) \
+   __attribute__ ((format(printf, formatXap, firstArg)))
 #else
-#define CHECK_PRINTF(formatIdx, firstArg)
+#define CHECK_PRINTF(formatXap, firstArg)
 #endif /* defined(__GNUC__) */
 #ifdef __GNUC__
-#define CHECK_SCANF(formatIdx, firstArg) \
-   __attribute__ ((format(scanf, formatIdx, firstArg)))
+#define CHECK_SCANF(formatXap, firstArg) \
+   __attribute__ ((format(scanf, formatXap, firstArg)))
 #else
-#define CHECK_SCANF(formatIdx, firstArg)
+#define CHECK_SCANF(formatXap, firstArg)
 #endif /* defined(__GNUC__) */
 
 /* What GCC do we have? */

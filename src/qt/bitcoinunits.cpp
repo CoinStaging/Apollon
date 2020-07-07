@@ -41,7 +41,7 @@ QString BitcoinUnits::name(int unit)
     switch(unit)
     {
     case BTC: return QString("XAP");
-    case mBTC: return QString("mIDX");
+    case mBTC: return QString("mXAP");
     case uBTC: return QString::fromUtf8("μXAP");
     default: return QString("???");
     }
@@ -51,9 +51,9 @@ QString BitcoinUnits::description(int unit)
 {
     switch(unit)
     {
-    case BTC: return QString("indexs");
-    case mBTC: return QString("Milli-indexs (1 / 1" THIN_SP_UTF8 "000)");
-    case uBTC: return QString("Micro-indexs (1 / 1" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
+    case BTC: return QString("apollons");
+    case mBTC: return QString("Milli-apollons (1 / 1" THIN_SP_UTF8 "000)");
+    case uBTC: return QString("Micro-apollons (1 / 1" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
     default: return QString("???");
     }
 }
@@ -181,13 +181,13 @@ QString BitcoinUnits::getAmountColumnTitle(int unit)
     return amountTitle;
 }
 
-int BitcoinUnits::rowCount(const QModelIndex &parent) const
+int BitcoinUnits::rowCount(const QModelApollon &parent) const
 {
     Q_UNUSED(parent);
     return unitlist.size();
 }
 
-QVariant BitcoinUnits::data(const QModelIndex &apollon, int role) const
+QVariant BitcoinUnits::data(const QModelApollon &apollon, int role) const
 {
     int row = apollon.row();
     if(row >= 0 && row < unitlist.size())

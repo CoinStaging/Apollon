@@ -808,7 +808,7 @@ static int secp256k1_ecmult_pippenger_batch(const secp256k1_ecmult_context *ctx,
     secp256k1_gej *buckets;
     struct secp256k1_pippenger_state *state_space;
     size_t xap = 0;
-    size_t point_idx = 0;
+    size_t point_xap = 0;
     int i, j;
     int bucket_window;
 
@@ -839,9 +839,9 @@ static int secp256k1_ecmult_pippenger_batch(const secp256k1_ecmult_context *ctx,
 #endif
     }
 
-    while (point_idx < n_points) {
+    while (point_xap < n_points) {
         secp256k1_gej point;
-        if (!cb(&scalars[xap], &point, point_idx + cb_offset, cbdata)) {
+        if (!cb(&scalars[xap], &point, point_xap + cb_offset, cbdata)) {
             secp256k1_scratch_deallocate_frame(scratch);
             return 0;
         }
@@ -851,7 +851,7 @@ static int secp256k1_ecmult_pippenger_batch(const secp256k1_ecmult_context *ctx,
         secp256k1_ecmult_endo_split(&scalars[xap - 1], &scalars[xap], &points[xap - 1], &points[xap]);
         xap++;
 #endif
-        point_idx++;
+        point_xap++;
     }
 
     secp256k1_ecmult_pippenger_wnaf(buckets, bucket_window, state_space, r, scalars, points, xap);

@@ -151,18 +151,18 @@
     </message>
     <message>
         <source>&amp;Sending addresses...</source>
-        <translation>&amp;Address สำหรับส่ง indexs</translation>
+        <translation>&amp;Address สำหรับส่ง apollons</translation>
     </message>
     <message>
         <source>&amp;Receiving addresses...</source>
-        <translation>&amp;Address ที่ใช้รับ indexs</translation>
+        <translation>&amp;Address ที่ใช้รับ apollons</translation>
     </message>
     <message>
         <source>Open &amp;URI...</source>
         <translation>เปิด &amp;URI</translation>
     </message>
     <message>
-        <source>Reindexing blocks on disk...</source>
+        <source>Reapolloning blocks on disk...</source>
         <translation>กำลังทำดัชนี ที่เก็บบล็อก ใหม่ ในดิสก์...</translation>
     </message>
     <message>
@@ -266,7 +266,7 @@
         <translation><numerusform>%n ช่องการเชื่อมต่อที่ใช้งานได้ เพื่อเชื่อมกับเครือข่าย Apollon</numerusform></translation>
     </message>
     <message>
-        <source>Indexing blocks on disk...</source>
+        <source>Apolloning blocks on disk...</source>
         <translation>การกำลังสร้างดัชนีของบล็อก ในดิสก์...</translation>
     </message>
     <message>

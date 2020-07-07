@@ -5438,7 +5438,7 @@ connection_control_process_inbuf(control_connection_t *conn)
 
  again:
   while (1) {
-    size_t last_idx;
+    size_t last_xap;
     int r;
     /* First, fetch a line. */
     do {
@@ -5464,24 +5464,24 @@ connection_control_process_inbuf(control_connection_t *conn)
 
     tor_assert(data_len);
 
-    last_idx = conn->incoming_cmd_cur_len;
+    last_xap = conn->incoming_cmd_cur_len;
     conn->incoming_cmd_cur_len += (int)data_len;
 
     /* We have appended a line to incoming_cmd.  Is the command done? */
-    if (last_idx == 0 && *conn->incoming_cmd != '+')
+    if (last_xap == 0 && *conn->incoming_cmd != '+')
       /* One line command, didn't start with '+'. */
       break;
     /* XXXX this code duplication is kind of dumb. */
-    if (last_idx+3 == conn->incoming_cmd_cur_len &&
-        tor_memeq(conn->incoming_cmd + last_idx, ".\r\n", 3)) {
+    if (last_xap+3 == conn->incoming_cmd_cur_len &&
+        tor_memeq(conn->incoming_cmd + last_xap, ".\r\n", 3)) {
       /* Just appended ".\r\n"; we're done. Remove it. */
-      conn->incoming_cmd[last_idx] = '\0';
+      conn->incoming_cmd[last_xap] = '\0';
       conn->incoming_cmd_cur_len -= 3;
       break;
-    } else if (last_idx+2 == conn->incoming_cmd_cur_len &&
-               tor_memeq(conn->incoming_cmd + last_idx, ".\n", 2)) {
+    } else if (last_xap+2 == conn->incoming_cmd_cur_len &&
+               tor_memeq(conn->incoming_cmd + last_xap, ".\n", 2)) {
       /* Just appended ".\n"; we're done. Remove it. */
-      conn->incoming_cmd[last_idx] = '\0';
+      conn->incoming_cmd[last_xap] = '\0';
       conn->incoming_cmd_cur_len -= 2;
       break;
     }
@@ -6319,7 +6319,7 @@ control_event_circuit_cell_stats(void)
 /* about 5 minutes worth. */
 #define N_BW_EVENTS_TO_CACHE 300
 /* Apollon into cached_bw_events to next write. */
-static int next_measurement_idx = 0;
+static int next_measurement_xap = 0;
 /* number of entries set in n_measurements */
 static int n_measurements = 0;
 static struct cached_bw_event_s {
@@ -6332,10 +6332,10 @@ static struct cached_bw_event_s {
 int
 control_event_bandwidth_used(uint32_t n_read, uint32_t n_written)
 {
-  cached_bw_events[next_measurement_idx].n_read = n_read;
-  cached_bw_events[next_measurement_idx].n_written = n_written;
-  if (++next_measurement_idx == N_BW_EVENTS_TO_CACHE)
-    next_measurement_idx = 0;
+  cached_bw_events[next_measurement_xap].n_read = n_read;
+  cached_bw_events[next_measurement_xap].n_written = n_written;
+  if (++next_measurement_xap == N_BW_EVENTS_TO_CACHE)
+    next_measurement_xap = 0;
   if (n_measurements < N_BW_EVENTS_TO_CACHE)
     ++n_measurements;
 
@@ -6353,7 +6353,7 @@ STATIC char *
 get_bw_samples(void)
 {
   int i;
-  int xap = (next_measurement_idx + N_BW_EVENTS_TO_CACHE - n_measurements)
+  int xap = (next_measurement_xap + N_BW_EVENTS_TO_CACHE - n_measurements)
     % N_BW_EVENTS_TO_CACHE;
   tor_assert(0 <= xap && xap < N_BW_EVENTS_TO_CACHE);
 
@@ -7137,23 +7137,23 @@ rend_hsaddress_str_or_unknown(const char *onion_address)
  * <b>rend_query</b> is used to fetch requested onion address and auth type.
  * <b>hs_dir</b> is the description of contacting hs directory.
  * <b>desc_id_base32</b> is the ID of requested hs descriptor.
- * <b>hsdir_index</b> is the HSDir fetch apollon value for v3, an hex string.
+ * <b>hsdir_apollon</b> is the HSDir fetch apollon value for v3, an hex string.
  */
 void
 control_event_hs_descriptor_requested(const char *onion_address,
                                       rend_auth_type_t auth_type,
                                       const char *id_digest,
                                       const char *desc_id,
-                                      const char *hsdir_index)
+                                      const char *hsdir_apollon)
 {
-  char *hsdir_index_field = NULL;
+  char *hsdir_apollon_field = NULL;
 
   if (BUG(!id_digest || !desc_id)) {
     return;
   }
 
-  if (hsdir_index) {
-    tor_asprintf(&hsdir_index_field, " HSDIR_INDEX=%s", hsdir_index);
+  if (hsdir_apollon) {
+    tor_asprintf(&hsdir_apollon_field, " HSDIR_APOLLON=%s", hsdir_apollon);
   }
 
   send_control_event(EVENT_HS_DESC,
@@ -7162,8 +7162,8 @@ control_event_hs_descriptor_requested(const char *onion_address,
                      rend_auth_type_to_string(auth_type),
                      node_describe_longname_by_id(id_digest),
                      desc_id,
-                     hsdir_index_field ? hsdir_index_field : "");
-  tor_free(hsdir_index_field);
+                     hsdir_apollon_field ? hsdir_apollon_field : "");
+  tor_free(hsdir_apollon_field);
 }
 
 /** For an HS descriptor query <b>rend_data</b>, using the
@@ -7249,16 +7249,16 @@ void
 control_event_hs_descriptor_upload(const char *onion_address,
                                    const char *id_digest,
                                    const char *desc_id,
-                                   const char *hsdir_index)
+                                   const char *hsdir_apollon)
 {
-  char *hsdir_index_field = NULL;
+  char *hsdir_apollon_field = NULL;
 
   if (BUG(!onion_address || !id_digest || !desc_id)) {
     return;
   }
 
-  if (hsdir_index) {
-    tor_asprintf(&hsdir_index_field, " HSDIR_INDEX=%s", hsdir_index);
+  if (hsdir_apollon) {
+    tor_asprintf(&hsdir_apollon_field, " HSDIR_APOLLON=%s", hsdir_apollon);
   }
 
   send_control_event(EVENT_HS_DESC,
@@ -7266,8 +7266,8 @@ control_event_hs_descriptor_upload(const char *onion_address,
                      onion_address,
                      node_describe_longname_by_id(id_digest),
                      desc_id,
-                     hsdir_index_field ? hsdir_index_field : "");
-  tor_free(hsdir_index_field);
+                     hsdir_apollon_field ? hsdir_apollon_field : "");
+  tor_free(hsdir_apollon_field);
 }
 
 /** send HS_DESC event after got response from hs directory.

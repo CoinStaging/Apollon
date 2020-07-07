@@ -85,12 +85,12 @@ static CZMQReplierInterface* pzmqReplierInterface = NULL;
 #include <event2/util.h>
 #include <event2/event.h>
 #include <event2/thread.h>
-#include "activeindexnode.h"
+#include "activeapollonnode.h"
 #include "darksend.h"
-#include "indexnode-payments.h"
-#include "indexnode-sync.h"
-#include "indexnodeman.h"
-#include "indexnodeconfig.h"
+#include "apollonnode-payments.h"
+#include "apollonnode-sync.h"
+#include "apollonnodeman.h"
+#include "apollonnodeconfig.h"
 #include "netfulfilledman.h"
 #include "flat-database.h"
 #include "instantx.h"
@@ -253,9 +253,9 @@ void PrepareShutdown(){
     GenerateBitcoins(false, 0, Params());
     StopNode();
 
-    CFlatDB<CIndexnodeMan> flatdb1("incache.dat", "magicIndexnodeCache");
+    CFlatDB<CApollonnodeMan> flatdb1("incache.dat", "magicApollonnodeCache");
     flatdb1.Dump(mnodeman);
-    CFlatDB<CIndexnodePayments> flatdb2("inpayments.dat", "magicIndexnodePaymentsCache");
+    CFlatDB<CApollonnodePayments> flatdb2("inpayments.dat", "magicApollonnodePaymentsCache");
     flatdb2.Dump(mnpayments);
     CFlatDB<CNetFulfilledRequestManager> flatdb4("netfulfilled.dat", "magicFulfilledCache");
     flatdb4.Dump(netfulfilledman);
@@ -432,23 +432,23 @@ std::string HelpMessage(HelpMessageMode mode) {
             -GetNumCores(), MAX_SCRIPTCHECK_THREADS, DEFAULT_SCRIPTCHECK_THREADS));
     strUsage += HelpMessageOpt("-pid=<file>", strprintf(_("Specify pid file (default: %s)"), BITCOIN_PID_FILENAME));
     strUsage += HelpMessageOpt("-prune=<n>", strprintf(
-            _("Reduce storage requirements by pruning (deleting) old blocks. This mode is incompatible with -txindex and -rescan. "
+            _("Reduce storage requirements by pruning (deleting) old blocks. This mode is incompatible with -txapollon and -rescan. "
                       "Warning: Reverting this setting requires re-downloading the entire blockchain. "
                       "(default: 0 = disable pruning blocks, >%u = target size in MiB to use for block files)"),
             MIN_DISK_SPACE_FOR_BLOCK_FILES / 1024 / 1024));
-    strUsage += HelpMessageOpt("-reindex-chainstate", _("Rebuild chain state from the currently indexed blocks"));
-    strUsage += HelpMessageOpt("-reindex", _("Rebuild chain state and block apollon from the blk*.dat files on disk"));
+    strUsage += HelpMessageOpt("-reapollon-chainstate", _("Rebuild chain state from the currently apolloned blocks"));
+    strUsage += HelpMessageOpt("-reapollon", _("Rebuild chain state and block apollon from the blk*.dat files on disk"));
     strUsage += HelpMessageOpt("-resync", _("Delete blockchain folders and resync from scratch") + " " + _("on startup"));
 #ifndef WIN32
     strUsage += HelpMessageOpt("-sysperms",
                                _("Create new files with system default permissions, instead of umask 077 (only effective with disabled wallet functionality)"));
 #endif
-    strUsage += HelpMessageOpt("-txindex", strprintf(
+    strUsage += HelpMessageOpt("-txapollon", strprintf(
             _("Maintain a full transaction apollon, used by the getrawtransaction rpc call (default: %u)"),
-            DEFAULT_TXINDEX));
-    strUsage += HelpMessageOpt("-addressindex", strprintf(_("Maintain a full address apollon, used to query for the balance, txids and unspent outputs for addresses (default: %u)"), DEFAULT_ADDRESSINDEX));
-    strUsage += HelpMessageOpt("-timestampindex", strprintf(_("Maintain a timestamp apollon for block hashes, used to query blocks hashes by a range of timestamps (default: %u)"), DEFAULT_TIMESTAMPINDEX));
-    strUsage += HelpMessageOpt("-spentindex", strprintf(_("Maintain a full spent apollon, used to query the spending txid and input apollon for an outpoint (default: %u)"), DEFAULT_SPENTINDEX));
+            DEFAULT_TXAPOLLON));
+    strUsage += HelpMessageOpt("-addressapollon", strprintf(_("Maintain a full address apollon, used to query for the balance, txids and unspent outputs for addresses (default: %u)"), DEFAULT_ADDRESSAPOLLON));
+    strUsage += HelpMessageOpt("-timestampapollon", strprintf(_("Maintain a timestamp apollon for block hashes, used to query blocks hashes by a range of timestamps (default: %u)"), DEFAULT_TIMESTAMPAPOLLON));
+    strUsage += HelpMessageOpt("-spentapollon", strprintf(_("Maintain a full spent apollon, used to query the spending txid and input apollon for an outpoint (default: %u)"), DEFAULT_SPENTAPOLLON));
 
     strUsage += HelpMessageGroup(_("Connection options:"));
     strUsage += HelpMessageOpt("-addnode=<ip>", _("Add a node to connect to and attempt to keep the connection open"));
@@ -557,8 +557,8 @@ std::string HelpMessage(HelpMessageMode mode) {
     strUsage += HelpMessageGroup(_("Debugging/Testing options:"));
     strUsage += HelpMessageOpt("-uacomment=<cmt>", _("Append comment to the user agent string"));
     if (showDebug) {
-        strUsage += HelpMessageOpt("-checkblockindex", strprintf(
-                "Do a full consistency check for mapBlockIndex, setBlockIndexCandidates, chainActive and mapBlocksUnlinked occasionally. Also sets -checkmempool (default: %u)",
+        strUsage += HelpMessageOpt("-checkblockapollon", strprintf(
+                "Do a full consistency check for mapBlockApollon, setBlockApollonCandidates, chainActive and mapBlocksUnlinked occasionally. Also sets -checkmempool (default: %u)",
                 Params(CBaseChainParams::MAIN).DefaultConsistencyChecks()));
         strUsage += HelpMessageOpt("-checkmempool=<n>", strprintf("Run checks every <n> transactions (default: %u)",
                                                                   Params(CBaseChainParams::MAIN).DefaultConsistencyChecks()));
@@ -589,7 +589,7 @@ std::string HelpMessage(HelpMessageMode mode) {
         strUsage += HelpMessageOpt("-bip9params=deployment:start:end",
                                    "Use given start/end times for specified bip9 deployment (regtest-only)");
     }
-    string debugCategories = "addrman, alert, bench, cmpctblock, coindb, db, http, libevent, lock, mempool, mempoolrej, net, proxy, prune, rand, reindex, rpc, selectcoins, tor, zmq"; // Don't translate these and qt below
+    string debugCategories = "addrman, alert, bench, cmpctblock, coindb, db, http, libevent, lock, mempool, mempoolrej, net, proxy, prune, rand, reapollon, rpc, selectcoins, tor, zmq"; // Don't translate these and qt below
     if (mode == HMM_BITCOIN_QT)
         debugCategories += ", qt";
     strUsage += HelpMessageOpt("-debug=<category>", strprintf(
@@ -692,7 +692,7 @@ std::string HelpMessage(HelpMessageMode mode) {
                                strprintf(_("Set the number of threads to service RPC calls (default: %d)"),
                                          DEFAULT_HTTP_THREADS));
     strUsage += HelpMessageOpt("-blockspamfilter=<n>", strprintf(_("Use block spam filter (default: %u)"), DEFAULT_BLOCK_SPAM_FILTER));
-    strUsage += HelpMessageOpt("-blockspamfiltermaxsize=<n>", strprintf(_("Maximum size of the list of indexes in the block spam filter (default: %u)"), DEFAULT_BLOCK_SPAM_FILTER_MAX_SIZE));
+    strUsage += HelpMessageOpt("-blockspamfiltermaxsize=<n>", strprintf(_("Maximum size of the list of apollones in the block spam filter (default: %u)"), DEFAULT_BLOCK_SPAM_FILTER_MAX_SIZE));
     strUsage += HelpMessageOpt("-blockspamfiltermaxavg=<n>", strprintf(_("Maximum average size of an apollon occurrence in the block spam filter (default: %u)"), DEFAULT_BLOCK_SPAM_FILTER_MAX_AVG));
 
     if (showDebug) {
@@ -726,8 +726,8 @@ std::string HelpMessage(HelpMessageMode mode) {
 }
 
 std::string LicenseInfo() {
-    const std::string URL_SOURCE_CODE = "<https://github.com/IndexChain/Apollon>";
-    const std::string URL_WEBSITE = "<https://indexchain.org/>";
+    const std::string URL_SOURCE_CODE = "<https://github.com/ApollonChain/Apollon>";
+    const std::string URL_WEBSITE = "<https://apollonchain.org/>";
     // todo: remove urls from translations on next change
     return CopyrightHolders(strprintf(_("Copyright (C) %i-%i"), 2009, COPYRIGHT_YEAR) + " ") + "\n" +
            "\n" +
@@ -747,13 +747,13 @@ std::string LicenseInfo() {
            "\n";
 }
 
-static void BlockNotifyCallback(bool initialSync, const CBlockIndex *pBlockIndex) {
-    if (initialSync || !pBlockIndex)
+static void BlockNotifyCallback(bool initialSync, const CBlockApollon *pBlockApollon) {
+    if (initialSync || !pBlockApollon)
         return;
 
     std::string strCmd = GetArg("-blocknotify", "");
 
-    boost::replace_all(strCmd, "%s", pBlockIndex->GetBlockHash().GetHex());
+    boost::replace_all(strCmd, "%s", pBlockApollon->GetBlockHash().GetHex());
     boost::thread t(runCommand, strCmd); // thread runs free
 }
 
@@ -761,8 +761,8 @@ static bool fHaveGenesis = false;
 static boost::mutex cs_GenesisWait;
 static CConditionVariable condvar_GenesisWait;
 
-static void BlockNotifyGenesisWait(bool, const CBlockIndex *pBlockIndex) {
-    if (pBlockIndex != NULL) {
+static void BlockNotifyGenesisWait(bool, const CBlockApollon *pBlockApollon) {
+    if (pBlockApollon != NULL) {
         {
             boost::unique_lock<boost::mutex> lock_GenesisWait(cs_GenesisWait);
             fHaveGenesis = true;
@@ -784,10 +784,10 @@ struct CImportingNow {
 };
 
 
-// If we're using -prune with -reindex, then delete block files that will be ignored by the
-// reindex.  Since reindexing works by starting at block file 0 and looping until a blockfile
+// If we're using -prune with -reapollon, then delete block files that will be ignored by the
+// reapollon.  Since reapolloning works by starting at block file 0 and looping until a blockfile
 // is missing, do the same here to delete any later block files after a gap.  Also delete all
-// rev files since they'll be rewritten by the reindex anyway.  This ensures that vinfoBlockFile
+// rev files since they'll be rewritten by the reapollon anyway.  This ensures that vinfoBlockFile
 // is in sync with what's actually on disk by the time we start downloading, so that pruning
 // works correctly.
 void CleanupBlockRevFiles() {
@@ -797,7 +797,7 @@ void CleanupBlockRevFiles() {
     // Glob all blk?????.dat and rev?????.dat files from the blocks directory.
     // Remove the rev files immediately and insert the blk file paths into an
     // ordered map keyed by block file apollon.
-    LogPrintf("Removing unusable blk?????.dat and rev?????.dat files for -reindex with -prune\n");
+    LogPrintf("Removing unusable blk?????.dat and rev?????.dat files for -reapollon with -prune\n");
     path blocksdir = GetDataDir() / "blocks";
     for (directory_iterator it(blocksdir); it != directory_iterator(); it++) {
         if (is_regular_file(*it) &&
@@ -839,25 +839,25 @@ void ThreadImport(std::vector <fs::path> vImportFiles) {
     const CChainParams &chainparams = Params();
     RenameThread("bitcoin-loadblk");
     CImportingNow imp;
-    // -reindex
-    if (fReindex) {
+    // -reapollon
+    if (fReapollon) {
         int nFile = 0;
         while (true) {
             CDiskBlockPos pos(nFile, 0);
             if (!fs::exists(GetBlockPosFilename(pos, "blk")))
-                break; // No block files left to reindex
+                break; // No block files left to reapollon
             FILE *file = OpenBlockFile(pos, true);
             if (!file)
                 break; // This error is logged in OpenBlockFile
-            LogPrintf("Reindexing block file blk%05u.dat...\n", (unsigned int) nFile);
+            LogPrintf("Reapolloning block file blk%05u.dat...\n", (unsigned int) nFile);
             LoadExternalBlockFile(chainparams, file, &pos);
             nFile++;
         }
-        pblocktree->WriteReindexing(false);
-        fReindex = false;
-        LogPrintf("Reindexing finished\n");
-        // To avoid ending up in a situation without genesis block, re-try initializing (no-op if reindexing worked):
-        InitBlockIndex(chainparams);
+        pblocktree->WriteReapolloning(false);
+        fReapollon = false;
+        LogPrintf("Reapolloning finished\n");
+        // To avoid ending up in a situation without genesis block, re-try initializing (no-op if reapolloning worked):
+        InitBlockApollon(chainparams);
     }
 
     // hardcoded $DATADIR/bootstrap.dat
@@ -996,10 +996,10 @@ void InitParameterInteraction() {
             LogPrintf("%s: parameter interaction: -salvagewallet=1 -> setting -rescan=1\n", __func__);
     }
 
-    // -zapwalletmints implies a reindex and zapwallettxes=1
+    // -zapwalletmints implies a reapollon and zapwallettxes=1
     if (GetBoolArg("-zapwalletmints", false)) {
-        if (SoftSetBoolArg("-reindex", true))
-            LogPrintf("%s: parameter interaction: -zapwalletmints=<mode> -> setting -reindex=1\n", __func__);
+        if (SoftSetBoolArg("-reapollon", true))
+            LogPrintf("%s: parameter interaction: -zapwalletmints=<mode> -> setting -reapollon=1\n", __func__);
         if (SoftSetArg("-zapwallettxes", std::string("1")))
             LogPrintf("%s: parameter interaction: -zapwalletmints=<mode> -> setting -zapwallettxes=1\n", __func__);
     }
@@ -1214,13 +1214,13 @@ bool AppInit2(boost::thread_group &threadGroup, CScheduler &scheduler) {
 
     // also see: InitParameterInteraction()
 
-    // if using block pruning, then disable txindex
+    // if using block pruning, then disable txapollon
     if (GetArg("-prune", 0)) {
-        if (GetBoolArg("-txindex", DEFAULT_TXINDEX))
-            return InitError(_("Prune mode is incompatible with -txindex."));
+        if (GetBoolArg("-txapollon", DEFAULT_TXAPOLLON))
+            return InitError(_("Prune mode is incompatible with -txapollon."));
 #ifdef ENABLE_WALLET
         if (GetBoolArg("-rescan", false)) {
-            return InitError(_("Rescans are not possible in pruned mode. You will need to use -reindex which will download the whole blockchain again."));
+            return InitError(_("Rescans are not possible in pruned mode. You will need to use -reapollon which will download the whole blockchain again."));
         }
 #endif
     }
@@ -1272,7 +1272,7 @@ bool AppInit2(boost::thread_group &threadGroup, CScheduler &scheduler) {
     if (mapArgs.count("-blockminsize"))
         InitWarning("Unsupported argument -blockminsize ignored.");
 
-    // Checkmempool and checkblockindex default to true in regtest mode
+    // Checkmempool and checkblockapollon default to true in regtest mode
     int ratio = std::min<int>(std::max<int>(GetArg("-checkmempool", chainparams.DefaultConsistencyChecks() ? 1 : 0), 0),
                               1000000);
     if (ratio != 0) {
@@ -1280,7 +1280,7 @@ bool AppInit2(boost::thread_group &threadGroup, CScheduler &scheduler) {
         // Changes to mempool should also be made to Dandelion stempool
         stempool.setSanityCheck(1.0 / ratio);
     }
-    fCheckBlockIndex = GetBoolArg("-checkblockindex", chainparams.DefaultConsistencyChecks());
+    fCheckBlockApollon = GetBoolArg("-checkblockapollon", chainparams.DefaultConsistencyChecks());
     fCheckpointsEnabled = GetBoolArg("-checkpoints", DEFAULT_CHECKPOINTS_ENABLED);
 
     // mempool AC_CONFIG_SUBDIRSlimits
@@ -1686,8 +1686,8 @@ bool AppInit2(boost::thread_group &threadGroup, CScheduler &scheduler) {
             fs::path blocksDir = GetDataDir() / "blocks";
             fs::path chainstateDir = GetDataDir() / "chainstate";
             fs::path sporksDir = GetDataDir() / "sporks";
-            fs::path indexnodeCache = GetDataDir() / "incache.dat";
-            fs::path indexnodePayments = GetDataDir() / "inpayments.dat";
+            fs::path apollonnodeCache = GetDataDir() / "incache.dat";
+            fs::path apollonnodePayments = GetDataDir() / "inpayments.dat";
 
             LogPrintf("Deleting blockchain folders blocks, chainstate, sporks and zerocoin\n");
             // We delete in 4 individual steps in case one of the folder is missing already
@@ -1706,13 +1706,13 @@ bool AppInit2(boost::thread_group &threadGroup, CScheduler &scheduler) {
                     fs::remove_all(sporksDir);
                     LogPrintf("-resync: folder deleted: %s\n", sporksDir);
                 }
-                if (fs::exists(indexnodeCache)){
-                    fs::remove(indexnodeCache);
-                    LogPrintf("-resync: file deleted: %s\n", indexnodeCache);
+                if (fs::exists(apollonnodeCache)){
+                    fs::remove(apollonnodeCache);
+                    LogPrintf("-resync: file deleted: %s\n", apollonnodeCache);
                 }
-                if (fs::exists(indexnodePayments)){
-                    fs::remove(indexnodePayments);
-                    LogPrintf("-resync: file deleted: %s\n", indexnodePayments);
+                if (fs::exists(apollonnodePayments)){
+                    fs::remove(apollonnodePayments);
+                    LogPrintf("-resync: file deleted: %s\n", apollonnodePayments);
                 }
             } catch (const fs::filesystem_error& error) {
                 LogPrintf("Failed to delete blockchain folders %s\n", fsbridge::get_filesystem_error_message(error));
@@ -1720,8 +1720,8 @@ bool AppInit2(boost::thread_group &threadGroup, CScheduler &scheduler) {
         }
     // ********************************************************* Step 7: load block chain
     LogPrintf("Step 7: load block chain ************************************\n");
-    fReindex = GetBoolArg("-reindex", false);
-    bool fReindexChainState = GetBoolArg("-reindex-chainstate", false);
+    fReapollon = GetBoolArg("-reapollon", false);
+    bool fReapollonChainState = GetBoolArg("-reapollon-chainstate", false);
 #ifdef ENABLE_CLIENTAPI
     if(fApi)
         pzmqPublisherInterface->StartWorker();
@@ -1748,7 +1748,7 @@ bool AppInit2(boost::thread_group &threadGroup, CScheduler &scheduler) {
             }
         }
         if (linked) {
-            fReindex = true;
+            fReapollon = true;
         }
     }
 
@@ -1759,8 +1759,8 @@ bool AppInit2(boost::thread_group &threadGroup, CScheduler &scheduler) {
     if (nTotalCache < (1 << 22))
         nTotalCache = (1 << 22);
     int64_t nBlockTreeDBCache = nTotalCache / 8;
-//    nBlockTreeDBCache = std::min(nBlockTreeDBCache, (GetBoolArg("-txindex", DEFAULT_TXINDEX) ? nMaxBlockDBAndTxIndexCache : nMaxBlockDBCache) << 20);
-    if (nBlockTreeDBCache > (1 << 21) && !GetBoolArg("-txindex", false))
+//    nBlockTreeDBCache = std::min(nBlockTreeDBCache, (GetBoolArg("-txapollon", DEFAULT_TXAPOLLON) ? nMaxBlockDBAndTxApollonCache : nMaxBlockDBCache) << 20);
+    if (nBlockTreeDBCache > (1 << 21) && !GetBoolArg("-txapollon", false))
         nBlockTreeDBCache = (1 << 21); // block tree db cache shouldn't be larger than 2 MiB
     nTotalCache -= nBlockTreeDBCache;
     int64_t nCoinDBCache = std::min(nTotalCache / 2,
@@ -1776,7 +1776,7 @@ bool AppInit2(boost::thread_group &threadGroup, CScheduler &scheduler) {
 
     bool fLoaded = false;
     while (!fLoaded) {
-        bool fReset = fReindex;
+        bool fReset = fReapollon;
         std::string strLoadError;
         LogPrintf("Loading block apollon...\n");
         uiInterface.InitMessage(_("Loading block apollon..."));
@@ -1784,50 +1784,50 @@ bool AppInit2(boost::thread_group &threadGroup, CScheduler &scheduler) {
         nStart = GetTimeMillis();
         do {
             try {
-                LogPrintf("UnloadBlockIndex() \n");
-                UnloadBlockIndex();
+                LogPrintf("UnloadBlockApollon() \n");
+                UnloadBlockApollon();
                 delete pcoinsTip;
                 delete pcoinsdbview;
                 delete pcoinscatcher;
                 delete pblocktree;
 
-                pblocktree = new CBlockTreeDB(nBlockTreeDBCache, false, fReindex);
+                pblocktree = new CBlockTreeDB(nBlockTreeDBCache, false, fReapollon);
 
-                if (!fReindex) {
-                    // Check existing block apollon database version, reindex if needed
-                    if (pblocktree->GetBlockIndexVersion() < ZC_ADVANCED_INDEX_VERSION) {
-                        LogPrintf("Upgrade to new version of block apollon required, reindex forced\n");
+                if (!fReapollon) {
+                    // Check existing block apollon database version, reapollon if needed
+                    if (pblocktree->GetBlockApollonVersion() < ZC_ADVANCED_APOLLON_VERSION) {
+                        LogPrintf("Upgrade to new version of block apollon required, reapollon forced\n");
                         delete pblocktree;
-                        fReindex = fReset = true;
-                        pblocktree = new CBlockTreeDB(nBlockTreeDBCache, false, fReindex);
+                        fReapollon = fReset = true;
+                        pblocktree = new CBlockTreeDB(nBlockTreeDBCache, false, fReapollon);
                     }
                 }
 
-                pcoinsdbview = new CCoinsViewDB(nCoinDBCache, false, fReindex || fReindexChainState);
+                pcoinsdbview = new CCoinsViewDB(nCoinDBCache, false, fReapollon || fReapollonChainState);
                 pcoinscatcher = new CCoinsViewErrorCatcher(pcoinsdbview);
                 pcoinsTip = new CCoinsViewCache(pcoinscatcher);
-                LogPrintf("fReindex = %s\n", fReindex);
-                if (fReindex) {
-                    pblocktree->WriteReindexing(true);
-                    //Clear banned if we are reindexing
+                LogPrintf("fReapollon = %s\n", fReapollon);
+                if (fReapollon) {
+                    pblocktree->WriteReapolloning(true);
+                    //Clear banned if we are reapolloning
                     CNode::ClearBanned();
-                    //If we're reindexing in prune mode, wipe away unusable block files and all undo data files
+                    //If we're reapolloning in prune mode, wipe away unusable block files and all undo data files
                     if (fPruneMode)
                         CleanupBlockRevFiles();
                 }
-                LogPrintf("LoadBlockIndex...\n");
-                if (!LoadBlockIndex()) {
+                LogPrintf("LoadBlockApollon...\n");
+                if (!LoadBlockApollon()) {
                     strLoadError = _("Error loading block database");
                     break;
                 }
 
-                if (!fReindex) {
-                    CBlockIndex *tip = chainActive.Tip();
+                if (!fReapollon) {
+                    CBlockApollon *tip = chainActive.Tip();
                     if (tip && tip->nHeight >= chainparams.GetConsensus().nSigmaStartBlock) {
                         const uint256* phash = tip->phashBlock;
-                        if (pblocktree->GetBlockIndexVersion(*phash) < SIGMA_PROTOCOL_ENABLEMENT_VERSION) {
+                        if (pblocktree->GetBlockApollonVersion(*phash) < SIGMA_PROTOCOL_ENABLEMENT_VERSION) {
                             strLoadError = _(
-                                    "Block apollon is outdated, reindex required\n");
+                                    "Block apollon is outdated, reapollon required\n");
                             break;
                         }
                     }
@@ -1835,22 +1835,22 @@ bool AppInit2(boost::thread_group &threadGroup, CScheduler &scheduler) {
 
                 // If the loaded chain has a wrong genesis, bail out immediately
                 // (we're likely using a testnet datadir, or the other way around).
-                if (!mapBlockIndex.empty() && mapBlockIndex.count(chainparams.GetConsensus().hashGenesisBlock) == 0) {
+                if (!mapBlockApollon.empty() && mapBlockApollon.count(chainparams.GetConsensus().hashGenesisBlock) == 0) {
                     LogPrintf("Genesis block hash %s not found.\n",
                         chainparams.GetConsensus().hashGenesisBlock.ToString());
-                    LogPrintf("mapBlockIndex contains %d blocks.\n", mapBlockIndex.size());
+                    LogPrintf("mapBlockApollon contains %d blocks.\n", mapBlockApollon.size());
                     return InitError(_("Incorrect or no genesis block found. Wrong datadir for network?"));
                 }
 
                 // Initialize the block apollon (no-op if non-empty database was already loaded)
-                if (!InitBlockIndex(chainparams)) {
+                if (!InitBlockApollon(chainparams)) {
                     strLoadError = _("Error initializing block database");
                     break;
                 }
 
-                // Check for changed -txindex state
-                if (fTxIndex != GetBoolArg("-txindex", DEFAULT_TXINDEX)) {
-                    strLoadError = _("You need to rebuild the database using -reindex-chainstate to change -txindex");
+                // Check for changed -txapollon state
+                if (fTxApollon != GetBoolArg("-txapollon", DEFAULT_TXAPOLLON)) {
+                    strLoadError = _("You need to rebuild the database using -reapollon-chainstate to change -txapollon");
                     break;
                 }
 
@@ -1858,13 +1858,13 @@ bool AppInit2(boost::thread_group &threadGroup, CScheduler &scheduler) {
                 // in the past, but is now trying to run unpruned.
                 if (fHavePruned && !fPruneMode) {
                     strLoadError = _(
-                            "You need to rebuild the database using -reindex to go back to unpruned mode.  This will redownload the entire blockchain");
+                            "You need to rebuild the database using -reapollon to go back to unpruned mode.  This will redownload the entire blockchain");
                     break;
                 }
 
-                if (!fReindex && chainActive.Tip() != NULL) {
+                if (!fReapollon && chainActive.Tip() != NULL) {
                     uiInterface.InitMessage(_("Rewinding blocks..."));
-                    if (!RewindBlockIndex(chainparams)) {
+                    if (!RewindBlockApollon(chainparams)) {
                         strLoadError = _(
                                 "Unable to rewind the database to a pre-fork state. You will need to redownload the blockchain");
                         break;
@@ -1879,7 +1879,7 @@ bool AppInit2(boost::thread_group &threadGroup, CScheduler &scheduler) {
 
                 {
                     LOCK(cs_main);
-                    CBlockIndex *tip = chainActive.Tip();
+                    CBlockApollon *tip = chainActive.Tip();
                     if (tip && tip->nTime > GetAdjustedTime() + 2 * 60 * 60) {
                         strLoadError = _("The block database contains a block which appears to be from the future. "
                                                  "This may be due to your computer's date and time being set incorrectly. "
@@ -1903,14 +1903,14 @@ bool AppInit2(boost::thread_group &threadGroup, CScheduler &scheduler) {
         } while (false);
 
         if (!fLoaded) {
-            // first suggest a reindex
+            // first suggest a reapollon
             if (!fReset) {
                 bool fRet = uiInterface.ThreadSafeQuestion(
                         strLoadError + ".\n\n" + _("Do you want to rebuild the block database now?"),
-                        strLoadError + ".\nPlease restart with -reindex or -reindex-chainstate to recover.",
+                        strLoadError + ".\nPlease restart with -reapollon or -reapollon-chainstate to recover.",
                         "", CClientUIInterface::MSG_ERROR | CClientUIInterface::BTN_ABORT);
-                if (fRet || fApi) { // Force reindex when using client-api
-                    fReindex = true;
+                if (fRet || fApi) { // Force reapollon when using client-api
+                    fReapollon = true;
                     fRequestShutdown = false;
                 } else {
                     LogPrintf("Aborted block database rebuild. Exiting.\n");
@@ -1922,7 +1922,7 @@ bool AppInit2(boost::thread_group &threadGroup, CScheduler &scheduler) {
         }
     }
 
-    // As LoadBlockIndex can take several minutes, it's possible the user
+    // As LoadBlockApollon can take several minutes, it's possible the user
     // requested to kill the GUI during the last operation. If so, exit.
     // As the program has not fully started yet, Shutdown() is possibly overkill.
     if (fRequestShutdown) {
@@ -1960,29 +1960,29 @@ bool AppInit2(boost::thread_group &threadGroup, CScheduler &scheduler) {
 
 #ifdef ENABLE_ELYSIUM
     if (isElysiumEnabled()) {
-        if (!fTxIndex) {
+        if (!fTxApollon) {
             // ask the user if they would like us to modify their config file for them
             std::string msg = _("Disabled transaction apollon detected.\n\n"
                                 "Elysium requires an enabled transaction apollon. To enable "
-                                "transaction indexing, please use the \"-txindex\" option as "
-                                "command line argument or add \"txindex=1\" to your client "
+                                "transaction apolloning, please use the \"-txapollon\" option as "
+                                "command line argument or add \"txapollon=1\" to your client "
                                 "configuration file within your data directory.\n\n"
                                 "Configuration file"); // allow translation of main text body while still allowing differing config file string
             msg += ": " + GetConfigFile().string() + "\n\n";
             msg += _("Would you like Elysium to attempt to update your configuration file accordingly?");
             bool fRet = uiInterface.ThreadSafeMessageBox(msg, "", CClientUIInterface::MSG_INFORMATION | CClientUIInterface::BTN_OK | CClientUIInterface::MODAL | CClientUIInterface::BTN_ABORT);
             if (fRet) {
-                // add txindex=1 to config file in GetConfigFile()
+                // add txapollon=1 to config file in GetConfigFile()
                 fs::path configPathInfo = GetConfigFile();
                 FILE *fp = fsbridge::fopen(configPathInfo, "at");
                 if (!fp) {
                     std::string failMsg = _("Unable to update configuration file at");
                     failMsg += ":\n" + GetConfigFile().string() + "\n\n";
                     failMsg += _("The file may be write protected or you may not have the required permissions to edit it.\n");
-                    failMsg += _("Please add txindex=1 to your configuration file manually.\n\nElysium will now shutdown.");
+                    failMsg += _("Please add txapollon=1 to your configuration file manually.\n\nElysium will now shutdown.");
                     return InitError(failMsg);
                 }
-                fprintf(fp, "\ntxindex=1\n");
+                fprintf(fp, "\ntxapollon=1\n");
                 fflush(fp);
                 fclose(fp);
                 std::string strUpdated = _(
@@ -1991,7 +1991,7 @@ bool AppInit2(boost::thread_group &threadGroup, CScheduler &scheduler) {
                 uiInterface.ThreadSafeMessageBox(strUpdated, "", CClientUIInterface::MSG_INFORMATION | CClientUIInterface::BTN_OK | CClientUIInterface::MODAL);
                 return false;
             } else {
-                return InitError(_("Please add txindex=1 to your configuration file manually.\n\nOmni Core will now shutdown."));
+                return InitError(_("Please add txapollon=1 to your configuration file manually.\n\nOmni Core will now shutdown."));
             }
         }
 
@@ -2010,7 +2010,7 @@ bool AppInit2(boost::thread_group &threadGroup, CScheduler &scheduler) {
     if (fPruneMode) {
         LogPrintf("Unsetting NODE_NETWORK on prune mode\n");
         nLocalServices = ServiceFlags(nLocalServices & ~NODE_NETWORK);
-        if (!fReindex) {
+        if (!fReapollon) {
             uiInterface.InitMessage(_("Pruning blockstore..."));
             PruneAndFlush();
         }
@@ -2072,7 +2072,7 @@ bool AppInit2(boost::thread_group &threadGroup, CScheduler &scheduler) {
         return InitError(strErrors.str());
 
     //// debug print
-    LogPrintf("mapBlockIndex.size() = %u\n", mapBlockIndex.size());
+    LogPrintf("mapBlockApollon.size() = %u\n", mapBlockApollon.size());
     LogPrintf("nBestHeight = %d\n", chainActive.Height());
 #ifdef ENABLE_WALLET
     LogPrintf("setKeyPool.size() = %u\n",      pwalletMain ? pwalletMain->setKeyPool.size() : 0);
@@ -2094,55 +2094,55 @@ bool AppInit2(boost::thread_group &threadGroup, CScheduler &scheduler) {
         threadGroup.create_thread(boost::bind(&ThreadStakeMiner, pwalletMain, chainparams));
 
     // ********************************************************* Step 11a: setup PrivateSend
-    fIndexNode = GetBoolArg("-indexnode", false);
+    fApollonNode = GetBoolArg("-apollonnode", false);
 
-    LogPrintf("fIndexNode = %s\n", fIndexNode);
-    LogPrintf("indexnodeConfig.getCount(): %s\n", indexnodeConfig.getCount());
+    LogPrintf("fApollonNode = %s\n", fApollonNode);
+    LogPrintf("apollonnodeConfig.getCount(): %s\n", apollonnodeConfig.getCount());
 
-    if ((fIndexNode || indexnodeConfig.getCount() > 0) && !fTxIndex) {
-        return InitError("Enabling Indexnode support requires turning on transaction indexing."
-                                 "Please add txindex=1 to your configuration and start with -reindex");
+    if ((fApollonNode || apollonnodeConfig.getCount() > 0) && !fTxApollon) {
+        return InitError("Enabling Apollonnode support requires turning on transaction apolloning."
+                                 "Please add txapollon=1 to your configuration and start with -reapollon");
     }
 
-    if (fIndexNode) {
-        LogPrintf("INDEXNODE:\n");
+    if (fApollonNode) {
+        LogPrintf("APOLLONNODE:\n");
 
-        if (!GetArg("-indexnodeaddr", "").empty()) {
-            // Hot Indexnode (either local or remote) should get its address in
-            // CActiveIndexnode::ManageState() automatically and no longer relies on Indexnodeaddr.
-            return InitError(_("indexnodeaddr option is deprecated. Please use indexnode.conf to manage your remote indexnodes."));
+        if (!GetArg("-apollonnodeaddr", "").empty()) {
+            // Hot Apollonnode (either local or remote) should get its address in
+            // CActiveApollonnode::ManageState() automatically and no longer relies on Apollonnodeaddr.
+            return InitError(_("apollonnodeaddr option is deprecated. Please use apollonnode.conf to manage your remote apollonnodes."));
         }
 
-        std::string strIndexnodePrivKey = GetArg("-indexnodeprivkey", "");
-        if (!strIndexnodePrivKey.empty()) {
-            if (!darkSendSigner.GetKeysFromSecret(strIndexnodePrivKey, activeIndexnode.keyIndexnode,
-                                                  activeIndexnode.pubKeyIndexnode))
-                return InitError(_("Invalid indexnodeprivkey. Please see documentation."));
+        std::string strApollonnodePrivKey = GetArg("-apollonnodeprivkey", "");
+        if (!strApollonnodePrivKey.empty()) {
+            if (!darkSendSigner.GetKeysFromSecret(strApollonnodePrivKey, activeApollonnode.keyApollonnode,
+                                                  activeApollonnode.pubKeyApollonnode))
+                return InitError(_("Invalid apollonnodeprivkey. Please see documentation."));
 
-            LogPrintf("  pubKeyIndexnode: %s\n", CBitcoinAddress(activeIndexnode.pubKeyIndexnode.GetID()).ToString());
+            LogPrintf("  pubKeyApollonnode: %s\n", CBitcoinAddress(activeApollonnode.pubKeyApollonnode.GetID()).ToString());
         } else {
             return InitError(
-                    _("You must specify a indexnodeprivkey in the configuration. Please see documentation for help."));
+                    _("You must specify a apollonnodeprivkey in the configuration. Please see documentation for help."));
         }
     }
 
-    LogPrintf("Using Indexnode config file %s\n", GetIndexnodeConfigFile().string());
+    LogPrintf("Using Apollonnode config file %s\n", GetApollonnodeConfigFile().string());
 
-    // Lock Existing Indexnodes
-    if (GetBoolArg("-inconflock", true) && (indexnodeConfig.getCount() > 0)) {
-        LogPrintf(" Locking Existing Indexnodes..\n");
+    // Lock Existing Apollonnodes
+    if (GetBoolArg("-inconflock", true) && (apollonnodeConfig.getCount() > 0)) {
+        LogPrintf(" Locking Existing Apollonnodes..\n");
         LOCK2(cs_main, pwalletMain->cs_wallet);
-        BOOST_FOREACH(CIndexnodeConfig::CIndexnodeEntry mne, indexnodeConfig.getEntries()) {
+        BOOST_FOREACH(CApollonnodeConfig::CApollonnodeEntry mne, apollonnodeConfig.getEntries()) {
             uint256 mnTxHash(uint256S(mne.getTxHash()));
-            int outputIndex = boost::lexical_cast<unsigned int>(mne.getOutputIndex());
+            int outputApollon = boost::lexical_cast<unsigned int>(mne.getOutputApollon());
 
-            COutPoint outpoint = COutPoint(mnTxHash, outputIndex);
+            COutPoint outpoint = COutPoint(mnTxHash, outputApollon);
 
             if(pwalletMain->IsMine(CTxIn(outpoint)) == ISMINE_SPENDABLE &&
-              !pwalletMain->IsSpent(mnTxHash, outputIndex)){
-                pwalletMain->LockCoin(outpoint); //Lock if this transaction is an available indexnode colleteral payment
+              !pwalletMain->IsSpent(mnTxHash, outputApollon)){
+                pwalletMain->LockCoin(outpoint); //Lock if this transaction is an available apollonnode colleteral payment
             }else {
-                pwalletMain->UnlockCoin(outpoint); // Unlock any spent/unavailable Indexnode collateral
+                pwalletMain->UnlockCoin(outpoint); // Unlock any spent/unavailable Apollonnode collateral
             }
         }
         if(fApi)
@@ -2166,10 +2166,10 @@ bool AppInit2(boost::thread_group &threadGroup, CScheduler &scheduler) {
 //    nInstantSendDepth = GetArg("-instantsenddepth", DEFAULT_INSTANTSEND_DEPTH);
 //    nInstantSendDepth = std::min(std::max(nInstantSendDepth, 0), 60);
 
-    // lite mode disables all Indexnode and Darksend related functionality
+    // lite mode disables all Apollonnode and Darksend related functionality
     fLiteMode = GetBoolArg("-litemode", false);
-    if (fIndexNode && fLiteMode) {
-        return InitError("You can not start a indexnode in litemode");
+    if (fApollonNode && fLiteMode) {
+        return InitError("You can not start a apollonnode in litemode");
     }
 
     LogPrintf("fLiteMode %d\n", fLiteMode);
@@ -2182,21 +2182,21 @@ bool AppInit2(boost::thread_group &threadGroup, CScheduler &scheduler) {
     // ********************************************************* Step 11b: Load cache data
 
     // LOAD SERIALIZED DAT FILES INTO DATA CACHES FOR INTERNAL USE
-    if (GetBoolArg("-persistentindexnodestate", true)) {
-        uiInterface.InitMessage(_("Loading indexnode cache..."));
-        CFlatDB<CIndexnodeMan> flatdb1("incache.dat", "magicIndexnodeCache");
+    if (GetBoolArg("-persistentapollonnodestate", true)) {
+        uiInterface.InitMessage(_("Loading apollonnode cache..."));
+        CFlatDB<CApollonnodeMan> flatdb1("incache.dat", "magicApollonnodeCache");
         if (!flatdb1.Load(mnodeman)) {
-            return InitError("Failed to load indexnode cache from incache.dat");
+            return InitError("Failed to load apollonnode cache from incache.dat");
         }
 
         if (mnodeman.size()) {
-            uiInterface.InitMessage(_("Loading Indexnode payment cache..."));
-            CFlatDB<CIndexnodePayments> flatdb2("inpayments.dat", "magicIndexnodePaymentsCache");
+            uiInterface.InitMessage(_("Loading Apollonnode payment cache..."));
+            CFlatDB<CApollonnodePayments> flatdb2("inpayments.dat", "magicApollonnodePaymentsCache");
             if (!flatdb2.Load(mnpayments)) {
-                return InitError("Failed to load indexnode payments cache from inpayments.dat");
+                return InitError("Failed to load apollonnode payments cache from inpayments.dat");
             }
         } else {
-            uiInterface.InitMessage(_("Indexnode cache is empty, skipping payments cache..."));
+            uiInterface.InitMessage(_("Apollonnode cache is empty, skipping payments cache..."));
         }
 
         uiInterface.InitMessage(_("Loading fulfilled requests cache..."));
@@ -2210,13 +2210,13 @@ bool AppInit2(boost::thread_group &threadGroup, CScheduler &scheduler) {
 
     // ********************************************************* Step 11c: update block tip in Apollon modules
 
-    // force UpdatedBlockTip to initialize pCurrentBlockIndex for DS, MN payments and budgets
+    // force UpdatedBlockTip to initialize pCurrentBlockApollon for DS, MN payments and budgets
     // but don't call it directly to prevent triggering of other listeners like zmq etc.
     // GetMainSignals().UpdatedBlockTip(chainActive.Tip());
     mnodeman.UpdatedBlockTip(chainActive.Tip());
     darkSendPool.UpdatedBlockTip(chainActive.Tip());
     mnpayments.UpdatedBlockTip(chainActive.Tip());
-    indexnodeSync.UpdatedBlockTip(chainActive.Tip());
+    apollonnodeSync.UpdatedBlockTip(chainActive.Tip());
     // governance.UpdatedBlockTip(chainActive.Tip());
 
     // ********************************************************* Step 11d: start dash-privatesend thread

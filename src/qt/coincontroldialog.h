@@ -84,7 +84,7 @@ private:
         COLUMN_CONFIRMATIONS,
         COLUMN_PRIORITY,
         COLUMN_TXHASH,
-        COLUMN_VOUT_INDEX,
+        COLUMN_VOUT_APOLLON,
     };
     friend class CCoinControlWidgetItem;
 

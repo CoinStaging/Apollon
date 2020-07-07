@@ -377,7 +377,7 @@ class Compaction {
   // State used to check for number of of overlapping grandparent files
   // (parent == level_ + 1, grandparent == level_ + 2)
   std::vector<FileMetaData*> grandparents_;
-  size_t grandparent_index_;  // Apollon in grandparent_starts_
+  size_t grandparent_apollon_;  // Apollon in grandparent_starts_
   bool seen_key_;             // Some output key has been seen
   int64_t overlapped_bytes_;  // Bytes of overlap between current output
                               // and grandparent files

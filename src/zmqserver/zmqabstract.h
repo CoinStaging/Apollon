@@ -7,7 +7,7 @@
 
 #include "zmqconfig.h"
 
-class CBlockIndex;
+class CBlockApollon;
 class CZMQAbstract;
 
 typedef CZMQAbstract* (*CZMQFactory)();
@@ -53,13 +53,13 @@ public:
     virtual void Shutdown() = 0;
 
     /* virtual functions to be implemented by publisher (defined here to allow access by notifiers) */ 
-    virtual bool NotifyBlock(const CBlockIndex *pindex);
+    virtual bool NotifyBlock(const CBlockApollon *papollon);
     virtual bool NotifyTransaction(const CTransaction &transaction);
     virtual bool NotifyConnections();
     virtual bool NotifyStatus();
     virtual bool NotifyAPIStatus();
-    virtual bool NotifyIndexnodeList();
-    virtual bool NotifyIndexnodeUpdate(CIndexnode &indexnode);
+    virtual bool NotifyApollonnodeList();
+    virtual bool NotifyApollonnodeUpdate(CApollonnode &apollonnode);
     virtual bool NotifyMintStatusUpdate(std::string update);
     virtual bool NotifySettingsUpdate(std::string update);
     virtual bool NotifyBalance();

@@ -480,7 +480,7 @@ connection_new(int type, int socket_family)
  *
  * Set conn-\>magic to the correct value.
  *
- * Set conn-\>type to <b>type</b>. Set conn-\>s and conn-\>conn_array_index to
+ * Set conn-\>type to <b>type</b>. Set conn-\>s and conn-\>conn_array_apollon to
  * -1 to signify they are not yet assigned.
  *
  * Initialize conn's timestamps to now.
@@ -516,7 +516,7 @@ connection_init(time_t now, connection_t *conn, int type, int socket_family)
   }
 
   conn->s = TOR_INVALID_SOCKET; /* give it a default of 'not used' */
-  conn->conn_array_index = -1; /* also default to 'not used' */
+  conn->conn_array_apollon = -1; /* also default to 'not used' */
   conn->global_identifier = n_connections_allocated++;
 
   conn->type = type;
@@ -2121,13 +2121,13 @@ conn_get_outbound_address(sa_family_t family,
 {
   const tor_addr_t *ext_addr = NULL;
 
-  int fam_index;
+  int fam_apollon;
   switch (family) {
     case AF_INET:
-      fam_index = 0;
+      fam_apollon = 0;
       break;
     case AF_INET6:
-      fam_index = 1;
+      fam_apollon = 1;
       break;
     default:
       return NULL;
@@ -2136,25 +2136,25 @@ conn_get_outbound_address(sa_family_t family,
   // If an exit connection, use the exit address (if present)
   if (conn_type == CONN_TYPE_EXIT) {
     if (!tor_addr_is_null(
-        &options->OutboundBindAddresses[OUTBOUND_ADDR_EXIT][fam_index])) {
+        &options->OutboundBindAddresses[OUTBOUND_ADDR_EXIT][fam_apollon])) {
       ext_addr = &options->OutboundBindAddresses[OUTBOUND_ADDR_EXIT]
-                 [fam_index];
+                 [fam_apollon];
     } else if (!tor_addr_is_null(
                  &options->OutboundBindAddresses[OUTBOUND_ADDR_EXIT_AND_OR]
-                 [fam_index])) {
+                 [fam_apollon])) {
       ext_addr = &options->OutboundBindAddresses[OUTBOUND_ADDR_EXIT_AND_OR]
-                 [fam_index];
+                 [fam_apollon];
     }
   } else { // All non-exit connections
     if (!tor_addr_is_null(
-           &options->OutboundBindAddresses[OUTBOUND_ADDR_OR][fam_index])) {
+           &options->OutboundBindAddresses[OUTBOUND_ADDR_OR][fam_apollon])) {
       ext_addr = &options->OutboundBindAddresses[OUTBOUND_ADDR_OR]
-                 [fam_index];
+                 [fam_apollon];
     } else if (!tor_addr_is_null(
                  &options->OutboundBindAddresses[OUTBOUND_ADDR_EXIT_AND_OR]
-                 [fam_index])) {
+                 [fam_apollon])) {
       ext_addr = &options->OutboundBindAddresses[OUTBOUND_ADDR_EXIT_AND_OR]
-                 [fam_index];
+                 [fam_apollon];
     }
   }
   return ext_addr;
@@ -5089,7 +5089,7 @@ int
 connection_is_moribund(connection_t *conn)
 {
   if (conn != NULL &&
-      (conn->conn_array_index < 0 ||
+      (conn->conn_array_apollon < 0 ||
        conn->marked_for_close)) {
     return 1;
   } else {
@@ -5290,7 +5290,7 @@ assert_connection_ok(connection_t *conn, time_t now)
   if (conn->hold_open_until_flushed)
     tor_assert(conn->marked_for_close);
 
-  /* XXXX check: read_blocked_on_bw, write_blocked_on_bw, s, conn_array_index,
+  /* XXXX check: read_blocked_on_bw, write_blocked_on_bw, s, conn_array_apollon,
    * marked_for_close. */
 
   /* buffers */

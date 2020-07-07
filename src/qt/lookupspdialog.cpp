@@ -262,7 +262,7 @@ void LookupSPDialog::updateDisplayedProperty()
 {
     uint64_t maxLabelWidth=100; // fairly safe value for now, next version consider wrapping
                                // instead of truncation and evaluate effects on vertical layout
-    QString strId = ui->matchingComboBox->itemData(ui->matchingComboBox->currentIndex()).toString();
+    QString strId = ui->matchingComboBox->itemData(ui->matchingComboBox->currentApollon()).toString();
     // protect against an empty matchedComboBox
     if (strId.toStdString().empty()) return;
 

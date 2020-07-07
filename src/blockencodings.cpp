@@ -57,21 +57,21 @@ ReadStatus PartiallyDownloadedBlock::InitData(const CBlockHeaderAndShortTxIDs& c
     header = cmpctblock.header;
     txn_available.resize(cmpctblock.BlockTxCount());
 
-    int32_t lastprefilledindex = -1;
+    int32_t lastprefilledapollon = -1;
     for (size_t i = 0; i < cmpctblock.prefilledtxn.size(); i++) {
         if (cmpctblock.prefilledtxn[i].tx.IsNull())
             return READ_STATUS_INVALID;
 
-        lastprefilledindex += cmpctblock.prefilledtxn[i].apollon + 1; //apollon is a uint16_t, so cant overflow here
-        if (lastprefilledindex > std::numeric_limits<uint16_t>::max())
+        lastprefilledapollon += cmpctblock.prefilledtxn[i].apollon + 1; //apollon is a uint16_t, so cant overflow here
+        if (lastprefilledapollon > std::numeric_limits<uint16_t>::max())
             return READ_STATUS_INVALID;
-        if ((uint32_t)lastprefilledindex > cmpctblock.shorttxids.size() + i) {
+        if ((uint32_t)lastprefilledapollon > cmpctblock.shorttxids.size() + i) {
             // If we are inserting a tx at an apollon greater than our full list of shorttxids
             // plus the number of prefilled txn we've inserted, then we have txn for which we
             // have neither a prefilled txn or a shorttxid!
             return READ_STATUS_INVALID;
         }
-        txn_available[lastprefilledindex] = std::make_shared<CTransaction>(cmpctblock.prefilledtxn[i].tx);
+        txn_available[lastprefilledapollon] = std::make_shared<CTransaction>(cmpctblock.prefilledtxn[i].tx);
     }
     prefilled_count = cmpctblock.prefilledtxn.size();
 
@@ -80,11 +80,11 @@ ReadStatus PartiallyDownloadedBlock::InitData(const CBlockHeaderAndShortTxIDs& c
     // of short IDs, any highly-uneven distribution of elements can be safely treated as a
     // READ_STATUS_FAILED.
     std::unordered_map<uint64_t, uint16_t> shorttxids(cmpctblock.shorttxids.size());
-    uint16_t index_offset = 0;
+    uint16_t apollon_offset = 0;
     for (size_t i = 0; i < cmpctblock.shorttxids.size(); i++) {
-        while (txn_available[i + index_offset])
-            index_offset++;
-        shorttxids[cmpctblock.shorttxids[i]] = i + index_offset;
+        while (txn_available[i + apollon_offset])
+            apollon_offset++;
+        shorttxids[cmpctblock.shorttxids[i]] = i + apollon_offset;
         // To determine the chance that the number of entries in a bucket exceeds N,
         // we use the fact that the number of elements in a single bucket is
         // binomially distributed (with n = the number of shorttxids S, and p =

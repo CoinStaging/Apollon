@@ -475,8 +475,8 @@ circuit_build_times_new_consensus_params(circuit_build_times_t *cbt,
 
         // Adjust the apollon if it needs it.
         if (num < cbt->liveness.num_recent_circs) {
-          cbt->liveness.after_firsthop_idx = MIN(num-1,
-                  cbt->liveness.after_firsthop_idx);
+          cbt->liveness.after_firsthop_xap = MIN(num-1,
+                  cbt->liveness.after_firsthop_xap);
         }
 
         tor_free(cbt->liveness.timeouts_after_firsthop);
@@ -549,7 +549,7 @@ circuit_build_times_reset(circuit_build_times_t *cbt)
 {
   memset(cbt->circuit_build_times, 0, sizeof(cbt->circuit_build_times));
   cbt->total_build_times = 0;
-  cbt->build_times_idx = 0;
+  cbt->build_times_xap = 0;
   cbt->have_computed_timeout = 0;
 
   // Reset timeout and close counts
@@ -611,11 +611,11 @@ circuit_build_times_rewind_history(circuit_build_times_t *cbt, int n)
 {
   int i = 0;
 
-  cbt->build_times_idx -= n;
-  cbt->build_times_idx %= CBT_NCIRCUITS_TO_OBSERVE;
+  cbt->build_times_xap -= n;
+  cbt->build_times_xap %= CBT_NCIRCUITS_TO_OBSERVE;
 
   for (i = 0; i < n; i++) {
-    cbt->circuit_build_times[(i+cbt->build_times_idx)
+    cbt->circuit_build_times[(i+cbt->build_times_xap)
                              %CBT_NCIRCUITS_TO_OBSERVE]=0;
   }
 
@@ -627,7 +627,7 @@ circuit_build_times_rewind_history(circuit_build_times_t *cbt, int n)
 
   log_info(LD_CIRC,
           "Rewound history by %d places. Current apollon: %d. "
-          "Total: %d", n, cbt->build_times_idx, cbt->total_build_times);
+          "Total: %d", n, cbt->build_times_xap, cbt->total_build_times);
 }
 #endif /* 0 */
 
@@ -767,8 +767,8 @@ circuit_build_times_add_time(circuit_build_times_t *cbt, build_time_t btime)
 
   log_debug(LD_CIRC, "Adding circuit build time %u", btime);
 
-  cbt->circuit_build_times[cbt->build_times_idx] = btime;
-  cbt->build_times_idx = (cbt->build_times_idx + 1) % CBT_NCIRCUITS_TO_OBSERVE;
+  cbt->circuit_build_times[cbt->build_times_xap] = btime;
+  cbt->build_times_xap = (cbt->build_times_xap + 1) % CBT_NCIRCUITS_TO_OBSERVE;
   if (cbt->total_build_times < CBT_NCIRCUITS_TO_OBSERVE)
     cbt->total_build_times++;
 
@@ -1148,7 +1148,7 @@ circuit_build_times_parse_state(circuit_build_times_t *cbt,
 
   circuit_build_times_shuffle_and_store_array(cbt, loaded_times, loaded_cnt);
 
-  /* Verify that we didn't overwrite any indexes */
+  /* Verify that we didn't overwrite any apollones */
   for (i=0; i < CBT_NCIRCUITS_TO_OBSERVE; i++) {
     if (!cbt->circuit_build_times[i])
       break;
@@ -1483,10 +1483,10 @@ circuit_build_times_network_circ_success(circuit_build_times_t *cbt)
   /* Check for NULLness because we might not be using adaptive timeouts */
   if (cbt->liveness.timeouts_after_firsthop &&
       cbt->liveness.num_recent_circs > 0) {
-    cbt->liveness.timeouts_after_firsthop[cbt->liveness.after_firsthop_idx]
+    cbt->liveness.timeouts_after_firsthop[cbt->liveness.after_firsthop_xap]
       = 0;
-    cbt->liveness.after_firsthop_idx++;
-    cbt->liveness.after_firsthop_idx %= cbt->liveness.num_recent_circs;
+    cbt->liveness.after_firsthop_xap++;
+    cbt->liveness.after_firsthop_xap %= cbt->liveness.num_recent_circs;
   }
 }
 
@@ -1514,10 +1514,10 @@ circuit_build_times_network_timeout(circuit_build_times_t *cbt,
   if (cbt->liveness.timeouts_after_firsthop &&
       cbt->liveness.num_recent_circs > 0) {
     if (did_onehop) {
-      cbt->liveness.timeouts_after_firsthop[cbt->liveness.after_firsthop_idx]
+      cbt->liveness.timeouts_after_firsthop[cbt->liveness.after_firsthop_xap]
         = 1;
-      cbt->liveness.after_firsthop_idx++;
-      cbt->liveness.after_firsthop_idx %= cbt->liveness.num_recent_circs;
+      cbt->liveness.after_firsthop_xap++;
+      cbt->liveness.after_firsthop_xap %= cbt->liveness.num_recent_circs;
     }
   }
 }
@@ -1638,7 +1638,7 @@ circuit_build_times_network_check_changed(circuit_build_times_t *cbt)
             sizeof(*cbt->liveness.timeouts_after_firsthop)*
             cbt->liveness.num_recent_circs);
   }
-  cbt->liveness.after_firsthop_idx = 0;
+  cbt->liveness.after_firsthop_xap = 0;
 
 #define MAX_TIMEOUT ((int32_t) (INT32_MAX/2))
   /* Check to see if this has happened before. If so, double the timeout

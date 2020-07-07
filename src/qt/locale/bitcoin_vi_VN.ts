@@ -162,8 +162,8 @@
         <translation>Mở &amp;URI...</translation>
     </message>
     <message>
-        <source>Reindexing blocks on disk...</source>
-        <translation>Đánh chỉ số (indexing) lại các khối (blocks) trên ổ đĩa ...</translation>
+        <source>Reapolloning blocks on disk...</source>
+        <translation>Đánh chỉ số (apolloning) lại các khối (blocks) trên ổ đĩa ...</translation>
     </message>
     <message>
         <source>Send coins to a Apollon address</source>

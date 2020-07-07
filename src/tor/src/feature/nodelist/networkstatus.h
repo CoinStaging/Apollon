@@ -45,7 +45,7 @@ MOCK_DECL(const routerstatus_t *,networkstatus_vote_find_entry,(
                                               const char *digest));
 routerstatus_t *networkstatus_vote_find_mutable_entry(networkstatus_t *ns,
                                               const char *digest);
-int networkstatus_vote_find_entry_idx(networkstatus_t *ns,
+int networkstatus_vote_find_entry_xap(networkstatus_t *ns,
                                       const char *digest, int *found_out);
 
 MOCK_DECL(download_status_t *,

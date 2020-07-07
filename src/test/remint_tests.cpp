@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE(remint_basic_test)
     // Mint 1 XAP zerocoin and remint it on wrong fork
     BOOST_CHECK_MESSAGE(pwalletMain->CreateZerocoinMintModel(stringError, "1"), stringError + " - Create Mint failed");
     CreateAndProcessBlock({}, scriptPubKey);
-    CBlockIndex *forkBlockIndex = chainActive.Tip();
+    CBlockApollon *forkBlockApollon = chainActive.Tip();
     // Get to the sigma portion
     for (int i=0; i<200; i++)
         CreateAndProcessBlock({}, scriptPubKey);
@@ -126,7 +126,7 @@ BOOST_AUTO_TEST_CASE(remint_basic_test)
     {
         LOCK(cs_main);
         CValidationState state;
-        InvalidateBlock(state, Params(), forkBlockIndex);
+        InvalidateBlock(state, Params(), forkBlockApollon);
     }
     // Mint and remint txs should be in the mempool now, clear them
     mempool.clear();

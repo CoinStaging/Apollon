@@ -157,45 +157,45 @@ class Version::LevelFileNumIterator : public Iterator {
                        const std::vector<FileMetaData*>* flist)
       : icmp_(icmp),
         flist_(flist),
-        index_(flist->size()) {        // Marks as invalid
+        apollon_(flist->size()) {        // Marks as invalid
   }
   virtual bool Valid() const {
-    return index_ < flist_->size();
+    return apollon_ < flist_->size();
   }
   virtual void Seek(const Slice& target) {
-    index_ = FindFile(icmp_, *flist_, target);
+    apollon_ = FindFile(icmp_, *flist_, target);
   }
-  virtual void SeekToFirst() { index_ = 0; }
+  virtual void SeekToFirst() { apollon_ = 0; }
   virtual void SeekToLast() {
-    index_ = flist_->empty() ? 0 : flist_->size() - 1;
+    apollon_ = flist_->empty() ? 0 : flist_->size() - 1;
   }
   virtual void Next() {
     assert(Valid());
-    index_++;
+    apollon_++;
   }
   virtual void Prev() {
     assert(Valid());
-    if (index_ == 0) {
-      index_ = flist_->size();  // Marks as invalid
+    if (apollon_ == 0) {
+      apollon_ = flist_->size();  // Marks as invalid
     } else {
-      index_--;
+      apollon_--;
     }
   }
   Slice key() const {
     assert(Valid());
-    return (*flist_)[index_]->largest.Encode();
+    return (*flist_)[apollon_]->largest.Encode();
   }
   Slice value() const {
     assert(Valid());
-    EncodeFixed64(value_buf_, (*flist_)[index_]->number);
-    EncodeFixed64(value_buf_+8, (*flist_)[index_]->file_size);
+    EncodeFixed64(value_buf_, (*flist_)[apollon_]->number);
+    EncodeFixed64(value_buf_+8, (*flist_)[apollon_]->file_size);
     return Slice(value_buf_, sizeof(value_buf_));
   }
   virtual Status status() const { return Status::OK(); }
  private:
   const InternalKeyComparator icmp_;
   const std::vector<FileMetaData*>* const flist_;
-  uint32_t index_;
+  uint32_t apollon_;
 
   // Backing store for value().  Holds the file number and size.
   mutable char value_buf_[16];
@@ -1400,7 +1400,7 @@ Compaction::Compaction(int level)
     : level_(level),
       max_output_file_size_(MaxFileSizeForLevel(level)),
       input_version_(NULL),
-      grandparent_index_(0),
+      grandparent_apollon_(0),
       seen_key_(false),
       overlapped_bytes_(0) {
   for (int i = 0; i < config::kNumLevels; i++) {
@@ -1455,13 +1455,13 @@ bool Compaction::IsBaseLevelForKey(const Slice& user_key) {
 bool Compaction::ShouldStopBefore(const Slice& internal_key) {
   // Scan to find earliest grandparent file that contains key.
   const InternalKeyComparator* icmp = &input_version_->vset_->icmp_;
-  while (grandparent_index_ < grandparents_.size() &&
+  while (grandparent_apollon_ < grandparents_.size() &&
       icmp->Compare(internal_key,
-                    grandparents_[grandparent_index_]->largest.Encode()) > 0) {
+                    grandparents_[grandparent_apollon_]->largest.Encode()) > 0) {
     if (seen_key_) {
-      overlapped_bytes_ += grandparents_[grandparent_index_]->file_size;
+      overlapped_bytes_ += grandparents_[grandparent_apollon_]->file_size;
     }
-    grandparent_index_++;
+    grandparent_apollon_++;
   }
   seen_key_ = true;
 

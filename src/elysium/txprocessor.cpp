@@ -117,7 +117,7 @@ int TxProcessor::ProcessSimpleMint(const CMPTransaction& tx)
 
     for (auto &mint : tx.getMints()) {
         SigmaMintGroup group;
-        SigmaMintIndex apollon;
+        SigmaMintApollon apollon;
 
         auto denom = mint.first;
         auto& pubkey = mint.second;

@@ -17,20 +17,20 @@ BOOST_FIXTURE_TEST_SUITE(skiplist_tests, BasicTestingSetup)
 
 BOOST_AUTO_TEST_CASE(skiplist_test)
 {
-    std::vector<CBlockIndex> vIndex(SKIPLIST_LENGTH);
+    std::vector<CBlockApollon> vApollon(SKIPLIST_LENGTH);
 
     for (int i=0; i<SKIPLIST_LENGTH; i++) {
-        vIndex[i].nHeight = i;
-        vIndex[i].pprev = (i == 0) ? NULL : &vIndex[i - 1];
-        vIndex[i].BuildSkip();
+        vApollon[i].nHeight = i;
+        vApollon[i].pprev = (i == 0) ? NULL : &vApollon[i - 1];
+        vApollon[i].BuildSkip();
     }
 
     for (int i=0; i<SKIPLIST_LENGTH; i++) {
         if (i > 0) {
-            BOOST_CHECK(vIndex[i].pskip == &vIndex[vIndex[i].pskip->nHeight]);
-            BOOST_CHECK(vIndex[i].pskip->nHeight < i);
+            BOOST_CHECK(vApollon[i].pskip == &vApollon[vApollon[i].pskip->nHeight]);
+            BOOST_CHECK(vApollon[i].pskip->nHeight < i);
         } else {
-            BOOST_CHECK(vIndex[i].pskip == NULL);
+            BOOST_CHECK(vApollon[i].pskip == NULL);
         }
     }
 
@@ -38,9 +38,9 @@ BOOST_AUTO_TEST_CASE(skiplist_test)
         int from = insecure_rand() % (SKIPLIST_LENGTH - 1);
         int to = insecure_rand() % (from + 1);
 
-        BOOST_CHECK(vIndex[SKIPLIST_LENGTH - 1].GetAncestor(from) == &vIndex[from]);
-        BOOST_CHECK(vIndex[from].GetAncestor(to) == &vIndex[to]);
-        BOOST_CHECK(vIndex[from].GetAncestor(0) == &vIndex[0]);
+        BOOST_CHECK(vApollon[SKIPLIST_LENGTH - 1].GetAncestor(from) == &vApollon[from]);
+        BOOST_CHECK(vApollon[from].GetAncestor(to) == &vApollon[to]);
+        BOOST_CHECK(vApollon[from].GetAncestor(0) == &vApollon[0]);
     }
 }
 
@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_CASE(getlocator_test)
 {
     // Build a main chain 100000 blocks long.
     std::vector<uint256> vHashMain(100000);
-    std::vector<CBlockIndex> vBlocksMain(100000);
+    std::vector<CBlockApollon> vBlocksMain(100000);
     for (unsigned int i=0; i<vBlocksMain.size(); i++) {
         vHashMain[i] = ArithToUint256(i); // Set the hash equal to the height, so we can quickly check the distances.
         vBlocksMain[i].nHeight = i;
@@ -61,7 +61,7 @@ BOOST_AUTO_TEST_CASE(getlocator_test)
 
     // Build a branch that splits off at block 49999, 50000 blocks long.
     std::vector<uint256> vHashSide(50000);
-    std::vector<CBlockIndex> vBlocksSide(50000);
+    std::vector<CBlockApollon> vBlocksSide(50000);
     for (unsigned int i=0; i<vBlocksSide.size(); i++) {
         vHashSide[i] = ArithToUint256(i + 50000 + (arith_uint256(1) << 128)); // Add 1<<128 to the hashes, so GetLow64() still returns the height.
         vBlocksSide[i].nHeight = i + 50000;
@@ -79,7 +79,7 @@ BOOST_AUTO_TEST_CASE(getlocator_test)
     // Test 100 random starting points for locators.
     for (int n=0; n<100; n++) {
         int r = insecure_rand() % 150000;
-        CBlockIndex* tip = (r < 100000) ? &vBlocksMain[r] : &vBlocksSide[r - 100000];
+        CBlockApollon* tip = (r < 100000) ? &vBlocksMain[r] : &vBlocksSide[r - 100000];
         CBlockLocator locator = chain.GetLocator(tip);
 
         // The first result must be the block itself, the last one must be genesis.

@@ -28,9 +28,9 @@
 #include "wallet/wallet.h"
 #include "definition.h"
 #include "crypto/scrypt.h"
-#include "indexnode-payments.h"
-#include "indexnode-sync.h"
-#include "indexnodeman.h"
+#include "apollonnode-payments.h"
+#include "apollonnode-sync.h"
+#include "apollonnodeman.h"
 #include "zerocoin.h"
 #include "sigma.h"
 #include "sigma/remint.h"
@@ -69,17 +69,17 @@ public:
     }
 };
 
-int64_t UpdateTime(CBlockHeader* pblock, const Consensus::Params& consensusParams, const CBlockIndex* pindexPrev)
+int64_t UpdateTime(CBlockHeader* pblock, const Consensus::Params& consensusParams, const CBlockApollon* papollonPrev)
 {
     int64_t nOldTime = pblock->nTime;
-    int64_t nNewTime = std::max(pindexPrev->GetMedianTimePast()+1, GetAdjustedTime());
+    int64_t nNewTime = std::max(papollonPrev->GetMedianTimePast()+1, GetAdjustedTime());
 
     if (nOldTime < nNewTime)
         pblock->nTime = nNewTime;
 
     // Updating time can change work required on testnet:
     if (consensusParams.fPowAllowMinDifficultyBlocks)
-        pblock->nBits = GetNextWorkRequired(pindexPrev, pblock, consensusParams,false);
+        pblock->nBits = GetNextWorkRequired(papollonPrev, pblock, consensusParams,false);
 
     return nNewTime - nOldTime;
 }
@@ -161,8 +161,8 @@ CBlockTemplate* BlockAssembler::CreateNewBlock(
     coinbaseTx.vin.resize(1);
     coinbaseTx.vin[0].prevout.SetNull();
     coinbaseTx.vout.resize(1);
-    CBlockIndex* pindexPrev = chainActive.Tip();
-    const int nHeight = pindexPrev->nHeight + 1;
+    CBlockApollon* papollonPrev = chainActive.Tip();
+    const int nHeight = papollonPrev->nHeight + 1;
     if (fProofOfStake)
     {
         // Make the coinbase tx empty in case of proof of stake
@@ -215,9 +215,9 @@ CBlockTemplate* BlockAssembler::CreateNewBlock(
     {
         LOCK2(cs_main, mempool.cs);
         pblock->nTime = nBlockTime;
-        const int64_t nMedianTimePast = pindexPrev->GetMedianTimePast();
+        const int64_t nMedianTimePast = papollonPrev->GetMedianTimePast();
 
-        pblock->nVersion = ComputeBlockVersion(pindexPrev, chainparams.GetConsensus());
+        pblock->nVersion = ComputeBlockVersion(papollonPrev, chainparams.GetConsensus());
         // -regtest only: allow overriding block.nVersion with
         // -blockversion=N to test forking scenarios
         if (chainparams.MineBlocksOnDemand())
@@ -230,7 +230,7 @@ CBlockTemplate* BlockAssembler::CreateNewBlock(
         bool fPriorityBlock = nBlockPrioritySize > 0;
         if (fPriorityBlock) {
             vecPriority.reserve(mempool.mapTx.size());
-            for (CTxMemPool::indexed_transaction_set::iterator mi = mempool.mapTx.begin();
+            for (CTxMemPool::apolloned_transaction_set::iterator mi = mempool.mapTx.begin();
                  mi != mempool.mapTx.end(); ++mi)
             {
                 double dPriority = mi->GetPriority(nHeight);
@@ -241,7 +241,7 @@ CBlockTemplate* BlockAssembler::CreateNewBlock(
             std::make_heap(vecPriority.begin(), vecPriority.end(), pricomparer);
         }
 
-        CTxMemPool::indexed_transaction_set::nth_index<3>::type::iterator mi = mempool.mapTx.get<3>().begin();
+        CTxMemPool::apolloned_transaction_set::nth_apollon<3>::type::iterator mi = mempool.mapTx.get<3>().begin();
         CTxMemPool::txiter iter;
         std::size_t nSigmaSpend = 0;
         CAmount nValueSigmaSpend(0);
@@ -458,18 +458,18 @@ CBlockTemplate* BlockAssembler::CreateNewBlock(
             }
         }
         CAmount blockReward = nFees + GetBlockSubsidy(nHeight, chainparams.GetConsensus(), nBlockTime);
-        // Update coinbase transaction with additional info about indexnode and governance payments,
+        // Update coinbase transaction with additional info about apollonnode and governance payments,
         // get some info back to pass to getblocktemplate
-        bool fPayIDXNode = nHeight >= chainparams.GetConsensus().nIndexnodePaymentsStartBlock && !fProofOfStake;
-        CAmount indexnodePayment = 0;
-        if (fPayIDXNode) {
+        bool fPayXAPNode = nHeight >= chainparams.GetConsensus().nApollonnodePaymentsStartBlock && !fProofOfStake;
+        CAmount apollonnodePayment = 0;
+        if (fPayXAPNode) {
             const Consensus::Params &params = chainparams.GetConsensus();
-            indexnodePayment = GetIndexnodePayment(chainparams.GetConsensus(),false,nHeight);
-            FillBlockPayments(coinbaseTx, nHeight, indexnodePayment, pblock->txoutIndexnode, pblock->voutSuperblock);
+            apollonnodePayment = GetApollonnodePayment(chainparams.GetConsensus(),false,nHeight);
+            FillBlockPayments(coinbaseTx, nHeight, apollonnodePayment, pblock->txoutApollonnode, pblock->voutSuperblock);
         }
-        //Only take out xap payment if a indexnode is actually filled in txoutindexnode and indexnodepayment is not 0
-        if(pblock->txoutIndexnode != CTxOut() && indexnodePayment != 0)
-            coinbaseTx.vout[0].nValue -= indexnodePayment;
+        //Only take out xap payment if a apollonnode is actually filled in txoutapollonnode and apollonnodepayment is not 0
+        if(pblock->txoutApollonnode != CTxOut() && apollonnodePayment != 0)
+            coinbaseTx.vout[0].nValue -= apollonnodePayment;
 
         nLastBlockTx = nBlockTx;
         nLastBlockSize = nBlockSize;
@@ -483,22 +483,22 @@ CBlockTemplate* BlockAssembler::CreateNewBlock(
         pblocktemplate->vTxFees[0] = -nFees;
 
         // Fill in header
-        pblock->hashPrevBlock  = pindexPrev->GetBlockHash();
+        pblock->hashPrevBlock  = papollonPrev->GetBlockHash();
         if(!fProofOfStake){
-            UpdateTime(pblock, chainparams.GetConsensus(), pindexPrev);
+            UpdateTime(pblock, chainparams.GetConsensus(), papollonPrev);
         }
-        pblock->nBits  = GetNextWorkRequired(pindexPrev, pblock, chainparams.GetConsensus(),fProofOfStake);
+        pblock->nBits  = GetNextWorkRequired(papollonPrev, pblock, chainparams.GetConsensus(),fProofOfStake);
         pblock->nNonce = fProofOfStake ? 0 : 1;
         pblocktemplate->vTxSigOpsCost[0] = GetLegacySigOpCount(pblock->vtx[0]);
 
         //LogPrintf("CreateNewBlock(): AFTER pblocktemplate->vTxSigOpsCost[0] = GetLegacySigOpCount(pblock->vtx[0])\n");
 
         CValidationState state;
-        //LogPrintf("CreateNewBlock(): BEFORE TestBlockValidity(state, chainparams, *pblock, pindexPrev, false, false)\n");
-        if ( !fProofOfStake && !TestBlockValidity(state, chainparams, *pblock, pindexPrev, false, false)) {
+        //LogPrintf("CreateNewBlock(): BEFORE TestBlockValidity(state, chainparams, *pblock, papollonPrev, false, false)\n");
+        if ( !fProofOfStake && !TestBlockValidity(state, chainparams, *pblock, papollonPrev, false, false)) {
             throw std::runtime_error(strprintf("%s: TestBlockValidity failed: %s", __func__, FormatStateMessage(state)));
         }
-        //LogPrintf("CreateNewBlock(): AFTER TestBlockValidity(state, chainparams, *pblock, pindexPrev, false, false)\n");
+        //LogPrintf("CreateNewBlock(): AFTER TestBlockValidity(state, chainparams, *pblock, papollonPrev, false, false)\n");
     }
     //LogPrintf("CreateNewBlock(): pblocktemplate.release()\n");
     return pblocktemplate.release();
@@ -675,7 +675,7 @@ void BlockAssembler::AddToBlock(CTxMemPool::txiter iter)
 }
 
 void BlockAssembler::UpdatePackagesForAdded(const CTxMemPool::setEntries& alreadyAdded,
-        indexed_modified_transaction_set &mapModifiedTx)
+        apolloned_modified_transaction_set &mapModifiedTx)
 {
     BOOST_FOREACH(const CTxMemPool::txiter it, alreadyAdded) {
         CTxMemPool::setEntries descendants;
@@ -707,7 +707,7 @@ void BlockAssembler::UpdatePackagesForAdded(const CTxMemPool::setEntries& alread
 // guaranteed to fail again, but as a belt-and-suspenders check we put it in
 // failedTx and avoid re-evaluation, since the re-evaluation would be using
 // cached size/sigops/fee values that are not actually correct.
-bool BlockAssembler::SkipMapTxEntry(CTxMemPool::txiter it, indexed_modified_transaction_set &mapModifiedTx, CTxMemPool::setEntries &failedTx)
+bool BlockAssembler::SkipMapTxEntry(CTxMemPool::txiter it, apolloned_modified_transaction_set &mapModifiedTx, CTxMemPool::setEntries &failedTx)
 {
     assert (it != mempool.mapTx.end());
     if (mapModifiedTx.count(it) || inBlock.count(it) || failedTx.count(it))
@@ -740,7 +740,7 @@ void BlockAssembler::addPackageTxs()
 {
     // mapModifiedTx will store sorted packages after they are modified
     // because some of their txs are already in the block
-    indexed_modified_transaction_set mapModifiedTx;
+    apolloned_modified_transaction_set mapModifiedTx;
     // Keep track of entries that failed inclusion, to avoid duplicate work
     CTxMemPool::setEntries failedTx;
 
@@ -748,7 +748,7 @@ void BlockAssembler::addPackageTxs()
     // and modifying them for their already included ancestors
     UpdatePackagesForAdded(inBlock, mapModifiedTx);
 
-    CTxMemPool::indexed_transaction_set::apollon<ancestor_score>::type::iterator mi = mempool.mapTx.get<ancestor_score>().begin();
+    CTxMemPool::apolloned_transaction_set::apollon<ancestor_score>::type::iterator mi = mempool.mapTx.get<ancestor_score>().begin();
     CTxMemPool::txiter iter;
     while (mi != mempool.mapTx.get<ancestor_score>().end() || !mapModifiedTx.empty())
     {
@@ -872,7 +872,7 @@ void BlockAssembler::addPriorityTxs()
     double actualPriority = -1;
 
     vecPriority.reserve(mempool.mapTx.size());
-    for (CTxMemPool::indexed_transaction_set::iterator mi = mempool.mapTx.begin();
+    for (CTxMemPool::apolloned_transaction_set::iterator mi = mempool.mapTx.begin();
          mi != mempool.mapTx.end(); ++mi)
     {
         double dPriority = mi->GetPriority(nHeight);
@@ -1053,10 +1053,10 @@ void static ZcoinMiner(const CChainParams &chainparams) {
                 // Busy-wait for the network to come online so we don't waste time mining
                 // on an obsolete chain. In regtest mode we expect to fly solo.
 
-                // Also try to wait for indexnode winners unless we're on regtest chain
+                // Also try to wait for apollonnode winners unless we're on regtest chain
                 do {
                     bool fvNodesEmpty;
-                    bool fHasIndexnodesWinnerForNextBlock;
+                    bool fHasApollonnodesWinnerForNextBlock;
                     const Consensus::Params &params = chainparams.GetConsensus();
                     {
                         LOCK(cs_vNodes);
@@ -1065,12 +1065,12 @@ void static ZcoinMiner(const CChainParams &chainparams) {
                     {
                         LOCK2(cs_main, mempool.cs);
                         int nCount = 0;
-                        fHasIndexnodesWinnerForNextBlock =
+                        fHasApollonnodesWinnerForNextBlock =
                                 params.IsRegtest() ||
-                                chainActive.Height() < params.nIndexnodePaymentsStartBlock ||
-                                mnodeman.GetNextIndexnodeInQueueForPayment(chainActive.Height(), true, nCount);
+                                chainActive.Height() < params.nApollonnodePaymentsStartBlock ||
+                                mnodeman.GetNextApollonnodeInQueueForPayment(chainActive.Height(), true, nCount);
                     }
-                    if (!fvNodesEmpty && fHasIndexnodesWinnerForNextBlock && !IsInitialBlockDownload()) {
+                    if (!fvNodesEmpty && fHasApollonnodesWinnerForNextBlock && !IsInitialBlockDownload()) {
                         break;
                     }
                     MilliSleep(1000);
@@ -1080,9 +1080,9 @@ void static ZcoinMiner(const CChainParams &chainparams) {
             // Create new block
             //
             unsigned int nTransactionsUpdatedLast = mempool.GetTransactionsUpdated();
-            CBlockIndex *pindexPrev = chainActive.Tip();
-            if (pindexPrev) {
-                LogPrintf("loop pindexPrev->nHeight=%s\n", pindexPrev->nHeight);
+            CBlockApollon *papollonPrev = chainActive.Tip();
+            if (papollonPrev) {
+                LogPrintf("loop papollonPrev->nHeight=%s\n", papollonPrev->nHeight);
             }
             unique_ptr <CBlockTemplate> pblocktemplate(BlockAssembler(Params()).CreateNewBlock(
                 coinbaseScript->reserveScript, {}));
@@ -1091,7 +1091,7 @@ void static ZcoinMiner(const CChainParams &chainparams) {
                 return;
             }
             CBlock *pblock = &pblocktemplate->block;
-            IncrementExtraNonce(pblock, pindexPrev, nExtraNonce);
+            IncrementExtraNonce(pblock, papollonPrev, nExtraNonce);
 
             LogPrintf("Running ZcoinMiner with %u transactions in block (%u bytes)\n", pblock->vtx.size(),
                       ::GetSerializeSize(*pblock, SER_NETWORK, PROTOCOL_VERSION));
@@ -1103,7 +1103,7 @@ void static ZcoinMiner(const CChainParams &chainparams) {
             arith_uint256 hashTarget = arith_uint256().SetCompact(pblock->nBits);
             LogPrintf("hashTarget: %s\n", hashTarget.ToString());
             LogPrintf("fTestnet: %d\n", fTestNet);
-            LogPrintf("pindexPrev->nHeight: %s\n", pindexPrev->nHeight);
+            LogPrintf("papollonPrev->nHeight: %s\n", papollonPrev->nHeight);
             LogPrintf("pblock: %s\n", pblock->ToString());
             LogPrintf("pblock->nVersion: %s\n", pblock->nVersion);
             LogPrintf("pblock->nTime: %s\n", pblock->nTime);
@@ -1151,11 +1151,11 @@ void static ZcoinMiner(const CChainParams &chainparams) {
                     break;
                 if (mempool.GetTransactionsUpdated() != nTransactionsUpdatedLast && GetTime() - nStart > 60)
                     break;
-                if (pindexPrev != chainActive.Tip())
+                if (papollonPrev != chainActive.Tip())
                     break;
 
                 // Update nTime every few seconds
-                if (UpdateTime(pblock, chainparams.GetConsensus(), pindexPrev) < 0)
+                if (UpdateTime(pblock, chainparams.GetConsensus(), papollonPrev) < 0)
                     break; // Recreate the block if the clock has run backwards,
                 // so that we can use the correct time.
                 if (chainparams.GetConsensus().fPowAllowMinDifficultyBlocks) {
@@ -1211,8 +1211,8 @@ void ThreadStakeMiner(CWallet *pwallet, const CChainParams& chainparams)
     bool fTryToSync = true;
     while (true)
     {
-        CBlockIndex* pindexPrev = chainActive.Tip();
-        const int nHeight = pindexPrev->nHeight + 1;            
+        CBlockApollon* papollonPrev = chainActive.Tip();
+        const int nHeight = papollonPrev->nHeight + 1;            
         if (nHeight >= Params().GetConsensus().nFirstPOSBlock)
         {
             while (pwallet->IsLocked())
@@ -1220,7 +1220,7 @@ void ThreadStakeMiner(CWallet *pwallet, const CChainParams& chainparams)
                 nLastCoinStakeSearchInterval = 0;
                 MilliSleep(10000);
             }
-            while (vNodes.empty() || IsInitialBlockDownload() || !indexnodeSync.IsSynced())
+            while (vNodes.empty() || IsInitialBlockDownload() || !apollonnodeSync.IsSynced())
             {
                 nLastCoinStakeSearchInterval = 0;
                 fTryToSync = true;
@@ -1229,7 +1229,7 @@ void ThreadStakeMiner(CWallet *pwallet, const CChainParams& chainparams)
             if (fTryToSync)
             {
                 fTryToSync = false;
-                if (vNodes.size() < 2 || pindexBestHeader->GetBlockTime() < GetTime() - 10 * 60)
+                if (vNodes.size() < 2 || papollonBestHeader->GetBlockTime() < GetTime() - 10 * 60)
                 {
                     MilliSleep(6000);
                     continue;
@@ -1267,7 +1267,7 @@ void ThreadStakeMiner(CWallet *pwallet, const CChainParams& chainparams)
     }
 }
 
-void IncrementExtraNonce(CBlock* pblock, const CBlockIndex* pindexPrev, unsigned int& nExtraNonce)
+void IncrementExtraNonce(CBlock* pblock, const CBlockApollon* papollonPrev, unsigned int& nExtraNonce)
 {
     // Update nExtraNonce
     static uint256 hashPrevBlock;
@@ -1277,7 +1277,7 @@ void IncrementExtraNonce(CBlock* pblock, const CBlockIndex* pindexPrev, unsigned
         hashPrevBlock = pblock->hashPrevBlock;
     }
     ++nExtraNonce;
-    unsigned int nHeight = pindexPrev->nHeight+1; // Height first in coinbase required for block.version=2
+    unsigned int nHeight = papollonPrev->nHeight+1; // Height first in coinbase required for block.version=2
     CMutableTransaction txCoinbase(pblock->vtx[0]);
     txCoinbase.vin[0].scriptSig = (CScript() << nHeight << CScriptNum(nExtraNonce)) + COINBASE_FLAGS;
     assert(txCoinbase.vin[0].scriptSig.size() <= 100);

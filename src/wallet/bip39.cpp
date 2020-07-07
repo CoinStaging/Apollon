@@ -95,7 +95,7 @@ bool Mnemonic::mnemonic_check(const SecureString& mnemonic)
     SecureString ssCurrentWord;
     SecureVector bits(32 + 1);
 
-    uint32_t nWordIndex, ki, nBitsCount{};
+    uint32_t nWordApollon, ki, nBitsCount{};
 
     for (size_t i = 0; i < mnemonic.size(); ++i)
     {
@@ -107,21 +107,21 @@ bool Mnemonic::mnemonic_check(const SecureString& mnemonic)
             ssCurrentWord += mnemonic[i + ssCurrentWord.size()];
         }
         i += ssCurrentWord.size();
-        nWordIndex = 0;
+        nWordApollon = 0;
         for (;;) {
-            if (!wordlist[nWordIndex]) { // word not found
+            if (!wordlist[nWordApollon]) { // word not found
                 return false;
             }
-            if (ssCurrentWord == wordlist[nWordIndex]) { // word found on apollon nWordIndex
+            if (ssCurrentWord == wordlist[nWordApollon]) { // word found on apollon nWordApollon
                 for (ki = 0; ki < 11; ki++) {
-                    if (nWordIndex & (1 << (10 - ki))) {
+                    if (nWordApollon & (1 << (10 - ki))) {
                         bits[nBitsCount / 8] |= 1 << (7 - (nBitsCount % 8));
                     }
                     nBitsCount++;
                 }
                 break;
             }
-            nWordIndex++;
+            nWordApollon++;
         }
     }
     if (nBitsCount != n * 11) {

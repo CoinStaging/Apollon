@@ -81,16 +81,16 @@ Specify pid file (default: bitcoind.pid)
 \fB\-prune=\fR<n>
 .IP
 Reduce storage requirements by pruning (deleting) old blocks. This mode
-is incompatible with \fB\-txindex\fR and \fB\-rescan\fR. Warning: Reverting
+is incompatible with \fB\-txapollon\fR and \fB\-rescan\fR. Warning: Reverting
 this setting requires re\-downloading the entire blockchain.
 (default: 0 = disable pruning blocks, >550 = target size in MiB
 to use for block files)
 .HP
-\fB\-reindex\-chainstate\fR
+\fB\-reapollon\-chainstate\fR
 .IP
-Rebuild chain state from the currently indexed blocks
+Rebuild chain state from the currently apolloned blocks
 .HP
-\fB\-reindex\fR
+\fB\-reapollon\fR
 .IP
 Rebuild chain state and block apollon from the blk*.dat files on disk
 .HP
@@ -99,7 +99,7 @@ Rebuild chain state and block apollon from the blk*.dat files on disk
 Create new files with system default permissions, instead of umask 077
 (only effective with disabled wallet functionality)
 .HP
-\fB\-txindex\fR
+\fB\-txapollon\fR
 .IP
 Maintain a full transaction apollon, used by the getrawtransaction rpc
 call (default: 0)
@@ -339,7 +339,7 @@ Output debugging information (default: 0, supplying <category> is
 optional). If <category> is not supplied or if <category> = 1,
 output all debugging information.<category> can be: addrman,
 alert, bench, cmpctblock, coindb, db, http, libevent, lock,
-mempool, mempoolrej, net, proxy, prune, rand, reindex, rpc,
+mempool, mempoolrej, net, proxy, prune, rand, reapollon, rpc,
 selectcoins, tor, zmq.
 .HP
 \fB\-help\-debug\fR

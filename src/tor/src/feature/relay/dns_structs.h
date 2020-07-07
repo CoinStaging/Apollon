@@ -95,7 +95,7 @@ typedef struct cached_resolve_t {
   /** Connections that want to know when we get an answer for this resolve. */
   pending_connection_t *pending_connections;
   /** Position of this element in the heap*/
-  int minheap_idx;
+  int minheap_xap;
 } cached_resolve_t;
 
 #endif /* !defined(TOR_DNS_STRUCTS_H) */

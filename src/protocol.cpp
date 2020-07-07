@@ -42,13 +42,13 @@ namespace NetMsgType {
     const char *GETBLOCKTXN = "getblocktxn";
     const char *BLOCKTXN = "blocktxn";
     const char *DANDELIONTX="dandeliontx";
-//indexnode
+//apollonnode
     const char *TXLOCKVOTE="txlvote";
     const char *SPORK = "spork";
     const char *GETSPORKS = "getsporks";
-    const char *INDEXNODEPAYMENTVOTE = "mnw";
-    const char *INDEXNODEPAYMENTBLOCK = "mnwb";
-    const char *INDEXNODEPAYMENTSYNC = "mnget";
+    const char *APOLLONNODEPAYMENTVOTE = "mnw";
+    const char *APOLLONNODEPAYMENTBLOCK = "mnwb";
+    const char *APOLLONNODEPAYMENTSYNC = "mnget";
     const char *MNANNOUNCE = "mnb";
     const char *MNPING = "mnp";
     const char *DSACCEPT = "dsa";
@@ -97,11 +97,11 @@ const static std::string allNetMessageTypes[] = {
         NetMsgType::GETBLOCKTXN,
         NetMsgType::BLOCKTXN,
 		NetMsgType::DANDELIONTX,
-        //indexnode
+        //apollonnode
         NetMsgType::TXLOCKREQUEST,
-        NetMsgType::INDEXNODEPAYMENTVOTE,
-        NetMsgType::INDEXNODEPAYMENTBLOCK,
-        NetMsgType::INDEXNODEPAYMENTSYNC,
+        NetMsgType::APOLLONNODEPAYMENTVOTE,
+        NetMsgType::APOLLONNODEPAYMENTBLOCK,
+        NetMsgType::APOLLONNODEPAYMENTSYNC,
         NetMsgType::SPORK,
         NetMsgType::GETSPORKS,
         NetMsgType::MNANNOUNCE,
@@ -209,12 +209,12 @@ const char* CInv::GetCommand() const
         case MSG_TXLOCK_REQUEST:        return NetMsgType::TXLOCKREQUEST;
         case MSG_TXLOCK_VOTE:           return NetMsgType::TXLOCKVOTE;
         case MSG_SPORK:                 return NetMsgType::SPORK;
-        case MSG_INDEXNODE_PAYMENT_VOTE:    return NetMsgType::INDEXNODEPAYMENTVOTE;
-        case MSG_INDEXNODE_PAYMENT_BLOCK:   return NetMsgType::INDEXNODEPAYMENTBLOCK;
-        case MSG_INDEXNODE_ANNOUNCE:        return NetMsgType::MNANNOUNCE;
-        case MSG_INDEXNODE_PING:            return NetMsgType::MNPING;
+        case MSG_APOLLONNODE_PAYMENT_VOTE:    return NetMsgType::APOLLONNODEPAYMENTVOTE;
+        case MSG_APOLLONNODE_PAYMENT_BLOCK:   return NetMsgType::APOLLONNODEPAYMENTBLOCK;
+        case MSG_APOLLONNODE_ANNOUNCE:        return NetMsgType::MNANNOUNCE;
+        case MSG_APOLLONNODE_PING:            return NetMsgType::MNPING;
         case MSG_DSTX:                  return NetMsgType::DSTX;
-        case MSG_INDEXNODE_VERIFY:          return NetMsgType::MNVERIFY;
+        case MSG_APOLLONNODE_VERIFY:          return NetMsgType::MNVERIFY;
         default: {
             return "error";
         }

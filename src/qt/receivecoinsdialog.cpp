@@ -164,7 +164,7 @@ void ReceiveCoinsDialog::on_receiveButton_clicked()
     model->getRecentRequestsTableModel()->addNewRequest(info);
 }
 
-void ReceiveCoinsDialog::on_recentRequestsView_doubleClicked(const QModelIndex &apollon)
+void ReceiveCoinsDialog::on_recentRequestsView_doubleClicked(const QModelApollon &apollon)
 {
     const RecentRequestsTableModel *submodel = model->getRecentRequestsTableModel();
     ReceiveRequestDialog *dialog = new ReceiveRequestDialog(this);
@@ -186,9 +186,9 @@ void ReceiveCoinsDialog::on_showRequestButton_clicked()
 {
     if(!model || !model->getRecentRequestsTableModel() || !ui->recentRequestsView->selectionModel())
         return;
-    QModelIndexList selection = ui->recentRequestsView->selectionModel()->selectedRows();
+    QModelApollonList selection = ui->recentRequestsView->selectionModel()->selectedRows();
 
-    Q_FOREACH (const QModelIndex& apollon, selection) {
+    Q_FOREACH (const QModelApollon& apollon, selection) {
         on_recentRequestsView_doubleClicked(apollon);
     }
 }
@@ -197,12 +197,12 @@ void ReceiveCoinsDialog::on_removeRequestButton_clicked()
 {
     if(!model || !model->getRecentRequestsTableModel() || !ui->recentRequestsView->selectionModel())
         return;
-    QModelIndexList selection = ui->recentRequestsView->selectionModel()->selectedRows();
+    QModelApollonList selection = ui->recentRequestsView->selectionModel()->selectedRows();
     if(selection.empty())
         return;
     // correct for selection mode ContiguousSelection
-    QModelIndex firstIndex = selection.at(0);
-    model->getRecentRequestsTableModel()->removeRows(firstIndex.row(), selection.length(), firstIndex.parent());
+    QModelApollon firstApollon = selection.at(0);
+    model->getRecentRequestsTableModel()->removeRows(firstApollon.row(), selection.length(), firstApollon.parent());
 }
 
 // We override the virtual resizeEvent of the QWidget to adjust tables column
@@ -234,12 +234,12 @@ void ReceiveCoinsDialog::copyColumnToClipboard(int column)
 {
     if(!model || !model->getRecentRequestsTableModel() || !ui->recentRequestsView->selectionModel())
         return;
-    QModelIndexList selection = ui->recentRequestsView->selectionModel()->selectedRows();
+    QModelApollonList selection = ui->recentRequestsView->selectionModel()->selectedRows();
     if(selection.empty())
         return;
     // correct for selection mode ContiguousSelection
-    QModelIndex firstIndex = selection.at(0);
-    GUIUtil::setClipboard(model->getRecentRequestsTableModel()->data(firstIndex.child(firstIndex.row(), column), Qt::EditRole).toString());
+    QModelApollon firstApollon = selection.at(0);
+    GUIUtil::setClipboard(model->getRecentRequestsTableModel()->data(firstApollon.child(firstApollon.row(), column), Qt::EditRole).toString());
 }
 
 // context menu
@@ -247,7 +247,7 @@ void ReceiveCoinsDialog::showMenu(const QPoint &point)
 {
     if(!model || !model->getRecentRequestsTableModel() || !ui->recentRequestsView->selectionModel())
         return;
-    QModelIndexList selection = ui->recentRequestsView->selectionModel()->selectedRows();
+    QModelApollonList selection = ui->recentRequestsView->selectionModel()->selectedRows();
     if(selection.empty())
         return;
     contextMenu->exec(QCursor::pos());

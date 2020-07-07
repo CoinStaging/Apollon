@@ -384,7 +384,7 @@ test_entry_guard_encode_for_state_minimal(void *arg)
   eg->selection_name = tor_strdup("wubwub");
   memcpy(eg->identity, "plurpyflurpyslurpydo", DIGEST_LEN);
   eg->sampled_on_date = 1479081600;
-  eg->confirmed_idx = -1;
+  eg->confirmed_xap = -1;
 
   char *s = NULL;
   s = entry_guard_encode_for_state(eg);
@@ -417,7 +417,7 @@ test_entry_guard_encode_for_state_maximal(void *arg)
   eg->unlisted_since_date = 1479081645;
   eg->currently_listed = 1;
   eg->confirmed_on_date = 1479081690;
-  eg->confirmed_idx = 333;
+  eg->confirmed_xap = 333;
   eg->extra_state_fields = tor_strdup("and the green grass grew all around");
 
   char *s = NULL;
@@ -433,7 +433,7 @@ test_entry_guard_encode_for_state_maximal(void *arg)
             "unlisted_since=2016-11-14T00:00:45 "
             "listed=1 "
             "confirmed_on=2016-11-14T00:01:30 "
-            "confirmed_idx=333 "
+            "confirmed_xap=333 "
             "and the green grass grew all around");
 
  done:
@@ -465,7 +465,7 @@ test_entry_guard_parse_from_state_minimal(void *arg)
   tt_ptr_op(eg->sampled_by_version, OP_EQ, NULL);
   tt_int_op(eg->currently_listed, OP_EQ, 0);
   tt_i64_op(eg->confirmed_on_date, OP_EQ, 0);
-  tt_int_op(eg->confirmed_idx, OP_EQ, -1);
+  tt_int_op(eg->confirmed_xap, OP_EQ, -1);
 
   tt_int_op(eg->last_tried_to_connect, OP_EQ, 0);
   tt_int_op(eg->is_reachable, OP_EQ, GUARD_REACHABLE_MAYBE);
@@ -492,7 +492,7 @@ test_entry_guard_parse_from_state_maximal(void *arg)
             "unlisted_since=2016-11-14T00:00:45 "
             "listed=1 "
             "confirmed_on=2016-11-14T00:01:30 "
-            "confirmed_idx=333 "
+            "confirmed_xap=333 "
             "and the green grass grew all around "
             "rsa_id=all,around");
   tt_assert(eg);
@@ -507,7 +507,7 @@ test_entry_guard_parse_from_state_maximal(void *arg)
   tt_str_op(eg->sampled_by_version, OP_EQ, "1.2.3");
   tt_int_op(eg->currently_listed, OP_EQ, 1);
   tt_i64_op(eg->confirmed_on_date, OP_EQ, 1479081690);
-  tt_int_op(eg->confirmed_idx, OP_EQ, 333);
+  tt_int_op(eg->confirmed_xap, OP_EQ, 333);
   tt_str_op(eg->extra_state_fields, OP_EQ,
             "and the green grass grew all around rsa_id=all,around");
 
@@ -574,7 +574,7 @@ test_entry_guard_parse_from_state_partial_failure(void *arg)
             "unlisted_since=2016-xx-14T00:00:45 "
             "listed=0 "
             "confirmed_on=2016-11-14T00:01:30zz "
-            "confirmed_idx=xap "
+            "confirmed_xap=xap "
             "and the green grass grew all around "
             "rsa_id=all,around");
   tt_assert(eg);
@@ -588,7 +588,7 @@ test_entry_guard_parse_from_state_partial_failure(void *arg)
   tt_str_op(eg->sampled_by_version, OP_EQ, "1.2.3");
   tt_int_op(eg->currently_listed, OP_EQ, 0);
   tt_i64_op(eg->confirmed_on_date, OP_EQ, 0);
-  tt_int_op(eg->confirmed_idx, OP_EQ, -1);
+  tt_int_op(eg->confirmed_xap, OP_EQ, -1);
   tt_str_op(eg->extra_state_fields, OP_EQ,
             "stuff in the middle and the green grass grew all around "
             "rsa_id=all,around");
@@ -623,13 +623,13 @@ test_entry_guard_parse_from_state_full(void *arg)
   "Guard in=default rsa_id=052900AB0EA3ED54BAB84AE8A99E74E8693CE2B2 "
     "nickname=5OfNovember sampled_on=2016-11-20T04:32:05 "
     "sampled_by=0.3.0.0-alpha-dev "
-    "listed=1 confirmed_on=2016-11-22T08:13:28 confirmed_idx=0 "
+    "listed=1 confirmed_on=2016-11-22T08:13:28 confirmed_xap=0 "
     "pb_circ_attempts=4.000000 pb_circ_successes=2.000000 "
     "pb_successful_circuits_closed=2.000000\n"
   "Guard in=default rsa_id=7B700C0C207EBD0002E00F499BE265519AC3C25A "
     "nickname=dc6jgk11 sampled_on=2016-11-28T11:50:13 "
     "sampled_by=0.3.0.0-alpha-dev "
-    "listed=1 confirmed_on=2016-11-24T08:45:30 confirmed_idx=4 "
+    "listed=1 confirmed_on=2016-11-24T08:45:30 confirmed_xap=4 "
     "pb_circ_attempts=5.000000 pb_circ_successes=5.000000 "
     "pb_successful_circuits_closed=5.000000\n"
   "Guard in=wobblesome rsa_id=7B700C0C207EBD0002E00F499BE265519AC3C25A "
@@ -645,7 +645,7 @@ test_entry_guard_parse_from_state_full(void *arg)
   "Guard in=bridges rsa_id=8FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF2E "
     "bridge_addr=24.1.1.1:443 sampled_on=2016-11-25T06:44:14 "
     "sampled_by=0.3.0.0-alpha-dev listed=1 "
-    "confirmed_on=2016-11-29T10:36:06 confirmed_idx=0 "
+    "confirmed_on=2016-11-29T10:36:06 confirmed_xap=0 "
     "pb_circ_attempts=8.000000 pb_circ_successes=8.000000 "
     "pb_successful_circuits_closed=13.000000\n"
   "Guard in=bridges rsa_id=5800000000000000000000000000000000000000 "
@@ -727,13 +727,13 @@ test_entry_guard_parse_from_state_full(void *arg)
   "Guard in=default rsa_id=052900AB0EA3ED54BAB84AE8A99E74E8693CE2B2 "
     "nickname=5OfNovember sampled_on=2016-11-20T04:32:05 "
     "sampled_by=0.3.0.0-alpha-dev "
-    "listed=1 confirmed_on=2016-11-22T08:13:28 confirmed_idx=0 "
+    "listed=1 confirmed_on=2016-11-22T08:13:28 confirmed_xap=0 "
     "pb_circ_attempts=4.000000 pb_circ_successes=2.000000 "
     "pb_successful_circuits_closed=2.000000\n"
   "Guard in=default rsa_id=7B700C0C207EBD0002E00F499BE265519AC3C25A "
     "nickname=dc6jgk11 sampled_on=2016-11-28T11:50:13 "
     "sampled_by=0.3.0.0-alpha-dev "
-    "listed=1 confirmed_on=2016-11-24T08:45:30 confirmed_idx=1 "
+    "listed=1 confirmed_on=2016-11-24T08:45:30 confirmed_xap=1 "
     "pb_circ_attempts=5.000000 pb_circ_successes=5.000000 "
     "pb_successful_circuits_closed=5.000000\n"
   "Guard in=default rsa_id=E9025AD60D86875D5F11548D536CC6AF60F0EF5E "
@@ -749,7 +749,7 @@ test_entry_guard_parse_from_state_full(void *arg)
   "Guard in=bridges rsa_id=8FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF2E "
     "bridge_addr=24.1.1.1:443 sampled_on=2016-11-25T06:44:14 "
     "sampled_by=0.3.0.0-alpha-dev listed=1 "
-    "confirmed_on=2016-11-29T10:36:06 confirmed_idx=0 "
+    "confirmed_on=2016-11-29T10:36:06 confirmed_xap=0 "
     "pb_circ_attempts=8.000000 pb_circ_successes=8.000000 "
     "pb_successful_circuits_closed=13.000000\n"
   "Guard in=bridges rsa_id=5800000000000000000000000000000000000000 "
@@ -783,14 +783,14 @@ test_entry_guard_parse_from_state_broken(void *arg)
   "Guard rsa_id=052900AB0EA3ED54BAB84AE8A99E74E8693CE2B2 "
     "nickname=5OfNovember sampled_on=2016-11-20T04:32:05 "
     "sampled_by=0.3.0.0-alpha-dev "
-    "listed=1 confirmed_on=2016-11-22T08:13:28 confirmed_idx=0 "
+    "listed=1 confirmed_on=2016-11-22T08:13:28 confirmed_xap=0 "
     "pb_circ_attempts=4.000000 pb_circ_successes=2.000000 "
     "pb_successful_circuits_closed=2.000000\n"
   /* Selection is "legacy"!! */
   "Guard in=legacy rsa_id=7B700C0C207EBD0002E00F499BE265519AC3C25A "
     "nickname=dc6jgk11 sampled_on=2016-11-28T11:50:13 "
     "sampled_by=0.3.0.0-alpha-dev "
-    "listed=1 confirmed_on=2016-11-24T08:45:30 confirmed_idx=4 "
+    "listed=1 confirmed_on=2016-11-24T08:45:30 confirmed_xap=4 "
     "pb_circ_attempts=5.000000 pb_circ_successes=5.000000 "
     "pb_successful_circuits_closed=5.000000\n";
 
@@ -922,7 +922,7 @@ test_entry_guard_add_single_guard(void *arg)
   tt_str_op(g1->sampled_by_version, OP_EQ, VERSION);
   tt_uint_op(g1->currently_listed, OP_EQ, 1);
   tt_i64_op(g1->confirmed_on_date, OP_EQ, 0);
-  tt_int_op(g1->confirmed_idx, OP_EQ, -1);
+  tt_int_op(g1->confirmed_xap, OP_EQ, -1);
   tt_int_op(g1->last_tried_to_connect, OP_EQ, 0);
   tt_uint_op(g1->is_reachable, OP_EQ, GUARD_REACHABLE_MAYBE);
   tt_i64_op(g1->failing_since, OP_EQ, 0);
@@ -1102,7 +1102,7 @@ test_entry_guard_expand_sample(void *arg)
   get_options_mutable()->ExcludeNodes = routerset_new();
   routerset_parse(get_options_mutable()->ExcludeNodes, "144.144.0.0/16", "");
   SMARTLIST_FOREACH(big_fake_net_nodes, node_t *, n, {
-    if (n_sl_idx % 64 != 0) {
+    if (n_sl_xap % 64 != 0) {
       n->rs->addr = 0x90903030;
     }
   });
@@ -1137,7 +1137,7 @@ test_entry_guard_expand_sample_small_net(void *arg)
 
   /* Fun corner case: not enough guards to make up our whole sample size. */
   SMARTLIST_FOREACH(big_fake_net_nodes, node_t *, n, {
-    if (n_sl_idx >= 15) {
+    if (n_sl_xap >= 15) {
       test_node_free(n);
       SMARTLIST_DEL_CURRENT(big_fake_net_nodes, n);
     } else {
@@ -1389,7 +1389,7 @@ test_entry_guard_update_from_consensus_remove(void *arg)
     entry_guard_t *g = smartlist_get(gs->sampled_entry_guards, 4);
     g->sampled_on_date = one_year_ago;
     g->confirmed_on_date = one_day_ago;
-    g->confirmed_idx = 0;
+    g->confirmed_xap = 0;
     g->is_primary = 1;
     smartlist_add(gs->confirmed_entry_guards, g);
     smartlist_add(gs->primary_entry_guards, g);
@@ -1400,7 +1400,7 @@ test_entry_guard_update_from_consensus_remove(void *arg)
     entry_guard_t *g = smartlist_get(gs->sampled_entry_guards, 5);
     g->sampled_on_date = two_years_ago;
     g->confirmed_on_date = one_year_ago;
-    g->confirmed_idx = 1;
+    g->confirmed_xap = 1;
     g->is_primary = 1;
     smartlist_add(gs->confirmed_entry_guards, g);
     smartlist_add(gs->primary_entry_guards, g);
@@ -1452,9 +1452,9 @@ test_entry_guard_confirming_guards(void *arg)
   make_guard_confirmed(gs, g3);
 
   /* Were the correct dates and indices fed in? */
-  tt_int_op(g1->confirmed_idx, OP_EQ, 1);
-  tt_int_op(g2->confirmed_idx, OP_EQ, 0);
-  tt_int_op(g3->confirmed_idx, OP_EQ, 2);
+  tt_int_op(g1->confirmed_xap, OP_EQ, 1);
+  tt_int_op(g2->confirmed_xap, OP_EQ, 0);
+  tt_int_op(g3->confirmed_xap, OP_EQ, 2);
   tt_i64_op(g1->confirmed_on_date, OP_EQ, start+10);
   tt_i64_op(g2->confirmed_on_date, OP_EQ, start);
   tt_i64_op(g3->confirmed_on_date, OP_EQ, start+10);
@@ -1464,34 +1464,34 @@ test_entry_guard_confirming_guards(void *arg)
 
   /* Now make sure we can regenerate the confirmed_entry_guards list. */
   smartlist_clear(gs->confirmed_entry_guards);
-  g2->confirmed_idx = 0;
-  g1->confirmed_idx = 10;
-  g3->confirmed_idx = 100;
+  g2->confirmed_xap = 0;
+  g1->confirmed_xap = 10;
+  g3->confirmed_xap = 100;
   entry_guards_update_confirmed(gs);
-  tt_int_op(g1->confirmed_idx, OP_EQ, 1);
-  tt_int_op(g2->confirmed_idx, OP_EQ, 0);
-  tt_int_op(g3->confirmed_idx, OP_EQ, 2);
+  tt_int_op(g1->confirmed_xap, OP_EQ, 1);
+  tt_int_op(g2->confirmed_xap, OP_EQ, 0);
+  tt_int_op(g3->confirmed_xap, OP_EQ, 2);
   tt_ptr_op(smartlist_get(gs->confirmed_entry_guards, 0), OP_EQ, g2);
   tt_ptr_op(smartlist_get(gs->confirmed_entry_guards, 1), OP_EQ, g1);
   tt_ptr_op(smartlist_get(gs->confirmed_entry_guards, 2), OP_EQ, g3);
 
   /* Now make sure we can regenerate the confirmed_entry_guards list if
    * the indices are messed up. */
-  g1->confirmed_idx = g2->confirmed_idx = g3->confirmed_idx = 999;
+  g1->confirmed_xap = g2->confirmed_xap = g3->confirmed_xap = 999;
   smartlist_clear(gs->confirmed_entry_guards);
   entry_guards_update_confirmed(gs);
-  tt_int_op(g1->confirmed_idx, OP_GE, 0);
-  tt_int_op(g2->confirmed_idx, OP_GE, 0);
-  tt_int_op(g3->confirmed_idx, OP_GE, 0);
-  tt_int_op(g1->confirmed_idx, OP_LE, 2);
-  tt_int_op(g2->confirmed_idx, OP_LE, 2);
-  tt_int_op(g3->confirmed_idx, OP_LE, 2);
+  tt_int_op(g1->confirmed_xap, OP_GE, 0);
+  tt_int_op(g2->confirmed_xap, OP_GE, 0);
+  tt_int_op(g3->confirmed_xap, OP_GE, 0);
+  tt_int_op(g1->confirmed_xap, OP_LE, 2);
+  tt_int_op(g2->confirmed_xap, OP_LE, 2);
+  tt_int_op(g3->confirmed_xap, OP_LE, 2);
   g1 = smartlist_get(gs->confirmed_entry_guards, 0);
   g2 = smartlist_get(gs->confirmed_entry_guards, 1);
   g3 = smartlist_get(gs->confirmed_entry_guards, 2);
-  tt_int_op(g1->confirmed_idx, OP_EQ, 0);
-  tt_int_op(g2->confirmed_idx, OP_EQ, 1);
-  tt_int_op(g3->confirmed_idx, OP_EQ, 2);
+  tt_int_op(g1->confirmed_xap, OP_EQ, 0);
+  tt_int_op(g2->confirmed_xap, OP_EQ, 1);
+  tt_int_op(g3->confirmed_xap, OP_EQ, 2);
   tt_assert(g1 != g2);
   tt_assert(g1 != g3);
   tt_assert(g2 != g3);
@@ -1548,7 +1548,7 @@ test_entry_guard_sample_reachable_filtered(void *arg)
   for (j = 0; tests[j].flag >= 0; ++j) {
     selected = bitarray_init_zero(n_guards);
     const int excluded_flags = tests[j].flag;
-    const int excluded_idx = tests[j].xap;
+    const int excluded_xap = tests[j].xap;
     for (i = 0; i < N; ++i) {
       g = sample_reachable_filtered_entry_guards(gs, NULL, excluded_flags);
       tor_assert(g);
@@ -1559,7 +1559,7 @@ test_entry_guard_sample_reachable_filtered(void *arg)
       bitarray_set(selected, pos);
     }
     for (i = 0; i < n_guards; ++i) {
-      const int should_be_set = (i != excluded_idx &&
+      const int should_be_set = (i != excluded_xap &&
                                  i != 3); // filtered out.
       tt_int_op(!!bitarray_is_set(selected, i), OP_EQ, should_be_set);
     }
@@ -1661,7 +1661,7 @@ test_entry_guard_manage_primary(void *arg)
   tt_int_op(n_primary, OP_GE, 1);
   SMARTLIST_FOREACH(gs->primary_entry_guards, entry_guard_t *, g, {
     tt_assert(g->is_primary);
-    tt_assert(g->confirmed_idx == -1);
+    tt_assert(g->confirmed_xap == -1);
   });
 
   /* Calling it a second time should leave the guards unchanged. */
@@ -1669,7 +1669,7 @@ test_entry_guard_manage_primary(void *arg)
   entry_guards_update_primary(gs);
   tt_int_op(smartlist_len(gs->primary_entry_guards), OP_EQ, n_primary);
   SMARTLIST_FOREACH(gs->primary_entry_guards, entry_guard_t *, g, {
-    tt_ptr_op(g, OP_EQ, smartlist_get(prev_guards, g_sl_idx));
+    tt_ptr_op(g, OP_EQ, smartlist_get(prev_guards, g_sl_xap));
   });
 
   /* If we have one confirmed guard, that guards becomes the first primary
@@ -1696,9 +1696,9 @@ test_entry_guard_manage_primary(void *arg)
   tt_ptr_op(smartlist_get(gs->primary_entry_guards, 0), OP_EQ, confirmed);
   SMARTLIST_FOREACH(gs->primary_entry_guards, entry_guard_t *, g, {
     tt_assert(g->is_primary);
-    if (g_sl_idx == 0)
+    if (g_sl_xap == 0)
       continue;
-    tt_ptr_op(g, OP_EQ, smartlist_get(prev_guards, g_sl_idx - 1));
+    tt_ptr_op(g, OP_EQ, smartlist_get(prev_guards, g_sl_xap - 1));
   });
   {
     entry_guard_t *prev_last_guard = smartlist_get(prev_guards, n_primary-1);
@@ -1711,7 +1711,7 @@ test_entry_guard_manage_primary(void *arg)
   entry_guards_update_primary(gs);
   tt_int_op(smartlist_len(gs->primary_entry_guards), OP_EQ, n_primary);
   SMARTLIST_FOREACH(gs->primary_entry_guards, entry_guard_t *, g, {
-    tt_ptr_op(g, OP_EQ, smartlist_get(prev_guards, g_sl_idx));
+    tt_ptr_op(g, OP_EQ, smartlist_get(prev_guards, g_sl_xap));
   });
 
   /* Do some dirinfo checks */
@@ -1747,7 +1747,7 @@ test_entry_guard_guard_preferred(void *arg)
   entry_guard_t *g1 = tor_malloc_zero(sizeof(entry_guard_t));
   entry_guard_t *g2 = tor_malloc_zero(sizeof(entry_guard_t));
 
-  g1->confirmed_idx = g2->confirmed_idx = -1;
+  g1->confirmed_xap = g2->confirmed_xap = -1;
   g1->last_tried_to_connect = approx_time();
   g2->last_tried_to_connect = approx_time();
 
@@ -1774,12 +1774,12 @@ test_entry_guard_guard_preferred(void *arg)
   tt_int_op(0, OP_EQ, entry_guard_has_higher_priority(g1, g2));
 
   /* Now, say that g1 is confirmed. It will get higher priority. */
-  g1->confirmed_idx = 5;
+  g1->confirmed_xap = 5;
   tt_int_op(0, OP_EQ, entry_guard_has_higher_priority(g2, g1));
   tt_int_op(1, OP_EQ, entry_guard_has_higher_priority(g1, g2));
 
   /* But if g2 was confirmed first, it will get priority */
-  g2->confirmed_idx = 2;
+  g2->confirmed_xap = 2;
   tt_int_op(1, OP_EQ, entry_guard_has_higher_priority(g2, g1));
   tt_int_op(0, OP_EQ, entry_guard_has_higher_priority(g1, g2));
 
@@ -1805,7 +1805,7 @@ test_entry_guard_select_for_circuit_no_confirmed(void *arg)
 
   tt_assert(g);
   tt_assert(g->is_primary);
-  tt_int_op(g->confirmed_idx, OP_EQ, -1);
+  tt_int_op(g->confirmed_xap, OP_EQ, -1);
   tt_uint_op(g->is_pending, OP_EQ, 0); // primary implies non-pending.
   tt_uint_op(state, OP_EQ, GUARD_CIRC_STATE_USABLE_ON_COMPLETION);
   tt_i64_op(g->last_tried_to_connect, OP_EQ, approx_time());
@@ -1825,7 +1825,7 @@ test_entry_guard_select_for_circuit_no_confirmed(void *arg)
   tt_ptr_op(g2, OP_NE, g);
   tt_assert(g2);
   tt_assert(g2->is_primary);
-  tt_int_op(g2->confirmed_idx, OP_EQ, -1);
+  tt_int_op(g2->confirmed_xap, OP_EQ, -1);
   tt_uint_op(g2->is_pending, OP_EQ, 0); // primary implies non-pending.
   tt_uint_op(state, OP_EQ, GUARD_CIRC_STATE_USABLE_ON_COMPLETION);
   tt_i64_op(g2->last_tried_to_connect, OP_EQ, approx_time());
@@ -1853,7 +1853,7 @@ test_entry_guard_select_for_circuit_no_confirmed(void *arg)
   g2 = select_entry_guard_for_circuit(gs, GUARD_USAGE_TRAFFIC, NULL, &state);
   tt_assert(g2);
   tt_assert(!g2->is_primary);
-  tt_int_op(g2->confirmed_idx, OP_EQ, -1);
+  tt_int_op(g2->confirmed_xap, OP_EQ, -1);
   tt_uint_op(g2->is_pending, OP_EQ, 1);
   tt_uint_op(state, OP_EQ, GUARD_CIRC_STATE_USABLE_IF_NO_BETTER_GUARD);
   tt_i64_op(g2->last_tried_to_connect, OP_EQ, approx_time());
@@ -1911,7 +1911,7 @@ test_entry_guard_select_for_circuit_confirmed(void *arg)
                                                     NULL, &state);
   tt_assert(g);
   tt_assert(g->is_primary);
-  tt_int_op(g->confirmed_idx, OP_EQ, 0);
+  tt_int_op(g->confirmed_xap, OP_EQ, 0);
   tt_uint_op(g->is_pending, OP_EQ, 0); // primary implies non-pending.
   tt_uint_op(state, OP_EQ, GUARD_CIRC_STATE_USABLE_ON_COMPLETION);
   tt_i64_op(g->last_tried_to_connect, OP_EQ, approx_time());
@@ -1928,7 +1928,7 @@ test_entry_guard_select_for_circuit_confirmed(void *arg)
   g = select_entry_guard_for_circuit(gs, GUARD_USAGE_TRAFFIC, NULL, &state);
   tt_assert(g);
   tt_assert(! g->is_primary);
-  tt_int_op(g->confirmed_idx, OP_EQ, smartlist_len(gs->primary_entry_guards));
+  tt_int_op(g->confirmed_xap, OP_EQ, smartlist_len(gs->primary_entry_guards));
   tt_assert(g->is_pending);
   tt_uint_op(state, OP_EQ, GUARD_CIRC_STATE_USABLE_IF_NO_BETTER_GUARD);
   tt_i64_op(g->last_tried_to_connect, OP_EQ, approx_time());
@@ -1941,7 +1941,7 @@ test_entry_guard_select_for_circuit_confirmed(void *arg)
   tt_assert(g2);
   tt_assert(! g2->is_primary);
   tt_ptr_op(g2, OP_NE, g);
-  tt_int_op(g2->confirmed_idx, OP_EQ,
+  tt_int_op(g2->confirmed_xap, OP_EQ,
             smartlist_len(gs->primary_entry_guards)+1);
   tt_assert(g2->is_pending);
   tt_uint_op(state, OP_EQ, GUARD_CIRC_STATE_USABLE_IF_NO_BETTER_GUARD);
@@ -1957,7 +1957,7 @@ test_entry_guard_select_for_circuit_confirmed(void *arg)
   g2 = select_entry_guard_for_circuit(gs, GUARD_USAGE_TRAFFIC, rst, &state);
   tt_ptr_op(g2, OP_NE, NULL);
   tt_ptr_op(g2, OP_NE, g);
-  tt_int_op(g2->confirmed_idx, OP_EQ,
+  tt_int_op(g2->confirmed_xap, OP_EQ,
             smartlist_len(gs->primary_entry_guards)+3);
 
   // If we make every confirmed guard become pending then we start poking
@@ -1966,14 +1966,14 @@ test_entry_guard_select_for_circuit_confirmed(void *arg)
     N_CONFIRMED - 3 - smartlist_len(gs->primary_entry_guards);
   for (i = 0; i < n_remaining_confirmed; ++i) {
     g = select_entry_guard_for_circuit(gs, GUARD_USAGE_TRAFFIC, NULL, &state);
-    tt_int_op(g->confirmed_idx, OP_GE, 0);
+    tt_int_op(g->confirmed_xap, OP_GE, 0);
     tt_assert(g);
   }
   state = 9999;
   g = select_entry_guard_for_circuit(gs, GUARD_USAGE_TRAFFIC, NULL, &state);
   tt_assert(g);
   tt_assert(g->is_pending);
-  tt_int_op(g->confirmed_idx, OP_EQ, -1);
+  tt_int_op(g->confirmed_xap, OP_EQ, -1);
 
   // If we EnforceDistinctSubnets and apply a restriction, we get
   // nothing, since we put all of the nodes in the same /16.
@@ -2019,7 +2019,7 @@ test_entry_guard_select_for_circuit_highlevel_primary(void *arg)
   tt_mem_op(g->identity, OP_EQ, node->identity, DIGEST_LEN);
   tt_int_op(g->is_primary, OP_EQ, 1);
   tt_i64_op(g->last_tried_to_connect, OP_EQ, start);
-  tt_int_op(g->confirmed_idx, OP_EQ, -1);
+  tt_int_op(g->confirmed_xap, OP_EQ, -1);
 
   /* Call that circuit successful. */
   update_approx_time(start+15);
@@ -2030,7 +2030,7 @@ test_entry_guard_select_for_circuit_highlevel_primary(void *arg)
   g = entry_guard_handle_get(guard->guard);
   tt_assert(g);
   tt_int_op(g->is_reachable, OP_EQ, GUARD_REACHABLE_YES);
-  tt_int_op(g->confirmed_idx, OP_EQ, 0);
+  tt_int_op(g->confirmed_xap, OP_EQ, 0);
 
   circuit_guard_state_free(guard);
   guard = NULL;
@@ -2052,7 +2052,7 @@ test_entry_guard_select_for_circuit_highlevel_primary(void *arg)
   tt_mem_op(g->identity, OP_EQ, node->identity, DIGEST_LEN);
   tt_int_op(g->is_primary, OP_EQ, 1);
   tt_i64_op(g->last_tried_to_connect, OP_EQ, start+35);
-  tt_int_op(g->confirmed_idx, OP_EQ, 0); // same one.
+  tt_int_op(g->confirmed_xap, OP_EQ, 0); // same one.
 
   /* It's failed!  What will happen to our poor guard? */
   update_approx_time(start+45);
@@ -2064,7 +2064,7 @@ test_entry_guard_select_for_circuit_highlevel_primary(void *arg)
   tt_assert(g);
   tt_int_op(g->is_reachable, OP_EQ, GUARD_REACHABLE_NO);
   tt_i64_op(g->failing_since, OP_EQ, start+45);
-  tt_int_op(g->confirmed_idx, OP_EQ, 0); // still confirmed.
+  tt_int_op(g->confirmed_xap, OP_EQ, 0); // still confirmed.
 
   circuit_guard_state_free(guard);
   guard = NULL;
@@ -2089,7 +2089,7 @@ test_entry_guard_select_for_circuit_highlevel_primary(void *arg)
   tt_mem_op(g->identity, OP_NE, g_prev->identity, DIGEST_LEN);
   tt_int_op(g->is_primary, OP_EQ, 1);
   tt_i64_op(g->last_tried_to_connect, OP_EQ, start+60);
-  tt_int_op(g->confirmed_idx, OP_EQ, -1); // not confirmed now.
+  tt_int_op(g->confirmed_xap, OP_EQ, -1); // not confirmed now.
 
   /* Call this one up; watch it get confirmed. */
   update_approx_time(start+90);
@@ -2100,7 +2100,7 @@ test_entry_guard_select_for_circuit_highlevel_primary(void *arg)
   g = entry_guard_handle_get(guard->guard);
   tt_assert(g);
   tt_int_op(g->is_reachable, OP_EQ, GUARD_REACHABLE_YES);
-  tt_int_op(g->confirmed_idx, OP_EQ, 1);
+  tt_int_op(g->confirmed_xap, OP_EQ, 1);
 
  done:
   guard_selection_free(gs);
@@ -2151,7 +2151,7 @@ test_entry_guard_select_for_circuit_highlevel_confirm_other(void *arg)
   entry_guard_t *g = entry_guard_handle_get(guard->guard);
   tt_assert(g);
   tt_int_op(guard->state, OP_EQ, GUARD_CIRC_STATE_USABLE_IF_NO_BETTER_GUARD);
-  tt_int_op(g->confirmed_idx, OP_EQ, -1);
+  tt_int_op(g->confirmed_xap, OP_EQ, -1);
   tt_int_op(g->is_primary, OP_EQ, 0);
   tt_int_op(g->is_pending, OP_EQ, 1);
   (void)start;
@@ -2162,7 +2162,7 @@ test_entry_guard_select_for_circuit_highlevel_confirm_other(void *arg)
    */
   tt_int_op(guard->state, OP_EQ, GUARD_CIRC_STATE_COMPLETE);
   tt_assert(u == GUARD_USABLE_NOW);
-  tt_int_op(g->confirmed_idx, OP_EQ, 0);
+  tt_int_op(g->confirmed_xap, OP_EQ, 0);
   tt_int_op(g->is_primary, OP_EQ, 1);
   tt_int_op(g->is_pending, OP_EQ, 0);
 
@@ -2632,13 +2632,13 @@ test_entry_guard_upgrade_blocked_by_better_circ_pending(void *arg)
    * we won't upgrade circ2. */
 
   /* XXXX Prop271 -- this is a kludge.  I'm making sure circ1 _is_ better,
-   * by messing with the guards' confirmed_idx */
+   * by messing with the guards' confirmed_xap */
   make_guard_confirmed(data->gs, data->guard1);
   {
     int tmp;
-    tmp = data->guard1->confirmed_idx;
-    data->guard1->confirmed_idx = data->guard2->confirmed_idx;
-    data->guard2->confirmed_idx = tmp;
+    tmp = data->guard1->confirmed_xap;
+    data->guard1->confirmed_xap = data->guard2->confirmed_xap;
+    data->guard2->confirmed_xap = tmp;
   }
 
   smartlist_t *result = smartlist_new();
@@ -2666,13 +2666,13 @@ test_entry_guard_upgrade_not_blocked_by_restricted_circ_pending(void *arg)
      circ2. */
 
   /* XXXX Prop271 -- this is a kludge.  I'm making sure circ1 _is_ better,
-   * by messing with the guards' confirmed_idx */
+   * by messing with the guards' confirmed_xap */
   make_guard_confirmed(data->gs, data->guard1);
   {
     int tmp;
-    tmp = data->guard1->confirmed_idx;
-    data->guard1->confirmed_idx = data->guard2->confirmed_idx;
-    data->guard2->confirmed_idx = tmp;
+    tmp = data->guard1->confirmed_xap;
+    data->guard1->confirmed_xap = data->guard2->confirmed_xap;
+    data->guard2->confirmed_xap = tmp;
   }
 
   data->guard2_state->restrictions =

@@ -18,9 +18,9 @@ BOOST_FIXTURE_TEST_SUITE(sigma_state_tests, ZerocoinTestingSetup200)
 
 static const uint256 txHash = uint256S("a64bf7b459d3bb09653e444d75a942e9848ed8e1f30e2890f999426ed6dd4a2c");
 
-CBlockIndex CreateBlockIndex(int nHeight)
+CBlockApollon CreateBlockApollon(int nHeight)
 {
-    CBlockIndex apollon;
+    CBlockApollon apollon;
     apollon.nHeight = nHeight;
     apollon.pprev = chainActive.Tip();
     apollon.phashBlock = new uint256();
@@ -108,10 +108,10 @@ BOOST_AUTO_TEST_CASE(sigma_hascoin_true)
     const sigma::PrivateCoin privcoin(params, sigma::CoinDenomination::SIGMA_DENOM_1);
     sigma::PublicCoin pubcoin;
     pubcoin = privcoin.getPublicCoin();
-    CBlockIndex apollon = CreateBlockIndex(1);
+    CBlockApollon apollon = CreateBlockApollon(1);
     auto mintsBlock = CreateBlockWithMints({pubcoin});
 
-    sigmaState->AddMintsToStateAndBlockIndex(&apollon, &mintsBlock);
+    sigmaState->AddMintsToStateAndBlockApollon(&apollon, &mintsBlock);
     auto hasCoin = sigmaState->HasCoin(pubcoin);
 
     BOOST_CHECK_MESSAGE(hasCoin, "The coin should not be in mintedPubCoins.");
@@ -128,10 +128,10 @@ BOOST_AUTO_TEST_CASE(sigma_getmintcoinheightandid_true)
     const sigma::PrivateCoin privcoin(params, sigma::CoinDenomination::SIGMA_DENOM_1);
     sigma::PublicCoin pubcoin;
     pubcoin = privcoin.getPublicCoin();
-    CBlockIndex apollon = CreateBlockIndex(1);
+    CBlockApollon apollon = CreateBlockApollon(1);
     auto mintsBlock = CreateBlockWithMints({pubcoin});
 
-    sigmaState->AddMintsToStateAndBlockIndex(&apollon, &mintsBlock);
+    sigmaState->AddMintsToStateAndBlockApollon(&apollon, &mintsBlock);
     auto cnData = sigmaState->GetMintedCoinHeightAndId(pubcoin);
 
     BOOST_CHECK_MESSAGE(cnData.first == 1, "Unexpected minted coin height.");
@@ -167,16 +167,16 @@ BOOST_AUTO_TEST_CASE(sigma_addmint_double)
     const sigma::PrivateCoin privcoin(params, sigma::CoinDenomination::SIGMA_DENOM_1);
     sigma::PublicCoin pubcoin;
     pubcoin = privcoin.getPublicCoin();
-    CBlockIndex apollon = CreateBlockIndex(1);
+    CBlockApollon apollon = CreateBlockApollon(1);
     auto mintsBlock = CreateBlockWithMints({pubcoin});
 
-    sigmaState->AddMintsToStateAndBlockIndex(&apollon, &mintsBlock);
+    sigmaState->AddMintsToStateAndBlockApollon(&apollon, &mintsBlock);
     auto mintedPubCoin = sigmaState->GetMints();
 
     BOOST_CHECK_MESSAGE(mintedPubCoin.size() == 1,
         "Unexpected mintedPubCoin size after first call.");
 
-    sigmaState->AddMintsToStateAndBlockIndex(&apollon, &mintsBlock);
+    sigmaState->AddMintsToStateAndBlockApollon(&apollon, &mintsBlock);
     mintedPubCoin = sigmaState->GetMints();
 
     BOOST_CHECK_MESSAGE(mintedPubCoin.size() == 1,
@@ -202,8 +202,8 @@ BOOST_AUTO_TEST_CASE(sigma_addmint_two)
 
     auto mintsBlock = CreateBlockWithMints({pubcoin1, pubcoin2});
 
-    CBlockIndex apollon = CreateBlockIndex(1);
-    sigmaState->AddMintsToStateAndBlockIndex(&apollon, &mintsBlock);
+    CBlockApollon apollon = CreateBlockApollon(1);
+    sigmaState->AddMintsToStateAndBlockApollon(&apollon, &mintsBlock);
 
     auto mintedPubCoin = sigmaState->GetMints();
 
@@ -489,12 +489,12 @@ BOOST_AUTO_TEST_CASE(sigma_reset)
     const sigma::PrivateCoin privcoin(params, sigma::CoinDenomination::SIGMA_DENOM_1);
     sigma::PublicCoin pubcoin;
     pubcoin = privcoin.getPublicCoin();
-    CBlockIndex apollon = CreateBlockIndex(1);
+    CBlockApollon apollon = CreateBlockApollon(1);
 
     // Let's add data to zerocoinstate before reset
 
     auto mintsBlock = CreateBlockWithMints({pubcoin});
-    sigmaState->AddMintsToStateAndBlockIndex(&apollon, &mintsBlock);
+    sigmaState->AddMintsToStateAndBlockApollon(&apollon, &mintsBlock);
 
     BOOST_CHECK_MESSAGE(sigmaState->GetMints().size() == 1,
       "Unexpected mintedPubCoin size before reset.");
@@ -547,10 +547,10 @@ BOOST_AUTO_TEST_CASE(sigma_getcoingroupinfo_existing)
     const sigma::PrivateCoin privcoin(params, sigma::CoinDenomination::SIGMA_DENOM_1);
     sigma::PublicCoin pubcoin;
     pubcoin = privcoin.getPublicCoin();
-    CBlockIndex apollon = CreateBlockIndex(1);
+    CBlockApollon apollon = CreateBlockApollon(1);
     auto mintsBlock = CreateBlockWithMints({pubcoin});
 
-    sigmaState->AddMintsToStateAndBlockIndex(&apollon, &mintsBlock);
+    sigmaState->AddMintsToStateAndBlockApollon(&apollon, &mintsBlock);
     auto mintedPubCoin = sigmaState->GetMints();
 
     BOOST_CHECK_MESSAGE(mintedPubCoin.size() == 1,
@@ -578,7 +578,7 @@ BOOST_AUTO_TEST_CASE(sigma_getcoingroupinfo_not_minted)
     const sigma::PrivateCoin privcoin(params, sigma::CoinDenomination::SIGMA_DENOM_1);
     sigma::PublicCoin pubcoin;
     pubcoin = privcoin.getPublicCoin();
-    CBlockIndex apollon = CreateBlockIndex(1);
+    CBlockApollon apollon = CreateBlockApollon(1);
 
     sigma::CSigmaState::SigmaCoinGroupInfo result;
     sigmaState->GetCoinGroupInfo(pubcoin.getDenomination(), 1, result);
@@ -588,7 +588,7 @@ BOOST_AUTO_TEST_CASE(sigma_getcoingroupinfo_not_minted)
     sigmaState->Reset();
 }
 
-BOOST_AUTO_TEST_CASE(zerocoin_sigma_addblock_nonexist_index)
+BOOST_AUTO_TEST_CASE(zerocoin_sigma_addblock_nonexist_apollon)
 {
     sigma::CSigmaState *sigmaState = sigma::CSigmaState::GetState();
     CScript scriptPubKey2;
@@ -597,7 +597,7 @@ BOOST_AUTO_TEST_CASE(zerocoin_sigma_addblock_nonexist_index)
     const sigma::PrivateCoin privcoin(params, sigma::CoinDenomination::SIGMA_DENOM_1);
     sigma::PublicCoin pubcoin;
     pubcoin = privcoin.getPublicCoin();
-    CBlockIndex apollon = CreateBlockIndex(1);
+    CBlockApollon apollon = CreateBlockApollon(1);
 
 	sigmaState->AddBlock(&apollon);
 	BOOST_CHECK_MESSAGE(sigmaState->GetMints().size() == 0,
@@ -623,7 +623,7 @@ BOOST_AUTO_TEST_CASE(zerocoin_sigma_addblock_minted_spend)
     sigma::PublicCoin pubcoin2;
     pubcoin2 = privcoin2.getPublicCoin();
 
-    CBlockIndex apollon = CreateBlockIndex(1);
+    CBlockApollon apollon = CreateBlockApollon(1);
     std::pair<sigma::CoinDenomination, int> denomination1Group1(
         sigma::CoinDenomination::SIGMA_DENOM_1,1);
 
@@ -650,10 +650,10 @@ BOOST_AUTO_TEST_CASE(zerocoin_sigma_addblock_minted_spend)
 
 	auto spendSerial = coinSpend.getCoinSerialNumber();
 
-    CBlockIndex index2 = CreateBlockIndex(2);
-	index2.sigmaSpentSerials.clear();
-	index2.sigmaSpentSerials.insert(std::make_pair(spendSerial, sigma::CSpendCoinInfo::make(coinSpend.getDenomination(), 0)));
-	sigmaState->AddBlock(&index2);
+    CBlockApollon apollon2 = CreateBlockApollon(2);
+	apollon2.sigmaSpentSerials.clear();
+	apollon2.sigmaSpentSerials.insert(std::make_pair(spendSerial, sigma::CSpendCoinInfo::make(coinSpend.getDenomination(), 0)));
+	sigmaState->AddBlock(&apollon2);
 	BOOST_CHECK_MESSAGE(sigmaState->GetMints().size() == 2,
 	  "Unexpected mintedPubCoins size, add new block without additional minted.");
 
@@ -664,10 +664,10 @@ BOOST_AUTO_TEST_CASE(zerocoin_sigma_addblock_minted_spend)
     const sigma::PrivateCoin privcoin3(params, sigma::CoinDenomination::SIGMA_DENOM_1);
     sigma::PublicCoin pubcoin3;
     pubcoin3 = privcoin3.getPublicCoin();
-    CBlockIndex index3 = CreateBlockIndex(3);
+    CBlockApollon apollon3 = CreateBlockApollon(3);
 
-    index3.sigmaMintedPubCoins[denomination1Group1].push_back(pubcoin3);
-    sigmaState->AddBlock(&index3);
+    apollon3.sigmaMintedPubCoins[denomination1Group1].push_back(pubcoin3);
+    sigmaState->AddBlock(&apollon3);
     BOOST_CHECK_MESSAGE(sigmaState->GetMints().size() == 3,
 	  "Unexpected mintedPubCoins size, add new block with one more minted.");
 
@@ -687,28 +687,28 @@ BOOST_AUTO_TEST_CASE(zerocoin_sigma_removeblock_remove)
     auto coins = generateCoins(params, 10, sigma::CoinDenomination::SIGMA_DENOM_1);
     auto pubCoins = getPubcoins(coins);
 
-    auto index1 = CreateBlockIndex(1);
+    auto apollon1 = CreateBlockApollon(1);
     std::pair<sigma::CoinDenomination, int> denomination1Group1(sigma::CoinDenomination::SIGMA_DENOM_1, 1);
-    index1.sigmaMintedPubCoins[denomination1Group1] = pubCoins;
+    apollon1.sigmaMintedPubCoins[denomination1Group1] = pubCoins;
 
     // add apollon 2 with 10 minted and 1 spend
     auto coins2 = generateCoins(params,10, sigma::CoinDenomination::SIGMA_DENOM_1);
     auto pubCoins2 = getPubcoins(coins2);
 
-    auto index2 = CreateBlockIndex(2);
+    auto apollon2 = CreateBlockApollon(2);
     std::pair<sigma::CoinDenomination, int> denomination1Group2(sigma::CoinDenomination::SIGMA_DENOM_1, 2);
-    index2.sigmaMintedPubCoins[denomination1Group2] = pubCoins2;
+    apollon2.sigmaMintedPubCoins[denomination1Group2] = pubCoins2;
 
     // Doesn't really matter what metadata we give here, it must pass.
     sigma::SpendMetaData metaData(0, uint256S("120"), uint256S("120"));
 
     sigma::CoinSpend coinSpend(params, coins[0], pubCoins, metaData, true);
 
-    index2.sigmaSpentSerials.clear();
-    index2.sigmaSpentSerials.insert(std::make_pair(coinSpend.getCoinSerialNumber(), sigma::CSpendCoinInfo::make(coinSpend.getDenomination(), 0)));
+    apollon2.sigmaSpentSerials.clear();
+    apollon2.sigmaSpentSerials.insert(std::make_pair(coinSpend.getCoinSerialNumber(), sigma::CSpendCoinInfo::make(coinSpend.getDenomination(), 0)));
 
-    sigmaState->AddBlock(&index1);
-    sigmaState->AddBlock(&index2);
+    sigmaState->AddBlock(&apollon1);
+    sigmaState->AddBlock(&apollon2);
 
     BOOST_CHECK_MESSAGE(sigmaState->GetLatestCoinIds().find(sigma::CoinDenomination::SIGMA_DENOM_1)->second == 2,
       "Unexpected lastestcoinId");
@@ -716,7 +716,7 @@ BOOST_AUTO_TEST_CASE(zerocoin_sigma_removeblock_remove)
       "Coin isn't in state before remove apollon 2");
 
     // remove one
-    sigmaState->RemoveBlock(&index2);
+    sigmaState->RemoveBlock(&apollon2);
     BOOST_CHECK_MESSAGE(sigmaState->GetMints().size() == 10,
 	  "Unexpected mintedPubCoins size, remove apollon contain 10 minteds.");
 
@@ -732,7 +732,7 @@ BOOST_AUTO_TEST_CASE(zerocoin_sigma_removeblock_remove)
       "Coin is in state after remove apollon 2");
 
     // remove all
-    sigmaState->RemoveBlock(&index1);
+    sigmaState->RemoveBlock(&apollon1);
     BOOST_CHECK_MESSAGE(sigmaState->GetMints().size() == 0,
 	  "Unexpected mintedPubCoins size, remove apollon contain 10 minteds.");
 
@@ -910,10 +910,10 @@ BOOST_AUTO_TEST_CASE(sigma_build_state)
     sigma::CSigmaState *sigmaState = sigma::CSigmaState::GetState();
     auto params = sigma::Params::get_default();
 
-    CBlockIndex index0 = CreateBlockIndex(0);
-    chainActive.SetTip(&index0);
+    CBlockApollon apollon0 = CreateBlockApollon(0);
+    chainActive.SetTip(&apollon0);
 
-    CBlockIndex index1 = CreateBlockIndex(1);
+    CBlockApollon apollon1 = CreateBlockApollon(1);
 
     // add apollon 1 with 10 SIGMA_DENOM_1
     auto coins = generateCoins(params, 10, sigma::CoinDenomination::SIGMA_DENOM_1);
@@ -921,11 +921,11 @@ BOOST_AUTO_TEST_CASE(sigma_build_state)
     std::pair<sigma::CoinDenomination, int> denomination1Group1(sigma::CoinDenomination::SIGMA_DENOM_1, 1);
     std::pair<sigma::CoinDenomination, int> denomination10Group1(sigma::CoinDenomination::SIGMA_DENOM_10, 1);
 
-    index1.sigmaMintedPubCoins[denomination1Group1] = pubCoins;
+    apollon1.sigmaMintedPubCoins[denomination1Group1] = pubCoins;
 
-    chainActive.SetTip(&index1);
+    chainActive.SetTip(&apollon1);
 
-    CBlockIndex index2 = CreateBlockIndex(2);
+    CBlockApollon apollon2 = CreateBlockApollon(2);
     // add apollon 2 with 1 DENOMINATION_1  mints and 1 spend
     auto coins2 = generateCoins(params, 1, sigma::CoinDenomination::SIGMA_DENOM_1);
     auto pubCoins2 = getPubcoins(coins2);
@@ -936,31 +936,31 @@ BOOST_AUTO_TEST_CASE(sigma_build_state)
     secp_primitives::Scalar serial;
     serial.randomize();
 
-    index2.sigmaSpentSerials.insert(std::make_pair(serial, sigma::CSpendCoinInfo::make(sigma::CoinDenomination::SIGMA_DENOM_1, 0)));
+    apollon2.sigmaSpentSerials.insert(std::make_pair(serial, sigma::CSpendCoinInfo::make(sigma::CoinDenomination::SIGMA_DENOM_1, 0)));
 
-    index2.sigmaMintedPubCoins[denomination1Group1] = pubCoins2;
-    index2.sigmaMintedPubCoins[denomination10Group1] = pubCoins3;
+    apollon2.sigmaMintedPubCoins[denomination1Group1] = pubCoins2;
+    apollon2.sigmaMintedPubCoins[denomination10Group1] = pubCoins3;
 
-    chainActive.SetTip(&index2);
+    chainActive.SetTip(&apollon2);
 
     for(int i =3 ;i<=100;i++){
-		CBlockIndex apollon = CreateBlockIndex(i);
+		CBlockApollon apollon = CreateBlockApollon(i);
         chainActive.SetTip(&apollon);
 	}
 
-    sigma::BuildSigmaStateFromIndex(&chainActive);
+    sigma::BuildSigmaStateFromApollon(&chainActive);
 
     // check group
     sigma::CSigmaState::SigmaCoinGroupInfo group;
     sigmaState->GetCoinGroupInfo(sigma::CoinDenomination::SIGMA_DENOM_1, 1, group);
-    BOOST_CHECK_MESSAGE(group.firstBlock->nHeight == index1.nHeight, "Expect firstBlock == index1");
-    BOOST_CHECK_MESSAGE(group.lastBlock->nHeight == index2.nHeight, "Expect lastBlock == index2");
+    BOOST_CHECK_MESSAGE(group.firstBlock->nHeight == apollon1.nHeight, "Expect firstBlock == apollon1");
+    BOOST_CHECK_MESSAGE(group.lastBlock->nHeight == apollon2.nHeight, "Expect lastBlock == apollon2");
     BOOST_CHECK_MESSAGE(group.nCoins == 11, "Expect nCoins == 11");
 
     sigma::CSigmaState::SigmaCoinGroupInfo group2;
     sigmaState->GetCoinGroupInfo(sigma::CoinDenomination::SIGMA_DENOM_10, 1, group2);
-    BOOST_CHECK_MESSAGE(group2.firstBlock->nHeight == index2.nHeight, "Expect firstBlock == index2");
-    BOOST_CHECK_MESSAGE(group2.lastBlock->nHeight == index2.nHeight, "Expect lastBlock == index2");
+    BOOST_CHECK_MESSAGE(group2.firstBlock->nHeight == apollon2.nHeight, "Expect firstBlock == apollon2");
+    BOOST_CHECK_MESSAGE(group2.lastBlock->nHeight == apollon2.nHeight, "Expect lastBlock == apollon2");
     BOOST_CHECK_MESSAGE(group2.nCoins == 1, "Expect nCoins == 1");
 
     // check serial
@@ -978,7 +978,7 @@ BOOST_AUTO_TEST_CASE(sigma_build_state)
 
     // get mint coin heigh and id
     std::pair<int,int> groupHeightAndID = sigmaState->GetMintedCoinHeightAndId(pubCoins2[0]);
-    BOOST_CHECK_MESSAGE(groupHeightAndID.first == index2.nHeight, "Expect pubcoin on index2");
+    BOOST_CHECK_MESSAGE(groupHeightAndID.first == apollon2.nHeight, "Expect pubcoin on apollon2");
     BOOST_CHECK_MESSAGE(groupHeightAndID.second == 1, "Expect pubcoin id == 1");
 
     std::pair<int,int> notFoundGroupHeightAndID = sigmaState->GetMintedCoinHeightAndId(notFoundPubCoins[0]);
@@ -992,15 +992,15 @@ BOOST_AUTO_TEST_CASE(sigma_build_state_no_sigma)
     sigma::CSigmaState *sigmaState = sigma::CSigmaState::GetState();
     auto params = sigma::Params::get_default();
 
-    std::vector<CBlockIndex> indexs;
-    indexs.resize(101);
+    std::vector<CBlockApollon> apollons;
+    apollons.resize(101);
     for(int i =0 ;i<=100;i++){
-		CBlockIndex apollon = CreateBlockIndex(i);
+		CBlockApollon apollon = CreateBlockApollon(i);
         chainActive.SetTip(&apollon);
-        indexs[i] = apollon;
+        apollons[i] = apollon;
 	}
 
-    sigma::BuildSigmaStateFromIndex(&chainActive);
+    sigma::BuildSigmaStateFromApollon(&chainActive);
 
     // check group
     sigma::CSigmaState::SigmaCoinGroupInfo group;
@@ -1029,17 +1029,17 @@ BOOST_AUTO_TEST_CASE(sigma_getcoinsetforspend)
 {
     sigma::CSigmaState *sigmaState = sigma::CSigmaState::GetState();
     sigma::Params* params = sigma::Params::get_default();
-    int nextIndex = 0;
-    std::vector<CBlockIndex> indexes;
-    indexes.resize(101);
+    int nextApollon = 0;
+    std::vector<CBlockApollon> apollones;
+    apollones.resize(101);
 
-    // nextIndex = 0
-    indexes[nextIndex] = CreateBlockIndex(nextIndex);
-    chainActive.SetTip(&indexes[nextIndex]);
+    // nextApollon = 0
+    apollones[nextApollon] = CreateBlockApollon(nextApollon);
+    chainActive.SetTip(&apollones[nextApollon]);
 
-    // nextIndex = 1
-    nextIndex++;
-    indexes[nextIndex] = CreateBlockIndex(nextIndex);
+    // nextApollon = 1
+    nextApollon++;
+    apollones[nextApollon] = CreateBlockApollon(nextApollon);
 
     std::pair<sigma::CoinDenomination, int> denomination1Group1(sigma::CoinDenomination::SIGMA_DENOM_1, 1);
     std::pair<sigma::CoinDenomination, int> denomination10Group1(sigma::CoinDenomination::SIGMA_DENOM_10, 1);
@@ -1054,30 +1054,30 @@ BOOST_AUTO_TEST_CASE(sigma_getcoinsetforspend)
     auto coins3 = generateCoins(params, 5, sigma::CoinDenomination::SIGMA_DENOM_10);
     auto pubCoins3 = getPubcoins(coins3);
 
-    indexes[nextIndex].sigmaMintedPubCoins[denomination1Group1] = pubCoins;
-    chainActive.SetTip(&indexes[nextIndex]);
+    apollones[nextApollon].sigmaMintedPubCoins[denomination1Group1] = pubCoins;
+    chainActive.SetTip(&apollones[nextApollon]);
 
-    nextIndex++;
-    indexes[nextIndex] = CreateBlockIndex(nextIndex);
+    nextApollon++;
+    apollones[nextApollon] = CreateBlockApollon(nextApollon);
 
     // mock spend
     secp_primitives::Scalar serial;
     serial.randomize();
 
-    indexes[nextIndex].sigmaSpentSerials.insert(std::make_pair(serial, sigma::CSpendCoinInfo::make(sigma::CoinDenomination::SIGMA_DENOM_1, 0)));
-    indexes[nextIndex].sigmaMintedPubCoins[denomination1Group1] = pubCoins2;
-    indexes[nextIndex].sigmaMintedPubCoins[denomination10Group1] = pubCoins3;
+    apollones[nextApollon].sigmaSpentSerials.insert(std::make_pair(serial, sigma::CSpendCoinInfo::make(sigma::CoinDenomination::SIGMA_DENOM_1, 0)));
+    apollones[nextApollon].sigmaMintedPubCoins[denomination1Group1] = pubCoins2;
+    apollones[nextApollon].sigmaMintedPubCoins[denomination10Group1] = pubCoins3;
 
-    chainActive.SetTip(&indexes[nextIndex]);
+    chainActive.SetTip(&apollones[nextApollon]);
 
-    // nextIndex = 3
-    nextIndex++;
-    for( ; nextIndex<=100; nextIndex++){
-		indexes[nextIndex] = CreateBlockIndex(nextIndex);
-        chainActive.SetTip(&indexes[nextIndex]);
+    // nextApollon = 3
+    nextApollon++;
+    for( ; nextApollon<=100; nextApollon++){
+		apollones[nextApollon] = CreateBlockApollon(nextApollon);
+        chainActive.SetTip(&apollones[nextApollon]);
 	}
 
-    sigma::BuildSigmaStateFromIndex(&chainActive);
+    sigma::BuildSigmaStateFromApollon(&chainActive);
 
     uint256 blockHash_out;
     uint256 blockHash_empty;
@@ -1092,19 +1092,19 @@ BOOST_AUTO_TEST_CASE(sigma_getcoinsetforspend)
 
     std::vector<sigma::PublicCoin> coins_out1;
     // maxheight > blockheight
-    coins_amount = sigmaState->GetCoinSetForSpend(&chainActive, nextIndex,
+    coins_amount = sigmaState->GetCoinSetForSpend(&chainActive, nextApollon,
     sigma::CoinDenomination::SIGMA_DENOM_10, 1, blockHash_out, coins_out1);
     BOOST_CHECK_MESSAGE(coins_amount == 5, "Unexpected Coins amount for spend, should be 5.");
     BOOST_CHECK_MESSAGE(coins_out1 == pubCoins3, "Unexpected coins out for denom 10.");
-    BOOST_CHECK_MESSAGE(blockHash_out == indexes[2].GetBlockHash(), "Unexpected blockhash for denom 10.");
+    BOOST_CHECK_MESSAGE(blockHash_out == apollones[2].GetBlockHash(), "Unexpected blockhash for denom 10.");
 
     std::vector<sigma::PublicCoin> coins_out2;
     // maxheight > blockheight another denom
-    coins_amount = sigmaState->GetCoinSetForSpend(&chainActive, nextIndex,
+    coins_amount = sigmaState->GetCoinSetForSpend(&chainActive, nextApollon,
     sigma::CoinDenomination::SIGMA_DENOM_1, 1, blockHash_out, coins_out2);
     BOOST_CHECK_MESSAGE(coins_amount == 11, "Unexpected Coins amount for spend, should be 11.");
     BOOST_CHECK_MESSAGE(coins_out2.size() == pubCoins2.size() + pubCoins.size(), "Unexpected coins out for denom 1.");
-    BOOST_CHECK_MESSAGE(blockHash_out == indexes[2].GetBlockHash(), "Unexpected blockhash for denom 1.");
+    BOOST_CHECK_MESSAGE(blockHash_out == apollones[2].GetBlockHash(), "Unexpected blockhash for denom 1.");
 
     sigmaState->Reset();
 }
@@ -1141,9 +1141,9 @@ BOOST_AUTO_TEST_CASE(sigma_surge_detection_positive)
 {
     sigma::CSigmaState *sigmaState = sigma::CSigmaState::GetState();
 
-    CBlockIndex apollon = CreateBlockIndex(1);
+    CBlockApollon apollon = CreateBlockApollon(1);
     CBlock mintsBlock = generateMint(sigma::CoinDenomination::SIGMA_DENOM_1);
-    sigmaState->AddMintsToStateAndBlockIndex(&apollon, &mintsBlock);
+    sigmaState->AddMintsToStateAndBlockApollon(&apollon, &mintsBlock);
     BOOST_CHECK(sigmaState->IsSurgeConditionDetected() == false);
 
     sigmaState->AddSpend(generateSpend(sigma::CoinDenomination::SIGMA_DENOM_1), sigma::CoinDenomination::SIGMA_DENOM_1, 1);
@@ -1163,9 +1163,9 @@ BOOST_AUTO_TEST_CASE(sigma_surge_detection_reset)
     sigmaState->AddSpend(generateSpend(sigma::CoinDenomination::SIGMA_DENOM_1), sigma::CoinDenomination::SIGMA_DENOM_1, 1);
     BOOST_CHECK(sigmaState->IsSurgeConditionDetected() == true);
 
-    CBlockIndex apollon = CreateBlockIndex(1);
+    CBlockApollon apollon = CreateBlockApollon(1);
     CBlock mintsBlock = generateMint(sigma::CoinDenomination::SIGMA_DENOM_1);
-    sigmaState->AddMintsToStateAndBlockIndex(&apollon, &mintsBlock);
+    sigmaState->AddMintsToStateAndBlockApollon(&apollon, &mintsBlock);
     BOOST_CHECK(sigmaState->IsSurgeConditionDetected() == false);
 
     sigmaState->Reset();
@@ -1184,16 +1184,16 @@ BOOST_AUTO_TEST_CASE(sigma_surge_detection_failure_anywhere)
     sigmaState->AddSpend(generateSpend(sigma::CoinDenomination::SIGMA_DENOM_1), sigma::CoinDenomination::SIGMA_DENOM_100, 1);
     BOOST_CHECK(sigmaState->IsSurgeConditionDetected() == true);
 
-    CBlockIndex apollon = CreateBlockIndex(1);
+    CBlockApollon apollon = CreateBlockApollon(1);
     CBlock mintsBlock1 = generateMint(sigma::CoinDenomination::SIGMA_DENOM_1);
-    sigmaState->AddMintsToStateAndBlockIndex(&apollon, &mintsBlock1);
+    sigmaState->AddMintsToStateAndBlockApollon(&apollon, &mintsBlock1);
     BOOST_CHECK(sigmaState->IsSurgeConditionDetected() == true);
 
     sigmaState->AddSpend(generateSpend(sigma::CoinDenomination::SIGMA_DENOM_1), sigma::CoinDenomination::SIGMA_DENOM_1, 1);
     BOOST_CHECK(sigmaState->IsSurgeConditionDetected() == true);
 
     CBlock mintsBlock100 = generateMint(sigma::CoinDenomination::SIGMA_DENOM_100);
-    sigmaState->AddMintsToStateAndBlockIndex(&apollon, &mintsBlock100);
+    sigmaState->AddMintsToStateAndBlockApollon(&apollon, &mintsBlock100);
     BOOST_CHECK(sigmaState->IsSurgeConditionDetected() == false);
 
     sigmaState->Reset();

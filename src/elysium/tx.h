@@ -73,7 +73,7 @@ private:
     uint256 txid;
     int block;
     int64_t blockTime;  // internally nTime is still an "unsigned int"
-    unsigned int tx_idx;  // tx # within the block, 0-based
+    unsigned int tx_xap;  // tx # within the block, 0-based
     uint64_t tx_fee_paid;
 
     boost::optional<elysium::PacketClass> packetClass;
@@ -266,7 +266,7 @@ public:
     uint16_t getFeatureId() const { return feature_id; }
     uint32_t getActivationBlock() const { return activation_block; }
     uint32_t getMinClientVersion() const { return min_client_version; }
-    unsigned int getIndexInBlock() const { return tx_idx; }
+    unsigned int getApollonInBlock() const { return tx_xap; }
     uint32_t getDistributionProperty() const { return distribution_property; }
 
     /** Sigma */
@@ -292,7 +292,7 @@ public:
         block = -1;
         blockTime = 0;
         raw.clear();
-        tx_idx = 0;
+        tx_xap = 0;
         tx_fee_paid = 0;
         packetClass = boost::none;
         sender.clear();
@@ -337,7 +337,7 @@ public:
     {
         txid = t;
         block = b;
-        tx_idx = xap;
+        tx_xap = xap;
         blockTime = bt;
     }
 
@@ -368,7 +368,7 @@ public:
     bool operator<(const CMPTransaction& other) const
     {
         if (block != other.block) return block > other.block;
-        return tx_idx > other.tx_idx;
+        return tx_xap > other.tx_xap;
     }
 
 private:

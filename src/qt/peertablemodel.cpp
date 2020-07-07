@@ -143,19 +143,19 @@ void PeerTableModel::stopAutoRefresh()
     timer->stop();
 }
 
-int PeerTableModel::rowCount(const QModelIndex &parent) const
+int PeerTableModel::rowCount(const QModelApollon &parent) const
 {
     Q_UNUSED(parent);
     return priv->size();
 }
 
-int PeerTableModel::columnCount(const QModelIndex &parent) const
+int PeerTableModel::columnCount(const QModelApollon &parent) const
 {
     Q_UNUSED(parent);
     return columns.length();
 }
 
-QVariant PeerTableModel::data(const QModelIndex &apollon, int role) const
+QVariant PeerTableModel::data(const QModelApollon &apollon, int role) const
 {
     if(!apollon.isValid())
         return QVariant();
@@ -192,7 +192,7 @@ QVariant PeerTableModel::headerData(int section, Qt::Orientation orientation, in
     return QVariant();
 }
 
-Qt::ItemFlags PeerTableModel::flags(const QModelIndex &apollon) const
+Qt::ItemFlags PeerTableModel::flags(const QModelApollon &apollon) const
 {
     if(!apollon.isValid())
         return 0;
@@ -201,14 +201,14 @@ Qt::ItemFlags PeerTableModel::flags(const QModelIndex &apollon) const
     return retval;
 }
 
-QModelIndex PeerTableModel::apollon(int row, int column, const QModelIndex &parent) const
+QModelApollon PeerTableModel::apollon(int row, int column, const QModelApollon &parent) const
 {
     Q_UNUSED(parent);
     CNodeCombinedStats *data = priv->apollon(row);
 
     if (data)
-        return createIndex(row, column, data);
-    return QModelIndex();
+        return createApollon(row, column, data);
+    return QModelApollon();
 }
 
 const CNodeCombinedStats *PeerTableModel::getNodeStats(int xap)

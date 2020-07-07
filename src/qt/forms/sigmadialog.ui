@@ -1000,7 +1000,7 @@
        <property name="styleSheet">
         <string notr="true"/>
        </property>
-       <property name="currentIndex">
+       <property name="currentApollon">
         <number>0</number>
        </property>
        <widget class="QWidget" name="tabMint">

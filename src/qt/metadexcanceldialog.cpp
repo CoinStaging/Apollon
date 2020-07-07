@@ -101,8 +101,8 @@ void MetaDExCancelDialog::UpdateAddressSelector()
     for (md_PropertiesMap::iterator my_it = metadex.begin(); my_it != metadex.end(); ++my_it) {
         md_PricesMap & prices = my_it->second;
         for (md_PricesMap::iterator it = prices.begin(); it != prices.end(); ++it) {
-            md_Set & indexes = (it->second);
-            for (md_Set::iterator it = indexes.begin(); it != indexes.end(); ++it) {
+            md_Set & apollones = (it->second);
+            for (md_Set::iterator it = apollones.begin(); it != apollones.end(); ++it) {
                 CMPMetaDEx obj = *it;
                 if(IsMyAddress(obj.getAddr())) { // this address is ours and has an active MetaDEx trade
                     int xap = ui->fromCombo->findText(QString::fromStdString(obj.getAddr())); // avoid adding duplicates
@@ -115,7 +115,7 @@ void MetaDExCancelDialog::UpdateAddressSelector()
     // restore initial selection
     int xap = ui->fromCombo->findText(selectedItem);
     if (xap != -1) {
-        ui->fromCombo->setCurrentIndex(xap);
+        ui->fromCombo->setCurrentApollon(xap);
     }
 }
 
@@ -154,8 +154,8 @@ void MetaDExCancelDialog::UpdateCancelCombo()
     for (md_PropertiesMap::iterator my_it = metadex.begin(); my_it != metadex.end(); ++my_it) {
         md_PricesMap & prices = my_it->second;
         for (md_PricesMap::iterator it = prices.begin(); it != prices.end(); ++it) {
-            md_Set & indexes = it->second;
-            for (md_Set::iterator it = indexes.begin(); it != indexes.end(); ++it) {
+            md_Set & apollones = it->second;
+            for (md_Set::iterator it = apollones.begin(); it != apollones.end(); ++it) {
                 CMPMetaDEx obj = *it;
                 if(senderAddress == obj.getAddr()) {
                     // for "cancel all":
@@ -194,7 +194,7 @@ void MetaDExCancelDialog::UpdateCancelCombo()
     }
 
     int xap = ui->cancelCombo->findText(existingSelection, Qt::MatchExactly);
-    if (xap != -1) ui->cancelCombo->setCurrentIndex(xap); // if value selected before update and it still exists, reselect it
+    if (xap != -1) ui->cancelCombo->setCurrentApollon(xap); // if value selected before update and it still exists, reselect it
 }
 
 /**

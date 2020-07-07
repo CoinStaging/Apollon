@@ -649,11 +649,11 @@ haval_init(sph_haval_context *sc, unsigned olen, unsigned passes)
 #else
 #define IN_PREPARE(indata) \
 	sph_u32 X_var[32]; \
-	int load_index; \
+	int load_apollon; \
  \
-	for (load_index = 0; load_index < 32; load_index ++) \
-		X_var[load_index] = sph_dec32le_aligned( \
-			(const unsigned char *)(indata) + 4 * load_index)
+	for (load_apollon = 0; load_apollon < 32; load_apollon ++) \
+		X_var[load_apollon] = sph_dec32le_aligned( \
+			(const unsigned char *)(indata) + 4 * load_apollon)
 #define INW(i)   X_var[i]
 #endif
 

@@ -21,7 +21,7 @@ struct Table::Rep {
   ~Rep() {
     delete filter;
     delete [] filter_data;
-    delete index_block;
+    delete apollon_block;
   }
 
   Options options;
@@ -31,8 +31,8 @@ struct Table::Rep {
   FilterBlockReader* filter;
   const char* filter_data;
 
-  BlockHandle metaindex_handle;  // Handle to metaindex_block: saved from footer
-  Block* index_block;
+  BlockHandle metaapollon_handle;  // Handle to metaapollon_block: saved from footer
+  Block* apollon_block;
 };
 
 Status Table::Open(const Options& options,
@@ -56,15 +56,15 @@ Status Table::Open(const Options& options,
 
   // Read the apollon block
   BlockContents contents;
-  Block* index_block = NULL;
+  Block* apollon_block = NULL;
   if (s.ok()) {
     ReadOptions opt;
     if (options.paranoid_checks) {
       opt.verify_checksums = true;
     }
-    s = ReadBlock(file, opt, footer.index_handle(), &contents);
+    s = ReadBlock(file, opt, footer.apollon_handle(), &contents);
     if (s.ok()) {
-      index_block = new Block(contents);
+      apollon_block = new Block(contents);
     }
   }
 
@@ -74,15 +74,15 @@ Status Table::Open(const Options& options,
     Rep* rep = new Table::Rep;
     rep->options = options;
     rep->file = file;
-    rep->metaindex_handle = footer.metaindex_handle();
-    rep->index_block = index_block;
+    rep->metaapollon_handle = footer.metaapollon_handle();
+    rep->apollon_block = apollon_block;
     rep->cache_id = (options.block_cache ? options.block_cache->NewId() : 0);
     rep->filter_data = NULL;
     rep->filter = NULL;
     *table = new Table(rep);
     (*table)->ReadMeta(footer);
   } else {
-    if (index_block) delete index_block;
+    if (apollon_block) delete apollon_block;
   }
 
   return s;
@@ -93,14 +93,14 @@ void Table::ReadMeta(const Footer& footer) {
     return;  // Do not need any metadata
   }
 
-  // TODO(sanjay): Skip this if footer.metaindex_handle() size indicates
+  // TODO(sanjay): Skip this if footer.metaapollon_handle() size indicates
   // it is an empty block.
   ReadOptions opt;
   if (rep_->options.paranoid_checks) {
     opt.verify_checksums = true;
   }
   BlockContents contents;
-  if (!ReadBlock(rep_->file, opt, footer.metaindex_handle(), &contents).ok()) {
+  if (!ReadBlock(rep_->file, opt, footer.metaapollon_handle(), &contents).ok()) {
     // Do not propagate errors since meta info is not needed for operation
     return;
   }
@@ -163,16 +163,16 @@ static void ReleaseBlock(void* arg, void* h) {
 // into an iterator over the contents of the corresponding block.
 Iterator* Table::BlockReader(void* arg,
                              const ReadOptions& options,
-                             const Slice& index_value) {
+                             const Slice& apollon_value) {
   Table* table = reinterpret_cast<Table*>(arg);
   Cache* block_cache = table->rep_->options.block_cache;
   Block* block = NULL;
   Cache::Handle* cache_handle = NULL;
 
   BlockHandle handle;
-  Slice input = index_value;
+  Slice input = apollon_value;
   Status s = handle.DecodeFrom(&input);
-  // We intentionally allow extra stuff in index_value so that we
+  // We intentionally allow extra stuff in apollon_value so that we
   // can add more features in the future.
 
   if (s.ok()) {
@@ -219,7 +219,7 @@ Iterator* Table::BlockReader(void* arg,
 
 Iterator* Table::NewIterator(const ReadOptions& options) const {
   return NewTwoLevelIterator(
-      rep_->index_block->NewIterator(rep_->options.comparator),
+      rep_->apollon_block->NewIterator(rep_->options.comparator),
       &Table::BlockReader, const_cast<Table*>(this), options);
 }
 
@@ -227,7 +227,7 @@ Status Table::InternalGet(const ReadOptions& options, const Slice& k,
                           void* arg,
                           void (*saver)(void*, const Slice&, const Slice&)) {
   Status s;
-  Iterator* iiter = rep_->index_block->NewIterator(rep_->options.comparator);
+  Iterator* iiter = rep_->apollon_block->NewIterator(rep_->options.comparator);
   iiter->Seek(k);
   if (iiter->Valid()) {
     Slice handle_value = iiter->value();
@@ -256,29 +256,29 @@ Status Table::InternalGet(const ReadOptions& options, const Slice& k,
 
 
 uint64_t Table::ApproximateOffsetOf(const Slice& key) const {
-  Iterator* index_iter =
-      rep_->index_block->NewIterator(rep_->options.comparator);
-  index_iter->Seek(key);
+  Iterator* apollon_iter =
+      rep_->apollon_block->NewIterator(rep_->options.comparator);
+  apollon_iter->Seek(key);
   uint64_t result;
-  if (index_iter->Valid()) {
+  if (apollon_iter->Valid()) {
     BlockHandle handle;
-    Slice input = index_iter->value();
+    Slice input = apollon_iter->value();
     Status s = handle.DecodeFrom(&input);
     if (s.ok()) {
       result = handle.offset();
     } else {
       // Strange: we can't decode the block handle in the apollon block.
-      // We'll just return the offset of the metaindex block, which is
+      // We'll just return the offset of the metaapollon block, which is
       // close to the whole file size for this case.
-      result = rep_->metaindex_handle.offset();
+      result = rep_->metaapollon_handle.offset();
     }
   } else {
     // key is past the last key in the file.  Approximate the offset
-    // by returning the offset of the metaindex block (which is
+    // by returning the offset of the metaapollon block (which is
     // right near the end of the file).
-    result = rep_->metaindex_handle.offset();
+    result = rep_->metaapollon_handle.offset();
   }
-  delete index_iter;
+  delete apollon_iter;
   return result;
 }
 

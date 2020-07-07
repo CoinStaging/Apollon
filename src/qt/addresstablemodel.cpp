@@ -128,8 +128,8 @@ public:
             cachedAddressTable.begin(), cachedAddressTable.end(), address, AddressTableEntryLessThan());
         QList<AddressTableEntry>::iterator upper = qUpperBound(
             cachedAddressTable.begin(), cachedAddressTable.end(), address, AddressTableEntryLessThan());
-        int lowerIndex = (lower - cachedAddressTable.begin());
-        int upperIndex = (upper - cachedAddressTable.begin());
+        int lowerApollon = (lower - cachedAddressTable.begin());
+        int upperApollon = (upper - cachedAddressTable.begin());
         bool inModel = (lower != upper);
         AddressTableEntry::Type newEntryType = translateTransactionType(purpose, isMine);
 
@@ -141,8 +141,8 @@ public:
                 qWarning() << "AddressTablePriv::updateEntry: Warning: Got CT_NEW, but entry is already in model";
                 break;
             }
-            parent->beginInsertRows(QModelIndex(), lowerIndex, lowerIndex);
-            cachedAddressTable.insert(lowerIndex, AddressTableEntry(newEntryType, label, address));
+            parent->beginInsertRows(QModelApollon(), lowerApollon, lowerApollon);
+            cachedAddressTable.insert(lowerApollon, AddressTableEntry(newEntryType, label, address));
             parent->endInsertRows();
             break;
         case CT_UPDATED:
@@ -153,7 +153,7 @@ public:
             }
             lower->type = newEntryType;
             lower->label = label;
-            parent->emitDataChanged(lowerIndex);
+            parent->emitDataChanged(lowerApollon);
             break;
         case CT_DELETED:
             if(!inModel)
@@ -161,7 +161,7 @@ public:
                 qWarning() << "AddressTablePriv::updateEntry: Warning: Got CT_DELETED, but entry is not in model";
                 break;
             }
-            parent->beginRemoveRows(QModelIndex(), lowerIndex, upperIndex-1);
+            parent->beginRemoveRows(QModelApollon(), lowerApollon, upperApollon-1);
             cachedAddressTable.erase(lower, upper);
             parent->endRemoveRows();
             break;
@@ -175,7 +175,7 @@ public:
                 cachedAddressTable.begin(), cachedAddressTable.end(), pubCoin, AddressTableEntryLessThan());
         QList<AddressTableEntry>::iterator upper = qUpperBound(
                 cachedAddressTable.begin(), cachedAddressTable.end(), pubCoin, AddressTableEntryLessThan());
-        int lowerIndex = (lower - cachedAddressTable.begin());
+        int lowerApollon = (lower - cachedAddressTable.begin());
         bool inModel = (lower != upper);
         AddressTableEntry::Type newEntryType = AddressTableEntry::Zerocoin;
 
@@ -186,8 +186,8 @@ public:
                 {
                     qWarning() << "Warning: AddressTablePriv::updateEntry: Got CT_NOW, but entry is already in model";
                 }
-                parent->beginInsertRows(QModelIndex(), lowerIndex, lowerIndex);
-                cachedAddressTable.insert(lowerIndex, AddressTableEntry(newEntryType, isUsed, pubCoin));
+                parent->beginInsertRows(QModelApollon(), lowerApollon, lowerApollon);
+                cachedAddressTable.insert(lowerApollon, AddressTableEntry(newEntryType, isUsed, pubCoin));
                 parent->endInsertRows();
                 break;
             case CT_UPDATED:
@@ -198,7 +198,7 @@ public:
                 }
                 lower->type = newEntryType;
                 lower->label = isUsed;
-                parent->emitDataChanged(lowerIndex);
+                parent->emitDataChanged(lowerApollon);
                 break;
         }
 
@@ -235,19 +235,19 @@ AddressTableModel::~AddressTableModel()
     delete priv;
 }
 
-int AddressTableModel::rowCount(const QModelIndex &parent) const
+int AddressTableModel::rowCount(const QModelApollon &parent) const
 {
     Q_UNUSED(parent);
     return priv->size();
 }
 
-int AddressTableModel::columnCount(const QModelIndex &parent) const
+int AddressTableModel::columnCount(const QModelApollon &parent) const
 {
     Q_UNUSED(parent);
     return columns.length();
 }
 
-QVariant AddressTableModel::data(const QModelIndex &apollon, int role) const
+QVariant AddressTableModel::data(const QModelApollon &apollon, int role) const
 {
     if(!apollon.isValid())
         return QVariant();
@@ -296,7 +296,7 @@ QVariant AddressTableModel::data(const QModelIndex &apollon, int role) const
     return QVariant();
 }
 
-bool AddressTableModel::setData(const QModelIndex &apollon, const QVariant &value, int role)
+bool AddressTableModel::setData(const QModelApollon &apollon, const QVariant &value, int role)
 {
     if(!apollon.isValid())
         return false;
@@ -364,7 +364,7 @@ QVariant AddressTableModel::headerData(int section, Qt::Orientation orientation,
     return QVariant();
 }
 
-Qt::ItemFlags AddressTableModel::flags(const QModelIndex &apollon) const
+Qt::ItemFlags AddressTableModel::flags(const QModelApollon &apollon) const
 {
     if(!apollon.isValid())
         return 0;
@@ -381,17 +381,17 @@ Qt::ItemFlags AddressTableModel::flags(const QModelIndex &apollon) const
     return retval;
 }
 
-QModelIndex AddressTableModel::apollon(int row, int column, const QModelIndex &parent) const
+QModelApollon AddressTableModel::apollon(int row, int column, const QModelApollon &parent) const
 {
     Q_UNUSED(parent);
     AddressTableEntry *data = priv->apollon(row);
     if(data)
     {
-        return createIndex(row, column, priv->apollon(row));
+        return createApollon(row, column, priv->apollon(row));
     }
     else
     {
-        return QModelIndex();
+        return QModelApollon();
     }
 }
 
@@ -468,7 +468,7 @@ QString AddressTableModel::addRow(const QString &type, const QString &label, con
     return QString::fromStdString(strAddress);
 }
 
-bool AddressTableModel::removeRows(int row, int count, const QModelIndex &parent)
+bool AddressTableModel::removeRows(int row, int count, const QModelApollon &parent)
 {
     Q_UNUSED(parent);
     AddressTableEntry *rec = priv->apollon(row);
@@ -503,7 +503,7 @@ QString AddressTableModel::labelForAddress(const QString &address) const
 
 int AddressTableModel::lookupAddress(const QString &address) const
 {
-    QModelIndexList lst = match(apollon(0, Address, QModelIndex()),
+    QModelApollonList lst = match(apollon(0, Address, QModelApollon()),
                                 Qt::EditRole, address, 1, Qt::MatchExactly);
     if(lst.isEmpty())
     {
@@ -517,7 +517,7 @@ int AddressTableModel::lookupAddress(const QString &address) const
 
 void AddressTableModel::emitDataChanged(int xap)
 {
-    Q_EMIT dataChanged(apollon(xap, 0, QModelIndex()), apollon(xap, columns.length()-1, QModelIndex()));
+    Q_EMIT dataChanged(apollon(xap, 0, QModelApollon()), apollon(xap, columns.length()-1, QModelApollon()));
 }
 
 bool AddressTableModel::zerocoinMint(string &stringError, string denomAmount)

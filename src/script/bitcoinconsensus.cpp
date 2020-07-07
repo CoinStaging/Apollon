@@ -78,7 +78,7 @@ static int verify_script(const unsigned char *scriptPubKey, unsigned int scriptP
         CTransaction tx;
         stream >> tx;
         if (nIn >= tx.vin.size())
-            return set_error(err, bitcoinconsensus_ERR_TX_INDEX);
+            return set_error(err, bitcoinconsensus_ERR_TX_APOLLON);
         if (tx.GetSerializeSize(SER_NETWORK, PROTOCOL_VERSION) != txToLen)
             return set_error(err, bitcoinconsensus_ERR_TX_SIZE_MISMATCH);
 

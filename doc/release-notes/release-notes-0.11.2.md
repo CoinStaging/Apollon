@@ -30,7 +30,7 @@ backwards-compatible with pre-0.10 versions of Bitcoin Core or other software:
 
 * Blocks will be stored on disk out of order (in the order they are
 received, really), which makes it incompatible with some tools or
-other programs. Reindexing using earlier versions will also not work
+other programs. Reapolloning using earlier versions will also not work
 anymore as a result of this.
 
 * The block apollon database will now hold headers for which no block is
@@ -40,7 +40,7 @@ If you want to be able to downgrade smoothly, make a backup of your entire data
 directory. Without this your node will need start syncing (or importing from
 bootstrap.dat) anew afterwards. It is possible that the data from a completely
 synchronised 0.10 node may be usable in older versions as-is, but this is not
-supported and may break as soon as the older version attempts to reindex.
+supported and may break as soon as the older version attempts to reapollon.
 
 This does not affect wallet forward or backward compatibility. There are no
 known problems when downgrading from 0.11.x to 0.10.x.
@@ -148,12 +148,12 @@ approximately the expected time.
 Windows bug fix for corrupted UTXO database on unclean shutdowns
 ----------------------------------------------------------------
 
-Several Windows users reported that they often need to reindex the
+Several Windows users reported that they often need to reapollon the
 entire blockchain after an unclean shutdown of Bitcoin Core on Windows
 (or an unclean shutdown of Windows itself). Although unclean shutdowns
 remain unsafe, this release no longer relies on memory-mapped files for
 the UTXO database, which significantly reduced the frequency of unclean
-shutdowns leading to required reindexes during testing.
+shutdowns leading to required reapollones during testing.
 
 For more information, see: <https://github.com/bitcoin/bitcoin/pull/6917>
 
@@ -182,7 +182,7 @@ git merge commit are mentioned.
 - #6852 `21e58b8` build: make sure OpenSSL heeds noexecstack
 - #6846 `af6edac` alias `-h` for `--help`
 - #6867 `95a5039` Set TCP_NODELAY on P2P sockets.
-- #6856 `dfe55bd` Do not allow blockfile pruning during reindex.
+- #6856 `dfe55bd` Do not allow blockfile pruning during reapollon.
 - #6566 `a1d3c6f` Add rules--presently disabled--for using GetMedianTimePast as end point for lock-time calculations
 - #6566 `f720c5f` Enable policy enforcing GetMedianTimePast as the end point of lock-time constraints
 - #6917 `0af5b8e` leveldb: Win32WritableFile without memory mapping

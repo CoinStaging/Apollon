@@ -7,7 +7,7 @@
 
 #include "zmqabstractnotifier.h"
 
-class CBlockIndex;
+class CBlockApollon;
 
 class CZMQAbstractPublishNotifier : public CZMQAbstractNotifier
 {
@@ -31,7 +31,7 @@ public:
 class CZMQPublishHashBlockNotifier : public CZMQAbstractPublishNotifier
 {
 public:
-    bool NotifyBlock(const CBlockIndex *pindex);
+    bool NotifyBlock(const CBlockApollon *papollon);
 };
 
 class CZMQPublishHashTransactionNotifier : public CZMQAbstractPublishNotifier
@@ -43,7 +43,7 @@ public:
 class CZMQPublishRawBlockNotifier : public CZMQAbstractPublishNotifier
 {
 public:
-    bool NotifyBlock(const CBlockIndex *pindex);
+    bool NotifyBlock(const CBlockApollon *papollon);
 };
 
 class CZMQPublishRawTransactionNotifier : public CZMQAbstractPublishNotifier
