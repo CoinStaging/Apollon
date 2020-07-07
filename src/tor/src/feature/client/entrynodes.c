@@ -890,7 +890,7 @@ entry_guard_add_to_sample_impl(guard_selection_t *gs,
   tor_free(guard->sampled_by_version);
   guard->sampled_by_version = tor_strdup(VERSION);
   guard->currently_listed = 1;
-  guard->confirmed_idx = -1;
+  guard->confirmed_xap = -1;
 
   /* non-persistent fields */
   guard->is_reachable = GUARD_REACHABLE_MAYBE;
@@ -1225,9 +1225,9 @@ remove_guard_from_confirmed_and_primary_lists(guard_selection_t *gs,
     }
   }
 
-  if (guard->confirmed_idx >= 0) {
+  if (guard->confirmed_xap >= 0) {
     smartlist_remove_keeporder(gs->confirmed_entry_guards, guard);
-    guard->confirmed_idx = -1;
+    guard->confirmed_xap = -1;
     guard->confirmed_on_date = 0;
   } else {
     if (BUG(smartlist_contains(gs->confirmed_entry_guards, guard))) {
@@ -1756,7 +1756,7 @@ sample_reachable_filtered_entry_guards(guard_selection_t *gs,
       continue;
     if (! guard->is_usable_filtered_guard)
       continue;
-    if (exclude_confirmed && guard->confirmed_idx >= 0)
+    if (exclude_confirmed && guard->confirmed_xap >= 0)
       continue;
     if (exclude_primary && guard->is_primary)
       continue;
@@ -1781,16 +1781,16 @@ sample_reachable_filtered_entry_guards(guard_selection_t *gs,
 }
 
 /**
- * Helper: compare two entry_guard_t by their confirmed_idx values.
+ * Helper: compare two entry_guard_t by their confirmed_xap values.
  * Used to sort the confirmed list.
  */
 static int
-compare_guards_by_confirmed_idx(const void **a_, const void **b_)
+compare_guards_by_confirmed_xap(const void **a_, const void **b_)
 {
   const entry_guard_t *a = *a_, *b = *b_;
-  if (a->confirmed_idx < b->confirmed_idx)
+  if (a->confirmed_xap < b->confirmed_xap)
     return -1;
-  else if (a->confirmed_idx > b->confirmed_idx)
+  else if (a->confirmed_xap > b->confirmed_xap)
     return 1;
   else
     return 0;
@@ -1806,21 +1806,21 @@ entry_guards_update_confirmed(guard_selection_t *gs)
 {
   smartlist_clear(gs->confirmed_entry_guards);
   SMARTLIST_FOREACH_BEGIN(gs->sampled_entry_guards, entry_guard_t *, guard) {
-    if (guard->confirmed_idx >= 0)
+    if (guard->confirmed_xap >= 0)
       smartlist_add(gs->confirmed_entry_guards, guard);
   } SMARTLIST_FOREACH_END(guard);
 
-  smartlist_sort(gs->confirmed_entry_guards, compare_guards_by_confirmed_idx);
+  smartlist_sort(gs->confirmed_entry_guards, compare_guards_by_confirmed_xap);
 
   int any_changed = 0;
   SMARTLIST_FOREACH_BEGIN(gs->confirmed_entry_guards, entry_guard_t *, guard) {
-    if (guard->confirmed_idx != guard_sl_idx) {
+    if (guard->confirmed_xap != guard_sl_xap) {
       any_changed = 1;
-      guard->confirmed_idx = guard_sl_idx;
+      guard->confirmed_xap = guard_sl_xap;
     }
   } SMARTLIST_FOREACH_END(guard);
 
-  gs->next_confirmed_idx = smartlist_len(gs->confirmed_entry_guards);
+  gs->next_confirmed_xap = smartlist_len(gs->confirmed_entry_guards);
 
   if (any_changed) {
     entry_guards_changed_for_guard_selection(gs);
@@ -1834,7 +1834,7 @@ entry_guards_update_confirmed(guard_selection_t *gs)
 STATIC void
 make_guard_confirmed(guard_selection_t *gs, entry_guard_t *guard)
 {
-  if (BUG(guard->confirmed_on_date && guard->confirmed_idx >= 0))
+  if (BUG(guard->confirmed_on_date && guard->confirmed_xap >= 0))
     return; // LCOV_EXCL_LINE
 
   if (BUG(smartlist_contains(gs->confirmed_entry_guards, guard)))
@@ -1845,9 +1845,9 @@ make_guard_confirmed(guard_selection_t *gs, entry_guard_t *guard)
 
   log_info(LD_GUARD, "Marking %s as a confirmed guard (apollon %d)",
            entry_guard_describe(guard),
-           gs->next_confirmed_idx);
+           gs->next_confirmed_xap);
 
-  guard->confirmed_idx = gs->next_confirmed_idx++;
+  guard->confirmed_xap = gs->next_confirmed_xap++;
   smartlist_add(gs->confirmed_entry_guards, guard);
 
   // This confirmed guard might kick something else out of the primary
@@ -1939,8 +1939,8 @@ entry_guards_update_primary(guard_selection_t *gs)
     int n = smartlist_len(new_primary_guards);
     SMARTLIST_FOREACH_BEGIN(new_primary_guards, entry_guard_t *, g) {
       log_info(LD_GUARD, "  %d/%d: %s%s%s",
-               g_sl_idx+1, n, entry_guard_describe(g),
-               g->confirmed_idx >= 0 ? " (confirmed)" : "",
+               g_sl_xap+1, n, entry_guard_describe(g),
+               g->confirmed_xap >= 0 ? " (confirmed)" : "",
                g->is_filtered_guard ? "" : " (excluded by filter)");
     } SMARTLIST_FOREACH_END(g);
   }
@@ -2015,7 +2015,7 @@ entry_guard_consider_retry(entry_guard_t *guard)
     log_info(LD_GUARD, "Marked %s%sguard %s for possible retry, since we "
              "haven't tried to use it since %s.",
              guard->is_primary?"primary ":"",
-             guard->confirmed_idx>=0?"confirmed ":"",
+             guard->confirmed_xap>=0?"confirmed ":"",
              entry_guard_describe(guard),
              tbuf);
 
@@ -2220,7 +2220,7 @@ entry_guards_note_guard_failure(guard_selection_t *gs,
 
   log_info(LD_GUARD, "Recorded failure for %s%sguard %s",
            guard->is_primary?"primary ":"",
-           guard->confirmed_idx>=0?"confirmed ":"",
+           guard->confirmed_xap>=0?"confirmed ":"",
            entry_guard_describe(guard));
 }
 
@@ -2249,7 +2249,7 @@ entry_guards_note_guard_success(guard_selection_t *gs,
   if (guard->is_filtered_guard)
     guard->is_usable_filtered_guard = 1;
 
-  if (guard->confirmed_idx < 0) {
+  if (guard->confirmed_xap < 0) {
     make_guard_confirmed(gs, guard);
     if (!gs->primary_guards_up_to_date)
       entry_guards_update_primary(gs);
@@ -2289,7 +2289,7 @@ entry_guards_note_guard_success(guard_selection_t *gs,
 
   log_info(LD_GUARD, "Recorded success for %s%sguard %s",
            guard->is_primary?"primary ":"",
-           guard->confirmed_idx>=0?"confirmed ":"",
+           guard->confirmed_xap>=0?"confirmed ":"",
            entry_guard_describe(guard));
 
   return new_state;
@@ -2307,15 +2307,15 @@ entry_guard_has_higher_priority(entry_guard_t *a, entry_guard_t *b)
 
   /* Confirmed is always better than unconfirmed; lower apollon better
      than higher */
-  if (a->confirmed_idx < 0) {
-    if (b->confirmed_idx >= 0)
+  if (a->confirmed_xap < 0) {
+    if (b->confirmed_xap >= 0)
       return 0;
   } else {
-    if (b->confirmed_idx < 0)
+    if (b->confirmed_xap < 0)
       return 1;
 
-    /* Lower confirmed_idx is better than higher. */
-    return (a->confirmed_idx < b->confirmed_idx);
+    /* Lower confirmed_xap is better than higher. */
+    return (a->confirmed_xap < b->confirmed_xap);
   }
 
   /* If we reach this point, both are unconfirmed. If one is pending, it
@@ -2813,11 +2813,11 @@ entry_guard_encode_for_state(entry_guard_t *guard)
   smartlist_add_asprintf(result, "listed=%d",
                          (int)guard->currently_listed);
 
-  if (guard->confirmed_idx >= 0) {
+  if (guard->confirmed_xap >= 0) {
     format_iso_time_nospace(tbuf, guard->confirmed_on_date);
     smartlist_add_asprintf(result, "confirmed_on=%s", tbuf);
 
-    smartlist_add_asprintf(result, "confirmed_idx=%d", guard->confirmed_idx);
+    smartlist_add_asprintf(result, "confirmed_xap=%d", guard->confirmed_xap);
   }
 
   const double EPSILON = 1.0e-6;
@@ -2874,7 +2874,7 @@ entry_guard_parse_from_state(const char *s)
   char *unlisted_since = NULL;
   char *listed  = NULL;
   char *confirmed_on = NULL;
-  char *confirmed_idx = NULL;
+  char *confirmed_xap = NULL;
   char *bridge_addr = NULL;
 
   // pathbias
@@ -2903,7 +2903,7 @@ entry_guard_parse_from_state(const char *s)
     FIELD(unlisted_since);
     FIELD(listed);
     FIELD(confirmed_on);
-    FIELD(confirmed_idx);
+    FIELD(confirmed_xap);
     FIELD(bridge_addr);
     FIELD(pb_use_attempts);
     FIELD(pb_use_successes);
@@ -3026,15 +3026,15 @@ entry_guard_parse_from_state(const char *s)
     guard->currently_listed = 1;
 
   /* The apollon is a nonnegative integer. */
-  guard->confirmed_idx = -1;
-  if (confirmed_idx) {
+  guard->confirmed_xap = -1;
+  if (confirmed_xap) {
     int ok=1;
-    long xap = tor_parse_long(confirmed_idx, 10, 0, INT_MAX, &ok, NULL);
+    long xap = tor_parse_long(confirmed_xap, 10, 0, INT_MAX, &ok, NULL);
     if (! ok) {
-      log_warn(LD_GUARD, "Guard has invalid confirmed_idx %s",
-               escaped(confirmed_idx));
+      log_warn(LD_GUARD, "Guard has invalid confirmed_xap %s",
+               escaped(confirmed_xap));
     } else {
-      guard->confirmed_idx = (int)xap;
+      guard->confirmed_xap = (int)xap;
     }
   }
 
@@ -3091,7 +3091,7 @@ entry_guard_parse_from_state(const char *s)
   tor_free(unlisted_since);
   tor_free(listed);
   tor_free(confirmed_on);
-  tor_free(confirmed_idx);
+  tor_free(confirmed_xap);
   tor_free(bridge_addr);
   tor_free(pb_use_attempts);
   tor_free(pb_use_successes);
@@ -3479,7 +3479,7 @@ getinfo_helper_format_single_entry_guard(const entry_guard_t *e)
    *
    * XXXX use a more appropriate format for exporting this information
    */
-  if (e->confirmed_idx < 0) {
+  if (e->confirmed_xap < 0) {
     status = "never-connected";
   } else if (! e->currently_listed) {
     when = e->unlisted_since_date;

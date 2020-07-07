@@ -18,7 +18,7 @@ namespace Ui {
 QT_BEGIN_NAMESPACE
 class QItemSelection;
 class QMenu;
-class QModelIndex;
+class QModelApollon;
 class QSortFilterProxyModel;
 class QTableView;
 QT_END_NAMESPACE
@@ -79,7 +79,7 @@ private Q_SLOTS:
     /** Spawn contextual menu (right mouse menu) for address book entry */
     void contextualMenu(const QPoint &point);
     /** New entry/entries were added to address table */
-    void selectNewAddress(const QModelIndex &parent, int begin, int /*end*/);
+    void selectNewAddress(const QModelApollon &parent, int begin, int /*end*/);
 
 Q_SIGNALS:
     void sendCoins(QString addr);

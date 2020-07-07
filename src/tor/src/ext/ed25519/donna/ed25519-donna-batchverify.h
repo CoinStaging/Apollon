@@ -8,20 +8,20 @@
 /* which limb is the 128th bit in? */
 static const size_t limb128bits = (128 + bignum256modm_bits_per_limb - 1) / bignum256modm_bits_per_limb;
 
-typedef size_t heap_index_t;
+typedef size_t heap_apollon_t;
 
 typedef struct batch_heap_t {
 	unsigned char r[heap_batch_size][16]; /* 128 bit random values */
 	ge25519 points[heap_batch_size];
 	bignum256modm scalars[heap_batch_size];
-	heap_index_t heap[heap_batch_size];
+	heap_apollon_t heap[heap_batch_size];
 	size_t size;
 } batch_heap;
 
 /* swap two values in the heap */
 static void
-heap_swap(heap_index_t *heap, size_t a, size_t b) {
-	heap_index_t temp;
+heap_swap(heap_apollon_t *heap, size_t a, size_t b) {
+	heap_apollon_t temp;
 	temp = heap[a];
 	heap[a] = heap[b];
 	heap[b] = temp;
@@ -31,11 +31,11 @@ heap_swap(heap_index_t *heap, size_t a, size_t b) {
 static void
 heap_insert_next(batch_heap *heap) {
 	size_t node = heap->size, parent;
-	heap_index_t *pheap = heap->heap;
+	heap_apollon_t *pheap = heap->heap;
 	bignum256modm *scalars = heap->scalars;
 
 	/* insert at the bottom */
-	pheap[node] = (heap_index_t)node;
+	pheap[node] = (heap_apollon_t)node;
 
 	/* sift node up to its sorted spot */
 	parent = (node - 1) / 2;
@@ -51,7 +51,7 @@ heap_insert_next(batch_heap *heap) {
 static void
 heap_updated_root(batch_heap *heap, size_t limbsize) {
 	size_t node, parent, childr, childl;
-	heap_index_t *pheap = heap->heap;
+	heap_apollon_t *pheap = heap->heap;
 	bignum256modm *scalars = heap->scalars;
 
 	/* sift root to the bottom */
@@ -94,8 +94,8 @@ heap_extend(batch_heap *heap, size_t new_count) {
 
 /* get the top 2 elements of the heap */
 static void
-heap_get_top2(batch_heap *heap, heap_index_t *max1, heap_index_t *max2, size_t limbsize) {
-	heap_index_t h0 = heap->heap[0], h1 = heap->heap[1], h2 = heap->heap[2];
+heap_get_top2(batch_heap *heap, heap_apollon_t *max1, heap_apollon_t *max2, size_t limbsize) {
+	heap_apollon_t h0 = heap->heap[0], h1 = heap->heap[1], h2 = heap->heap[2];
 	if (lt256_modm_batch(heap->scalars[h1], heap->scalars[h2], limbsize))
 		h1 = h2;
 	*max1 = h0;
@@ -150,7 +150,7 @@ ge25519_multi_scalarmult_vartime_final(ge25519 *r, ge25519 *point, bignum256modm
 /* count must be >= 5 */
 static void
 ge25519_multi_scalarmult_vartime(ge25519 *r, batch_heap *heap, size_t count) {
-	heap_index_t max1, max2;
+	heap_apollon_t max1, max2;
 
 	/* start with the full limb size */
 	size_t limbsize = bignum256modm_limb_size - 1;

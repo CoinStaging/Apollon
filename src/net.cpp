@@ -397,20 +397,20 @@ CNode *FindNode(const NodeId nodeid) {
     return NULL;
 }
 
-CNode *ConnectNode(CAddress addrConnect, const char *pszDest, bool fCountFailure, bool fConnectToIndexnode) {
+CNode *ConnectNode(CAddress addrConnect, const char *pszDest, bool fCountFailure, bool fConnectToApollonnode) {
     if (pszDest == NULL) {
-        // we clean indexnode connections in CIndexnodeMan::ProcessIndexnodeConnections()
-        // so should be safe to skip this and connect to local Hot MN on CActiveIndexnode::ManageState()
-        if (IsLocal(addrConnect) && !fConnectToIndexnode)
+        // we clean apollonnode connections in CApollonnodeMan::ProcessApollonnodeConnections()
+        // so should be safe to skip this and connect to local Hot MN on CActiveApollonnode::ManageState()
+        if (IsLocal(addrConnect) && !fConnectToApollonnode)
             return NULL;
         LOCK(cs_vNodes);
         // Look for an existing connection
         CNode *pnode = FindNode((CService) addrConnect);
         if (pnode) {
-            // we have existing connection to this node but it was not a connection to indexnode,
+            // we have existing connection to this node but it was not a connection to apollonnode,
             // change flag and add reference so that we can correctly clear it later
-            if (fConnectToIndexnode && !pnode->fIndexnode) {
-                pnode->fIndexnode = true;
+            if (fConnectToApollonnode && !pnode->fApollonnode) {
+                pnode->fApollonnode = true;
             }
             pnode->AddRef();
             return pnode;
@@ -441,8 +441,8 @@ CNode *ConnectNode(CAddress addrConnect, const char *pszDest, bool fCountFailure
             // name catch this early.
             CNode *pnode = FindNode((CService) addrConnect);
             if (pnode) {
-                if (fConnectToIndexnode && !pnode->fIndexnode) {
-                    pnode->fIndexnode = true;
+                if (fConnectToApollonnode && !pnode->fApollonnode) {
+                    pnode->fApollonnode = true;
                 }
                 pnode->AddRef();
                 {
@@ -460,8 +460,8 @@ CNode *ConnectNode(CAddress addrConnect, const char *pszDest, bool fCountFailure
 
         // Add node
         CNode *pnode = new CNode(hSocket, addrConnect, pszDest ? pszDest : "", false);
-        if (fConnectToIndexnode) {
-            pnode->fIndexnode = true;
+        if (fConnectToApollonnode) {
+            pnode->fApollonnode = true;
         }
         pnode->AddRef();
 
@@ -2234,9 +2234,9 @@ void CNode::DandelionShuffle() {
             while (vDandelionDestination.size() < consensus.nDandelionMaxDestinations &&
                    vDandelionDestination.size() < vDandelionOutbound.size() &&
                    candidateDestinations.size() > 0) {
-                int rand_index = rng.randrange(candidateDestinations.size());
-                vDandelionDestination.push_back(candidateDestinations[rand_index]);
-                candidateDestinations.erase(candidateDestinations.begin() + rand_index);
+                int rand_apollon = rng.randrange(candidateDestinations.size());
+                vDandelionDestination.push_back(candidateDestinations[rand_apollon]);
+                candidateDestinations.erase(candidateDestinations.begin() + rand_apollon);
             }
         }
 
@@ -2840,8 +2840,8 @@ CNode::CNode(SOCKET hSocketIn, const CAddress &addrIn, const std::string &addrNa
     minFeeFilter = 0;
     lastSentFeeFilter = 0;
     nextSendTimeFeeFilter = 0;
-    // indexnode
-    fIndexnode = false;
+    // apollonnode
+    fApollonnode = false;
 
     BOOST_FOREACH(
     const std::string &msg, getAllNetMessageTypes())
@@ -2892,7 +2892,7 @@ void CNode::AskFor(const CInv &inv) {
     LogPrint("net", "askfor %s  %d (%s) peer=%d\n", inv.ToString(), nRequestTime,
              DateTimeStrFormat("%H:%M:%S", nRequestTime / 1000000), id);
 
-    // Make sure not to reuse time indexes to keep things in the same order
+    // Make sure not to reuse time apollones to keep things in the same order
     int64_t nNow = GetTimeMicros() - 1000000;
     static int64_t nLastTime;
     ++nLastTime;

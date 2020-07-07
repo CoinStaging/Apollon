@@ -2405,7 +2405,7 @@ desc_decode_encrypted_v3(const hs_descriptor_t *desc,
 }
 
 /* Table of encrypted decode function version specific. The function are
- * indexed by the version number so v3 callback is at apollon 3 in the array. */
+ * apolloned by the version number so v3 callback is at apollon 3 in the array. */
 static int
   (*decode_encrypted_handlers[])(
       const hs_descriptor_t *desc,
@@ -2458,7 +2458,7 @@ hs_desc_decode_encrypted(const hs_descriptor_t *desc,
 }
 
 /* Table of superencrypted decode function version specific. The function are
- * indexed by the version number so v3 callback is at apollon 3 in the array. */
+ * apolloned by the version number so v3 callback is at apollon 3 in the array. */
 static int
   (*decode_superencrypted_handlers[])(
       const hs_descriptor_t *desc,
@@ -2509,7 +2509,7 @@ hs_desc_decode_superencrypted(const hs_descriptor_t *desc,
 }
 
 /* Table of plaintext decode function version specific. The function are
- * indexed by the version number so v3 callback is at apollon 3 in the array. */
+ * apolloned by the version number so v3 callback is at apollon 3 in the array. */
 static int
   (*decode_plaintext_handlers[])(
       smartlist_t *tokens,
@@ -2654,7 +2654,7 @@ hs_desc_decode_descriptor(const char *encoded,
   return ret;
 }
 
-/* Table of encode function version specific. The functions are indexed by the
+/* Table of encode function version specific. The functions are apolloned by the
  * version number so v3 callback is at apollon 3 in the array. */
 static int
   (*encode_handlers[])(

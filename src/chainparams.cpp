@@ -114,7 +114,7 @@ public:
         consensus.nMinimumChainWork = uint256S("0000000000000000000000000000000000000000000000002ee3ae8b33a68f5f");
 
         consensus.nCheckBugFixedAtBlock = ZC_CHECK_BUG_FIXED_AT_BLOCK;
-        consensus.nIndexnodePaymentsBugFixedAtBlock = ZC_INDEXNODE_PAYMENT_BUG_FIXED_AT_BLOCK;
+        consensus.nApollonnodePaymentsBugFixedAtBlock = ZC_APOLLONNODE_PAYMENT_BUG_FIXED_AT_BLOCK;
 	    consensus.nSpendV15StartBlock = ZC_V1_5_STARTING_BLOCK;
 	    consensus.nSpendV2ID_1 = ZC_V2_SWITCH_ID_1;
 	    consensus.nSpendV2ID_10 = ZC_V2_SWITCH_ID_10;
@@ -127,8 +127,8 @@ public:
         consensus.nMultipleSpendInputsInOneTxStartBlock = ZC_MULTIPLE_SPEND_INPUT_STARTING_BLOCK;
         consensus.nDontAllowDupTxsStartBlock = 1;
 
-        // indexnode params
-        consensus.nIndexnodePaymentsStartBlock = HF_INDEXNODE_PAYMENT_START; // not true, but it's ok as long as it's less then nIndexnodePaymentsIncreaseBlock
+        // apollonnode params
+        consensus.nApollonnodePaymentsStartBlock = HF_APOLLONNODE_PAYMENT_START; // not true, but it's ok as long as it's less then nApollonnodePaymentsIncreaseBlock
 
 
         consensus.nDisableZerocoinStartBlock = 1;
@@ -169,7 +169,7 @@ public:
         assert(consensus.hashGenesisBlock == uint256S("0x000000263aa7c2332ccdaa9f5ae5b9008c685c6c263020d2529432ed5bd77b32"));
         assert(genesis.hashMerkleRoot     == uint256S("b6f05125e30ba39aac82cd89a07afe985ecf1fbbceeb2abde4e6e78da22a9b22"));
         //Initial seeders for use
-        vSeeds.push_back(CDNSSeedData("mineit.io", "mineit.io", false));
+        vSeeds.push_back(CDNSSeedData("", "", false));
 
         // Note that of those with the service bits flag, most only support a subset of possible options
         base58Prefixes[PUBKEY_ADDRESS] = std::vector < unsigned char > (1, 23);
@@ -280,7 +280,7 @@ public:
 
         consensus.nSpendV15StartBlock = 5000;
         consensus.nCheckBugFixedAtBlock = 1;
-        consensus.nIndexnodePaymentsBugFixedAtBlock = 1;
+        consensus.nApollonnodePaymentsBugFixedAtBlock = 1;
 
         consensus.nSpendV2ID_1 = ZC_V2_TESTNET_SWITCH_ID_1;
         consensus.nSpendV2ID_10 = ZC_V2_TESTNET_SWITCH_ID_10;
@@ -293,8 +293,8 @@ public:
         consensus.nMultipleSpendInputsInOneTxStartBlock = 1;
         consensus.nDontAllowDupTxsStartBlock = 18825;
 
-        // Indexnode params testnet
-        consensus.nIndexnodePaymentsStartBlock = 2200;
+        // Apollonnode params testnet
+        consensus.nApollonnodePaymentsStartBlock = 2200;
         nMaxTipAge = 0x7fffffff; // allow mining on top of old blocks for testnet
 
 
@@ -303,7 +303,7 @@ public:
         nPoolMaxTransactions = 3;
         nFulfilledRequestExpireTime = 5*60; // fulfilled requests expire in 5 minutes
         strSporkPubKey = "046f78dcf911fbd61910136f7f0f8d90578f68d0b3ac973b5040fb7afb501b5939f39b108b0569dca71488f5bbf498d92e4d1194f6f941307ffd95f75e76869f0e";
-        strIndexnodePaymentsPubKey = "046f78dcf911fbd61910136f7f0f8d90578f68d0b3ac973b5040fb7afb501b5939f39b108b0569dca71488f5bbf498d92e4d1194f6f941307ffd95f75e76869f0e";
+        strApollonnodePaymentsPubKey = "046f78dcf911fbd61910136f7f0f8d90578f68d0b3ac973b5040fb7afb501b5939f39b108b0569dca71488f5bbf498d92e4d1194f6f941307ffd95f75e76869f0e";
 
         pchMessageStart[0] = 0xcf;
         pchMessageStart[1] = 0xfc;
@@ -372,7 +372,7 @@ public:
         vSeeds.clear();
         // nodes with support for servicebits filtering should be at the top
         // apollon test seeds
-        // vSeeds.push_back(CDNSSeedData("beta1.indexchain.org", "beta1.indexchain.org", false));
+        // vSeeds.push_back(CDNSSeedData("beta1.apollonchain.org", "beta1.apollonchain.org", false));
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector < unsigned char > (1, 65);
         base58Prefixes[SCRIPT_ADDRESS] = std::vector < unsigned char > (1, 178);
@@ -452,7 +452,7 @@ public:
         consensus.nPowTargetSpacing = 1; // 10 minute blocks
         consensus.fPowAllowMinDifficultyBlocks = true;
         consensus.fPowNoRetargeting = true;
-        consensus.nIndexnodePaymentsStartBlock = 120;
+        consensus.nApollonnodePaymentsStartBlock = 120;
         consensus.nRuleChangeActivationThreshold = 108; // 75% for testchains
         consensus.nMinerConfirmationWindow = 144; // Faster than normal for regtest (144 instead of 2016)
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].bit = 28;
@@ -467,12 +467,12 @@ public:
 
         // The best chain should have at least this much work.
         consensus.nMinimumChainWork = uint256S("0x00");
-        // Indexnode code
+        // Apollonnode code
         nFulfilledRequestExpireTime = 5*60; // fulfilled requests expire in 5 minutes
         nMaxTipAge = 6 * 60 * 60; // ~144 blocks behind -> 2 x fork detection time, was 24 * 60 * 60 in bitcoin
 
         consensus.nCheckBugFixedAtBlock = 120;
-        consensus.nIndexnodePaymentsBugFixedAtBlock = 1;
+        consensus.nApollonnodePaymentsBugFixedAtBlock = 1;
         consensus.nSpendV15StartBlock = 1;
         consensus.nSpendV2ID_1 = 2;
         consensus.nSpendV2ID_10 = 3;

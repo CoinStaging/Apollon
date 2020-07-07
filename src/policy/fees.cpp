@@ -56,12 +56,12 @@ void TxConfirmStats::Record(int blocksToConfirm, double val)
     // blocksToConfirm is 1-based
     if (blocksToConfirm < 1)
         return;
-    unsigned int bucketindex = bucketMap.lower_bound(val)->second;
+    unsigned int bucketapollon = bucketMap.lower_bound(val)->second;
     for (size_t i = blocksToConfirm; i <= curBlockConf.size(); i++) {
-        curBlockConf[i - 1][bucketindex]++;
+        curBlockConf[i - 1][bucketapollon]++;
     }
-    curBlockTxCt[bucketindex]++;
-    curBlockVal[bucketindex] += val;
+    curBlockTxCt[bucketapollon]++;
+    curBlockVal[bucketapollon] += val;
 }
 
 void TxConfirmStats::UpdateMovingAverages()
@@ -84,13 +84,13 @@ double TxConfirmStats::EstimateMedianVal(int confTarget, double sufficientTxVal,
     double totalNum = 0; // Total number of tx's that were ever confirmed
     int extraNum = 0;  // Number of tx's still in mempool for confTarget or longer
 
-    int maxbucketindex = buckets.size() - 1;
+    int maxbucketapollon = buckets.size() - 1;
 
     // requireGreater means we are looking for the lowest fee/priority such that all higher
-    // values pass, so we start at maxbucketindex (highest fee) and look at successively
+    // values pass, so we start at maxbucketapollon (highest fee) and look at successively
     // smaller buckets until we reach failure.  Otherwise, we are looking for the highest
     // fee/priority such that all lower values fail, and we go in the opposite direction.
-    unsigned int startbucket = requireGreater ? maxbucketindex : 0;
+    unsigned int startbucket = requireGreater ? maxbucketapollon : 0;
     int step = requireGreater ? -1 : 1;
 
     // We'll combine buckets until we have enough samples.
@@ -107,7 +107,7 @@ double TxConfirmStats::EstimateMedianVal(int confTarget, double sufficientTxVal,
     unsigned int bins = unconfTxs.size();
 
     // Start counting from highest(default) or lowest fee/pri transactions
-    for (int bucket = startbucket; bucket >= 0 && bucket <= maxbucketindex; bucket += step) {
+    for (int bucket = startbucket; bucket >= 0 && bucket <= maxbucketapollon; bucket += step) {
         curFarBucket = bucket;
         nConf += confAvg[confTarget - 1][bucket];
         totalNum += txCtAvg[bucket];
@@ -247,14 +247,14 @@ void TxConfirmStats::Read(CAutoFile& filein)
 
 unsigned int TxConfirmStats::NewTx(unsigned int nBlockHeight, double val)
 {
-    unsigned int bucketindex = bucketMap.lower_bound(val)->second;
-    unsigned int blockIndex = nBlockHeight % unconfTxs.size();
-    unconfTxs[blockIndex][bucketindex]++;
+    unsigned int bucketapollon = bucketMap.lower_bound(val)->second;
+    unsigned int blockApollon = nBlockHeight % unconfTxs.size();
+    unconfTxs[blockApollon][bucketapollon]++;
     LogPrint("estimatefee", "adding to %s, nBlockHeight=%s, fee=%s\n", dataTypeString, nBlockHeight, val/1000000);
-    return bucketindex;
+    return bucketapollon;
 }
 
-void TxConfirmStats::removeTx(unsigned int entryHeight, unsigned int nBestSeenHeight, unsigned int bucketindex)
+void TxConfirmStats::removeTx(unsigned int entryHeight, unsigned int nBestSeenHeight, unsigned int bucketapollon)
 {
     //nBestSeenHeight is not updated yet for the new block
     int blocksAgo = nBestSeenHeight - entryHeight;
@@ -266,19 +266,19 @@ void TxConfirmStats::removeTx(unsigned int entryHeight, unsigned int nBestSeenHe
     }
 
     if (blocksAgo >= (int)unconfTxs.size()) {
-        if (oldUnconfTxs[bucketindex] > 0)
-            oldUnconfTxs[bucketindex]--;
+        if (oldUnconfTxs[bucketapollon] > 0)
+            oldUnconfTxs[bucketapollon]--;
         else
-            LogPrint("estimatefee", "Blockpolicy error, mempool tx removed from >25 blocks,bucketIndex=%u already\n",
-                     bucketindex);
+            LogPrint("estimatefee", "Blockpolicy error, mempool tx removed from >25 blocks,bucketApollon=%u already\n",
+                     bucketapollon);
     }
     else {
-        unsigned int blockIndex = entryHeight % unconfTxs.size();
-        if (unconfTxs[blockIndex][bucketindex] > 0)
-            unconfTxs[blockIndex][bucketindex]--;
+        unsigned int blockApollon = entryHeight % unconfTxs.size();
+        if (unconfTxs[blockApollon][bucketapollon] > 0)
+            unconfTxs[blockApollon][bucketapollon]--;
         else
-            LogPrint("estimatefee", "Blockpolicy error, mempool tx removed from blockIndex=%u,bucketIndex=%u already\n",
-                     blockIndex, bucketindex);
+            LogPrint("estimatefee", "Blockpolicy error, mempool tx removed from blockApollon=%u,bucketApollon=%u already\n",
+                     blockApollon, bucketapollon);
     }
 }
 
@@ -292,10 +292,10 @@ void CBlockPolicyEstimator::removeTx(uint256 hash)
     }
     TxConfirmStats *stats = pos->second.stats;
     unsigned int entryHeight = pos->second.blockHeight;
-    unsigned int bucketIndex = pos->second.bucketIndex;
+    unsigned int bucketApollon = pos->second.bucketApollon;
 
     if (stats != NULL)
-        stats->removeTx(entryHeight, nBestSeenHeight, bucketIndex);
+        stats->removeTx(entryHeight, nBestSeenHeight, bucketApollon);
     mapMemPoolTxs.erase(hash);
 }
 
@@ -389,14 +389,14 @@ void CBlockPolicyEstimator::processTransaction(const CTxMemPoolEntry& entry, boo
 //    if (entry.GetFee() == 0 || isPriDataPoint(feeRate, c) {
     if (entry.GetFee() == 0) {
         mapMemPoolTxs[hash].stats = &priStats;
-//        mapMemPoolTxs[hash].bucketIndex =  priStats.NewTx(txHeight, curPri);
-        mapMemPoolTxs[hash].bucketIndex =  priStats.NewTx(txHeight, (double)entry.GetFee());
+//        mapMemPoolTxs[hash].bucketApollon =  priStats.NewTx(txHeight, curPri);
+        mapMemPoolTxs[hash].bucketApollon =  priStats.NewTx(txHeight, (double)entry.GetFee());
     }
     // Record this as a fee estimate
 //    else if (isFeeDataPoint(feeRate, curPri)) {
     else {
         mapMemPoolTxs[hash].stats = &feeStats;
-        mapMemPoolTxs[hash].bucketIndex = feeStats.NewTx(txHeight, (double)entry.GetFee());
+        mapMemPoolTxs[hash].bucketApollon = feeStats.NewTx(txHeight, (double)entry.GetFee());
     }
 //    else {
 //        LogPrint("estimatefee", "not adding");

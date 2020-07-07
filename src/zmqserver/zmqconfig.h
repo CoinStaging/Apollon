@@ -16,7 +16,7 @@
 
 #include "primitives/block.h"
 #include "primitives/transaction.h"
-#include "indexnode.h"
+#include "apollonnode.h"
 
 void zmqError(const char *str);
 

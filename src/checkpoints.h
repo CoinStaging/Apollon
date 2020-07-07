@@ -9,7 +9,7 @@
 
 #include <map>
 
-class CBlockIndex;
+class CBlockApollon;
 struct CCheckpointData;
 
 /**
@@ -19,13 +19,13 @@ struct CCheckpointData;
 namespace Checkpoints
 {
 
-//! Returns last CBlockIndex* in mapBlockIndex that is a checkpoint
-CBlockIndex* GetLastCheckpoint(const CCheckpointData& data);
+//! Returns last CBlockApollon* in mapBlockApollon that is a checkpoint
+CBlockApollon* GetLastCheckpoint(const CCheckpointData& data);
 
 //! Return conservative estimate of total number of blocks, 0 if unknown
 int GetTotalBlocksEstimate(const CCheckpointData& data);
 
-double GuessVerificationProgress(const CCheckpointData& data, CBlockIndex* pindex, bool fSigchecks = true);
+double GuessVerificationProgress(const CCheckpointData& data, CBlockApollon* papollon, bool fSigchecks = true);
 
 } //namespace Checkpoints
 

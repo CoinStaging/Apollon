@@ -1,13 +1,13 @@
-#include "indexnodelist.h"
-#include "ui_indexnodelist.h"
+#include "apollonnodelist.h"
+#include "ui_apollonnodelist.h"
 
-#include "activeindexnode.h"
+#include "activeapollonnode.h"
 #include "clientmodel.h"
 #include "init.h"
 #include "guiutil.h"
-#include "indexnode-sync.h"
-#include "indexnodeconfig.h"
-#include "indexnodeman.h"
+#include "apollonnode-sync.h"
+#include "apollonnodeconfig.h"
+#include "apollonnodeman.h"
 #include "sync.h"
 #include "wallet/wallet.h"
 #include "walletmodel.h"
@@ -26,9 +26,9 @@ int GetOffsetFromUtc()
 #endif
 }
 
-IndexnodeList::IndexnodeList(const PlatformStyle *platformStyle, QWidget *parent) :
+ApollonnodeList::ApollonnodeList(const PlatformStyle *platformStyle, QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::IndexnodeList),
+    ui(new Ui::ApollonnodeList),
     clientModel(0),
     walletModel(0)
 {
@@ -43,26 +43,26 @@ IndexnodeList::IndexnodeList(const PlatformStyle *platformStyle, QWidget *parent
     int columnActiveWidth = 130;
     int columnLastSeenWidth = 130;
 
-    ui->tableWidgetMyIndexnodes->setColumnWidth(0, columnAliasWidth);
-    ui->tableWidgetMyIndexnodes->setColumnWidth(1, columnAddressWidth);
-    ui->tableWidgetMyIndexnodes->setColumnWidth(2, columnProtocolWidth);
-    ui->tableWidgetMyIndexnodes->setColumnWidth(3, columnStatusWidth);
-    ui->tableWidgetMyIndexnodes->setColumnWidth(4, columnActiveWidth);
-    ui->tableWidgetMyIndexnodes->setColumnWidth(5, columnLastSeenWidth);
+    ui->tableWidgetMyApollonnodes->setColumnWidth(0, columnAliasWidth);
+    ui->tableWidgetMyApollonnodes->setColumnWidth(1, columnAddressWidth);
+    ui->tableWidgetMyApollonnodes->setColumnWidth(2, columnProtocolWidth);
+    ui->tableWidgetMyApollonnodes->setColumnWidth(3, columnStatusWidth);
+    ui->tableWidgetMyApollonnodes->setColumnWidth(4, columnActiveWidth);
+    ui->tableWidgetMyApollonnodes->setColumnWidth(5, columnLastSeenWidth);
 
-    ui->tableWidgetIndexnodes->setColumnWidth(0, columnAddressWidth);
-    ui->tableWidgetIndexnodes->setColumnWidth(1, columnProtocolWidth);
-    ui->tableWidgetIndexnodes->setColumnWidth(2, columnStatusWidth);
-    ui->tableWidgetIndexnodes->setColumnWidth(3, columnActiveWidth);
-    ui->tableWidgetIndexnodes->setColumnWidth(4, columnLastSeenWidth);
+    ui->tableWidgetApollonnodes->setColumnWidth(0, columnAddressWidth);
+    ui->tableWidgetApollonnodes->setColumnWidth(1, columnProtocolWidth);
+    ui->tableWidgetApollonnodes->setColumnWidth(2, columnStatusWidth);
+    ui->tableWidgetApollonnodes->setColumnWidth(3, columnActiveWidth);
+    ui->tableWidgetApollonnodes->setColumnWidth(4, columnLastSeenWidth);
 
-    ui->tableWidgetMyIndexnodes->setContextMenuPolicy(Qt::CustomContextMenu);
-    SetObjectStyleSheet(ui->tableWidgetMyIndexnodes, StyleSheetNames::TableViewLight);
+    ui->tableWidgetMyApollonnodes->setContextMenuPolicy(Qt::CustomContextMenu);
+    SetObjectStyleSheet(ui->tableWidgetMyApollonnodes, StyleSheetNames::TableViewLight);
 
     QAction *startAliasAction = new QAction(tr("Start alias"), this);
     contextMenu = new QMenu();
     contextMenu->addAction(startAliasAction);
-    connect(ui->tableWidgetMyIndexnodes, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));
+    connect(ui->tableWidgetMyApollonnodes, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));
     connect(startAliasAction, SIGNAL(triggered()), this, SLOT(on_startButton_clicked()));
 
     timer = new QTimer(this);
@@ -75,50 +75,50 @@ IndexnodeList::IndexnodeList(const PlatformStyle *platformStyle, QWidget *parent
     updateNodeList();
 }
 
-IndexnodeList::~IndexnodeList()
+ApollonnodeList::~ApollonnodeList()
 {
     delete ui;
 }
 
-void IndexnodeList::setClientModel(ClientModel *model)
+void ApollonnodeList::setClientModel(ClientModel *model)
 {
     this->clientModel = model;
     if(model) {
-        // try to update list when indexnode count changes
-        // connect(clientModel, SIGNAL(strIndexnodesChanged(QString)), this, SLOT(updateNodeList()));
+        // try to update list when apollonnode count changes
+        // connect(clientModel, SIGNAL(strApollonnodesChanged(QString)), this, SLOT(updateNodeList()));
     }
 }
 
-void IndexnodeList::setWalletModel(WalletModel *model)
+void ApollonnodeList::setWalletModel(WalletModel *model)
 {
     this->walletModel = model;
 }
 
-void IndexnodeList::showContextMenu(const QPoint &point)
+void ApollonnodeList::showContextMenu(const QPoint &point)
 {
-    QTableWidgetItem *item = ui->tableWidgetMyIndexnodes->itemAt(point);
+    QTableWidgetItem *item = ui->tableWidgetMyApollonnodes->itemAt(point);
     if(item) contextMenu->exec(QCursor::pos());
 }
 
-void IndexnodeList::StartAlias(std::string strAlias)
+void ApollonnodeList::StartAlias(std::string strAlias)
 {
     std::string strStatusHtml;
     strStatusHtml += "<center>Alias: " + strAlias;
 
-    BOOST_FOREACH(CIndexnodeConfig::CIndexnodeEntry mne, indexnodeConfig.getEntries()) {
+    BOOST_FOREACH(CApollonnodeConfig::CApollonnodeEntry mne, apollonnodeConfig.getEntries()) {
         if(mne.getAlias() == strAlias) {
             std::string strError;
-            CIndexnodeBroadcast mnb;
+            CApollonnodeBroadcast mnb;
 
-            bool fSuccess = CIndexnodeBroadcast::Create(mne.getIp(), mne.getPrivKey(), mne.getTxHash(), mne.getOutputIndex(), strError, mnb);
+            bool fSuccess = CApollonnodeBroadcast::Create(mne.getIp(), mne.getPrivKey(), mne.getTxHash(), mne.getOutputApollon(), strError, mnb);
 
             if(fSuccess) {
-                strStatusHtml += "<br>Successfully started indexnode.";
-                mnodeman.UpdateIndexnodeList(mnb);
-                mnb.RelayIndexNode();
-                mnodeman.NotifyIndexnodeUpdates();
+                strStatusHtml += "<br>Successfully started apollonnode.";
+                mnodeman.UpdateApollonnodeList(mnb);
+                mnb.RelayApollonNode();
+                mnodeman.NotifyApollonnodeUpdates();
             } else {
-                strStatusHtml += "<br>Failed to start indexnode.<br>Error: " + strError;
+                strStatusHtml += "<br>Failed to start apollonnode.<br>Error: " + strError;
             }
             break;
         }
@@ -132,32 +132,32 @@ void IndexnodeList::StartAlias(std::string strAlias)
     updateMyNodeList(true);
 }
 
-void IndexnodeList::StartAll(std::string strCommand)
+void ApollonnodeList::StartAll(std::string strCommand)
 {
     int nCountSuccessful = 0;
     int nCountFailed = 0;
     std::string strFailedHtml;
 
-    BOOST_FOREACH(CIndexnodeConfig::CIndexnodeEntry mne, indexnodeConfig.getEntries()) {
+    BOOST_FOREACH(CApollonnodeConfig::CApollonnodeEntry mne, apollonnodeConfig.getEntries()) {
         std::string strError;
-        CIndexnodeBroadcast mnb;
+        CApollonnodeBroadcast mnb;
 
-        int32_t nOutputIndex = 0;
-        if(!ParseInt32(mne.getOutputIndex(), &nOutputIndex)) {
+        int32_t nOutputApollon = 0;
+        if(!ParseInt32(mne.getOutputApollon(), &nOutputApollon)) {
             continue;
         }
 
-        COutPoint outpoint = COutPoint(uint256S(mne.getTxHash()), nOutputIndex);
+        COutPoint outpoint = COutPoint(uint256S(mne.getTxHash()), nOutputApollon);
 
         if(strCommand == "start-missing" && mnodeman.Has(CTxIn(outpoint))) continue;
 
-        bool fSuccess = CIndexnodeBroadcast::Create(mne.getIp(), mne.getPrivKey(), mne.getTxHash(), mne.getOutputIndex(), strError, mnb);
+        bool fSuccess = CApollonnodeBroadcast::Create(mne.getIp(), mne.getPrivKey(), mne.getTxHash(), mne.getOutputApollon(), strError, mnb);
 
         if(fSuccess) {
             nCountSuccessful++;
-            mnodeman.UpdateIndexnodeList(mnb);
-            mnb.RelayIndexNode();
-            mnodeman.NotifyIndexnodeUpdates();
+            mnodeman.UpdateApollonnodeList(mnb);
+            mnb.RelayApollonNode();
+            mnodeman.NotifyApollonnodeUpdates();
         } else {
             nCountFailed++;
             strFailedHtml += "\nFailed to start " + mne.getAlias() + ". Error: " + strError;
@@ -166,7 +166,7 @@ void IndexnodeList::StartAll(std::string strCommand)
     pwalletMain->Lock();
 
     std::string returnObj;
-    returnObj = strprintf("Successfully started %d indexnodes, failed to start %d, total %d", nCountSuccessful, nCountFailed, nCountFailed + nCountSuccessful);
+    returnObj = strprintf("Successfully started %d apollonnodes, failed to start %d, total %d", nCountSuccessful, nCountFailed, nCountFailed + nCountSuccessful);
     if (nCountFailed > 0) {
         returnObj += strFailedHtml;
     }
@@ -178,13 +178,13 @@ void IndexnodeList::StartAll(std::string strCommand)
     updateMyNodeList(true);
 }
 
-void IndexnodeList::updateMyIndexnodeInfo(QString strAlias, QString strAddr, const COutPoint& outpoint)
+void ApollonnodeList::updateMyApollonnodeInfo(QString strAlias, QString strAddr, const COutPoint& outpoint)
 {
     bool fOldRowFound = false;
     int nNewRow = 0;
 
-    for(int i = 0; i < ui->tableWidgetMyIndexnodes->rowCount(); i++) {
-        if(ui->tableWidgetMyIndexnodes->item(i, 0)->text() == strAlias) {
+    for(int i = 0; i < ui->tableWidgetMyApollonnodes->rowCount(); i++) {
+        if(ui->tableWidgetMyApollonnodes->item(i, 0)->text() == strAlias) {
             fOldRowFound = true;
             nNewRow = i;
             break;
@@ -192,32 +192,32 @@ void IndexnodeList::updateMyIndexnodeInfo(QString strAlias, QString strAddr, con
     }
 
     if(nNewRow == 0 && !fOldRowFound) {
-        nNewRow = ui->tableWidgetMyIndexnodes->rowCount();
-        ui->tableWidgetMyIndexnodes->insertRow(nNewRow);
+        nNewRow = ui->tableWidgetMyApollonnodes->rowCount();
+        ui->tableWidgetMyApollonnodes->insertRow(nNewRow);
     }
 
-    indexnode_info_t infoMn = mnodeman.GetIndexnodeInfo(CTxIn(outpoint));
+    apollonnode_info_t infoMn = mnodeman.GetApollonnodeInfo(CTxIn(outpoint));
     bool fFound = infoMn.fInfoValid;
 
     QTableWidgetItem *aliasItem = new QTableWidgetItem(strAlias);
     QTableWidgetItem *addrItem = new QTableWidgetItem(fFound ? QString::fromStdString(infoMn.addr.ToString()) : strAddr);
     QTableWidgetItem *protocolItem = new QTableWidgetItem(QString::number(fFound ? infoMn.nProtocolVersion : -1));
-    QTableWidgetItem *statusItem = new QTableWidgetItem(QString::fromStdString(fFound ? CIndexnode::StateToString(infoMn.nActiveState) : "MISSING"));
+    QTableWidgetItem *statusItem = new QTableWidgetItem(QString::fromStdString(fFound ? CApollonnode::StateToString(infoMn.nActiveState) : "MISSING"));
     QTableWidgetItem *activeSecondsItem = new QTableWidgetItem(QString::fromStdString(DurationToDHMS(fFound ? (infoMn.nTimeLastPing - infoMn.sigTime) : 0)));
     QTableWidgetItem *lastSeenItem = new QTableWidgetItem(QString::fromStdString(DateTimeStrFormat("%Y-%m-%d %H:%M",
                                                                                                    fFound ? infoMn.nTimeLastPing + GetOffsetFromUtc() : 0)));
     QTableWidgetItem *pubkeyItem = new QTableWidgetItem(QString::fromStdString(fFound ? CBitcoinAddress(infoMn.pubKeyCollateralAddress.GetID()).ToString() : ""));
 
-    ui->tableWidgetMyIndexnodes->setItem(nNewRow, 0, aliasItem);
-    ui->tableWidgetMyIndexnodes->setItem(nNewRow, 1, addrItem);
-    ui->tableWidgetMyIndexnodes->setItem(nNewRow, 2, protocolItem);
-    ui->tableWidgetMyIndexnodes->setItem(nNewRow, 3, statusItem);
-    ui->tableWidgetMyIndexnodes->setItem(nNewRow, 4, activeSecondsItem);
-    ui->tableWidgetMyIndexnodes->setItem(nNewRow, 5, lastSeenItem);
-    ui->tableWidgetMyIndexnodes->setItem(nNewRow, 6, pubkeyItem);
+    ui->tableWidgetMyApollonnodes->setItem(nNewRow, 0, aliasItem);
+    ui->tableWidgetMyApollonnodes->setItem(nNewRow, 1, addrItem);
+    ui->tableWidgetMyApollonnodes->setItem(nNewRow, 2, protocolItem);
+    ui->tableWidgetMyApollonnodes->setItem(nNewRow, 3, statusItem);
+    ui->tableWidgetMyApollonnodes->setItem(nNewRow, 4, activeSecondsItem);
+    ui->tableWidgetMyApollonnodes->setItem(nNewRow, 5, lastSeenItem);
+    ui->tableWidgetMyApollonnodes->setItem(nNewRow, 6, pubkeyItem);
 }
 
-void IndexnodeList::updateMyNodeList(bool fForce)
+void ApollonnodeList::updateMyNodeList(bool fForce)
 {
     TRY_LOCK(cs_mymnlist, fLockAcquired);
     if(!fLockAcquired) {
@@ -225,7 +225,7 @@ void IndexnodeList::updateMyNodeList(bool fForce)
     }
     static int64_t nTimeMyListUpdated = 0;
 
-    // automatically update my indexnode list only once in MY_MASTERNODELIST_UPDATE_SECONDS seconds,
+    // automatically update my apollonnode list only once in MY_MASTERNODELIST_UPDATE_SECONDS seconds,
     // this update still can be triggered manually at any time via button click
     int64_t nSecondsTillUpdate = nTimeMyListUpdated + MY_MASTERNODELIST_UPDATE_SECONDS - GetTime();
     ui->secondsLabel->setText(QString::number(nSecondsTillUpdate));
@@ -233,22 +233,22 @@ void IndexnodeList::updateMyNodeList(bool fForce)
     if(nSecondsTillUpdate > 0 && !fForce) return;
     nTimeMyListUpdated = GetTime();
 
-    ui->tableWidgetIndexnodes->setSortingEnabled(false);
-    BOOST_FOREACH(CIndexnodeConfig::CIndexnodeEntry mne, indexnodeConfig.getEntries()) {
-        int32_t nOutputIndex = 0;
-        if(!ParseInt32(mne.getOutputIndex(), &nOutputIndex)) {
+    ui->tableWidgetApollonnodes->setSortingEnabled(false);
+    BOOST_FOREACH(CApollonnodeConfig::CApollonnodeEntry mne, apollonnodeConfig.getEntries()) {
+        int32_t nOutputApollon = 0;
+        if(!ParseInt32(mne.getOutputApollon(), &nOutputApollon)) {
             continue;
         }
 
-        updateMyIndexnodeInfo(QString::fromStdString(mne.getAlias()), QString::fromStdString(mne.getIp()), COutPoint(uint256S(mne.getTxHash()), nOutputIndex));
+        updateMyApollonnodeInfo(QString::fromStdString(mne.getAlias()), QString::fromStdString(mne.getIp()), COutPoint(uint256S(mne.getTxHash()), nOutputApollon));
     }
-    ui->tableWidgetIndexnodes->setSortingEnabled(true);
+    ui->tableWidgetApollonnodes->setSortingEnabled(true);
 
     // reset "timer"
     ui->secondsLabel->setText("0");
 }
 
-void IndexnodeList::updateNodeList()
+void ApollonnodeList::updateNodeList()
 {
     TRY_LOCK(cs_mnlist, fLockAcquired);
     if(!fLockAcquired) {
@@ -271,16 +271,16 @@ void IndexnodeList::updateNodeList()
 
     QString strToFilter;
     ui->countLabel->setText("Updating...");
-    ui->tableWidgetIndexnodes->setSortingEnabled(false);
-    ui->tableWidgetIndexnodes->clearContents();
-    ui->tableWidgetIndexnodes->setRowCount(0);
-//    std::map<COutPoint, CIndexnode> mapIndexnodes = mnodeman.GetFullIndexnodeMap();
-    std::vector<CIndexnode> vIndexnodes = mnodeman.GetFullIndexnodeVector();
+    ui->tableWidgetApollonnodes->setSortingEnabled(false);
+    ui->tableWidgetApollonnodes->clearContents();
+    ui->tableWidgetApollonnodes->setRowCount(0);
+//    std::map<COutPoint, CApollonnode> mapApollonnodes = mnodeman.GetFullApollonnodeMap();
+    std::vector<CApollonnode> vApollonnodes = mnodeman.GetFullApollonnodeVector();
     int offsetFromUtc = GetOffsetFromUtc();
 
-    BOOST_FOREACH(CIndexnode & mn, vIndexnodes)
+    BOOST_FOREACH(CApollonnode & mn, vApollonnodes)
     {
-//        CIndexnode mn = mnpair.second;
+//        CApollonnode mn = mnpair.second;
         // populate list
         // Address, Protocol, Status, Active Seconds, Last Seen, Pub Key
         QTableWidgetItem *addressItem = new QTableWidgetItem(QString::fromStdString(mn.addr.ToString()));
@@ -301,20 +301,20 @@ void IndexnodeList::updateNodeList()
             if (!strToFilter.contains(strCurrentFilter)) continue;
         }
 
-        ui->tableWidgetIndexnodes->insertRow(0);
-        ui->tableWidgetIndexnodes->setItem(0, 0, addressItem);
-        ui->tableWidgetIndexnodes->setItem(0, 1, protocolItem);
-        ui->tableWidgetIndexnodes->setItem(0, 2, statusItem);
-        ui->tableWidgetIndexnodes->setItem(0, 3, activeSecondsItem);
-        ui->tableWidgetIndexnodes->setItem(0, 4, lastSeenItem);
-        ui->tableWidgetIndexnodes->setItem(0, 5, pubkeyItem);
+        ui->tableWidgetApollonnodes->insertRow(0);
+        ui->tableWidgetApollonnodes->setItem(0, 0, addressItem);
+        ui->tableWidgetApollonnodes->setItem(0, 1, protocolItem);
+        ui->tableWidgetApollonnodes->setItem(0, 2, statusItem);
+        ui->tableWidgetApollonnodes->setItem(0, 3, activeSecondsItem);
+        ui->tableWidgetApollonnodes->setItem(0, 4, lastSeenItem);
+        ui->tableWidgetApollonnodes->setItem(0, 5, pubkeyItem);
     }
 
-    ui->countLabel->setText(QString::number(ui->tableWidgetIndexnodes->rowCount()));
-    ui->tableWidgetIndexnodes->setSortingEnabled(true);
+    ui->countLabel->setText(QString::number(ui->tableWidgetApollonnodes->rowCount()));
+    ui->tableWidgetApollonnodes->setSortingEnabled(true);
 }
 
-void IndexnodeList::on_filterLineEdit_textChanged(const QString &strFilterIn)
+void ApollonnodeList::on_filterLineEdit_textChanged(const QString &strFilterIn)
 {
     strCurrentFilter = strFilterIn;
     nTimeFilterUpdated = GetTime();
@@ -322,25 +322,25 @@ void IndexnodeList::on_filterLineEdit_textChanged(const QString &strFilterIn)
     ui->countLabel->setText(QString::fromStdString(strprintf("Please wait... %d", MASTERNODELIST_FILTER_COOLDOWN_SECONDS)));
 }
 
-void IndexnodeList::on_startButton_clicked()
+void ApollonnodeList::on_startButton_clicked()
 {
     std::string strAlias;
     {
         LOCK(cs_mymnlist);
         // Find selected node alias
-        QItemSelectionModel* selectionModel = ui->tableWidgetMyIndexnodes->selectionModel();
-        QModelIndexList selected = selectionModel->selectedRows();
+        QItemSelectionModel* selectionModel = ui->tableWidgetMyApollonnodes->selectionModel();
+        QModelApollonList selected = selectionModel->selectedRows();
 
         if(selected.count() == 0) return;
 
-        QModelIndex apollon = selected.at(0);
+        QModelApollon apollon = selected.at(0);
         int nSelectedRow = apollon.row();
-        strAlias = ui->tableWidgetMyIndexnodes->item(nSelectedRow, 0)->text().toStdString();
+        strAlias = ui->tableWidgetMyApollonnodes->item(nSelectedRow, 0)->text().toStdString();
     }
 
     // Display message box
-    QMessageBox::StandardButton retval = QMessageBox::question(this, tr("Confirm indexnode start"),
-        tr("Are you sure you want to start indexnode %1?").arg(QString::fromStdString(strAlias)),
+    QMessageBox::StandardButton retval = QMessageBox::question(this, tr("Confirm apollonnode start"),
+        tr("Are you sure you want to start apollonnode %1?").arg(QString::fromStdString(strAlias)),
         QMessageBox::Yes | QMessageBox::Cancel,
         QMessageBox::Cancel);
 
@@ -360,11 +360,11 @@ void IndexnodeList::on_startButton_clicked()
     StartAlias(strAlias);
 }
 
-void IndexnodeList::on_startAllButton_clicked()
+void ApollonnodeList::on_startAllButton_clicked()
 {
     // Display message box
-    QMessageBox::StandardButton retval = QMessageBox::question(this, tr("Confirm all indexnodes start"),
-        tr("Are you sure you want to start ALL indexnodes?"),
+    QMessageBox::StandardButton retval = QMessageBox::question(this, tr("Confirm all apollonnodes start"),
+        tr("Are you sure you want to start ALL apollonnodes?"),
         QMessageBox::Yes | QMessageBox::Cancel,
         QMessageBox::Cancel);
 
@@ -384,19 +384,19 @@ void IndexnodeList::on_startAllButton_clicked()
     StartAll();
 }
 
-void IndexnodeList::on_startMissingButton_clicked()
+void ApollonnodeList::on_startMissingButton_clicked()
 {
 
-    if(!indexnodeSync.IsIndexnodeListSynced()) {
+    if(!apollonnodeSync.IsApollonnodeListSynced()) {
         QMessageBox::critical(this, tr("Command is not available right now"),
-            tr("You can't use this command until indexnode list is synced"));
+            tr("You can't use this command until apollonnode list is synced"));
         return;
     }
 
     // Display message box
     QMessageBox::StandardButton retval = QMessageBox::question(this,
-        tr("Confirm missing indexnodes start"),
-        tr("Are you sure you want to start MISSING indexnodes?"),
+        tr("Confirm missing apollonnodes start"),
+        tr("Are you sure you want to start MISSING apollonnodes?"),
         QMessageBox::Yes | QMessageBox::Cancel,
         QMessageBox::Cancel);
 
@@ -416,14 +416,14 @@ void IndexnodeList::on_startMissingButton_clicked()
     StartAll("start-missing");
 }
 
-void IndexnodeList::on_tableWidgetMyIndexnodes_itemSelectionChanged()
+void ApollonnodeList::on_tableWidgetMyApollonnodes_itemSelectionChanged()
 {
-    if(ui->tableWidgetMyIndexnodes->selectedItems().count() > 0) {
+    if(ui->tableWidgetMyApollonnodes->selectedItems().count() > 0) {
         ui->startButton->setEnabled(true);
     }
 }
 
-void IndexnodeList::on_UpdateButton_clicked()
+void ApollonnodeList::on_UpdateButton_clicked()
 {
     updateMyNodeList(true);
 }

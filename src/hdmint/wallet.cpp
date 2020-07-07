@@ -15,7 +15,7 @@
 #include "crypto/hmac_sha512.h"
 #include "keystore.h"
 #include <boost/optional.hpp>
-#include "indexnode-sync.h"
+#include "apollonnode-sync.h"
 
 /**
  * Constructor for CHDMintWallet object.
@@ -97,7 +97,7 @@ bool CHDMintWallet::SetupWallet(const uint160& hashSeedMaster, bool fResetCount)
 std::pair<uint256,uint256> CHDMintWallet::RegenerateMintPoolEntry(const uint160& mintHashSeedMaster, CKeyID& seedId, const int32_t& nCount)
 {
     // hashPubcoin, hashSerial
-    std::pair<uint256,uint256> nIndexes;
+    std::pair<uint256,uint256> nApollones;
 
     CWalletDB walletdb(strWalletFile);
     //Is locked
@@ -122,10 +122,10 @@ std::pair<uint256,uint256> CHDMintWallet::RegenerateMintPoolEntry(const uint160&
     CWalletDB(strWalletFile).WriteMintPoolPair(hashPubcoin, mintPoolEntry);
     LogPrintf("%s : hashSeedMaster=%s hashPubcoin=%s seedId=%s\n count=%d\n", __func__, hashSeedMaster.GetHex(), hashPubcoin.GetHex(), seedId.GetHex(), nCount);
 
-    nIndexes.first = hashPubcoin;
-    nIndexes.second = hashSerial;
+    nApollones.first = hashPubcoin;
+    nApollones.second = hashSerial;
 
-    return nIndexes;
+    return nApollones;
 
 }
 
@@ -137,9 +137,9 @@ std::pair<uint256,uint256> CHDMintWallet::RegenerateMintPoolEntry(const uint160&
  * Generates 20 mints at a time.
  * Makes the appropriate database entries.
  *
- * @param nIndex The number of mints to generate. Defaults to 20 if no param passed.
+ * @param nApollon The number of mints to generate. Defaults to 20 if no param passed.
  */
-void CHDMintWallet::GenerateMintPool(int32_t nIndex)
+void CHDMintWallet::GenerateMintPool(int32_t nApollon)
 {
     CWalletDB walletdb(strWalletFile);
     //Is locked
@@ -153,8 +153,8 @@ void CHDMintWallet::GenerateMintPool(int32_t nIndex)
 
     int32_t nLastCount = nCountNextGenerate;
     int32_t nStop = nLastCount + 20;
-    if(nIndex > 0 && nIndex >= nLastCount)
-        nStop = nIndex + 20;
+    if(nApollon > 0 && nApollon >= nLastCount)
+        nStop = nApollon + 20;
     LogPrintf("%s : nLastCount=%d nStop=%d\n", __func__, nLastCount, nStop - 1);
     for (; nLastCount <= nStop; ++nLastCount) {
         if (ShutdownRequested())
@@ -314,25 +314,25 @@ void CHDMintWallet::SyncWithChain(bool fGenerateMintPool, boost::optional<std::l
                     break;
                 }
 
-                CBlockIndex* pindex = nullptr;
-                if (mapBlockIndex.count(hashBlock))
-                    pindex = mapBlockIndex.at(hashBlock);
+                CBlockApollon* papollon = nullptr;
+                if (mapBlockApollon.count(hashBlock))
+                    papollon = mapBlockApollon.at(hashBlock);
 
                 if (!setAddedTx.count(txHash)) {
                     CBlock block;
                     CWalletTx wtx(pwalletMain, tx);
-                    if (pindex && ReadBlockFromDisk(block, pindex, Params().GetConsensus())) {
+                    if (papollon && ReadBlockFromDisk(block, papollon, Params().GetConsensus())) {
                         LOCK(cs_main);
                         wtx.SetMerkleBranch(block);
                     }
 
                     //Fill out wtx so that a transaction record can be created
-                    wtx.nTimeReceived = pindex->GetBlockTime();
+                    wtx.nTimeReceived = papollon->GetBlockTime();
                     pwalletMain->AddToWallet(wtx, false, &walletdb);
                     setAddedTx.insert(txHash);
                 }
 
-                if(!SetMintSeedSeen(pMint, pindex->nHeight, txHash, denomination.get()))
+                if(!SetMintSeedSeen(pMint, papollon->nHeight, txHash, denomination.get()))
                     continue;
 
                 // Only update if the current hashSeedMaster matches the mints'
@@ -419,14 +419,14 @@ bool CHDMintWallet::SetMintSeedSeen(std::pair<uint256,MintPoolEntry> mintPoolEnt
         LogPrintf("%s: Mint object is spent. Setting used..\n", __func__);
         dMint.SetUsed(true);
         CWalletTx wtx(pwalletMain, txSpend);
-        CBlockIndex* pindex = chainActive[nHeightTx];
+        CBlockApollon* papollon = chainActive[nHeightTx];
         CBlock block;
-        if (ReadBlockFromDisk(block, pindex, Params().GetConsensus())) {
+        if (ReadBlockFromDisk(block, papollon, Params().GetConsensus())) {
             LOCK(cs_main);
             wtx.SetMerkleBranch(block);
         }
 
-        wtx.nTimeReceived = pindex->nTime;
+        wtx.nTimeReceived = papollon->nTime;
         pwalletMain->AddToWallet(wtx, false, &walletdb);
     }
 
@@ -440,7 +440,7 @@ bool CHDMintWallet::SetMintSeedSeen(std::pair<uint256,MintPoolEntry> mintPoolEnt
 /**
  * Convert a 512-bit mint seed into a mint. 
  *
- * See https://github.com/IndexChain/Apollon/pull/392 for specification on mint generation.
+ * See https://github.com/ApollonChain/Apollon/pull/392 for specification on mint generation.
  * 
  * @param mintSeed uint512 object of seed for mint
  * @param commit reference to public coin. Is set in this function
@@ -479,7 +479,7 @@ bool CHDMintWallet::SeedToMint(const uint512& mintSeed, GroupElement& commit, si
 /**
  * Get seed ID for the key used in mint generation.
  *
- * See https://github.com/IndexChain/Apollon/pull/392 for specification on mint generation.
+ * See https://github.com/ApollonChain/Apollon/pull/392 for specification on mint generation.
  * Looks to the mintpool first - if mint doesn't exist, generates new mints in the mintpool.
  * 
  * @param nCount count in the HD Chain of the mint to use.
@@ -505,7 +505,7 @@ CKeyID CHDMintWallet::GetMintSeedID(int32_t nCount){
 /**
  * Create the mint seed for the count passed.
  *
- * See https://github.com/IndexChain/Apollon/pull/392 for specification on mint generation.
+ * See https://github.com/ApollonChain/Apollon/pull/392 for specification on mint generation.
  * We check if the key for the count passed exists. if so retrieve it's seed ID. if not, generate a new key.
  * If seedId is passed, use that seedId and ignore key generation section.
  * Following that, get the key, and use it to generate the mint seed according to the specification.
@@ -522,14 +522,14 @@ bool CHDMintWallet::CreateMintSeed(uint512& mintSeed, const int32_t& nCount, CKe
 
     if(seedId.IsNull()){
         CPubKey pubKey;
-        int32_t chainIndex = pwalletMain->GetHDChain().nExternalChainCounters[BIP44_MINT_INDEX];
-        if(nCount==chainIndex){
-            // If chainIndex is the same as n (ie. we are generating next available key), generate a new key.
-            pubKey = pwalletMain->GenerateNewKey(BIP44_MINT_INDEX);
+        int32_t chainApollon = pwalletMain->GetHDChain().nExternalChainCounters[BIP44_MINT_APOLLON];
+        if(nCount==chainApollon){
+            // If chainApollon is the same as n (ie. we are generating next available key), generate a new key.
+            pubKey = pwalletMain->GenerateNewKey(BIP44_MINT_APOLLON);
         }
-        else if(nCount<chainIndex){
+        else if(nCount<chainApollon){
             // if it's less than the current chain apollon, we are regenerating the mintpool. get the key at n
-            pubKey = pwalletMain->GetKeyFromKeypath(BIP44_MINT_INDEX, nCount);
+            pubKey = pwalletMain->GetKeyFromKeypath(BIP44_MINT_APOLLON, nCount);
         }
         else{
             throw ZerocoinException("Unable to retrieve mint seed ID (internal apollon greater than HDChain apollon). \n"
@@ -670,7 +670,7 @@ bool CHDMintWallet::GetHDMintFromMintPoolEntry(const sigma::CoinDenomination den
  */
 bool CHDMintWallet::GenerateMint(const sigma::CoinDenomination denom, sigma::PrivateCoin& coin, CHDMint& dMint, boost::optional<MintPoolEntry> mintPoolEntry, bool fAllowUnsynced)
 {
-    if(!indexnodeSync.IsBlockchainSynced() && !fAllowUnsynced && !(Params().NetworkIDString() == CBaseChainParams::REGTEST))
+    if(!apollonnodeSync.IsBlockchainSynced() && !fAllowUnsynced && !(Params().NetworkIDString() == CBaseChainParams::REGTEST))
         throw ZerocoinException("Unable to generate mint: Blockchain not yet synced.");
 
     if(mintPoolEntry!=boost::none)

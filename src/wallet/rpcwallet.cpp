@@ -22,11 +22,11 @@
 #include "wallet.h"
 #include "walletdb.h"
 #include "hdmint/tracker.h"
-#include "indexnode-sync.h"
+#include "apollonnode-sync.h"
 #include "zerocoin.h"
 #include "walletexcept.h"
 
-#include <indexnode-payments.h>
+#include <apollonnode-payments.h>
 
 #include <stdint.h>
 
@@ -121,8 +121,8 @@ void WalletTxToJSON(const CWalletTx& wtx, UniValue& entry)
     if (confirms > 0)
     {
         entry.push_back(Pair("blockhash", wtx.hashBlock.GetHex()));
-        entry.push_back(Pair("blockindex", wtx.nIndex));
-        entry.push_back(Pair("blocktime", mapBlockIndex[wtx.hashBlock]->GetBlockTime()));
+        entry.push_back(Pair("blockapollon", wtx.nApollon));
+        entry.push_back(Pair("blocktime", mapBlockApollon[wtx.hashBlock]->GetBlockTime()));
     } else {
         entry.push_back(Pair("trusted", wtx.IsTrusted()));
     }
@@ -173,7 +173,7 @@ UniValue getnewaddress(const UniValue& params, bool fHelp)
             "\nArguments:\n"
             "1. \"account\"        (string, optional) DEPRECATED. The account name for the address to be linked to. If not provided, the default account \"\" is used. It can also be set to the empty string \"\" to represent the default account. The account does not need to exist, it will be created if there is no account by the given name.\n"
             "\nResult:\n"
-            "\"indexaddress\"    (string) The new Apollon address\n"
+            "\"apollonaddress\"    (string) The new Apollon address\n"
             "\nExamples:\n"
             + HelpExampleCli("getnewaddress", "")
             + HelpExampleRpc("getnewaddress", "")
@@ -237,7 +237,7 @@ UniValue getaccountaddress(const UniValue& params, bool fHelp)
             "\nArguments:\n"
             "1. \"account\"       (string, required) The account name for the address. It can also be set to the empty string \"\" to represent the default account. The account does not need to exist, it will be created and a new address created  if there is no account by the given name.\n"
             "\nResult:\n"
-            "\"indexaddress\"   (string) The account Apollon address\n"
+            "\"apollonaddress\"   (string) The account Apollon address\n"
             "\nExamples:\n"
             + HelpExampleCli("getaccountaddress", "")
             + HelpExampleCli("getaccountaddress", "\"\"")
@@ -299,10 +299,10 @@ UniValue setaccount(const UniValue& params, bool fHelp)
 
     if (fHelp || params.size() < 1 || params.size() > 2)
         throw runtime_error(
-            "setaccount \"indexaddress\" \"account\"\n"
+            "setaccount \"apollonaddress\" \"account\"\n"
             "\nDEPRECATED. Sets the account associated with the given address.\n"
             "\nArguments:\n"
-            "1. \"indexaddress\"  (string, required) The Apollon address to be associated with an account.\n"
+            "1. \"apollonaddress\"  (string, required) The Apollon address to be associated with an account.\n"
             "2. \"account\"         (string, required) The account to assign the address to.\n"
             "\nExamples:\n"
             + HelpExampleCli("setaccount", "\"1D1ZrZNe3JUo7ZycKEYQQiQAWd9y54F4XZ\" \"tabby\"")
@@ -345,10 +345,10 @@ UniValue getaccount(const UniValue& params, bool fHelp)
 
     if (fHelp || params.size() != 1)
         throw runtime_error(
-            "getaccount \"indexaddress\"\n"
+            "getaccount \"apollonaddress\"\n"
             "\nDEPRECATED. Returns the account associated with the given address.\n"
             "\nArguments:\n"
-            "1. \"indexaddress\"  (string, required) The Apollon address for account lookup.\n"
+            "1. \"apollonaddress\"  (string, required) The Apollon address for account lookup.\n"
             "\nResult:\n"
             "\"accountname\"        (string) the account address\n"
             "\nExamples:\n"
@@ -399,7 +399,7 @@ UniValue getaddressesbyaccount(const UniValue& params, bool fHelp)
             "1. \"account\"  (string, required) The account name.\n"
             "\nResult:\n"
             "[                     (json array of string)\n"
-            "  \"indexaddress\"  (string) a Apollon address associated with the given account\n"
+            "  \"apollonaddress\"  (string) a Apollon address associated with the given account\n"
             "  ,...\n"
             "]\n"
             "\nExamples:\n"
@@ -466,11 +466,11 @@ UniValue sendtoaddress(const UniValue& params, bool fHelp)
 
     if (fHelp || params.size() < 2 || params.size() > 5)
         throw runtime_error(
-            "sendtoaddress \"indexaddress\" amount ( \"comment\" \"comment-to\" subtractfeefromamount )\n"
+            "sendtoaddress \"apollonaddress\" amount ( \"comment\" \"comment-to\" subtractfeefromamount )\n"
             "\nSend an amount to a given address.\n"
             + HelpRequiringPassphrase() +
             "\nArguments:\n"
-            "1. \"indexaddress\"  (string, required) The Apollon address to send to.\n"
+            "1. \"apollonaddress\"  (string, required) The Apollon address to send to.\n"
             "2. \"amount\"      (numeric or string, required) The amount in " + CURRENCY_UNIT + " to send. eg 0.1\n"
             "3. \"comment\"     (string, optional) A comment used to store what the transaction is for. \n"
             "                             This is not part of the transaction, just kept in your wallet.\n"
@@ -532,7 +532,7 @@ UniValue listaddressgroupings(const UniValue& params, bool fHelp)
             "[\n"
             "  [\n"
             "    [\n"
-            "      \"indexaddress\",     (string) The Apollon address\n"
+            "      \"apollonaddress\",     (string) The Apollon address\n"
             "      amount,                 (numeric) The amount in " + CURRENCY_UNIT + "\n"
             "      \"account\"             (string, optional) The account (DEPRECATED)\n"
             "    ]\n"
@@ -575,11 +575,11 @@ UniValue signmessage(const UniValue& params, bool fHelp)
 
     if (fHelp || params.size() != 2)
         throw runtime_error(
-            "signmessage \"indexaddress\" \"message\"\n"
+            "signmessage \"apollonaddress\" \"message\"\n"
             "\nSign a message with the private key of an address"
             + HelpRequiringPassphrase() + "\n"
             "\nArguments:\n"
-            "1. \"indexaddress\"  (string, required) The Apollon address to use for the private key.\n"
+            "1. \"apollonaddress\"  (string, required) The Apollon address to use for the private key.\n"
             "2. \"message\"         (string, required) The message to create a signature of.\n"
             "\nResult:\n"
             "\"signature\"          (string) The signature of the message encoded in base 64\n"
@@ -631,10 +631,10 @@ UniValue getreceivedbyaddress(const UniValue& params, bool fHelp)
 
     if (fHelp || params.size() < 1 || params.size() > 2)
         throw runtime_error(
-            "getreceivedbyaddress \"indexaddress\" ( minconf )\n"
-            "\nReturns the total amount received by the given indexaddress in transactions with at least minconf confirmations.\n"
+            "getreceivedbyaddress \"apollonaddress\" ( minconf )\n"
+            "\nReturns the total amount received by the given apollonaddress in transactions with at least minconf confirmations.\n"
             "\nArguments:\n"
-            "1. \"indexaddress\"  (string, required) The Apollon address for transactions.\n"
+            "1. \"apollonaddress\"  (string, required) The Apollon address for transactions.\n"
             "2. minconf             (numeric, optional, default=1) Only include transactions confirmed at least this many times.\n"
             "\nResult:\n"
             "amount   (numeric) The total amount in " + CURRENCY_UNIT + " received at this address.\n"
@@ -884,12 +884,12 @@ UniValue sendfrom(const UniValue& params, bool fHelp)
 
     if (fHelp || params.size() < 3 || params.size() > 6)
         throw runtime_error(
-            "sendfrom \"fromaccount\" \"toindexaddress\" amount ( minconf \"comment\" \"comment-to\" )\n"
+            "sendfrom \"fromaccount\" \"toapollonaddress\" amount ( minconf \"comment\" \"comment-to\" )\n"
             "\nDEPRECATED (use sendtoaddress). Sent an amount from an account to a Apollon address."
             + HelpRequiringPassphrase() + "\n"
             "\nArguments:\n"
             "1. \"fromaccount\"       (string, required) The name of the account to send funds from. May be the default account using \"\".\n"
-            "2. \"toindexaddress\"  (string, required) The Apollon address to send funds to.\n"
+            "2. \"toapollonaddress\"  (string, required) The Apollon address to send funds to.\n"
             "3. amount                (numeric or string, required) The amount in " + CURRENCY_UNIT + " (transaction fee is added on top).\n"
             "4. minconf               (numeric, optional, default=1) Only use funds with at least this many confirmations.\n"
             "5. \"comment\"           (string, optional) A comment used to store what the transaction is for. \n"
@@ -1077,7 +1077,7 @@ UniValue addmultisigaddress(const UniValue& params, bool fHelp)
             "3. \"account\"      (string, optional) DEPRECATED. An account to assign the addresses to.\n"
 
             "\nResult:\n"
-            "\"indexaddress\"  (string) A Apollon address associated with the keys.\n"
+            "\"apollonaddress\"  (string) A Apollon address associated with the keys.\n"
 
             "\nExamples:\n"
             "\nAdd a multisig address from 2 addresses\n"
@@ -1480,7 +1480,7 @@ void ListTransactions(const CWalletTx& wtx, const string& strAccount, int nMinDe
                     ExtractDestination(payee, payeeDest);
                     CBitcoinAddress payeeAddr(payeeDest);
                     if(addr.ToString() == payeeAddr.ToString()){
-                        entry.push_back(Pair("category", "indexnode"));
+                        entry.push_back(Pair("category", "apollonnode"));
                     }
                     else if (wtx.GetDepthInMainChain() < 1)
                         entry.push_back(Pair("category", "orphan"));
@@ -1542,7 +1542,7 @@ UniValue listtransactions(const UniValue& params, bool fHelp)
             "  {\n"
             "    \"account\":\"accountname\",       (string) DEPRECATED. The account name associated with the transaction. \n"
             "                                                It will be \"\" for the default account.\n"
-            "    \"address\":\"indexaddress\",    (string) The Apollon address of the transaction. Not present for \n"
+            "    \"address\":\"apollonaddress\",    (string) The Apollon address of the transaction. Not present for \n"
             "                                                move transactions (category = move).\n"
             "    \"category\":\"send|receive|move\", (string) The transaction category. 'move' is a local (off blockchain)\n"
             "                                                transaction between accounts, and not associated with an address,\n"
@@ -1561,7 +1561,7 @@ UniValue listtransactions(const UniValue& params, bool fHelp)
             "    \"trusted\": xxx            (bool) Whether we consider the outputs of this unconfirmed transaction safe to spend.\n"
             "    \"blockhash\": \"hashvalue\", (string) The block hash containing the transaction. Available for 'send' and 'receive'\n"
             "                                          category of transactions.\n"
-            "    \"blockindex\": n,          (numeric) The apollon of the transaction in the block that includes it. Available for 'send' and 'receive'\n"
+            "    \"blockapollon\": n,          (numeric) The apollon of the transaction in the block that includes it. Available for 'send' and 'receive'\n"
             "                                          category of transactions.\n"
             "    \"blocktime\": xxx,         (numeric) The block time in seconds since epoch (1 Jan 1970 GMT).\n"
             "    \"txid\": \"transactionid\", (string) The transaction id. Available for 'send' and 'receive' category of transactions.\n"
@@ -1746,7 +1746,7 @@ UniValue listsinceblock(const UniValue& params, bool fHelp)
             "{\n"
             "  \"transactions\": [\n"
             "    \"account\":\"accountname\",       (string) DEPRECATED. The account name associated with the transaction. Will be \"\" for the default account.\n"
-            "    \"address\":\"indexaddress\",    (string) The Apollon address of the transaction. Not present for move transactions (category = move).\n"
+            "    \"address\":\"apollonaddress\",    (string) The Apollon address of the transaction. Not present for move transactions (category = move).\n"
             "    \"category\":\"send|receive\",     (string) The transaction category. 'send' has negative amounts, 'receive' has positive amounts.\n"
             "    \"amount\": x.xxx,          (numeric) The amount in " + CURRENCY_UNIT + ". This is negative for the 'send' category, and for the 'move' category for moves \n"
             "                                          outbound. It is positive for the 'receive' category, and for the 'move' category for inbound funds.\n"
@@ -1754,7 +1754,7 @@ UniValue listsinceblock(const UniValue& params, bool fHelp)
             "    \"fee\": x.xxx,             (numeric) The amount of the fee in " + CURRENCY_UNIT + ". This is negative and only available for the 'send' category of transactions.\n"
             "    \"confirmations\": n,       (numeric) The number of confirmations for the transaction. Available for 'send' and 'receive' category of transactions.\n"
             "    \"blockhash\": \"hashvalue\",     (string) The block hash containing the transaction. Available for 'send' and 'receive' category of transactions.\n"
-            "    \"blockindex\": n,          (numeric) The apollon of the transaction in the block that includes it. Available for 'send' and 'receive' category of transactions.\n"
+            "    \"blockapollon\": n,          (numeric) The apollon of the transaction in the block that includes it. Available for 'send' and 'receive' category of transactions.\n"
             "    \"blocktime\": xxx,         (numeric) The block time in seconds since epoch (1 Jan 1970 GMT).\n"
             "    \"txid\": \"transactionid\",  (string) The transaction id. Available for 'send' and 'receive' category of transactions.\n"
             "    \"time\": xxx,              (numeric) The transaction time in seconds since epoch (Jan 1 1970 GMT).\n"
@@ -1773,7 +1773,7 @@ UniValue listsinceblock(const UniValue& params, bool fHelp)
 
     LOCK2(cs_main, pwalletMain->cs_wallet);
 
-    CBlockIndex *pindex = NULL;
+    CBlockApollon *papollon = NULL;
     int target_confirms = 1;
     isminefilter filter = ISMINE_SPENDABLE;
 
@@ -1782,9 +1782,9 @@ UniValue listsinceblock(const UniValue& params, bool fHelp)
         uint256 blockId;
 
         blockId.SetHex(params[0].get_str());
-        BlockMap::iterator it = mapBlockIndex.find(blockId);
-        if (it != mapBlockIndex.end())
-            pindex = it->second;
+        BlockMap::iterator it = mapBlockApollon.find(blockId);
+        if (it != mapBlockApollon.end())
+            papollon = it->second;
     }
 
     if (params.size() > 1)
@@ -1799,7 +1799,7 @@ UniValue listsinceblock(const UniValue& params, bool fHelp)
         if(params[2].get_bool())
             filter = filter | ISMINE_WATCH_ONLY;
 
-    int depth = pindex ? (1 + chainActive.Height() - pindex->nHeight) : -1;
+    int depth = papollon ? (1 + chainActive.Height() - papollon->nHeight) : -1;
 
     UniValue transactions(UniValue::VARR);
 
@@ -1811,7 +1811,7 @@ UniValue listsinceblock(const UniValue& params, bool fHelp)
             ListTransactions(tx, "*", 0, true, transactions, filter);
     }
 
-    CBlockIndex *pblockLast = chainActive[chainActive.Height() + 1 - target_confirms];
+    CBlockApollon *pblockLast = chainActive[chainActive.Height() + 1 - target_confirms];
     uint256 lastblock = pblockLast ? pblockLast->GetBlockHash() : uint256();
 
     UniValue ret(UniValue::VOBJ);
@@ -1838,7 +1838,7 @@ UniValue gettransaction(const UniValue& params, bool fHelp)
             "  \"amount\" : x.xxx,        (numeric) The transaction amount in " + CURRENCY_UNIT + "\n"
             "  \"confirmations\" : n,     (numeric) The number of confirmations\n"
             "  \"blockhash\" : \"hash\",  (string) The block hash\n"
-            "  \"blockindex\" : xx,       (numeric) The apollon of the transaction in the block that includes it\n"
+            "  \"blockapollon\" : xx,       (numeric) The apollon of the transaction in the block that includes it\n"
             "  \"blocktime\" : ttt,       (numeric) The time in seconds since epoch (1 Jan 1970 GMT)\n"
             "  \"txid\" : \"transactionid\",   (string) The transaction id.\n"
             "  \"time\" : ttt,            (numeric) The transaction time in seconds since epoch (1 Jan 1970 GMT)\n"
@@ -1848,7 +1848,7 @@ UniValue gettransaction(const UniValue& params, bool fHelp)
             "  \"details\" : [\n"
             "    {\n"
             "      \"account\" : \"accountname\",  (string) DEPRECATED. The account name involved in the transaction, can be \"\" for the default account.\n"
-            "      \"address\" : \"indexaddress\",   (string) The Apollon address involved in the transaction\n"
+            "      \"address\" : \"apollonaddress\",   (string) The Apollon address involved in the transaction\n"
             "      \"category\" : \"send|receive\",    (string) The category, either 'send' or 'receive'\n"
             "      \"amount\" : x.xxx,                 (numeric) The amount in " + CURRENCY_UNIT + "\n"
             "      \"label\" : \"label\",              (string) A comment for the address/transaction, if any\n"
@@ -2025,7 +2025,7 @@ UniValue walletpassphrase(const UniValue& params, bool fHelp)
         throw runtime_error(
             "walletpassphrase \"passphrase\" timeout ( stakingonly )\n"
             "\nStores the wallet decryption key in memory for 'timeout' seconds.\n"
-            "This is needed prior to performing transactions related to private keys such as sending indexs\n"
+            "This is needed prior to performing transactions related to private keys such as sending apollons\n"
             "\nArguments:\n"
             "1. \"passphrase\"     (string, required) The wallet passphrase\n"
             "2. timeout            (numeric, required) The time to keep the decryption key in seconds.\n"
@@ -2189,7 +2189,7 @@ UniValue encryptwallet(const UniValue& params, bool fHelp)
             "\nNow set the passphrase to use the wallet, such as for signing or sending bitcoin\n"
             + HelpExampleCli("walletpassphrase", "\"my pass phrase\"") +
             "\nNow we can so something like sign\n"
-            + HelpExampleCli("signmessage", "\"indexaddress\" \"test message\"") +
+            + HelpExampleCli("signmessage", "\"apollonaddress\" \"test message\"") +
             "\nNow lock the wallet again by removing the passphrase\n"
             + HelpExampleCli("walletlock", "") +
             "\nAs a json rpc call\n"
@@ -2725,12 +2725,12 @@ UniValue regeneratemintpool(const UniValue &params, bool fHelp) {
     std::vector<std::pair<uint256, GroupElement>> serialPubcoinPairs = walletdb.ListSerialPubcoinPairs();
 
     // <hashPubcoin, hashSerial>
-    std::pair<uint256,uint256> nIndexes;
+    std::pair<uint256,uint256> nApollones;
 
     uint256 oldHashSerial;
     uint256 oldHashPubcoin;
 
-    bool reindexRequired = false;
+    bool reapollonRequired = false;
 
     for (auto& mintPoolPair : listMintPool){
         LogPrintf("regeneratemintpool: hashPubcoin: %d hashSeedMaster: %d seedId: %d nCount: %s\n",
@@ -2740,21 +2740,21 @@ UniValue regeneratemintpool(const UniValue &params, bool fHelp) {
         bool hasSerial = zwalletMain->GetSerialForPubcoin(serialPubcoinPairs, oldHashPubcoin, oldHashSerial);
 
         MintPoolEntry entry = mintPoolPair.second;
-        nIndexes = zwalletMain->RegenerateMintPoolEntry(get<0>(entry),get<1>(entry),get<2>(entry));
+        nApollones = zwalletMain->RegenerateMintPoolEntry(get<0>(entry),get<1>(entry),get<2>(entry));
 
-        if(nIndexes.first != oldHashPubcoin){
+        if(nApollones.first != oldHashPubcoin){
             walletdb.EraseMintPoolPair(oldHashPubcoin);
-            reindexRequired = true;
+            reapollonRequired = true;
         }
 
-        if(!hasSerial || nIndexes.second != oldHashSerial){
+        if(!hasSerial || nApollones.second != oldHashSerial){
             walletdb.ErasePubcoin(oldHashSerial);
-            reindexRequired = true;
+            reapollonRequired = true;
         }
     }
 
-    if(reindexRequired)
-        throw JSONRPCError(RPC_INTERNAL_ERROR, "Mintpool issue corrected. Please shutdown apollon and restart with -reindex flag.");
+    if(reapollonRequired)
+        throw JSONRPCError(RPC_INTERNAL_ERROR, "Mintpool issue corrected. Please shutdown apollon and restart with -reapollon flag.");
 
     return true;
 }
@@ -3148,11 +3148,11 @@ UniValue spendzerocoin(const UniValue& params, bool fHelp) {
 
     if (fHelp || params.size() < 1 || params.size() > 2)
         throw runtime_error(
-                "spendzerocoin <amount>(1,10,25,50,100) (\"indexaddress\")\n"
+                "spendzerocoin <amount>(1,10,25,50,100) (\"apollonaddress\")\n"
                 + HelpRequiringPassphrase() +
 				"\nArguments:\n"
 				"1. \"amount\"      (numeric or string, required) The amount in " + CURRENCY_UNIT + " to send. currently options are following 1, 10, 25, 50 and 100 only\n"
-				"2. \"indexaddress\"  (string, optional) The Apollon address to send to third party.\n"
+				"2. \"apollonaddress\"  (string, optional) The Apollon address to send to third party.\n"
 				"\nExamples:\n"
 				            + HelpExampleCli("spendzerocoin", "10 \"a1kCCGddf5pMXSipLVD9hBG2MGGVNaJ15U\"")
         );
@@ -3179,7 +3179,7 @@ UniValue spendzerocoin(const UniValue& params, bool fHelp) {
         nAmount = AmountFromValue(params[0]);
     } else {
         throw runtime_error(
-                "spendzerocoin <amount>(1,10,25,50,100) (\"indexaddress\")\n");
+                "spendzerocoin <amount>(1,10,25,50,100) (\"apollonaddress\")\n");
     }
 
     CBitcoinAddress address;
@@ -3301,7 +3301,7 @@ UniValue spendmanyzerocoin(const UniValue& params, bool fHelp) {
                 break;
             default:
                 throw runtime_error(
-                    "spendmanyzerocoin <amount>(1,10,25,50,100) (\"indexaddress\")\n");
+                    "spendmanyzerocoin <amount>(1,10,25,50,100) (\"apollonaddress\")\n");
         }
         for(int64_t j=0; j<amount; j++){
             denominations.push_back(std::make_pair(value * COIN, denomination));
@@ -3358,7 +3358,7 @@ UniValue spendmany(const UniValue& params, bool fHelp) {
                 "4. \"comment\"             (string, optional) A comment\n"
                 "5. subtractfeefromamount   (string, optional) A json array with addresses.\n"
                 "                           The fee will be equally deducted from the amount of each selected address.\n"
-                "                           Those recipients will receive less indexs than you enter in their corresponding amount field.\n"
+                "                           Those recipients will receive less apollons than you enter in their corresponding amount field.\n"
                 "                           If no addresses are specified here, the sender pays the fee.\n"
                 "    [\n"
                 "      \"address\"            (string) Subtract fee from this address\n"
@@ -4081,11 +4081,11 @@ UniValue removetxwallet(const UniValue& params, bool fHelp) {
 
 
 
-extern UniValue dumpprivkey_index(const UniValue& params, bool fHelp); // in rpcdump.cpp
+extern UniValue dumpprivkey_apollon(const UniValue& params, bool fHelp); // in rpcdump.cpp
 extern UniValue importprivkey(const UniValue& params, bool fHelp);
 extern UniValue importaddress(const UniValue& params, bool fHelp);
 extern UniValue importpubkey(const UniValue& params, bool fHelp);
-extern UniValue dumpwallet_index(const UniValue& params, bool fHelp);
+extern UniValue dumpwallet_apollon(const UniValue& params, bool fHelp);
 extern UniValue importwallet(const UniValue& params, bool fHelp);
 extern UniValue importprunedfunds(const UniValue& params, bool fHelp);
 extern UniValue removeprunedfunds(const UniValue& params, bool fHelp);
@@ -4099,8 +4099,8 @@ static const CRPCCommand rpcCommands[] =
     { "wallet",             "addmultisigaddress",       &addmultisigaddress,       true  },
     { "wallet",             "addwitnessaddress",        &addwitnessaddress,        true  },
     { "wallet",             "backupwallet",             &backupwallet,             true  },
-    { "wallet",             "dumpprivkey",              &dumpprivkey_index,        true  },
-    { "wallet",             "dumpwallet",               &dumpwallet_index,         true  },
+    { "wallet",             "dumpprivkey",              &dumpprivkey_apollon,        true  },
+    { "wallet",             "dumpwallet",               &dumpwallet_apollon,         true  },
     { "wallet",             "encryptwallet",            &encryptwallet,            true  },
     { "wallet",             "getaccountaddress",        &getaccountaddress,        true  },
     { "wallet",             "getaccount",               &getaccount,               true  },
@@ -4169,6 +4169,6 @@ static const CRPCCommand rpcCommands[] =
 
 void RegisterWalletRPCCommands(CRPCTable &tableRPC)
 {
-    for (unsigned int vcidx = 0; vcidx < ARRAYLEN(rpcCommands); vcidx++)
-        tableRPC.appendCommand(rpcCommands[vcidx].name, &rpcCommands[vcidx]);
+    for (unsigned int vcxap = 0; vcxap < ARRAYLEN(rpcCommands); vcxap++)
+        tableRPC.appendCommand(rpcCommands[vcxap].name, &rpcCommands[vcxap]);
 }

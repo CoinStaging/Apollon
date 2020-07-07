@@ -48,7 +48,7 @@ During the first startup historical Omni transactions are reprocessed and Omni C
 Downgrading
 -----------
 
-Downgrading to an Omni Core version prior 0.0.12 is generally not supported as older versions will not provide accurate information due to the changes in consensus rules. Downgrading to Omni Core 0.0.12 can require a reindex of the blockchain, and is not recommended.
+Downgrading to an Omni Core version prior 0.0.12 is generally not supported as older versions will not provide accurate information due to the changes in consensus rules. Downgrading to Omni Core 0.0.12 can require a reapollon of the blockchain, and is not recommended.
 
 Compatibility with Bitcoin Core
 -------------------------------

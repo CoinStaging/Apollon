@@ -886,14 +886,14 @@ rep_hist_load_mtbf_data(time_t now)
       have_mtbf = 1;
     } else {
       // format == 2.
-      int mtbf_idx, wfu_idx;
+      int mtbf_xap, wfu_xap;
       if (strcmpstart(line, "R ") || strlen(line) < 2+HEX_DIGEST_LEN)
         continue;
       strlcpy(hexbuf, line+2, sizeof(hexbuf));
-      mtbf_idx = find_next_with(lines, i+1, "+MTBF ");
-      wfu_idx = find_next_with(lines, i+1, "+WFU ");
-      if (mtbf_idx >= 0) {
-        const char *mtbfline = smartlist_get(lines, mtbf_idx);
+      mtbf_xap = find_next_with(lines, i+1, "+MTBF ");
+      wfu_xap = find_next_with(lines, i+1, "+WFU ");
+      if (mtbf_xap >= 0) {
+        const char *mtbfline = smartlist_get(lines, mtbf_xap);
         n = tor_sscanf(mtbfline, "+MTBF %lu %lf S=%10s %8s",
                    &wrl, &trw, mtbf_timebuf, mtbf_timebuf+11);
         if (n == 2 || n == 4) {
@@ -903,8 +903,8 @@ rep_hist_load_mtbf_data(time_t now)
                    escaped(mtbfline));
         }
       }
-      if (wfu_idx >= 0) {
-        const char *wfuline = smartlist_get(lines, wfu_idx);
+      if (wfu_xap >= 0) {
+        const char *wfuline = smartlist_get(lines, wfu_xap);
         n = tor_sscanf(wfuline, "+WFU %lu %lu S=%10s %8s",
                    &wt_uptime, &total_wt_time,
                    wfu_timebuf, wfu_timebuf+11);
@@ -914,10 +914,10 @@ rep_hist_load_mtbf_data(time_t now)
           log_warn(LD_HIST, "Couldn't scan +WFU line %s", escaped(wfuline));
         }
       }
-      if (wfu_idx > i)
-        i = wfu_idx;
-      if (mtbf_idx > i)
-        i = mtbf_idx;
+      if (wfu_xap > i)
+        i = wfu_xap;
+      if (mtbf_xap > i)
+        i = mtbf_xap;
     }
     if (base16_decode(digest, DIGEST_LEN,
                       hexbuf, HEX_DIGEST_LEN) != DIGEST_LEN) {
@@ -990,10 +990,10 @@ struct bw_array_t {
   /** Observation array: Total number of bytes transferred in each of the last
    * NUM_SECS_ROLLING_MEASURE seconds. This is used as a circular array. */
   uint64_t obs[NUM_SECS_ROLLING_MEASURE];
-  int cur_obs_idx; /**< Current position in obs. */
-  time_t cur_obs_time; /**< Time represented in obs[cur_obs_idx] */
+  int cur_obs_xap; /**< Current position in obs. */
+  time_t cur_obs_time; /**< Time represented in obs[cur_obs_xap] */
   uint64_t total_obs; /**< Total for all members of obs except
-                       * obs[cur_obs_idx] */
+                       * obs[cur_obs_xap] */
   uint64_t max_total; /**< Largest value that total_obs has taken on in the
                        * current period. */
   uint64_t total_in_period; /**< Total bytes transferred in the current
@@ -1003,7 +1003,7 @@ struct bw_array_t {
   time_t next_period;
   /** Where in 'maxima' should the maximum bandwidth usage for the current
    * period be stored? */
-  int next_max_idx;
+  int next_max_xap;
   /** How many values in maxima/totals have been set ever? */
   int num_maxes_set;
   /** Circular array of the maximum
@@ -1020,13 +1020,13 @@ STATIC void
 commit_max(bw_array_t *b)
 {
   /* Store total from current period. */
-  b->totals[b->next_max_idx] = b->total_in_period;
+  b->totals[b->next_max_xap] = b->total_in_period;
   /* Store maximum from current period. */
-  b->maxima[b->next_max_idx++] = b->max_total;
-  /* Advance next_period and next_max_idx */
+  b->maxima[b->next_max_xap++] = b->max_total;
+  /* Advance next_period and next_max_xap */
   b->next_period += NUM_SECS_BW_SUM_INTERVAL;
-  if (b->next_max_idx == NUM_TOTALS)
-    b->next_max_idx = 0;
+  if (b->next_max_xap == NUM_TOTALS)
+    b->next_max_xap = 0;
   if (b->num_maxes_set < NUM_TOTALS)
     ++b->num_maxes_set;
   /* Reset max_total. */
@@ -1039,22 +1039,22 @@ commit_max(bw_array_t *b)
 STATIC void
 advance_obs(bw_array_t *b)
 {
-  int nextidx;
+  int nextxap;
   uint64_t total;
 
   /* Calculate the total bandwidth for the last NUM_SECS_ROLLING_MEASURE
    * seconds; adjust max_total as needed.*/
-  total = b->total_obs + b->obs[b->cur_obs_idx];
+  total = b->total_obs + b->obs[b->cur_obs_xap];
   if (total > b->max_total)
     b->max_total = total;
 
-  nextidx = b->cur_obs_idx+1;
-  if (nextidx == NUM_SECS_ROLLING_MEASURE)
-    nextidx = 0;
+  nextxap = b->cur_obs_xap+1;
+  if (nextxap == NUM_SECS_ROLLING_MEASURE)
+    nextxap = 0;
 
-  b->total_obs = total - b->obs[nextidx];
-  b->obs[nextidx]=0;
-  b->cur_obs_idx = nextidx;
+  b->total_obs = total - b->obs[nextxap];
+  b->obs[nextxap]=0;
+  b->cur_obs_xap = nextxap;
 
   if (++b->cur_obs_time >= b->next_period)
     commit_max(b);
@@ -1069,7 +1069,7 @@ add_obs(bw_array_t *b, time_t when, uint64_t n)
     return; /* Don't record data in the past. */
 
   /* If we're currently adding observations for an earlier second than
-   * 'when', advance b->cur_obs_time and b->cur_obs_idx by an
+   * 'when', advance b->cur_obs_time and b->cur_obs_xap by an
    * appropriate number of seconds, and do all the other housekeeping. */
   while (when > b->cur_obs_time) {
     /* Doing this one second at a time is potentially inefficient, if we start
@@ -1078,7 +1078,7 @@ add_obs(bw_array_t *b, time_t when, uint64_t n)
     advance_obs(b);
   }
 
-  b->obs[b->cur_obs_idx] += n;
+  b->obs[b->cur_obs_xap] += n;
   b->total_in_period += n;
 }
 
@@ -1236,13 +1236,13 @@ rep_hist_fill_bandwidth_history(char *buf, size_t len, const bw_array_t *b)
   const or_options_t *options = get_options();
   uint64_t cutoff;
 
-  if (b->num_maxes_set <= b->next_max_idx) {
+  if (b->num_maxes_set <= b->next_max_xap) {
     /* We haven't been through the circular array yet; time starts at i=0.*/
     i = 0;
   } else {
     /* We've been around the array at least once.  The next i to be
        overwritten is the oldest. */
-    i = b->next_max_idx;
+    i = b->next_max_xap;
   }
 
   if (options->RelayBandwidthRate) {
@@ -1375,7 +1375,7 @@ rep_hist_update_bwhist_state_section(or_state_t *state,
   *s_values = smartlist_new();
   *s_maxima = smartlist_new();
   /* Set i to first position in circular array */
-  i = (b->num_maxes_set <= b->next_max_idx) ? 0 : b->next_max_idx;
+  i = (b->num_maxes_set <= b->next_max_xap) ? 0 : b->next_max_xap;
   for (j=0; j < b->num_maxes_set; ++j,++i) {
     if (i >= NUM_TOTALS)
       i = 0;
@@ -1444,7 +1444,7 @@ rep_hist_load_bwhist_state_section(bw_array_t *b,
         const char *maxstr = NULL;
         v = tor_parse_uint64(cp, 10, 0, UINT64_MAX, &ok, NULL);
         if (have_maxima) {
-          maxstr = smartlist_get(s_maxima, cp_sl_idx);
+          maxstr = smartlist_get(s_maxima, cp_sl_xap);
           mv = tor_parse_uint64(maxstr, 10, 0, UINT64_MAX, &ok_m, NULL);
           mv *= NUM_SECS_ROLLING_MEASURE;
         } else {
@@ -1599,7 +1599,7 @@ compare_int_(const void *x, const void *y)
 char *
 rep_hist_format_exit_stats(time_t now)
 {
-  int i, j, top_elements = 0, cur_min_idx = 0, cur_port;
+  int i, j, top_elements = 0, cur_min_xap = 0, cur_port;
   uint64_t top_bytes[EXIT_STATS_TOP_N_PORTS];
   int top_ports[EXIT_STATS_TOP_N_PORTS];
   uint64_t cur_bytes = 0, other_read = 0, other_written = 0,
@@ -1634,8 +1634,8 @@ rep_hist_format_exit_stats(time_t now)
    *    There is no j in 0..i and k in 0..top_elements such that:
    *        volume(j) > top_bytes[k] AND j is not in top_ports[0..top_elements]
    *
-   *    There is no j!=cur_min_idx in 0..top_elements such that:
-   *        top_bytes[j] < top_bytes[cur_min_idx]
+   *    There is no j!=cur_min_xap in 0..top_elements such that:
+   *        top_bytes[j] < top_bytes[cur_min_xap]
    *
    * where volume(x) == exit_bytes_read[x]+exit_bytes_written[x]
    *
@@ -1652,16 +1652,16 @@ rep_hist_format_exit_stats(time_t now)
     if (top_elements < EXIT_STATS_TOP_N_PORTS) {
       top_bytes[top_elements] = cur_bytes;
       top_ports[top_elements++] = i;
-    } else if (cur_bytes > top_bytes[cur_min_idx]) {
-      top_bytes[cur_min_idx] = cur_bytes;
-      top_ports[cur_min_idx] = i;
+    } else if (cur_bytes > top_bytes[cur_min_xap]) {
+      top_bytes[cur_min_xap] = cur_bytes;
+      top_ports[cur_min_xap] = i;
     } else {
       continue;
     }
-    cur_min_idx = 0;
+    cur_min_xap = 0;
     for (j = 1; j < top_elements; j++) {
-      if (top_bytes[j] < top_bytes[cur_min_idx]) {
-        cur_min_idx = j;
+      if (top_bytes[j] < top_bytes[cur_min_xap]) {
+        cur_min_xap = j;
       }
     }
   }

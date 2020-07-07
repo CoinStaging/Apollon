@@ -9,10 +9,10 @@
 #include "sigmaprimitives.h"
 #include "walletmodels.h"
 
-#include <boost/multi_index_container.hpp>
-#include <boost/multi_index/hashed_index.hpp>
-#include <boost/multi_index/member.hpp>
-#include <boost/multi_index/ordered_index.hpp>
+#include <boost/multi_apollon_container.hpp>
+#include <boost/multi_apollon/hashed_apollon.hpp>
+#include <boost/multi_apollon/member.hpp>
+#include <boost/multi_apollon/ordered_apollon.hpp>
 #include <boost/optional.hpp>
 
 #include "../crypto/hmac_sha256.h"
@@ -52,16 +52,16 @@ public:
         }
     };
 
-    typedef boost::multi_index_container<
+    typedef boost::multi_apollon_container<
         MintPoolEntry,
-        boost::multi_index::indexed_by<
+        boost::multi_apollon::apolloned_by<
             // Sequence
-            boost::multi_index::ordered_unique<
-                boost::multi_index::member<MintPoolEntry, uint32_t, &MintPoolEntry::apollon>
+            boost::multi_apollon::ordered_unique<
+                boost::multi_apollon::member<MintPoolEntry, uint32_t, &MintPoolEntry::apollon>
             >,
             // Public Key apollon
-            boost::multi_index::hashed_unique<
-                boost::multi_index::member<MintPoolEntry, SigmaPublicKey, &MintPoolEntry::key>,
+            boost::multi_apollon::hashed_unique<
+                boost::multi_apollon::member<MintPoolEntry, SigmaPublicKey, &MintPoolEntry::key>,
                 std::hash<SigmaPublicKey>
             >
         >
@@ -126,10 +126,10 @@ public:
 protected:
     uint32_t GenerateNewSeed(CKeyID &seedId, uint512 &seed);
     uint32_t GenerateSeed(CKeyID const &seedId, uint512 &seed);
-    uint32_t GetSeedIndex(CKeyID const &seedId, uint32_t &change);
+    uint32_t GetSeedApollon(CKeyID const &seedId, uint32_t &change);
 
 protected:
-    virtual uint32_t BIP44ChangeIndex() const = 0;
+    virtual uint32_t BIP44ChangeApollon() const = 0;
     virtual SigmaPrivateKey GeneratePrivateKey(uint512 const &seed) = 0;
 
     // Mint updating

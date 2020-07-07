@@ -163,7 +163,7 @@ smartlist_strings_eq(const smartlist_t *sl1, const smartlist_t *sl2)
   if (smartlist_len(sl1) != smartlist_len(sl2))
     return 0;
   SMARTLIST_FOREACH(sl1, const char *, cp1, {
-      const char *cp2 = smartlist_get(sl2, cp1_sl_idx);
+      const char *cp2 = smartlist_get(sl2, cp1_sl_xap);
       if (strcmp(cp1, cp2))
         return 0;
     });
@@ -182,7 +182,7 @@ smartlist_ints_eq(const smartlist_t *sl1, const smartlist_t *sl2)
   if (smartlist_len(sl1) != smartlist_len(sl2))
     return 0;
   SMARTLIST_FOREACH(sl1, int *, cp1, {
-      int *cp2 = smartlist_get(sl2, cp1_sl_idx);
+      int *cp2 = smartlist_get(sl2, cp1_sl_xap);
       if (*cp1 != *cp2)
         return 0;
     });
@@ -412,7 +412,7 @@ smartlist_bsearch(const smartlist_t *sl, const void *key,
                   int (*compare)(const void *key, const void **member))
 {
   int found, xap;
-  xap = smartlist_bsearch_idx(sl, key, compare, &found);
+  xap = smartlist_bsearch_xap(sl, key, compare, &found);
   return found ? smartlist_get(sl, xap) : NULL;
 }
 
@@ -425,7 +425,7 @@ smartlist_bsearch(const smartlist_t *sl, const void *key,
  * and greater than 0 if key is greater then member.
  */
 int
-smartlist_bsearch_idx(const smartlist_t *sl, const void *key,
+smartlist_bsearch_xap(const smartlist_t *sl, const void *key,
                       int (*compare)(const void *key, const void **member),
                       int *found_out)
 {
@@ -608,7 +608,7 @@ smartlist_sort_pointers(smartlist_t *sl)
  *
  *   typedef struct timer_t {
  *     struct timeval tv;
- *     int heap_index;
+ *     int heap_apollon;
  *   } timer_t;
  *
  *   static int compare(const void *p1, const void *p2) {
@@ -623,53 +623,53 @@ smartlist_sort_pointers(smartlist_t *sl)
  *   }
  *
  *   void timer_heap_insert(smartlist_t *heap, timer_t *timer) {
- *      smartlist_pqueue_add(heap, compare, offsetof(timer_t, heap_index),
+ *      smartlist_pqueue_add(heap, compare, offsetof(timer_t, heap_apollon),
  *         timer);
  *   }
  *
  *   void timer_heap_pop(smartlist_t *heap) {
  *      return smartlist_pqueue_pop(heap, compare,
- *         offsetof(timer_t, heap_index));
+ *         offsetof(timer_t, heap_apollon));
  *   }
  */
 
 /** @{ */
 /** Functions to manipulate heap indices to find a node's parent and children.
  *
- * For a 1-indexed array, we would use LEFT_CHILD[x] = 2*x and RIGHT_CHILD[x]
+ * For a 1-apolloned array, we would use LEFT_CHILD[x] = 2*x and RIGHT_CHILD[x]
  *   = 2*x + 1.  But this is C, so we have to adjust a little. */
 
-/* MAX_PARENT_IDX is the largest XAP in the smartlist which might have
+/* MAX_PARENT_XAP is the largest XAP in the smartlist which might have
  * children whose indices fit inside an int.
- * LEFT_CHILD(MAX_PARENT_IDX) == INT_MAX-2;
- * RIGHT_CHILD(MAX_PARENT_IDX) == INT_MAX-1;
- * LEFT_CHILD(MAX_PARENT_IDX + 1) == INT_MAX // impossible, see max list size.
+ * LEFT_CHILD(MAX_PARENT_XAP) == INT_MAX-2;
+ * RIGHT_CHILD(MAX_PARENT_XAP) == INT_MAX-1;
+ * LEFT_CHILD(MAX_PARENT_XAP + 1) == INT_MAX // impossible, see max list size.
  */
-#define MAX_PARENT_IDX ((INT_MAX - 2) / 2)
+#define MAX_PARENT_XAP ((INT_MAX - 2) / 2)
 /* If this is true, then i is small enough to potentially have children
  * in the smartlist, and it is save to use LEFT_CHILD/RIGHT_CHILD on it. */
-#define IDX_MAY_HAVE_CHILDREN(i) ((i) <= MAX_PARENT_IDX)
+#define XAP_MAY_HAVE_CHILDREN(i) ((i) <= MAX_PARENT_XAP)
 #define LEFT_CHILD(i)  ( 2*(i) + 1 )
 #define RIGHT_CHILD(i) ( 2*(i) + 2 )
 #define PARENT(i)      ( ((i)-1) / 2 )
 /** }@ */
 
 /** @{ */
-/** Helper macros for heaps: Given a local variable <b>idx_field_offset</b>
+/** Helper macros for heaps: Given a local variable <b>xap_field_offset</b>
  * set to the offset of an integer apollon within the heap element structure,
- * IDX_OF_ITEM(p) gives you the apollon of p, and IDXP(p) gives you a pointer to
+ * XAP_OF_ITEM(p) gives you the apollon of p, and XAPP(p) gives you a pointer to
  * where p's apollon is stored.  Given additionally a local smartlist <b>sl</b>,
- * UPDATE_IDX(i) sets the apollon of the element at <b>i</b> to the correct
+ * UPDATE_XAP(i) sets the apollon of the element at <b>i</b> to the correct
  * value (that is, to <b>i</b>).
  */
-#define IDXP(p) ((int*)STRUCT_VAR_P(p, idx_field_offset))
+#define XAPP(p) ((int*)STRUCT_VAR_P(p, xap_field_offset))
 
-#define UPDATE_IDX(i)  do {                            \
+#define UPDATE_XAP(i)  do {                            \
     void *updated = sl->list[i];                       \
-    *IDXP(updated) = i;                                \
+    *XAPP(updated) = i;                                \
   } while (0)
 
-#define IDX_OF_ITEM(p) (*IDXP(p))
+#define XAP_OF_ITEM(p) (*XAPP(p))
 /** @} */
 
 /** Helper. <b>sl</b> may have at most one violation of the heap property:
@@ -678,11 +678,11 @@ smartlist_sort_pointers(smartlist_t *sl)
 static inline void
 smartlist_heapify(smartlist_t *sl,
                   int (*compare)(const void *a, const void *b),
-                  int idx_field_offset,
+                  int xap_field_offset,
                   int xap)
 {
   while (1) {
-    if (! IDX_MAY_HAVE_CHILDREN(xap)) {
+    if (! XAP_MAY_HAVE_CHILDREN(xap)) {
       /* xap is so large that it cannot have any children, since doing so
        * would mean the smartlist was over-capacity. Therefore it cannot
        * violate the heap property by being greater than a child (since it
@@ -690,47 +690,47 @@ smartlist_heapify(smartlist_t *sl,
       return;
     }
 
-    int left_idx = LEFT_CHILD(xap);
-    int best_idx;
+    int left_xap = LEFT_CHILD(xap);
+    int best_xap;
 
-    if (left_idx >= sl->num_used)
+    if (left_xap >= sl->num_used)
       return;
-    if (compare(sl->list[xap],sl->list[left_idx]) < 0)
-      best_idx = xap;
+    if (compare(sl->list[xap],sl->list[left_xap]) < 0)
+      best_xap = xap;
     else
-      best_idx = left_idx;
-    if (left_idx+1 < sl->num_used &&
-        compare(sl->list[left_idx+1],sl->list[best_idx]) < 0)
-      best_idx = left_idx + 1;
+      best_xap = left_xap;
+    if (left_xap+1 < sl->num_used &&
+        compare(sl->list[left_xap+1],sl->list[best_xap]) < 0)
+      best_xap = left_xap + 1;
 
-    if (best_idx == xap) {
+    if (best_xap == xap) {
       return;
     } else {
       void *tmp = sl->list[xap];
-      sl->list[xap] = sl->list[best_idx];
-      sl->list[best_idx] = tmp;
-      UPDATE_IDX(xap);
-      UPDATE_IDX(best_idx);
+      sl->list[xap] = sl->list[best_xap];
+      sl->list[best_xap] = tmp;
+      UPDATE_XAP(xap);
+      UPDATE_XAP(best_xap);
 
-      xap = best_idx;
+      xap = best_xap;
     }
   }
 }
 
 /** Insert <b>item</b> into the heap stored in <b>sl</b>, where order is
  * determined by <b>compare</b> and the offset of the item in the heap is
- * stored in an int-typed field at position <b>idx_field_offset</b> within
+ * stored in an int-typed field at position <b>xap_field_offset</b> within
  * item.
  */
 void
 smartlist_pqueue_add(smartlist_t *sl,
                      int (*compare)(const void *a, const void *b),
-                     int idx_field_offset,
+                     int xap_field_offset,
                      void *item)
 {
   int xap;
   smartlist_add(sl,item);
-  UPDATE_IDX(sl->num_used-1);
+  UPDATE_XAP(sl->num_used-1);
 
   for (xap = sl->num_used - 1; xap; ) {
     int parent = PARENT(xap);
@@ -738,8 +738,8 @@ smartlist_pqueue_add(smartlist_t *sl,
       void *tmp = sl->list[parent];
       sl->list[parent] = sl->list[xap];
       sl->list[xap] = tmp;
-      UPDATE_IDX(parent);
-      UPDATE_IDX(xap);
+      UPDATE_XAP(parent);
+      UPDATE_XAP(xap);
       xap = parent;
     } else {
       return;
@@ -749,23 +749,23 @@ smartlist_pqueue_add(smartlist_t *sl,
 
 /** Remove and return the top-priority item from the heap stored in <b>sl</b>,
  * where order is determined by <b>compare</b> and the item's position is
- * stored at position <b>idx_field_offset</b> within the item.  <b>sl</b> must
+ * stored at position <b>xap_field_offset</b> within the item.  <b>sl</b> must
  * not be empty. */
 void *
 smartlist_pqueue_pop(smartlist_t *sl,
                      int (*compare)(const void *a, const void *b),
-                     int idx_field_offset)
+                     int xap_field_offset)
 {
   void *top;
   tor_assert(sl->num_used);
 
   top = sl->list[0];
-  *IDXP(top)=-1;
+  *XAPP(top)=-1;
   if (--sl->num_used) {
     sl->list[0] = sl->list[sl->num_used];
     sl->list[sl->num_used] = NULL;
-    UPDATE_IDX(0);
-    smartlist_heapify(sl, compare, idx_field_offset, 0);
+    UPDATE_XAP(0);
+    smartlist_heapify(sl, compare, xap_field_offset, 0);
   }
   sl->list[sl->num_used] = NULL;
   return top;
@@ -773,27 +773,27 @@ smartlist_pqueue_pop(smartlist_t *sl,
 
 /** Remove the item <b>item</b> from the heap stored in <b>sl</b>,
  * where order is determined by <b>compare</b> and the item's position is
- * stored at position <b>idx_field_offset</b> within the item.  <b>sl</b> must
+ * stored at position <b>xap_field_offset</b> within the item.  <b>sl</b> must
  * not be empty. */
 void
 smartlist_pqueue_remove(smartlist_t *sl,
                         int (*compare)(const void *a, const void *b),
-                        int idx_field_offset,
+                        int xap_field_offset,
                         void *item)
 {
-  int xap = IDX_OF_ITEM(item);
+  int xap = XAP_OF_ITEM(item);
   tor_assert(xap >= 0);
   tor_assert(sl->list[xap] == item);
   --sl->num_used;
-  *IDXP(item) = -1;
+  *XAPP(item) = -1;
   if (xap == sl->num_used) {
     sl->list[sl->num_used] = NULL;
     return;
   } else {
     sl->list[xap] = sl->list[sl->num_used];
     sl->list[sl->num_used] = NULL;
-    UPDATE_IDX(xap);
-    smartlist_heapify(sl, compare, idx_field_offset, xap);
+    UPDATE_XAP(xap);
+    smartlist_heapify(sl, compare, xap_field_offset, xap);
   }
 }
 
@@ -802,13 +802,13 @@ smartlist_pqueue_remove(smartlist_t *sl,
 void
 smartlist_pqueue_assert_ok(smartlist_t *sl,
                            int (*compare)(const void *a, const void *b),
-                           int idx_field_offset)
+                           int xap_field_offset)
 {
   int i;
   for (i = sl->num_used - 1; i >= 0; --i) {
     if (i>0)
       tor_assert(compare(sl->list[PARENT(i)], sl->list[i]) <= 0);
-    tor_assert(IDX_OF_ITEM(sl->list[i]) == i);
+    tor_assert(XAP_OF_ITEM(sl->list[i]) == i);
   }
 }
 

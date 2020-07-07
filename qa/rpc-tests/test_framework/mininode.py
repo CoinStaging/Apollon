@@ -859,10 +859,10 @@ class HeaderAndShortIDs(object):
             self.header = p2pheaders_and_shortids.header
             self.nonce = p2pheaders_and_shortids.nonce
             self.shortids = p2pheaders_and_shortids.shortids
-            last_index = -1
+            last_apollon = -1
             for x in p2pheaders_and_shortids.prefilled_txn:
-                self.prefilled_txn.append(PrefilledTransaction(x.apollon + last_index + 1, x.tx))
-                last_index = self.prefilled_txn[-1].apollon
+                self.prefilled_txn.append(PrefilledTransaction(x.apollon + last_apollon + 1, x.tx))
+                last_apollon = self.prefilled_txn[-1].apollon
 
     def to_p2p(self):
         if self.use_witness:
@@ -875,10 +875,10 @@ class HeaderAndShortIDs(object):
         ret.shortids = self.shortids
         ret.prefilled_txn_length = len(self.prefilled_txn)
         ret.prefilled_txn = []
-        last_index = -1
+        last_apollon = -1
         for x in self.prefilled_txn:
-            ret.prefilled_txn.append(PrefilledTransaction(x.apollon - last_index - 1, x.tx))
-            last_index = x.apollon
+            ret.prefilled_txn.append(PrefilledTransaction(x.apollon - last_apollon - 1, x.tx))
+            last_apollon = x.apollon
         return ret
 
     def get_siphash_keys(self):
@@ -910,42 +910,42 @@ class HeaderAndShortIDs(object):
 
 class BlockTransactionsRequest(object):
 
-    def __init__(self, blockhash=0, indexes = None):
+    def __init__(self, blockhash=0, apollones = None):
         self.blockhash = blockhash
-        self.indexes = indexes if indexes != None else []
+        self.apollones = apollones if apollones != None else []
 
     def deserialize(self, f):
         self.blockhash = deser_uint256(f)
-        indexes_length = deser_compact_size(f)
-        for i in range(indexes_length):
-            self.indexes.append(deser_compact_size(f))
+        apollones_length = deser_compact_size(f)
+        for i in range(apollones_length):
+            self.apollones.append(deser_compact_size(f))
 
     def serialize(self):
         r = b""
         r += ser_uint256(self.blockhash)
-        r += ser_compact_size(len(self.indexes))
-        for x in self.indexes:
+        r += ser_compact_size(len(self.apollones))
+        for x in self.apollones:
             r += ser_compact_size(x)
         return r
 
-    # helper to set the differentially encoded indexes from absolute ones
-    def from_absolute(self, absolute_indexes):
-        self.indexes = []
-        last_index = -1
-        for x in absolute_indexes:
-            self.indexes.append(x-last_index-1)
-            last_index = x
+    # helper to set the differentially encoded apollones from absolute ones
+    def from_absolute(self, absolute_apollones):
+        self.apollones = []
+        last_apollon = -1
+        for x in absolute_apollones:
+            self.apollones.append(x-last_apollon-1)
+            last_apollon = x
 
     def to_absolute(self):
-        absolute_indexes = []
-        last_index = -1
-        for x in self.indexes:
-            absolute_indexes.append(x+last_index+1)
-            last_index = absolute_indexes[-1]
-        return absolute_indexes
+        absolute_apollones = []
+        last_apollon = -1
+        for x in self.apollones:
+            absolute_apollones.append(x+last_apollon+1)
+            last_apollon = absolute_apollones[-1]
+        return absolute_apollones
 
     def __repr__(self):
-        return "BlockTransactionsRequest(hash=%064x indexes=%s)" % (self.blockhash, repr(self.indexes))
+        return "BlockTransactionsRequest(hash=%064x apollones=%s)" % (self.blockhash, repr(self.apollones))
 
 
 class BlockTransactions(object):

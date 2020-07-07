@@ -174,7 +174,7 @@
         <translation>&amp;URI 열기...</translation>
     </message>
     <message>
-        <source>Reindexing blocks on disk...</source>
+        <source>Reapolloning blocks on disk...</source>
         <translation>디스크에서 블록 다시 색인중...</translation>
     </message>
     <message>
@@ -278,7 +278,7 @@
         <translation><numerusform>비트코인 네트워크에 %n개의 연결이 활성화되어 있습니다.</numerusform></translation>
     </message>
     <message>
-        <source>Indexing blocks on disk...</source>
+        <source>Apolloning blocks on disk...</source>
         <translation>디스크에서 블록 색인중...</translation>
     </message>
     <message>
@@ -1598,7 +1598,7 @@
         <translation>항목을 지웁니다</translation>
     </message>
     <message>
-        <source>The fee will be deducted from the amount being sent. The recipient will receive less indexs than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
+        <source>The fee will be deducted from the amount being sent. The recipient will receive less apollons than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
         <translation>수수료가 송금되는 금액에서 공제됩니다. 수령자는 금액 필드에서 입력한 금액보다 적은 금액을 전송받게 됩니다. 받는 사람이 여러 명인 경우 수수료는 균등하게 나누어집니다.</translation>
     </message>
     <message>
@@ -1659,7 +1659,7 @@
         <translation>메시지 서명(&amp;S)</translation>
     </message>
     <message>
-        <source>You can sign messages/agreements with your addresses to prove you can receive indexs sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
+        <source>You can sign messages/agreements with your addresses to prove you can receive apollons sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
         <translation>여러분 자신을 증명하기 위해 주소를 첨가하고 서명할 수 있습니다. 피싱 공격으로 말미암아 여러분의 서명을 통해 속아 넘어가게 할 수 있으므로, 서명하지 않은 모든 모호한 요소를 주의하십시오. 조항들이 완전 무결한지 확인 후 동의하는 경우에만 서명하십시오.</translation>
     </message>
     <message>
@@ -1820,16 +1820,16 @@
         <translation>블록 축소가 최소치의 %d MiB 밑으로 설정되어 있습니다. 더 높은 값을 사용해 보세요.</translation>
     </message>
     <message>
-        <source>Prune: last wallet synchronisation goes beyond pruned data. You need to -reindex (download the whole blockchain again in case of pruned node)</source>
-        <translation>블록 축소: 마지막 지갑 동기화 지점이 축소된 데이터보다 과거의 것 입니다. -reindex가 필요합니다 (정지된 노드의 경우 모든 블록체인을 재다운로드합니다)</translation>
+        <source>Prune: last wallet synchronisation goes beyond pruned data. You need to -reapollon (download the whole blockchain again in case of pruned node)</source>
+        <translation>블록 축소: 마지막 지갑 동기화 지점이 축소된 데이터보다 과거의 것 입니다. -reapollon가 필요합니다 (정지된 노드의 경우 모든 블록체인을 재다운로드합니다)</translation>
     </message>
     <message>
-        <source>Reduce storage requirements by pruning (deleting) old blocks. This mode is incompatible with -txindex and -rescan. Warning: Reverting this setting requires re-downloading the entire blockchain. (default: 0 = disable pruning blocks, &gt;%u = target size in MiB to use for block files)</source>
-        <translation>오래된 블록을 제거(축소)하여 디스크 용량을 줄입니다. 이 모드는 -txindex 와 -rescan 과 호환되지 않습니다. 경고: 이 모드를 취소하면 모든 블록체인을 다시 다운로드 받아야 합니다. (기본값:0 = 블록 축소 비활성화, &gt;%u = 블록파일에 사용할 용량을 MiB단위로 지정)</translation>
+        <source>Reduce storage requirements by pruning (deleting) old blocks. This mode is incompatible with -txapollon and -rescan. Warning: Reverting this setting requires re-downloading the entire blockchain. (default: 0 = disable pruning blocks, &gt;%u = target size in MiB to use for block files)</source>
+        <translation>오래된 블록을 제거(축소)하여 디스크 용량을 줄입니다. 이 모드는 -txapollon 와 -rescan 과 호환되지 않습니다. 경고: 이 모드를 취소하면 모든 블록체인을 다시 다운로드 받아야 합니다. (기본값:0 = 블록 축소 비활성화, &gt;%u = 블록파일에 사용할 용량을 MiB단위로 지정)</translation>
     </message>
     <message>
-        <source>Rescans are not possible in pruned mode. You will need to use -reindex which will download the whole blockchain again.</source>
-        <translation>블록 축소 모드에서는 재검색이 불가능 합니다. -reindex 명령을 사용해서 모든 블록체인을 다시 다운로드 해야 합니다.</translation>
+        <source>Rescans are not possible in pruned mode. You will need to use -reapollon which will download the whole blockchain again.</source>
+        <translation>블록 축소 모드에서는 재검색이 불가능 합니다. -reapollon 명령을 사용해서 모든 블록체인을 다시 다운로드 해야 합니다.</translation>
     </message>
     <message>
         <source>Error: A fatal internal error occurred, see debug.log for details</source>
@@ -1948,8 +1948,8 @@
         <translation>설정된 넷마스크 혹은 IP 주소로 화이트리스트에 포함된 피어에 접속합니다. 이 설정은 복수로 지정 할 수 있습니다.</translation>
     </message>
     <message>
-        <source>You need to rebuild the database using -reindex-chainstate to change -txindex</source>
-        <translation>-txindex를 바꾸기 위해서는 -reindex-chainstate를 사용해서 데이터베이스를 재구성해야 합니다. </translation>
+        <source>You need to rebuild the database using -reapollon-chainstate to change -txapollon</source>
+        <translation>-txapollon를 바꾸기 위해서는 -reapollon-chainstate를 사용해서 데이터베이스를 재구성해야 합니다. </translation>
     </message>
     <message>
         <source>%s corrupt, salvage failed</source>
@@ -2124,15 +2124,15 @@
         <translation>블록 축소는 음수로 설정할 수 없습니다.</translation>
     </message>
     <message>
-        <source>Prune mode is incompatible with -txindex.</source>
-        <translation>블록 축소 모드는 -txindex와 호환되지 않습니다.</translation>
+        <source>Prune mode is incompatible with -txapollon.</source>
+        <translation>블록 축소 모드는 -txapollon와 호환되지 않습니다.</translation>
     </message>
     <message>
         <source>Rebuild chain state and block apollon from the blk*.dat files on disk</source>
         <translation>현재의 blk*.dat 파일들로부터 블록체인 색인을 재구성합니다.</translation>
     </message>
     <message>
-        <source>Rebuild chain state from the currently indexed blocks</source>
+        <source>Rebuild chain state from the currently apolloned blocks</source>
         <translation>현재 색인 된 블록들로부터 블록체인을 재구성합니다.</translation>
     </message>
     <message>
@@ -2272,8 +2272,8 @@
         <translation>화이트리스트에 포함된 피어는 이미 메모리풀에 포함되어 있어도 DoS 추방이 되지 않으며 그들의 트랜잭션이 항상 중계됩니다, 이는 예를 들면 게이트웨이에서 유용합니다.</translation>
     </message>
     <message>
-        <source>You need to rebuild the database using -reindex to go back to unpruned mode.  This will redownload the entire blockchain</source>
-        <translation>축소 모드를 해제하고 데이터베이스를 재구성 하기 위해 -reindex를 사용해야 합니다. 이 명령은 모든 블록체인을 다시 다운로드 할 것 입니다.</translation>
+        <source>You need to rebuild the database using -reapollon to go back to unpruned mode.  This will redownload the entire blockchain</source>
+        <translation>축소 모드를 해제하고 데이터베이스를 재구성 하기 위해 -reapollon를 사용해야 합니다. 이 명령은 모든 블록체인을 다시 다운로드 할 것 입니다.</translation>
     </message>
     <message>
         <source>(default: %u)</source>

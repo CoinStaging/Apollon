@@ -57,7 +57,7 @@ const QString RESCAN("-rescan");
 const QString ZAPTXES1("-zapwallettxes=1");
 const QString ZAPTXES2("-zapwallettxes=2");
 const QString UPGRADEWALLET("-upgradewallet");
-const QString REINDEX("-reindex");
+const QString REAPOLLON("-reapollon");
 const QString RESYNC("-resync");
 
 const struct {
@@ -289,7 +289,7 @@ RPCConsole::RPCConsole(const PlatformStyle *platformStyle, QWidget *parent) :
     connect(ui->btn_zapwallettxes1, SIGNAL(clicked()), this, SLOT(walletZaptxes1()));
     connect(ui->btn_zapwallettxes2, SIGNAL(clicked()), this, SLOT(walletZaptxes2()));
     connect(ui->btn_upgradewallet, SIGNAL(clicked()), this, SLOT(walletUpgrade()));
-    connect(ui->btn_reindex, SIGNAL(clicked()), this, SLOT(walletReindex()));
+    connect(ui->btn_reapollon, SIGNAL(clicked()), this, SLOT(walletReapollon()));
     connect(ui->btn_resync, SIGNAL(clicked()), this, SLOT(walletResync()));
     // Set stylesheet
     SetObjectStyleSheet(ui->promptIcon, StyleSheetNames::ButtonTransparent);
@@ -466,7 +466,7 @@ void RPCConsole::setClientModel(ClientModel *model)
         connect(unbanAction, SIGNAL(triggered()), this, SLOT(unbanSelectedNode()));
 
         // ban table signal handling - clear peer details when clicking a peer in the ban table
-        connect(ui->banlistWidget, SIGNAL(clicked(const QModelIndex&)), this, SLOT(clearSelectedNode()));
+        connect(ui->banlistWidget, SIGNAL(clicked(const QModelApollon&)), this, SLOT(clearSelectedNode()));
         // ban table signal handling - ensure ban table is shown or hidden (if empty)
         connect(model->getBanTableModel(), SIGNAL(layoutChanged()), this, SLOT(showOrHideBanTableIfRequired()));
         showOrHideBanTableIfRequired();
@@ -579,10 +579,10 @@ void RPCConsole::walletUpgrade()
     buildParameterlist(UPGRADEWALLET);
 }
 
-/** Restart wallet with "-reindex" */
-void RPCConsole::walletReindex()
+/** Restart wallet with "-reapollon" */
+void RPCConsole::walletReapollon()
 {
-    buildParameterlist(REINDEX);
+    buildParameterlist(REAPOLLON);
 }
 /** Restart wallet with "-resync" */
 void RPCConsole::walletResync()
@@ -603,7 +603,7 @@ void RPCConsole::buildParameterlist(QString arg)
     args.removeAll(ZAPTXES1);
     args.removeAll(ZAPTXES2);
     args.removeAll(UPGRADEWALLET);
-    args.removeAll(REINDEX);
+    args.removeAll(REAPOLLON);
 
     // Append repair parameter to command line.
     args.append(arg);
@@ -653,7 +653,7 @@ void RPCConsole::clear(bool clearHistory)
 
 void RPCConsole::showRepair()
 {
-    ui->tabWidget->setCurrentIndex(4);
+    ui->tabWidget->setCurrentApollon(4);
     show();
 }
 
@@ -822,10 +822,10 @@ void RPCConsole::peerSelected(const QItemSelection &selected, const QItemSelecti
 {
     Q_UNUSED(deselected);
 
-    if (!clientModel || !clientModel->getPeerTableModel() || selected.indexes().isEmpty())
+    if (!clientModel || !clientModel->getPeerTableModel() || selected.apollones().isEmpty())
         return;
 
-    const CNodeCombinedStats *stats = clientModel->getPeerTableModel()->getNodeStats(selected.indexes().first().row());
+    const CNodeCombinedStats *stats = clientModel->getPeerTableModel()->getNodeStats(selected.apollones().first().row());
     if (stats)
         updateNodeDetail(stats);
 }
@@ -844,9 +844,9 @@ void RPCConsole::peerLayoutChanged()
 
     // find the currently selected row
     int selectedRow = -1;
-    QModelIndexList selectedModelIndex = ui->peerWidget->selectionModel()->selectedIndexes();
-    if (!selectedModelIndex.isEmpty()) {
-        selectedRow = selectedModelIndex.first().row();
+    QModelApollonList selectedModelApollon = ui->peerWidget->selectionModel()->selectedApollones();
+    if (!selectedModelApollon.isEmpty()) {
+        selectedRow = selectedModelApollon.first().row();
     }
 
     // check if our detail node has a row in the table (it may not necessarily
@@ -961,14 +961,14 @@ void RPCConsole::hideEvent(QHideEvent *event)
 
 void RPCConsole::showPeersTableContextMenu(const QPoint& point)
 {
-    QModelIndex apollon = ui->peerWidget->indexAt(point);
+    QModelApollon apollon = ui->peerWidget->apollonAt(point);
     if (apollon.isValid())
         peersTableContextMenu->exec(QCursor::pos());
 }
 
 void RPCConsole::showBanTableContextMenu(const QPoint& point)
 {
-    QModelIndex apollon = ui->banlistWidget->indexAt(point);
+    QModelApollon apollon = ui->banlistWidget->apollonAt(point);
     if (apollon.isValid())
         banTableContextMenu->exec(QCursor::pos());
 }
@@ -1041,5 +1041,5 @@ void RPCConsole::showOrHideBanTableIfRequired()
 
 void RPCConsole::setTabFocus(enum TabTypes tabType)
 {
-    ui->tabWidget->setCurrentIndex(tabType);
+    ui->tabWidget->setCurrentApollon(tabType);
 }

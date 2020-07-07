@@ -458,7 +458,7 @@ process_get_argv(const process_t *process)
   SMARTLIST_FOREACH_BEGIN(arguments, char *, arg_val) {
     tor_assert(arg_val != NULL);
 
-    argv[arg_val_sl_idx + 1] = arg_val;
+    argv[arg_val_sl_xap + 1] = arg_val;
   } SMARTLIST_FOREACH_END(arg_val);
 
   return argv;

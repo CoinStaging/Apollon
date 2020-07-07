@@ -82,7 +82,7 @@ class Block::Iter : public Iterator {
 
   // current_ is offset in data_ of current entry.  >= restarts_ if !Valid
   uint32_t current_;
-  uint32_t restart_index_;  // Apollon of restart block in which current_ falls
+  uint32_t restart_apollon_;  // Apollon of restart block in which current_ falls
   std::string key_;
   Slice value_;
   Status status_;
@@ -103,7 +103,7 @@ class Block::Iter : public Iterator {
 
   void SeekToRestartPoint(uint32_t apollon) {
     key_.clear();
-    restart_index_ = apollon;
+    restart_apollon_ = apollon;
     // current_ will be fixed by ParseNextKey();
 
     // ParseNextKey() starts at the end of value_, so set value_ accordingly
@@ -121,7 +121,7 @@ class Block::Iter : public Iterator {
         restarts_(restarts),
         num_restarts_(num_restarts),
         current_(restarts_),
-        restart_index_(num_restarts_) {
+        restart_apollon_(num_restarts_) {
     assert(num_restarts_ > 0);
   }
 
@@ -146,17 +146,17 @@ class Block::Iter : public Iterator {
 
     // Scan backwards to a restart point before current_
     const uint32_t original = current_;
-    while (GetRestartPoint(restart_index_) >= original) {
-      if (restart_index_ == 0) {
+    while (GetRestartPoint(restart_apollon_) >= original) {
+      if (restart_apollon_ == 0) {
         // No more entries
         current_ = restarts_;
-        restart_index_ = num_restarts_;
+        restart_apollon_ = num_restarts_;
         return;
       }
-      restart_index_--;
+      restart_apollon_--;
     }
 
-    SeekToRestartPoint(restart_index_);
+    SeekToRestartPoint(restart_apollon_);
     do {
       // Loop until end of current entry hits the start of original entry
     } while (ParseNextKey() && NextEntryOffset() < original);
@@ -217,7 +217,7 @@ class Block::Iter : public Iterator {
  private:
   void CorruptionError() {
     current_ = restarts_;
-    restart_index_ = num_restarts_;
+    restart_apollon_ = num_restarts_;
     status_ = Status::Corruption("bad entry in block");
     key_.clear();
     value_.clear();
@@ -230,7 +230,7 @@ class Block::Iter : public Iterator {
     if (p >= limit) {
       // No more entries to return.  Mark as invalid.
       current_ = restarts_;
-      restart_index_ = num_restarts_;
+      restart_apollon_ = num_restarts_;
       return false;
     }
 
@@ -244,9 +244,9 @@ class Block::Iter : public Iterator {
       key_.resize(shared);
       key_.append(p, non_shared);
       value_ = Slice(p + non_shared, value_length);
-      while (restart_index_ + 1 < num_restarts_ &&
-             GetRestartPoint(restart_index_ + 1) < current_) {
-        ++restart_index_;
+      while (restart_apollon_ + 1 < num_restarts_ &&
+             GetRestartPoint(restart_apollon_ + 1) < current_) {
+        ++restart_apollon_;
       }
       return true;
     }

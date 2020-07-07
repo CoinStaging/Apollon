@@ -30,38 +30,38 @@ class BlockTransactionsRequest {
 public:
     // A BlockTransactionsRequest message
     uint256 blockhash;
-    std::vector<uint16_t> indexes;
+    std::vector<uint16_t> apollones;
 
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
     inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
         READWRITE(blockhash);
-        uint64_t indexes_size = (uint64_t)indexes.size();
-        READWRITE(COMPACTSIZE(indexes_size));
+        uint64_t apollones_size = (uint64_t)apollones.size();
+        READWRITE(COMPACTSIZE(apollones_size));
         if (ser_action.ForRead()) {
             size_t i = 0;
-            while (indexes.size() < indexes_size) {
-                indexes.resize(std::min((uint64_t)(1000 + indexes.size()), indexes_size));
-                for (; i < indexes.size(); i++) {
+            while (apollones.size() < apollones_size) {
+                apollones.resize(std::min((uint64_t)(1000 + apollones.size()), apollones_size));
+                for (; i < apollones.size(); i++) {
                     uint64_t apollon = 0;
                     READWRITE(COMPACTSIZE(apollon));
                     if (apollon > std::numeric_limits<uint16_t>::max())
                         throw std::ios_base::failure("apollon overflowed 16 bits");
-                    indexes[i] = apollon;
+                    apollones[i] = apollon;
                 }
             }
 
             uint16_t offset = 0;
-            for (size_t i = 0; i < indexes.size(); i++) {
-                if (uint64_t(indexes[i]) + uint64_t(offset) > std::numeric_limits<uint16_t>::max())
-                    throw std::ios_base::failure("indexes overflowed 16 bits");
-                indexes[i] = indexes[i] + offset;
-                offset = indexes[i] + 1;
+            for (size_t i = 0; i < apollones.size(); i++) {
+                if (uint64_t(apollones[i]) + uint64_t(offset) > std::numeric_limits<uint16_t>::max())
+                    throw std::ios_base::failure("apollones overflowed 16 bits");
+                apollones[i] = apollones[i] + offset;
+                offset = apollones[i] + 1;
             }
         } else {
-            for (size_t i = 0; i < indexes.size(); i++) {
-                uint64_t apollon = indexes[i] - (i == 0 ? 0 : (indexes[i - 1] + 1));
+            for (size_t i = 0; i < apollones.size(); i++) {
+                uint64_t apollon = apollones[i] - (i == 0 ? 0 : (apollones[i - 1] + 1));
                 READWRITE(COMPACTSIZE(apollon));
             }
         }
@@ -76,7 +76,7 @@ public:
 
     BlockTransactions() {}
     BlockTransactions(const BlockTransactionsRequest& req) :
-        blockhash(req.blockhash), txn(req.indexes.size()) {}
+        blockhash(req.blockhash), txn(req.apollones.size()) {}
 
     ADD_SERIALIZE_METHODS;
 

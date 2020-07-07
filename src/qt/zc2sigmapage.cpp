@@ -16,7 +16,7 @@
 #include "guiutil.h"
 #include "platformstyle.h"
 #include "zc2sigmamodel.h"
-#include "indexnode-sync.h"
+#include "apollonnode-sync.h"
 #include "clientmodel.h"
 #include "walletmodel.h"
 
@@ -31,7 +31,7 @@
 #include <QStackedWidget>
 
 
-extern CIndexnodeSync indexnodeSync;
+extern CApollonnodeSync apollonnodeSync;
 
 
 Zc2SigmaPage::Zc2SigmaPage(const PlatformStyle *platformStyle, QWidget *parent)
@@ -106,20 +106,20 @@ void Zc2SigmaPage::on_remintButton_clicked() {
     if(!select->hasSelection())
         return;
 
-    QModelIndex dummy;
+    QModelApollon dummy;
     int const initial_count = model->rowCount(dummy);
 
     bool reminted = false;
-    QModelIndexList idxs = select->selectedRows();
-    for(int i = 0; i < idxs.size(); ++i) {
-        int const row = idxs[i].row();
+    QModelApollonList xaps = select->selectedRows();
+    for(int i = 0; i < xaps.size(); ++i) {
+        int const row = xaps[i].row();
         bool ok;
-        uint denom =  select->currentIndex().child(row , 1).data().toUInt(&ok); //denomination
+        uint denom =  select->currentApollon().child(row , 1).data().toUInt(&ok); //denomination
         if(!ok) {
             QMessageBox::critical(this, "Unable to remint", QString("Failed to parse denomination."));
             break;
         }
-        uint version = select->currentIndex().child(row , 2).data().toUInt(&ok); //version
+        uint version = select->currentApollon().child(row , 2).data().toUInt(&ok); //version
         if(!ok) {
             QMessageBox::critical(this, "Unable to remint", QString("Failed to parse version."));
             break;
@@ -145,8 +145,8 @@ void Zc2SigmaPage::on_remintButton_clicked() {
     if(model->rowCount(dummy) < initial_count) {
         ui->remintButton->setEnabled(false);
     } else {
-        for(int i = 0; i < idxs.size(); ++i) {
-            ui->availMintsTable->selectRow(idxs[i].row());
+        for(int i = 0; i < xaps.size(); ++i) {
+            ui->availMintsTable->selectRow(xaps[i].row());
         }
     }
     ui->availMintsTable->setFocus();
@@ -155,11 +155,11 @@ void Zc2SigmaPage::on_remintButton_clicked() {
 void Zc2SigmaPage::selectionChanged() {
     QItemSelectionModel * select = ui->availMintsTable->selectionModel();
     bool enabled = false;
-    QModelIndexList idxs = select->selectedRows();
-    for(int i = 0; i < idxs.size(); ++i) {
-        int const row = idxs[i].row();
+    QModelApollonList xaps = select->selectedRows();
+    for(int i = 0; i < xaps.size(); ++i) {
+        int const row = xaps[i].row();
         bool ok;
-        uint num =  select->currentIndex().child(row , 0).data().toUInt(&ok); //number
+        uint num =  select->currentApollon().child(row , 0).data().toUInt(&ok); //number
         if(!ok)
             continue;
         if(num > 0) {
@@ -177,7 +177,7 @@ void Zc2SigmaPage::updateAvailableRemints() {
 bool Zc2SigmaPage::showZc2SigmaPage() {
     if(!Params().GetConsensus().IsRegtest()) {
         LOCK(cs_main);
-        if(!indexnodeSync.IsBlockchainSynced()) {
+        if(!apollonnodeSync.IsBlockchainSynced()) {
             return false;
         }
     }

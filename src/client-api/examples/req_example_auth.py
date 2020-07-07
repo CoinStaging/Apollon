@@ -1,7 +1,7 @@
 #
 #   Request-reply client in Python
 #   Connects REQ socket to tcp://localhost:5557
-#   Sends json request to indexd
+#   Sends json request to apollond
 #
 import zmq
 import json

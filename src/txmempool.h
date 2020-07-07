@@ -9,8 +9,8 @@
 #include <list>
 #include <memory>
 #include <set>
-#include "addressindex.h"
-#include "spentindex.h"
+#include "addressapollon.h"
+#include "spentapollon.h"
 #include "amount.h"
 #include "coins.h"
 #include "indirectmap.h"
@@ -18,12 +18,12 @@
 #include "sync.h"
 
 #undef foreach
-#include "boost/multi_index_container.hpp"
-#include "boost/multi_index/ordered_index.hpp"
-#include "boost/multi_index/hashed_index.hpp"
+#include "boost/multi_apollon_container.hpp"
+#include "boost/multi_apollon/ordered_apollon.hpp"
+#include "boost/multi_apollon/hashed_apollon.hpp"
 
 class CAutoFile;
-class CBlockIndex;
+class CBlockApollon;
 
 inline double AllowFreeThreshold()
 {
@@ -50,7 +50,7 @@ struct LockPoints
     // As long as the current chain descends from the highest height block
     // containing one of the inputs used in the calculation, then the cached
     // values are still valid even after a reorg.
-    CBlockIndex* maxInputBlock;
+    CBlockApollon* maxInputBlock;
 
     LockPoints() : height(0), time(0), maxInputBlock(NULL) { }
 };
@@ -153,10 +153,10 @@ public:
     CAmount GetModFeesWithAncestors() const { return nModFeesWithAncestors; }
     int64_t GetSigOpCostWithAncestors() const { return nSigOpCostWithAncestors; }
 
-    mutable size_t vTxHashesIdx; //!< Apollon in mempool's vTxHashes
+    mutable size_t vTxHashesXap; //!< Apollon in mempool's vTxHashes
 };
 
-// Helpers for modifying CTxMemPool::mapTx, which is a boost multi_index.
+// Helpers for modifying CTxMemPool::mapTx, which is a boost multi_apollon.
 struct update_descendant_state
 {
     update_descendant_state(int64_t _modifySize, CAmount _modifyFee, int64_t _modifyCount) :
@@ -305,7 +305,7 @@ public:
     }
 };
 
-// Multi_index tag names
+// Multi_apollon tag names
 struct descendant_score {};
 struct entry_time {};
 struct mining_score {};
@@ -340,7 +340,7 @@ struct TxMempoolInfo
  *
  * CTxMemPool::mapTx, and CTxMemPoolEntry bookkeeping:
  *
- * mapTx is a boost::multi_index that sorts the mempool on 4 criteria:
+ * mapTx is a boost::multi_apollon that sorts the mempool on 4 criteria:
  * - transaction hash
  * - feerate [we use max(feerate of tx, feerate of tx with all descendants)]
  * - time in mempool
@@ -427,42 +427,42 @@ public:
 
     static const int ROLLING_FEE_HALFLIFE = 60 * 60 * 12; // public only for testing
     unsigned long countZCSpend;
-    typedef boost::multi_index_container<
+    typedef boost::multi_apollon_container<
         CTxMemPoolEntry,
-        boost::multi_index::indexed_by<
+        boost::multi_apollon::apolloned_by<
             // sorted by txid
-            boost::multi_index::hashed_unique<mempoolentry_txid, SaltedTxidHasher>,
+            boost::multi_apollon::hashed_unique<mempoolentry_txid, SaltedTxidHasher>,
             // sorted by fee rate
-            boost::multi_index::ordered_non_unique<
-                boost::multi_index::tag<descendant_score>,
-                boost::multi_index::identity<CTxMemPoolEntry>,
+            boost::multi_apollon::ordered_non_unique<
+                boost::multi_apollon::tag<descendant_score>,
+                boost::multi_apollon::identity<CTxMemPoolEntry>,
                 CompareTxMemPoolEntryByDescendantScore
             >,
             // sorted by entry time
-            boost::multi_index::ordered_non_unique<
-                boost::multi_index::tag<entry_time>,
-                boost::multi_index::identity<CTxMemPoolEntry>,
+            boost::multi_apollon::ordered_non_unique<
+                boost::multi_apollon::tag<entry_time>,
+                boost::multi_apollon::identity<CTxMemPoolEntry>,
                 CompareTxMemPoolEntryByEntryTime
             >,
             // sorted by score (for mining prioritization)
-            boost::multi_index::ordered_unique<
-                boost::multi_index::tag<mining_score>,
-                boost::multi_index::identity<CTxMemPoolEntry>,
+            boost::multi_apollon::ordered_unique<
+                boost::multi_apollon::tag<mining_score>,
+                boost::multi_apollon::identity<CTxMemPoolEntry>,
                 CompareTxMemPoolEntryByScore
             >,
             // sorted by fee rate with ancestors
-            boost::multi_index::ordered_non_unique<
-                boost::multi_index::tag<ancestor_score>,
-                boost::multi_index::identity<CTxMemPoolEntry>,
+            boost::multi_apollon::ordered_non_unique<
+                boost::multi_apollon::tag<ancestor_score>,
+                boost::multi_apollon::identity<CTxMemPoolEntry>,
                 CompareTxMemPoolEntryByAncestorFee
             >
         >
-    > indexed_transaction_set;
+    > apolloned_transaction_set;
 
     mutable CCriticalSection cs;
-    indexed_transaction_set mapTx;
+    apolloned_transaction_set mapTx;
 
-    typedef indexed_transaction_set::nth_index<0>::type::iterator txiter;
+    typedef apolloned_transaction_set::nth_apollon<0>::type::iterator txiter;
     std::vector<std::pair<uint256, txiter> > vTxHashes; //!< All tx witness hashes/entries in mapTx, in random order
 
     struct CompareIteratorByHash {
@@ -491,16 +491,16 @@ private:
     typedef std::map<uint256, std::vector<CMempoolAddressDeltaKey> > addressDeltaMapInserted;
     addressDeltaMapInserted mapAddressInserted;
 
-    typedef std::map<CSpentIndexKey, CSpentIndexValue, CSpentIndexKeyCompare> mapSpentIndex;
-    mapSpentIndex mapSpent;
+    typedef std::map<CSpentApollonKey, CSpentApollonValue, CSpentApollonKeyCompare> mapSpentApollon;
+    mapSpentApollon mapSpent;
 
-    typedef std::map<uint256, std::vector<CSpentIndexKey> > mapSpentIndexInserted;
-    mapSpentIndexInserted mapSpentInserted;
+    typedef std::map<uint256, std::vector<CSpentApollonKey> > mapSpentApollonInserted;
+    mapSpentApollonInserted mapSpentInserted;
 
     void UpdateParent(txiter entry, txiter parent, bool add);
     void UpdateChild(txiter entry, txiter child, bool add);
 
-    std::vector<indexed_transaction_set::const_iterator> GetSortedDepthAndScore() const;
+    std::vector<apolloned_transaction_set::const_iterator> GetSortedDepthAndScore() const;
 
 public:
     indirectmap<COutPoint, const CTransaction*> mapNextTx;
@@ -530,14 +530,14 @@ public:
     bool addUnchecked(const uint256& hash, const CTxMemPoolEntry &entry, bool fCurrentEstimate = true);
     bool addUnchecked(const uint256& hash, const CTxMemPoolEntry &entry, setEntries &setAncestors, bool fCurrentEstimate = true);
 
-    void addAddressIndex(const CTxMemPoolEntry &entry, const CCoinsViewCache &view);
-    bool getAddressIndex(std::vector<std::pair<uint160, AddressType> > &addresses,
+    void addAddressApollon(const CTxMemPoolEntry &entry, const CCoinsViewCache &view);
+    bool getAddressApollon(std::vector<std::pair<uint160, AddressType> > &addresses,
                          std::vector<std::pair<CMempoolAddressDeltaKey, CMempoolAddressDelta> > &results);
-    bool removeAddressIndex(const uint256 txhash);
+    bool removeAddressApollon(const uint256 txhash);
 
-    void addSpentIndex(const CTxMemPoolEntry &entry, const CCoinsViewCache &view);
-    bool getSpentIndex(CSpentIndexKey &key, CSpentIndexValue &value);
-    bool removeSpentIndex(const uint256 txhash);
+    void addSpentApollon(const CTxMemPoolEntry &entry, const CCoinsViewCache &view);
+    bool getSpentApollon(CSpentApollonKey &key, CSpentApollonValue &value);
+    bool removeSpentApollon(const uint256 txhash);
 
     void removeRecursive(const CTransaction &tx, std::list<CTransaction>& removed);
     void removeForReorg(const CCoinsViewCache *pcoins, unsigned int nMemPoolHeight, int flags);

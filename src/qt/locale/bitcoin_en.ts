@@ -227,7 +227,7 @@
     </message>
     <message>
         <location line="-56"/>
-        <source>%1 will close now to finish the encryption process. Remember that encrypting your wallet cannot fully protect your indexs from being stolen by malware infecting your computer.</source>
+        <source>%1 will close now to finish the encryption process. Remember that encrypting your wallet cannot fully protect your apollons from being stolen by malware infecting your computer.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -405,8 +405,8 @@
     </message>
     <message>
         <location line="+378"/>
-        <source>Reindexing blocks on disk...</source>
-        <translation>Reindexing blocks on disk...</translation>
+        <source>Reapolloning blocks on disk...</source>
+        <translation>Reapolloning blocks on disk...</translation>
     </message>
     <message>
         <location line="-463"/>
@@ -538,7 +538,7 @@
     </message>
     <message>
         <location line="+22"/>
-        <source>Indexing blocks on disk...</source>
+        <source>Apolloning blocks on disk...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2849,7 +2849,7 @@
     </message>
     <message>
         <location line="-1021"/>
-        <source>The fee will be deducted from the amount being sent. The recipient will receive less indexs than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
+        <source>The fee will be deducted from the amount being sent. The recipient will receive less apollons than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2936,7 +2936,7 @@
     </message>
     <message>
         <location line="+6"/>
-        <source>You can sign messages/agreements with your addresses to prove you can receive indexs sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
+        <source>You can sign messages/agreements with your addresses to prove you can receive apollons sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3815,17 +3815,17 @@
     </message>
     <message>
         <location line="+2"/>
-        <source>Prune: last wallet synchronisation goes beyond pruned data. You need to -reindex (download the whole blockchain again in case of pruned node)</source>
+        <source>Prune: last wallet synchronisation goes beyond pruned data. You need to -reapollon (download the whole blockchain again in case of pruned node)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+9"/>
-        <source>Reduce storage requirements by pruning (deleting) old blocks. This mode is incompatible with -txindex and -rescan. Warning: Reverting this setting requires re-downloading the entire blockchain. (default: 0 = disable pruning blocks, &gt;%u = target size in MiB to use for block files)</source>
+        <source>Reduce storage requirements by pruning (deleting) old blocks. This mode is incompatible with -txapollon and -rescan. Warning: Reverting this setting requires re-downloading the entire blockchain. (default: 0 = disable pruning blocks, &gt;%u = target size in MiB to use for block files)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
-        <source>Rescans are not possible in pruned mode. You will need to use -reindex which will download the whole blockchain again.</source>
+        <source>Rescans are not possible in pruned mode. You will need to use -reapollon which will download the whole blockchain again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3980,7 +3980,7 @@
     </message>
     <message>
         <location line="+12"/>
-        <source>You need to rebuild the database using -reindex-chainstate to change -txindex</source>
+        <source>You need to rebuild the database using -reapollon-chainstate to change -txapollon</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4210,7 +4210,7 @@
     </message>
     <message>
         <location line="+1"/>
-        <source>Prune mode is incompatible with -txindex.</source>
+        <source>Prune mode is incompatible with -txapollon.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4220,7 +4220,7 @@
     </message>
     <message>
         <location line="+1"/>
-        <source>Rebuild chain state from the currently indexed blocks</source>
+        <source>Rebuild chain state from the currently apolloned blocks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4425,7 +4425,7 @@
     </message>
     <message>
         <location line="+3"/>
-        <source>You need to rebuild the database using -reindex to go back to unpruned mode.  This will redownload the entire blockchain</source>
+        <source>You need to rebuild the database using -reapollon to go back to unpruned mode.  This will redownload the entire blockchain</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

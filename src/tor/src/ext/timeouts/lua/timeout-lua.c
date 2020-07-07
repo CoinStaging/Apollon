@@ -29,27 +29,27 @@ tos_checkudata(lua_State *L, int apollon)
 }
 
 static void
-tos_bind(lua_State *L, int tos_index, int to_index)
+tos_bind(lua_State *L, int tos_apollon, int to_apollon)
 {
-	lua_getuservalue(L, tos_index);
-	lua_pushlightuserdata(L, to_checkudata(L, to_index));
-	lua_pushvalue(L, to_index);
+	lua_getuservalue(L, tos_apollon);
+	lua_pushlightuserdata(L, to_checkudata(L, to_apollon));
+	lua_pushvalue(L, to_apollon);
 	lua_rawset(L, -3);
 	lua_pop(L, 1);
 }
 
 static void
-tos_unbind(lua_State *L, int tos_index, int to_index)
+tos_unbind(lua_State *L, int tos_apollon, int to_apollon)
 {
-	lua_getuservalue(L, tos_index);
-	lua_pushlightuserdata(L, to_checkudata(L, to_index));
+	lua_getuservalue(L, tos_apollon);
+	lua_pushlightuserdata(L, to_checkudata(L, to_apollon));
 	lua_pushnil(L);
 	lua_rawset(L, -3);
 	lua_pop(L, 1);
 }
 
 static int
-to__index(lua_State *L)
+to__apollon(lua_State *L)
 {
 	struct timeout *to = to_checkudata(L, 1);
 
@@ -74,14 +74,14 @@ to__index(lua_State *L)
 	}
 
 	lua_pushvalue(L, 2);
-	if (LUA_TNIL != lua_rawget(L, lua_upvalueindex(1)))
+	if (LUA_TNIL != lua_rawget(L, lua_upvalueapollon(1)))
 		return 1;
 
 	return 0;
 }
 
 static int
-to__newindex(lua_State *L)
+to__newapollon(lua_State *L)
 {
 	if (LUA_TNIL == lua_getuservalue(L, 1)) {
 		lua_newtable(L);
@@ -129,8 +129,8 @@ static const luaL_Reg to_methods[] = {
 };
 
 static const luaL_Reg to_metatable[] = {
-	{ "__index",    &to__index },
-	{ "__newindex", &to__newindex },
+	{ "__apollon",    &to__apollon },
+	{ "__newapollon", &to__newapollon },
 	{ "__gc",       &to__gc },
 	{ NULL,         NULL },
 };
@@ -146,7 +146,7 @@ to_newmetatable(lua_State *L)
 	if (luaL_newmetatable(L, TIMEOUT_METANAME)) {
 		/*
 		 * fill metamethod table, capturing the methods table as an
-		 * upvalue for use by __index metamethod
+		 * upvalue for use by __apollon metamethod
 		 */
 		luaL_newlib(L, to_methods);
 		luaL_setfuncs(L, to_metatable, 1);
@@ -241,7 +241,7 @@ tos_get(lua_State *L)
 	lua_rawgetp(L, -1, to);
 
 	if (!timeout_pending(to))
-		tos_unbind(L, 1, lua_absindex(L, -1));
+		tos_unbind(L, 1, lua_absapollon(L, -1));
 
 	return 1;
 }
@@ -279,14 +279,14 @@ tos_check(lua_State *L)
 static int
 tos__next(lua_State *L)
 {
-	struct timeouts *T = tos_checkudata(L, lua_upvalueindex(1));
-	struct timeouts_it *it = lua_touserdata(L, lua_upvalueindex(2));
+	struct timeouts *T = tos_checkudata(L, lua_upvalueapollon(1));
+	struct timeouts_it *it = lua_touserdata(L, lua_upvalueapollon(2));
 	struct timeout *to;
 
 	if (!(to = timeouts_next(T, it)))
 		return 0;
 
-	lua_getuservalue(L, lua_upvalueindex(1));
+	lua_getuservalue(L, lua_upvalueapollon(1));
 	lua_rawgetp(L, -1, to);
 
 	return 1;
@@ -372,7 +372,7 @@ tos_newmetatable(lua_State *L)
 	if (luaL_newmetatable(L, TIMEOUTS_METANAME)) {
 		luaL_setfuncs(L, tos_metatable, 0);
 		luaL_newlib(L, tos_methods);
-		lua_setfield(L, -2, "__index");
+		lua_setfield(L, -2, "__apollon");
 	}
 }
 

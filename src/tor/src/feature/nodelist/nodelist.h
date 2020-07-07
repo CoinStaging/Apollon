@@ -163,7 +163,7 @@ STATIC void node_lookup_declared_family(smartlist_t *out, const node_t *node);
 
 #ifdef TOR_UNIT_TESTS
 
-STATIC void node_set_hsdir_index(node_t *node, const networkstatus_t *ns);
+STATIC void node_set_hsdir_apollon(node_t *node, const networkstatus_t *ns);
 
 #endif /* defined(TOR_UNIT_TESTS) */
 

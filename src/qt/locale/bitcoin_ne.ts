@@ -162,7 +162,7 @@
         <translation>URI &amp;amp;खोल्नुहोस्...</translation>
     </message>
     <message>
-        <source>Reindexing blocks on disk...</source>
+        <source>Reapolloning blocks on disk...</source>
         <translation>डिस्कमा ब्लकलाई पुनः सूचीकरण गरिँदै...</translation>
     </message>
     <message>
@@ -312,7 +312,7 @@
 <context>
     <name>SendCoinsEntry</name>
     <message>
-        <source>The fee will be deducted from the amount being sent. The recipient will receive less indexs than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
+        <source>The fee will be deducted from the amount being sent. The recipient will receive less apollons than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
         <translation>पठाइँदै गरेको रकमबाट शुल्क कटौती गरिनेछ । प्राप्तकर्ताले तपाईंले रकम क्षेत्रमा प्रवेष गरेको भन्दा थोरै बिटकोइन प्राप्त गर्ने छन् । धेरै प्राप्तकर्ता चयन गरिएको छ भने समान रूपमा शुल्क विभाजित गरिनेछ ।</translation>
     </message>
     <message>
@@ -329,7 +329,7 @@
 <context>
     <name>SignVerifyMessageDialog</name>
     <message>
-        <source>You can sign messages/agreements with your addresses to prove you can receive indexs sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
+        <source>You can sign messages/agreements with your addresses to prove you can receive apollons sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
         <translation>आफ्नो ठेगानामा पठाइएको बिटकोइन प्राप्त गर्न सकिन्छ भनेर प्रमाणित गर्न तपाईंले ती ठेगानाले सन्देश/सम्झौताहरूमा हस्ताक्षर गर्न सक्नुहुन्छ । फिसिङ आक्रमणले तपाईंलाई छक्याएर अरूका लागि तपाईंको परिचयमा हस्ताक्षर गराउने प्रयास गर्न सक्ने भएकाले अस्पष्ट वा जथाभावीमा हस्ताक्षर गर्दा ध्यान दिनुहोस् । आफू सहमत भएको पूर्ण विस्तृत-कथनमा मात्र हस्ताक्षर गर्नुहोस् ।</translation>
     </message>
     </context>
@@ -394,8 +394,8 @@
         <translation>दिइएको नेटमास्क वा ठेगानाबाट कनेक्ट भइरहेका श्वेतसूचीका सहकर्मी ।</translation>
     </message>
     <message>
-        <source>You need to rebuild the database using -reindex-chainstate to change -txindex</source>
-        <translation>तपाईंले -चेनस्टेट-पुनः सूचकांकबाट -txindex परिवर्तन प्रयोग गरेर डाटाबेस पुनर्निर्माण गर्नु आवश्यक छ</translation>
+        <source>You need to rebuild the database using -reapollon-chainstate to change -txapollon</source>
+        <translation>तपाईंले -चेनस्टेट-पुनः सूचकांकबाट -txapollon परिवर्तन प्रयोग गरेर डाटाबेस पुनर्निर्माण गर्नु आवश्यक छ</translation>
     </message>
     <message>
         <source>%s corrupt, salvage failed</source>
@@ -574,7 +574,7 @@
         <translation>श्वेतसूचीका सहकर्मी पहिलैबाट मेमपूल, उपयोगीमा भए पनि उनीहरूलाई DoS banned गर्न सकिँदैन र उनीहरूको कारोबार सधैं रिले हुन्छ, उदाहरण, गेटवेको लाग</translation>
     </message>
     <message>
-        <source>You need to rebuild the database using -reindex to go back to unpruned mode.  This will redownload the entire blockchain</source>
+        <source>You need to rebuild the database using -reapollon to go back to unpruned mode.  This will redownload the entire blockchain</source>
         <translation>तपाईंले काटछाँट नगरेको मोडमा जान पुनः सूचकांक प्रयोग गरेर डाटाबेस पुनर्निर्माण गर्नु पर्ने हुन्छ । यसले सम्पूर्ण ब्लकचेनलाई फेरि डाउनलोड गर्नेछ</translation>
     </message>
     </context>

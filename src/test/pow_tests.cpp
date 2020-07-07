@@ -22,11 +22,11 @@ BOOST_AUTO_TEST_CASE(get_next_work)
     const Consensus::Params& params = Params().GetConsensus();
 
     int64_t nLastRetargetTime = 1261130161; // Block #30240
-    CBlockIndex pindexLast;
-    pindexLast.nHeight = 32255;
-    pindexLast.nTime = 1262152739;  // Block #32255
-    pindexLast.nBits = 0x1d00ffff;
-    BOOST_CHECK_EQUAL(CalculateNextWorkRequired(&pindexLast, nLastRetargetTime, params), 0x1d00d86a);
+    CBlockApollon papollonLast;
+    papollonLast.nHeight = 32255;
+    papollonLast.nTime = 1262152739;  // Block #32255
+    papollonLast.nBits = 0x1d00ffff;
+    BOOST_CHECK_EQUAL(CalculateNextWorkRequired(&papollonLast, nLastRetargetTime, params), 0x1d00d86a);
 }
 
 /* Test the constraint on the upper bound for next work */
@@ -36,11 +36,11 @@ BOOST_AUTO_TEST_CASE(get_next_work_pow_limit)
     const Consensus::Params& params = Params().GetConsensus();
 
     int64_t nLastRetargetTime = 1231006505; // Block #0
-    CBlockIndex pindexLast;
-    pindexLast.nHeight = 2015;
-    pindexLast.nTime = 1233061996;  // Block #2015
-    pindexLast.nBits = 0x1d00ffff;
-    BOOST_CHECK_EQUAL(CalculateNextWorkRequired(&pindexLast, nLastRetargetTime, params), 0x1d00ffff);
+    CBlockApollon papollonLast;
+    papollonLast.nHeight = 2015;
+    papollonLast.nTime = 1233061996;  // Block #2015
+    papollonLast.nBits = 0x1d00ffff;
+    BOOST_CHECK_EQUAL(CalculateNextWorkRequired(&papollonLast, nLastRetargetTime, params), 0x1d00ffff);
 }
 
 /* Test the constraint on the lower bound for actual time taken */
@@ -50,11 +50,11 @@ BOOST_AUTO_TEST_CASE(get_next_work_lower_limit_actual)
     const Consensus::Params& params = Params().GetConsensus();
 
     int64_t nLastRetargetTime = 1279008237; // Block #66528
-    CBlockIndex pindexLast;
-    pindexLast.nHeight = 68543;
-    pindexLast.nTime = 1279297671;  // Block #68543
-    pindexLast.nBits = 0x1c05a3f4;
-    BOOST_CHECK_EQUAL(CalculateNextWorkRequired(&pindexLast, nLastRetargetTime, params), 0x1c0168fd);
+    CBlockApollon papollonLast;
+    papollonLast.nHeight = 68543;
+    papollonLast.nTime = 1279297671;  // Block #68543
+    papollonLast.nBits = 0x1c05a3f4;
+    BOOST_CHECK_EQUAL(CalculateNextWorkRequired(&papollonLast, nLastRetargetTime, params), 0x1c0168fd);
 }
 
 /* Test the constraint on the upper bound for actual time taken */
@@ -64,11 +64,11 @@ BOOST_AUTO_TEST_CASE(get_next_work_upper_limit_actual)
     const Consensus::Params& params = Params().GetConsensus();
 
     int64_t nLastRetargetTime = 1263163443; // NOTE: Not an actual block time
-    CBlockIndex pindexLast;
-    pindexLast.nHeight = 46367;
-    pindexLast.nTime = 1269211443;  // Block #46367
-    pindexLast.nBits = 0x1c387f6f;
-    BOOST_CHECK_EQUAL(CalculateNextWorkRequired(&pindexLast, nLastRetargetTime, params), 0x1d00e1fd);
+    CBlockApollon papollonLast;
+    papollonLast.nHeight = 46367;
+    papollonLast.nTime = 1269211443;  // Block #46367
+    papollonLast.nBits = 0x1c387f6f;
+    BOOST_CHECK_EQUAL(CalculateNextWorkRequired(&papollonLast, nLastRetargetTime, params), 0x1d00e1fd);
 }
 
 BOOST_AUTO_TEST_CASE(GetBlockProofEquivalentTime_test)
@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_CASE(GetBlockProofEquivalentTime_test)
     SelectParams(CBaseChainParams::MAIN);
     const Consensus::Params& params = Params().GetConsensus();
 
-    std::vector<CBlockIndex> blocks(10000);
+    std::vector<CBlockApollon> blocks(10000);
     for (int i = 0; i < 10000; i++) {
         blocks[i].pprev = i ? &blocks[i - 1] : NULL;
         blocks[i].nHeight = i;
@@ -86,9 +86,9 @@ BOOST_AUTO_TEST_CASE(GetBlockProofEquivalentTime_test)
     }
 
     for (int j = 0; j < 1000; j++) {
-        CBlockIndex *p1 = &blocks[GetRand(10000)];
-        CBlockIndex *p2 = &blocks[GetRand(10000)];
-        CBlockIndex *p3 = &blocks[GetRand(10000)];
+        CBlockApollon *p1 = &blocks[GetRand(10000)];
+        CBlockApollon *p2 = &blocks[GetRand(10000)];
+        CBlockApollon *p3 = &blocks[GetRand(10000)];
 
         int64_t tdiff = GetBlockProofEquivalentTime(*p1, *p2, *p3, params);
         BOOST_CHECK_EQUAL(tdiff, p1->GetBlockTime() - p2->GetBlockTime());

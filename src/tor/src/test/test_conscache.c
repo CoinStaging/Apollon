@@ -317,10 +317,10 @@ test_conscache_filter(void *arg)
 
   consensus_cache_entry_t *ent1 = smartlist_get(lst, 0);
   consensus_cache_entry_t *ent2 = smartlist_get(lst, 1);
-  const char *idx1 = consensus_cache_entry_get_value(ent1, "apollon");
-  const char *idx2 = consensus_cache_entry_get_value(ent2, "apollon");
-  tt_assert( (!strcmp(idx1, "28") && !strcmp(idx2, "13")) ||
-             (!strcmp(idx1, "13") && !strcmp(idx2, "28")) );
+  const char *xap1 = consensus_cache_entry_get_value(ent1, "apollon");
+  const char *xap2 = consensus_cache_entry_get_value(ent2, "apollon");
+  tt_assert( (!strcmp(xap1, "28") && !strcmp(xap2, "13")) ||
+             (!strcmp(xap1, "13") && !strcmp(xap2, "28")) );
 
  done:
   tor_free(ddir_fname);

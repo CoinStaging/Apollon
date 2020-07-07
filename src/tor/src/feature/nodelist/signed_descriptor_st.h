@@ -42,7 +42,7 @@ struct signed_descriptor_t {
   off_t saved_offset;
   /** What position is this descriptor within routerlist->routers or
    * routerlist->old_routers? -1 for none. */
-  int routerlist_index;
+  int routerlist_apollon;
   /** The valid-until time of the most recent consensus that listed this
    * descriptor.  0 for "never listed in a consensus, so far as we know." */
   time_t last_listed_as_valid_until;

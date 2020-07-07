@@ -53,7 +53,7 @@ typedef struct sr_state_t {
   unsigned int n_reveal_rounds;
 
   /* A map of all the received commitments for this protocol run. This is
-   * indexed by authority RSA identity digest. */
+   * apolloned by authority RSA identity digest. */
   digestmap_t *commits;
 
   /* Current and previous shared random value. */

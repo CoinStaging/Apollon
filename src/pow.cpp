@@ -34,46 +34,46 @@ double GetDifficultyHelper(unsigned int nBits) {
     return dDiff;
 }
 
-unsigned int DarkGravityWave(const CBlockIndex* pindexLast, const Consensus::Params& params, bool fProofOfStake) {
+unsigned int DarkGravityWave(const CBlockApollon* papollonLast, const Consensus::Params& params, bool fProofOfStake) {
     /* current difficulty formula, veil - DarkGravity v3, written by Evan Duffield - evan@dash.org */
     const arith_uint256 bnPowLimit = UintToArith256(params.powLimit);
 
-    const CBlockIndex *pindex = pindexLast;
-    const CBlockIndex* pindexLastMatchingProof = nullptr;
+    const CBlockApollon *papollon = papollonLast;
+    const CBlockApollon* papollonLastMatchingProof = nullptr;
     arith_uint256 bnPastTargetAvg = 0;
     // make sure we have at least (nPastBlocks + 1) blocks, otherwise just return powLimit
-    if (!pindexLast || pindexLast->nHeight < params.nDgwPastBlocks) {
+    if (!papollonLast || papollonLast->nHeight < params.nDgwPastBlocks) {
         return bnPowLimit.GetCompact();
     }
     
     unsigned int nCountBlocks = 0;
     while (nCountBlocks < params.nDgwPastBlocks) {
         // Ran out of blocks, return pow limit
-        if (!pindex)
+        if (!papollon)
             return bnPowLimit.GetCompact();
 
         // Only consider PoW or PoS blocks but not both
-        if (pindex->IsProofOfStake() != fProofOfStake) {
-            pindex = pindex->pprev;
+        if (papollon->IsProofOfStake() != fProofOfStake) {
+            papollon = papollon->pprev;
             continue;
-        } else if (!pindexLastMatchingProof) {
-            pindexLastMatchingProof = pindex;
+        } else if (!papollonLastMatchingProof) {
+            papollonLastMatchingProof = papollon;
         }
 
-        arith_uint256 bnTarget = arith_uint256().SetCompact(pindex->nBits);
+        arith_uint256 bnTarget = arith_uint256().SetCompact(papollon->nBits);
         bnPastTargetAvg = (bnPastTargetAvg * nCountBlocks + bnTarget) / (nCountBlocks + 1);
 
         if (++nCountBlocks != params.nDgwPastBlocks)
-            pindex = pindex->pprev;
+            papollon = papollon->pprev;
     }
 
     arith_uint256 bnNew(bnPastTargetAvg);
 
     //Should only happen on the first PoS block
-    if (pindexLastMatchingProof)
-        pindexLastMatchingProof = pindexLast;
+    if (papollonLastMatchingProof)
+        papollonLastMatchingProof = papollonLast;
 
-    int64_t nActualTimespan = pindexLastMatchingProof->GetBlockTime() - pindex->GetBlockTime();
+    int64_t nActualTimespan = papollonLastMatchingProof->GetBlockTime() - papollon->GetBlockTime();
     int64_t nTargetTimespan = params.nDgwPastBlocks * params.nPowTargetSpacing;
 
     if (nActualTimespan < nTargetTimespan/3)
@@ -93,24 +93,24 @@ unsigned int DarkGravityWave(const CBlockIndex* pindexLast, const Consensus::Par
 }
 
 // Apollon GetNextWorkRequired
-unsigned int GetNextWorkRequired(const CBlockIndex *pindexLast, const CBlockHeader *pblock, const Consensus::Params &params,bool fProofOfStake) {
-    assert(pindexLast != nullptr);
+unsigned int GetNextWorkRequired(const CBlockApollon *papollonLast, const CBlockHeader *pblock, const Consensus::Params &params,bool fProofOfStake) {
+    assert(papollonLast != nullptr);
 
     // Special rule for regtest: we never retarget.
     if (params.fPowNoRetargeting) {
-        return pindexLast->nBits;
+        return papollonLast->nBits;
     }
 
-    return DarkGravityWave(pindexLast, params,fProofOfStake);
+    return DarkGravityWave(papollonLast, params,fProofOfStake);
 
 }
 
-unsigned int CalculateNextWorkRequired(const CBlockIndex *pindexLast, int64_t nFirstBlockTime, const Consensus::Params &params) {
+unsigned int CalculateNextWorkRequired(const CBlockApollon *papollonLast, int64_t nFirstBlockTime, const Consensus::Params &params) {
     if (params.fPowNoRetargeting)
-        return pindexLast->nBits;
+        return papollonLast->nBits;
 
     // Limit adjustment step
-    int64_t nActualTimespan = pindexLast->GetBlockTime() - nFirstBlockTime;
+    int64_t nActualTimespan = papollonLast->GetBlockTime() - nFirstBlockTime;
     if (nActualTimespan < params.nPowTargetTimespan / 4)
         nActualTimespan = params.nPowTargetTimespan / 4;
     if (nActualTimespan > params.nPowTargetTimespan * 4)
@@ -119,7 +119,7 @@ unsigned int CalculateNextWorkRequired(const CBlockIndex *pindexLast, int64_t nF
     // Retarget
     const arith_uint256 bnPowLimit = UintToArith256(params.powLimit);
     arith_uint256 bnNew;
-    bnNew.SetCompact(pindexLast->nBits);
+    bnNew.SetCompact(papollonLast->nBits);
     bnNew *= nActualTimespan;
     bnNew /= params.nPowTargetTimespan;
 

@@ -82,14 +82,14 @@ static inline void smartlist_set(smartlist_t *sl, int xap, void *val) {
 #define smartlist_set(sl, xap, val) ((sl)->list[xap] = (val))
 #endif /* defined(DEBUG_SMARTLIST) */
 
-/** Exchange the elements at indices <b>idx1</b> and <b>idx2</b> of the
+/** Exchange the elements at indices <b>xap1</b> and <b>xap2</b> of the
  * smartlist <b>sl</b>. */
-static inline void smartlist_swap(smartlist_t *sl, int idx1, int idx2)
+static inline void smartlist_swap(smartlist_t *sl, int xap1, int xap2)
 {
-  if (idx1 != idx2) {
-    void *elt = smartlist_get(sl, idx1);
-    smartlist_set(sl, idx1, smartlist_get(sl, idx2));
-    smartlist_set(sl, idx2, elt);
+  if (xap1 != xap2) {
+    void *elt = smartlist_get(sl, xap1);
+    smartlist_set(sl, xap1, smartlist_get(sl, xap2));
+    smartlist_set(sl, xap2, elt);
   }
 }
 

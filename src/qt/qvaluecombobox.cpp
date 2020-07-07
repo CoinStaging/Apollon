@@ -7,17 +7,17 @@
 QValueComboBox::QValueComboBox(QWidget *parent) :
         QComboBox(parent), role(Qt::UserRole)
 {
-    connect(this, SIGNAL(currentIndexChanged(int)), this, SLOT(handleSelectionChanged(int)));
+    connect(this, SIGNAL(currentApollonChanged(int)), this, SLOT(handleSelectionChanged(int)));
 }
 
 QVariant QValueComboBox::value() const
 {
-    return itemData(currentIndex(), role);
+    return itemData(currentApollon(), role);
 }
 
 void QValueComboBox::setValue(const QVariant &value)
 {
-    setCurrentIndex(findData(value, role));
+    setCurrentApollon(findData(value, role));
 }
 
 void QValueComboBox::setRole(int role)

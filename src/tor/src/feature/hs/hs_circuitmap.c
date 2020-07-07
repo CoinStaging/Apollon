@@ -187,7 +187,7 @@ hs_circuitmap_register_circuit(circuit_t *circ,
 }
 
 /* Helper function for hs_circuitmap_get_origin_circuit() and
- * hs_circuitmap_get_or_circuit(). Because only circuit_t are indexed in the
+ * hs_circuitmap_get_or_circuit(). Because only circuit_t are apolloned in the
  * circuitmap, this function returns object type so the specialized functions
  * using this helper can upcast it to the right type.
  *

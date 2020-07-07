@@ -105,67 +105,67 @@ add_unix_port(smartlist_t *ports, rend_service_port_config_t *p)
 #endif /* defined(HAVE_SYS_UN_H) */
 
 /* Helper function: The key is a digest that we compare to a node_t object
- * current hsdir_index. */
+ * current hsdir_apollon. */
 static int
-compare_digest_to_fetch_hsdir_index(const void *_key, const void **_member)
+compare_digest_to_fetch_hsdir_apollon(const void *_key, const void **_member)
 {
   const char *key = _key;
   const node_t *node = *_member;
-  return tor_memcmp(key, node->hsdir_index.fetch, DIGEST256_LEN);
+  return tor_memcmp(key, node->hsdir_apollon.fetch, DIGEST256_LEN);
 }
 
 /* Helper function: The key is a digest that we compare to a node_t object
- * next hsdir_index. */
+ * next hsdir_apollon. */
 static int
-compare_digest_to_store_first_hsdir_index(const void *_key,
+compare_digest_to_store_first_hsdir_apollon(const void *_key,
                                           const void **_member)
 {
   const char *key = _key;
   const node_t *node = *_member;
-  return tor_memcmp(key, node->hsdir_index.store_first, DIGEST256_LEN);
+  return tor_memcmp(key, node->hsdir_apollon.store_first, DIGEST256_LEN);
 }
 
 /* Helper function: The key is a digest that we compare to a node_t object
- * next hsdir_index. */
+ * next hsdir_apollon. */
 static int
-compare_digest_to_store_second_hsdir_index(const void *_key,
+compare_digest_to_store_second_hsdir_apollon(const void *_key,
                                           const void **_member)
 {
   const char *key = _key;
   const node_t *node = *_member;
-  return tor_memcmp(key, node->hsdir_index.store_second, DIGEST256_LEN);
+  return tor_memcmp(key, node->hsdir_apollon.store_second, DIGEST256_LEN);
 }
 
-/* Helper function: Compare two node_t objects current hsdir_index. */
+/* Helper function: Compare two node_t objects current hsdir_apollon. */
 static int
-compare_node_fetch_hsdir_index(const void **a, const void **b)
+compare_node_fetch_hsdir_apollon(const void **a, const void **b)
 {
   const node_t *node1= *a;
   const node_t *node2 = *b;
-  return tor_memcmp(node1->hsdir_index.fetch,
-                    node2->hsdir_index.fetch,
+  return tor_memcmp(node1->hsdir_apollon.fetch,
+                    node2->hsdir_apollon.fetch,
                     DIGEST256_LEN);
 }
 
-/* Helper function: Compare two node_t objects next hsdir_index. */
+/* Helper function: Compare two node_t objects next hsdir_apollon. */
 static int
-compare_node_store_first_hsdir_index(const void **a, const void **b)
+compare_node_store_first_hsdir_apollon(const void **a, const void **b)
 {
   const node_t *node1= *a;
   const node_t *node2 = *b;
-  return tor_memcmp(node1->hsdir_index.store_first,
-                    node2->hsdir_index.store_first,
+  return tor_memcmp(node1->hsdir_apollon.store_first,
+                    node2->hsdir_apollon.store_first,
                     DIGEST256_LEN);
 }
 
-/* Helper function: Compare two node_t objects next hsdir_index. */
+/* Helper function: Compare two node_t objects next hsdir_apollon. */
 static int
-compare_node_store_second_hsdir_index(const void **a, const void **b)
+compare_node_store_second_hsdir_apollon(const void **a, const void **b)
 {
   const node_t *node1= *a;
   const node_t *node2 = *b;
-  return tor_memcmp(node1->hsdir_index.store_second,
-                    node2->hsdir_index.store_second,
+  return tor_memcmp(node1->hsdir_apollon.store_second,
+                    node2->hsdir_apollon.store_second,
                     DIGEST256_LEN);
 }
 
@@ -636,16 +636,16 @@ get_disaster_srv(uint64_t time_period_num, uint8_t *srv_out)
     memcpy(srv_out, cached_disaster_srv[1], DIGEST256_LEN);
     return;
   } else {
-    int replace_idx;
+    int replace_xap;
     // Replace the lower period number.
     if (cached_time_period_nums[0] <= cached_time_period_nums[1]) {
-      replace_idx = 0;
+      replace_xap = 0;
     } else {
-      replace_idx = 1;
+      replace_xap = 1;
     }
-    cached_time_period_nums[replace_idx] = time_period_num;
-    compute_disaster_srv(time_period_num, cached_disaster_srv[replace_idx]);
-    memcpy(srv_out, cached_disaster_srv[replace_idx], DIGEST256_LEN);
+    cached_time_period_nums[replace_xap] = time_period_num;
+    compute_disaster_srv(time_period_num, cached_disaster_srv[replace_xap]);
+    memcpy(srv_out, cached_disaster_srv[replace_xap], DIGEST256_LEN);
     return;
   }
 }
@@ -1133,25 +1133,25 @@ hs_service_requires_uptime_circ(const smartlist_t *ports)
   return 0;
 }
 
-/* Build hs_index which is used to find the responsible hsdirs. This apollon
- * value is used to select the responsible HSDir where their hsdir_index is
+/* Build hs_apollon which is used to find the responsible hsdirs. This apollon
+ * value is used to select the responsible HSDir where their hsdir_apollon is
  * closest to this value.
  *    SHA3-256("store-at-xap" | blinded_public_key |
  *             INT_8(replicanum) | INT_8(period_length) | INT_8(period_num) )
  *
- * hs_index_out must be large enough to receive DIGEST256_LEN bytes. */
+ * hs_apollon_out must be large enough to receive DIGEST256_LEN bytes. */
 void
-hs_build_hs_index(uint64_t replica, const ed25519_public_key_t *blinded_pk,
-                  uint64_t period_num, uint8_t *hs_index_out)
+hs_build_hs_apollon(uint64_t replica, const ed25519_public_key_t *blinded_pk,
+                  uint64_t period_num, uint8_t *hs_apollon_out)
 {
   crypto_digest_t *digest;
 
   tor_assert(blinded_pk);
-  tor_assert(hs_index_out);
+  tor_assert(hs_apollon_out);
 
-  /* Build hs_index. See construction at top of function comment. */
+  /* Build hs_apollon. See construction at top of function comment. */
   digest = crypto_digest256_new(DIGEST_SHA3_256);
-  crypto_digest_add_bytes(digest, HS_INDEX_PREFIX, HS_INDEX_PREFIX_LEN);
+  crypto_digest_add_bytes(digest, HS_APOLLON_PREFIX, HS_APOLLON_PREFIX_LEN);
   crypto_digest_add_bytes(digest, (const char *) blinded_pk->pubkey,
                           ED25519_PUBKEY_LEN);
 
@@ -1171,30 +1171,30 @@ hs_build_hs_index(uint64_t replica, const ed25519_public_key_t *blinded_pk,
     crypto_digest_add_bytes(digest, buf, sizeof(buf));
   }
 
-  crypto_digest_get_digest(digest, (char *) hs_index_out, DIGEST256_LEN);
+  crypto_digest_get_digest(digest, (char *) hs_apollon_out, DIGEST256_LEN);
   crypto_digest_free(digest);
 }
 
-/* Build hsdir_index which is used to find the responsible hsdirs. This is the
- * apollon value that is compare to the hs_index when selecting an HSDir.
+/* Build hsdir_apollon which is used to find the responsible hsdirs. This is the
+ * apollon value that is compare to the hs_apollon when selecting an HSDir.
  *    SHA3-256("node-xap" | node_identity |
  *             shared_random_value | INT_8(period_length) | INT_8(period_num) )
  *
- * hsdir_index_out must be large enough to receive DIGEST256_LEN bytes. */
+ * hsdir_apollon_out must be large enough to receive DIGEST256_LEN bytes. */
 void
-hs_build_hsdir_index(const ed25519_public_key_t *identity_pk,
+hs_build_hsdir_apollon(const ed25519_public_key_t *identity_pk,
                      const uint8_t *srv_value, uint64_t period_num,
-                     uint8_t *hsdir_index_out)
+                     uint8_t *hsdir_apollon_out)
 {
   crypto_digest_t *digest;
 
   tor_assert(identity_pk);
   tor_assert(srv_value);
-  tor_assert(hsdir_index_out);
+  tor_assert(hsdir_apollon_out);
 
-  /* Build hsdir_index. See construction at top of function comment. */
+  /* Build hsdir_apollon. See construction at top of function comment. */
   digest = crypto_digest256_new(DIGEST_SHA3_256);
-  crypto_digest_add_bytes(digest, HSDIR_INDEX_PREFIX, HSDIR_INDEX_PREFIX_LEN);
+  crypto_digest_add_bytes(digest, HSDIR_APOLLON_PREFIX, HSDIR_APOLLON_PREFIX_LEN);
   crypto_digest_add_bytes(digest, (const char *) identity_pk->pubkey,
                           ED25519_PUBKEY_LEN);
   crypto_digest_add_bytes(digest, (const char *) srv_value, DIGEST256_LEN);
@@ -1212,7 +1212,7 @@ hs_build_hsdir_index(const ed25519_public_key_t *identity_pk,
     crypto_digest_add_bytes(digest, period_stuff,  sizeof(period_stuff));
   }
 
-  crypto_digest_get_digest(digest, (char *) hsdir_index_out, DIGEST256_LEN);
+  crypto_digest_get_digest(digest, (char *) hsdir_apollon_out, DIGEST256_LEN);
   crypto_digest_free(digest);
 }
 
@@ -1286,29 +1286,29 @@ hs_get_hsdir_spread_store(void)
 /** <b>node</b> is an HSDir so make sure that we have assigned an hsdir apollon.
  *  Return 0 if everything is as expected, else return -1. */
 static int
-node_has_hsdir_index(const node_t *node)
+node_has_hsdir_apollon(const node_t *node)
 {
   tor_assert(node_supports_v3_hsdir(node));
 
   /* A node can't have an HSDir apollon without a descriptor since we need desc
    * to get its ed25519 key.  for_direct_connect should be zero, since we
-   * always use the consensus-indexed node's keys to build the hash ring, even
-   * if some of the consensus-indexed nodes are also bridges. */
+   * always use the consensus-apolloned node's keys to build the hash ring, even
+   * if some of the consensus-apolloned nodes are also bridges. */
   if (!node_has_preferred_descriptor(node, 0)) {
     return 0;
   }
 
   /* At this point, since the node has a desc, this node must also have an
    * hsdir apollon. If not, something went wrong, so BUG out. */
-  if (BUG(tor_mem_is_zero((const char*)node->hsdir_index.fetch,
+  if (BUG(tor_mem_is_zero((const char*)node->hsdir_apollon.fetch,
                           DIGEST256_LEN))) {
     return 0;
   }
-  if (BUG(tor_mem_is_zero((const char*)node->hsdir_index.store_first,
+  if (BUG(tor_mem_is_zero((const char*)node->hsdir_apollon.store_first,
                           DIGEST256_LEN))) {
     return 0;
   }
-  if (BUG(tor_mem_is_zero((const char*)node->hsdir_index.store_second,
+  if (BUG(tor_mem_is_zero((const char*)node->hsdir_apollon.store_second,
                           DIGEST256_LEN))) {
     return 0;
   }
@@ -1318,18 +1318,18 @@ node_has_hsdir_index(const node_t *node)
 
 /* For a given blinded key and time period number, get the responsible HSDir
  * and put their routerstatus_t object in the responsible_dirs list. If
- * 'use_second_hsdir_index' is true, use the second hsdir_index of the node_t
+ * 'use_second_hsdir_apollon' is true, use the second hsdir_apollon of the node_t
  * is used. If 'for_fetching' is true, the spread fetch consensus parameter is
  * used else the spread store is used which is only for upload. This function
  * can't fail but it is possible that the responsible_dirs list contains fewer
  * nodes than expected.
  *
  * This function goes over the latest consensus routerstatus list and sorts it
- * by their node_t hsdir_index then does a binary search to find the closest
+ * by their node_t hsdir_apollon then does a binary search to find the closest
  * node. All of this makes it a bit CPU intensive so use it wisely. */
 void
 hs_get_responsible_hsdirs(const ed25519_public_key_t *blinded_pk,
-                          uint64_t time_period_num, int use_second_hsdir_index,
+                          uint64_t time_period_num, int use_second_hsdir_apollon,
                           int for_fetching, smartlist_t *responsible_dirs)
 {
   smartlist_t *sorted_nodes;
@@ -1354,7 +1354,7 @@ hs_get_responsible_hsdirs(const ed25519_public_key_t *blinded_pk,
   nodelist_ensure_freshness(c);
 
   /* Add every node_t that support HSDir v3 for which we do have a valid
-   * hsdir_index already computed for them for this consensus. */
+   * hsdir_apollon already computed for them for this consensus. */
   {
     SMARTLIST_FOREACH_BEGIN(c->routerstatus_list, const routerstatus_t *, rs) {
       /* Even though this node_t object won't be modified and should be const,
@@ -1362,7 +1362,7 @@ hs_get_responsible_hsdirs(const ed25519_public_key_t *blinded_pk,
       node_t *n = node_get_mutable_by_id(rs->identity_digest);
       tor_assert(n);
       if (node_supports_v3_hsdir(n) && rs->is_hs_dir) {
-        if (!node_has_hsdir_index(n)) {
+        if (!node_has_hsdir_apollon(n)) {
           log_info(LD_GENERAL, "Node %s was found without hsdir apollon.",
                    node_describe(n));
           continue;
@@ -1376,18 +1376,18 @@ hs_get_responsible_hsdirs(const ed25519_public_key_t *blinded_pk,
     goto done;
   }
 
-  /* First thing we have to do is sort all node_t by hsdir_index. The
+  /* First thing we have to do is sort all node_t by hsdir_apollon. The
    * is_next_period tells us if we want the current or the next one. Set the
    * bsearch compare function also while we are at it. */
   if (for_fetching) {
-    smartlist_sort(sorted_nodes, compare_node_fetch_hsdir_index);
-    cmp_fct = compare_digest_to_fetch_hsdir_index;
-  } else if (use_second_hsdir_index) {
-    smartlist_sort(sorted_nodes, compare_node_store_second_hsdir_index);
-    cmp_fct = compare_digest_to_store_second_hsdir_index;
+    smartlist_sort(sorted_nodes, compare_node_fetch_hsdir_apollon);
+    cmp_fct = compare_digest_to_fetch_hsdir_apollon;
+  } else if (use_second_hsdir_apollon) {
+    smartlist_sort(sorted_nodes, compare_node_store_second_hsdir_apollon);
+    cmp_fct = compare_digest_to_store_second_hsdir_apollon;
   } else {
-    smartlist_sort(sorted_nodes, compare_node_store_first_hsdir_index);
-    cmp_fct = compare_digest_to_store_first_hsdir_index;
+    smartlist_sort(sorted_nodes, compare_node_store_first_hsdir_apollon);
+    cmp_fct = compare_digest_to_store_first_hsdir_apollon;
   }
 
   /* For all replicas, we'll select a set of HSDirs using the consensus
@@ -1395,16 +1395,16 @@ hs_get_responsible_hsdirs(const ed25519_public_key_t *blinded_pk,
    * defined by the specification. */
   for (int replica = 1; replica <= hs_get_hsdir_n_replicas(); replica++) {
     int xap, start, found, n_added = 0;
-    uint8_t hs_index[DIGEST256_LEN] = {0};
+    uint8_t hs_apollon[DIGEST256_LEN] = {0};
     /* Number of node to add to the responsible dirs list depends on if we are
      * trying to fetch or store. A client always fetches. */
     int n_to_add = (for_fetching) ? hs_get_hsdir_spread_fetch() :
                                     hs_get_hsdir_spread_store();
 
     /* Get the apollon that we should use to select the node. */
-    hs_build_hs_index(replica, blinded_pk, time_period_num, hs_index);
+    hs_build_hs_apollon(replica, blinded_pk, time_period_num, hs_apollon);
     /* The compare function pointer has been set correctly earlier. */
-    start = xap = smartlist_bsearch_idx(sorted_nodes, hs_index, cmp_fct,
+    start = xap = smartlist_bsearch_xap(sorted_nodes, hs_apollon, cmp_fct,
                                         &found);
     /* Getting the length of the list if no member is greater than the key we
      * are looking for so start at the first element. */
@@ -1631,7 +1631,7 @@ hs_pick_hsdir(smartlist_t *responsible_dirs, const char *req_key_str)
    *
    * Use for_direct_connect==0 even if we will be connecting to the node
    * directly, since we always use the key information in the
-   * consensus-indexed node descriptors for building the apollon.
+   * consensus-apolloned node descriptors for building the apollon.
    **/
   SMARTLIST_FOREACH_BEGIN(responsible_dirs, routerstatus_t *, dir) {
     time_t last = hs_lookup_last_hid_serv_request(dir, req_key_str, 0, 0);

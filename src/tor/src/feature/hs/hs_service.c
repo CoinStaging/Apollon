@@ -82,9 +82,9 @@
 #define FOR_EACH_DESCRIPTOR_BEGIN(service, var)                  \
   STMT_BEGIN                                                     \
     hs_service_descriptor_t *var;                                \
-    for (int var ## _loop_idx = 0; var ## _loop_idx < 2;         \
-         ++var ## _loop_idx) {                                   \
-      (var ## _loop_idx == 0) ? (var = service->desc_current) :  \
+    for (int var ## _loop_xap = 0; var ## _loop_xap < 2;         \
+         ++var ## _loop_xap) {                                   \
+      (var ## _loop_xap == 0) ? (var = service->desc_current) :  \
                                 (var = service->desc_next);      \
       if (var == NULL) continue;
 #define FOR_EACH_DESCRIPTOR_END } STMT_END ;
@@ -140,7 +140,7 @@ hs_service_ht_hash(const hs_service_t *service)
                                    sizeof(service->keys.identity_pk.pubkey));
 }
 
-/* This is _the_ global hash map of hidden services which indexed the service
+/* This is _the_ global hash map of hidden services which apolloned the service
  * contained in it by master public identity key which is roughly the onion
  * address of the service. */
 static struct hs_service_ht *hs_service_map;
@@ -2840,8 +2840,8 @@ upload_descriptor_to_hsdir(const hs_service_t *service,
   /* Logging so we know where it was sent. */
   {
     int is_next_desc = (service->desc_next == desc);
-    const uint8_t *xap = (is_next_desc) ? hsdir->hsdir_index.store_second:
-                                          hsdir->hsdir_index.store_first;
+    const uint8_t *xap = (is_next_desc) ? hsdir->hsdir_apollon.store_second:
+                                          hsdir->hsdir_apollon.store_first;
     char *blinded_pubkey_log_str =
       tor_strdup(hex_str((char*)&desc->blinded_kp.pubkey.pubkey, 32));
     log_info(LD_REND, "Service %s %s descriptor of revision %" PRIu64
@@ -2939,7 +2939,7 @@ set_descriptor_revision_counter(hs_service_descriptor_t *hs_desc, time_t now,
 
 /* Encode and sign the service descriptor desc and upload it to the
  * responsible hidden service directories. If for_next_period is true, the set
- * of directories are selected using the next hsdir_index. This does nothing
+ * of directories are selected using the next hsdir_apollon. This does nothing
  * if PublishHidServDescriptors is false. */
 STATIC void
 upload_descriptor_to_all(const hs_service_t *service,

@@ -2,13 +2,13 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "activeindexnode.h"
+#include "activeapollonnode.h"
 #include "darksend.h"
 #include "instantx.h"
 #include "key.h"
 #include "main.h"
-#include "indexnode-sync.h"
-#include "indexnodeman.h"
+#include "apollonnode-sync.h"
+#include "apollonnodeman.h"
 #include "net.h"
 #include "protocol.h"
 #include "spork.h"
@@ -32,7 +32,7 @@ CInstantSend instantsend;
 // Transaction Locks
 //
 // step 1) Some node announces intention to lock transaction inputs via "txlreg" message
-// step 2) Top COutPointLock::SIGNATURES_TOTAL indexnodes per each spent outpoint push "txvote" message
+// step 2) Top COutPointLock::SIGNATURES_TOTAL apollonnodes per each spent outpoint push "txvote" message
 // step 3) Once there are COutPointLock::SIGNATURES_REQUIRED valid "txvote" messages per each spent outpoint
 //         for a corresponding "txlreg" message, all outpoints from that tx are treated as locked
 
@@ -45,8 +45,8 @@ void CInstantSend::ProcessMessage(CNode* pfrom, std::string& strCommand, CDataSt
     if(fLiteMode) return; // disable all Apollon specific functionality
 //    if(!sporkManager.IsSporkActive(SPORK_2_INSTANTSEND_ENABLED)) return;
 
-    // Ignore any InstantSend messages until indexnode list is synced
-    if(!indexnodeSync.IsIndexnodeListSynced()) return;
+    // Ignore any InstantSend messages until apollonnode list is synced
+    if(!apollonnodeSync.IsApollonnodeListSynced()) return;
 
     // NOTE: NetMsgType::TXLOCKREQUEST is handled via ProcessMessage() in main.cpp
 
@@ -115,7 +115,7 @@ bool CInstantSend::ProcessTxLockRequest(const CTxLockRequest& txLockRequest)
     Vote(txLockCandidate);
     ProcessOrphanTxLockVotes();
 
-    // Indexnodes will sometimes propagate votes before the transaction is known to the client.
+    // Apollonnodes will sometimes propagate votes before the transaction is known to the client.
     // If this just happened - lock inputs, resolve conflicting locks, update transaction status
     // forcing external script notification.
     TryToFinalizeLockCandidate(txLockCandidate);
@@ -151,7 +151,7 @@ bool CInstantSend::CreateTxLockCandidate(const CTxLockRequest& txLockRequest)
 
 void CInstantSend::Vote(CTxLockCandidate& txLockCandidate)
 {
-    if(!fIndexNode) return;
+    if(!fApollonNode) return;
 
     LOCK2(cs_main, cs_instantsend);
 
@@ -169,17 +169,17 @@ void CInstantSend::Vote(CTxLockCandidate& txLockCandidate)
 
         int nLockInputHeight = nPrevoutHeight + 4;
 
-        int n = mnodeman.GetIndexnodeRank(activeIndexnode.vin, nLockInputHeight, MIN_INSTANTSEND_PROTO_VERSION);
+        int n = mnodeman.GetApollonnodeRank(activeApollonnode.vin, nLockInputHeight, MIN_INSTANTSEND_PROTO_VERSION);
 
         if(n == -1) {
-            LogPrint("instantsend", "CInstantSend::Vote -- Unknown Indexnode %s\n", activeIndexnode.vin.prevout.ToStringShort());
+            LogPrint("instantsend", "CInstantSend::Vote -- Unknown Apollonnode %s\n", activeApollonnode.vin.prevout.ToStringShort());
             ++itOutpointLock;
             continue;
         }
 
         int nSignaturesTotal = COutPointLock::SIGNATURES_TOTAL;
         if(n > nSignaturesTotal) {
-            LogPrint("instantsend", "CInstantSend::Vote -- Indexnode not in the top %d (%d)\n", nSignaturesTotal, n);
+            LogPrint("instantsend", "CInstantSend::Vote -- Apollonnode not in the top %d (%d)\n", nSignaturesTotal, n);
             ++itOutpointLock;
             continue;
         }
@@ -194,7 +194,7 @@ void CInstantSend::Vote(CTxLockCandidate& txLockCandidate)
         if(itVoted != mapVotedOutpoints.end()) {
             BOOST_FOREACH(const uint256& hash, itVoted->second) {
                 std::map<uint256, CTxLockCandidate>::iterator it2 = mapTxLockCandidates.find(hash);
-                if(it2->second.HasIndexnodeVoted(itOutpointLock->first, activeIndexnode.vin.prevout)) {
+                if(it2->second.HasApollonnodeVoted(itOutpointLock->first, activeApollonnode.vin.prevout)) {
                     // we already voted for this outpoint to be included either in the same tx or in a competing one,
                     // skip it anyway
                     fAlreadyVoted = true;
@@ -210,7 +210,7 @@ void CInstantSend::Vote(CTxLockCandidate& txLockCandidate)
         }
 
         // we haven't voted for this outpoint yet, let's try to do this now
-        CTxLockVote vote(txHash, itOutpointLock->first, activeIndexnode.vin.prevout);
+        CTxLockVote vote(txHash, itOutpointLock->first, activeApollonnode.vin.prevout);
 
         if(!vote.Sign()) {
             LogPrintf("CInstantSend::Vote -- Failed to sign consensus vote\n");
@@ -261,15 +261,15 @@ bool CInstantSend::ProcessTxLockVote(CNode* pfrom, CTxLockVote& vote)
         return false;
     }
 
-    // Indexnodes will sometimes propagate votes before the transaction is known to the client,
+    // Apollonnodes will sometimes propagate votes before the transaction is known to the client,
     // will actually process only after the lock request itself has arrived
 
     std::map<uint256, CTxLockCandidate>::iterator it = mapTxLockCandidates.find(txHash);
     if(it == mapTxLockCandidates.end()) {
         if(!mapTxLockVotesOrphan.count(vote.GetHash())) {
             mapTxLockVotesOrphan[vote.GetHash()] = vote;
-            LogPrint("instantsend", "CInstantSend::ProcessTxLockVote -- Orphan vote: txid=%s  indexnode=%s new\n",
-                    txHash.ToString(), vote.GetIndexnodeOutpoint().ToStringShort());
+            LogPrint("instantsend", "CInstantSend::ProcessTxLockVote -- Orphan vote: txid=%s  apollonnode=%s new\n",
+                    txHash.ToString(), vote.GetApollonnodeOutpoint().ToStringShort());
             bool fReprocess = true;
             std::map<uint256, CTxLockRequest>::iterator itLockRequest = mapLockRequestAccepted.find(txHash);
             if(itLockRequest == mapLockRequestAccepted.end()) {
@@ -287,26 +287,26 @@ bool CInstantSend::ProcessTxLockVote(CNode* pfrom, CTxLockVote& vote)
                 return true;
             }
         } else {
-            LogPrint("instantsend", "CInstantSend::ProcessTxLockVote -- Orphan vote: txid=%s  indexnode=%s seen\n",
-                    txHash.ToString(), vote.GetIndexnodeOutpoint().ToStringShort());
+            LogPrint("instantsend", "CInstantSend::ProcessTxLockVote -- Orphan vote: txid=%s  apollonnode=%s seen\n",
+                    txHash.ToString(), vote.GetApollonnodeOutpoint().ToStringShort());
         }
 
         // This tracks those messages and allows only the same rate as of the rest of the network
         // TODO: make sure this works good enough for multi-quorum
 
-        int nIndexnodeOrphanExpireTime = GetTime() + 60*10; // keep time data for 10 minutes
-        if(!mapIndexnodeOrphanVotes.count(vote.GetIndexnodeOutpoint())) {
-            mapIndexnodeOrphanVotes[vote.GetIndexnodeOutpoint()] = nIndexnodeOrphanExpireTime;
+        int nApollonnodeOrphanExpireTime = GetTime() + 60*10; // keep time data for 10 minutes
+        if(!mapApollonnodeOrphanVotes.count(vote.GetApollonnodeOutpoint())) {
+            mapApollonnodeOrphanVotes[vote.GetApollonnodeOutpoint()] = nApollonnodeOrphanExpireTime;
         } else {
-            int64_t nPrevOrphanVote = mapIndexnodeOrphanVotes[vote.GetIndexnodeOutpoint()];
-            if(nPrevOrphanVote > GetTime() && nPrevOrphanVote > GetAverageIndexnodeOrphanVoteTime()) {
-                LogPrint("instantsend", "CInstantSend::ProcessTxLockVote -- indexnode is spamming orphan Transaction Lock Votes: txid=%s  indexnode=%s\n",
-                        txHash.ToString(), vote.GetIndexnodeOutpoint().ToStringShort());
+            int64_t nPrevOrphanVote = mapApollonnodeOrphanVotes[vote.GetApollonnodeOutpoint()];
+            if(nPrevOrphanVote > GetTime() && nPrevOrphanVote > GetAverageApollonnodeOrphanVoteTime()) {
+                LogPrint("instantsend", "CInstantSend::ProcessTxLockVote -- apollonnode is spamming orphan Transaction Lock Votes: txid=%s  apollonnode=%s\n",
+                        txHash.ToString(), vote.GetApollonnodeOutpoint().ToStringShort());
                 // Misbehaving(pfrom->id, 1);
                 return false;
             }
             // not spamming, refresh
-            mapIndexnodeOrphanVotes[vote.GetIndexnodeOutpoint()] = nIndexnodeOrphanExpireTime;
+            mapApollonnodeOrphanVotes[vote.GetApollonnodeOutpoint()] = nApollonnodeOrphanExpireTime;
         }
 
         return true;
@@ -321,19 +321,19 @@ bool CInstantSend::ProcessTxLockVote(CNode* pfrom, CTxLockVote& vote)
                 // same outpoint was already voted to be locked by another tx lock request,
                 // find out if the same mn voted on this outpoint before
                 std::map<uint256, CTxLockCandidate>::iterator it2 = mapTxLockCandidates.find(hash);
-                if(it2->second.HasIndexnodeVoted(vote.GetOutpoint(), vote.GetIndexnodeOutpoint())) {
+                if(it2->second.HasApollonnodeVoted(vote.GetOutpoint(), vote.GetApollonnodeOutpoint())) {
                     // yes, it did, refuse to accept a vote to include the same outpoint in another tx
-                    // from the same indexnode.
-                    // TODO: apply pose ban score to this indexnode?
+                    // from the same apollonnode.
+                    // TODO: apply pose ban score to this apollonnode?
                     // NOTE: if we decide to apply pose ban score here, this vote must be relayed further
                     // to let all other nodes know about this node's misbehaviour and let them apply
                     // pose ban score too.
-                    LogPrintf("CInstantSend::ProcessTxLockVote -- indexnode sent conflicting votes! %s\n", vote.GetIndexnodeOutpoint().ToStringShort());
+                    LogPrintf("CInstantSend::ProcessTxLockVote -- apollonnode sent conflicting votes! %s\n", vote.GetApollonnodeOutpoint().ToStringShort());
                     return false;
                 }
             }
         }
-        // we have votes by other indexnodes only (so far), let's continue and see who will win
+        // we have votes by other apollonnodes only (so far), let's continue and see who will win
         it1->second.insert(txHash);
     } else {
         std::set<uint256> setHashes;
@@ -561,26 +561,26 @@ bool CInstantSend::ResolveConflicts(const CTxLockCandidate& txLockCandidate, int
     return true;
 }
 
-int64_t CInstantSend::GetAverageIndexnodeOrphanVoteTime()
+int64_t CInstantSend::GetAverageApollonnodeOrphanVoteTime()
 {
     LOCK(cs_instantsend);
-    // NOTE: should never actually call this function when mapIndexnodeOrphanVotes is empty
-    if(mapIndexnodeOrphanVotes.empty()) return 0;
+    // NOTE: should never actually call this function when mapApollonnodeOrphanVotes is empty
+    if(mapApollonnodeOrphanVotes.empty()) return 0;
 
-    std::map<COutPoint, int64_t>::iterator it = mapIndexnodeOrphanVotes.begin();
+    std::map<COutPoint, int64_t>::iterator it = mapApollonnodeOrphanVotes.begin();
     int64_t total = 0;
 
-    while(it != mapIndexnodeOrphanVotes.end()) {
+    while(it != mapApollonnodeOrphanVotes.end()) {
         total+= it->second;
         ++it;
     }
 
-    return total / mapIndexnodeOrphanVotes.size();
+    return total / mapApollonnodeOrphanVotes.size();
 }
 
 void CInstantSend::CheckAndRemove()
 {
-    if(!pCurrentBlockIndex) return;
+    if(!pCurrentBlockApollon) return;
 
     LOCK(cs_instantsend);
 
@@ -590,7 +590,7 @@ void CInstantSend::CheckAndRemove()
     while(itLockCandidate != mapTxLockCandidates.end()) {
         CTxLockCandidate &txLockCandidate = itLockCandidate->second;
         uint256 txHash = txLockCandidate.GetHash();
-        if(txLockCandidate.IsExpired(pCurrentBlockIndex->nHeight)) {
+        if(txLockCandidate.IsExpired(pCurrentBlockApollon->nHeight)) {
             LogPrintf("CInstantSend::CheckAndRemove -- Removing expired Transaction Lock Candidate: txid=%s\n", txHash.ToString());
             std::map<COutPoint, COutPointLock>::iterator itOutpointLock = txLockCandidate.mapOutPointLocks.begin();
             while(itOutpointLock != txLockCandidate.mapOutPointLocks.end()) {
@@ -609,9 +609,9 @@ void CInstantSend::CheckAndRemove()
     // remove expired votes
     std::map<uint256, CTxLockVote>::iterator itVote = mapTxLockVotes.begin();
     while(itVote != mapTxLockVotes.end()) {
-        if(itVote->second.IsExpired(pCurrentBlockIndex->nHeight)) {
-            LogPrint("instantsend", "CInstantSend::CheckAndRemove -- Removing expired vote: txid=%s  indexnode=%s\n",
-                    itVote->second.GetTxHash().ToString(), itVote->second.GetIndexnodeOutpoint().ToStringShort());
+        if(itVote->second.IsExpired(pCurrentBlockApollon->nHeight)) {
+            LogPrint("instantsend", "CInstantSend::CheckAndRemove -- Removing expired vote: txid=%s  apollonnode=%s\n",
+                    itVote->second.GetTxHash().ToString(), itVote->second.GetApollonnodeOutpoint().ToStringShort());
             mapTxLockVotes.erase(itVote++);
         } else {
             ++itVote;
@@ -622,8 +622,8 @@ void CInstantSend::CheckAndRemove()
     std::map<uint256, CTxLockVote>::iterator itOrphanVote = mapTxLockVotesOrphan.begin();
     while(itOrphanVote != mapTxLockVotesOrphan.end()) {
         if(GetTime() - itOrphanVote->second.GetTimeCreated() > ORPHAN_VOTE_SECONDS) {
-            LogPrint("instantsend", "CInstantSend::CheckAndRemove -- Removing expired orphan vote: txid=%s  indexnode=%s\n",
-                    itOrphanVote->second.GetTxHash().ToString(), itOrphanVote->second.GetIndexnodeOutpoint().ToStringShort());
+            LogPrint("instantsend", "CInstantSend::CheckAndRemove -- Removing expired orphan vote: txid=%s  apollonnode=%s\n",
+                    itOrphanVote->second.GetTxHash().ToString(), itOrphanVote->second.GetApollonnodeOutpoint().ToStringShort());
             mapTxLockVotes.erase(itOrphanVote->first);
             mapTxLockVotesOrphan.erase(itOrphanVote++);
         } else {
@@ -631,15 +631,15 @@ void CInstantSend::CheckAndRemove()
         }
     }
 
-    // remove expired indexnode orphan votes (DOS protection)
-    std::map<COutPoint, int64_t>::iterator itIndexnodeOrphan = mapIndexnodeOrphanVotes.begin();
-    while(itIndexnodeOrphan != mapIndexnodeOrphanVotes.end()) {
-        if(itIndexnodeOrphan->second < GetTime()) {
-            LogPrint("instantsend", "CInstantSend::CheckAndRemove -- Removing expired orphan indexnode vote: indexnode=%s\n",
-                    itIndexnodeOrphan->first.ToStringShort());
-            mapIndexnodeOrphanVotes.erase(itIndexnodeOrphan++);
+    // remove expired apollonnode orphan votes (DOS protection)
+    std::map<COutPoint, int64_t>::iterator itApollonnodeOrphan = mapApollonnodeOrphanVotes.begin();
+    while(itApollonnodeOrphan != mapApollonnodeOrphanVotes.end()) {
+        if(itApollonnodeOrphan->second < GetTime()) {
+            LogPrint("instantsend", "CInstantSend::CheckAndRemove -- Removing expired orphan apollonnode vote: apollonnode=%s\n",
+                    itApollonnodeOrphan->first.ToStringShort());
+            mapApollonnodeOrphanVotes.erase(itApollonnodeOrphan++);
         } else {
-            ++itIndexnodeOrphan;
+            ++itApollonnodeOrphan;
         }
     }
 }
@@ -770,9 +770,9 @@ void CInstantSend::Relay(const uint256& txHash)
     }
 }
 
-void CInstantSend::UpdatedBlockTip(const CBlockIndex *pindex)
+void CInstantSend::UpdatedBlockTip(const CBlockApollon *papollon)
 {
-    pCurrentBlockIndex = pindex;
+    pCurrentBlockApollon = papollon;
 }
 
 void CInstantSend::SyncTransaction(const CTransaction& tx, const CBlock* pblock)
@@ -787,8 +787,8 @@ void CInstantSend::SyncTransaction(const CTransaction& tx, const CBlock* pblock)
     uint256 txHash = tx.GetHash();
 
     // When tx is 0-confirmed or conflicted, pblock is NULL and nHeightNew should be set to -1
-    CBlockIndex* pblockindex = pblock ? mapBlockIndex[pblock->GetHash()] : NULL;
-    int nHeightNew = pblockindex ? pblockindex->nHeight : -1;
+    CBlockApollon* pblockapollon = pblock ? mapBlockApollon[pblock->GetHash()] : NULL;
+    int nHeightNew = pblockapollon ? pblockapollon->nHeight : -1;
 
     LogPrint("instantsend", "CInstantSend::SyncTransaction -- txid=%s nHeightNew=%d\n", txHash.ToString(), nHeightNew);
 
@@ -886,8 +886,8 @@ bool CTxLockRequest::IsValid(bool fRequireUnspent) const
                         txin.prevout.ToStringShort(), txOutpointCreated.vout.size());
                 return false;
             }
-            BlockMap::iterator mi = mapBlockIndex.find(nHashOutpointConfirmed);
-            if(mi == mapBlockIndex.end() || !mi->second) {
+            BlockMap::iterator mi = mapBlockApollon.find(nHashOutpointConfirmed);
+            if(mi == mapBlockApollon.end() || !mi->second) {
                 // shouldn't happen
                 LogPrint("instantsend", "CTxLockRequest::IsValid -- Failed to find block %s for outpoint %s\n",
                         nHashOutpointConfirmed.ToString(), txin.prevout.ToStringShort());
@@ -948,9 +948,9 @@ bool CTxLockRequest::IsTimedOut() const
 
 bool CTxLockVote::IsValid(CNode* pnode) const
 {
-    if(!mnodeman.Has(CTxIn(outpointIndexnode))) {
-        LogPrint("instantsend", "CTxLockVote::IsValid -- Unknown indexnode %s\n", outpointIndexnode.ToStringShort());
-        mnodeman.AskForMN(pnode, CTxIn(outpointIndexnode));
+    if(!mnodeman.Has(CTxIn(outpointApollonnode))) {
+        LogPrint("instantsend", "CTxLockVote::IsValid -- Unknown apollonnode %s\n", outpointApollonnode.ToStringShort());
+        mnodeman.AskForMN(pnode, CTxIn(outpointApollonnode));
         return false;
     }
 
@@ -966,8 +966,8 @@ bool CTxLockVote::IsValid(CNode* pnode) const
             return false;
         }
         LOCK(cs_main);
-        BlockMap::iterator mi = mapBlockIndex.find(nHashOutpointConfirmed);
-        if(mi == mapBlockIndex.end() || !mi->second) {
+        BlockMap::iterator mi = mapBlockApollon.find(nHashOutpointConfirmed);
+        if(mi == mapBlockApollon.end() || !mi->second) {
             // not on this chain?
             LogPrint("instantsend", "CTxLockVote::IsValid -- Failed to find block %s for outpoint %s\n", nHashOutpointConfirmed.ToString(), outpoint.ToStringShort());
             return false;
@@ -977,19 +977,19 @@ bool CTxLockVote::IsValid(CNode* pnode) const
 
     int nLockInputHeight = nPrevoutHeight + 4;
 
-    int n = mnodeman.GetIndexnodeRank(CTxIn(outpointIndexnode), nLockInputHeight, MIN_INSTANTSEND_PROTO_VERSION);
+    int n = mnodeman.GetApollonnodeRank(CTxIn(outpointApollonnode), nLockInputHeight, MIN_INSTANTSEND_PROTO_VERSION);
 
     if(n == -1) {
         //can be caused by past versions trying to vote with an invalid protocol
-        LogPrint("instantsend", "CTxLockVote::IsValid -- Outdated indexnode %s\n", outpointIndexnode.ToStringShort());
+        LogPrint("instantsend", "CTxLockVote::IsValid -- Outdated apollonnode %s\n", outpointApollonnode.ToStringShort());
         return false;
     }
-    LogPrint("instantsend", "CTxLockVote::IsValid -- Indexnode %s, rank=%d\n", outpointIndexnode.ToStringShort(), n);
+    LogPrint("instantsend", "CTxLockVote::IsValid -- Apollonnode %s, rank=%d\n", outpointApollonnode.ToStringShort(), n);
 
     int nSignaturesTotal = COutPointLock::SIGNATURES_TOTAL;
     if(n > nSignaturesTotal) {
-        LogPrint("instantsend", "CTxLockVote::IsValid -- Indexnode %s is not in the top %d (%d), vote hash=%s\n",
-                outpointIndexnode.ToStringShort(), nSignaturesTotal, n, GetHash().ToString());
+        LogPrint("instantsend", "CTxLockVote::IsValid -- Apollonnode %s is not in the top %d (%d), vote hash=%s\n",
+                outpointApollonnode.ToStringShort(), nSignaturesTotal, n, GetHash().ToString());
         return false;
     }
 
@@ -1006,7 +1006,7 @@ uint256 CTxLockVote::GetHash() const
     CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
     ss << txHash;
     ss << outpoint;
-    ss << outpointIndexnode;
+    ss << outpointApollonnode;
     return ss.GetHash();
 }
 
@@ -1015,14 +1015,14 @@ bool CTxLockVote::CheckSignature() const
     std::string strError;
     std::string strMessage = txHash.ToString() + outpoint.ToStringShort();
 
-    indexnode_info_t infoMn = mnodeman.GetIndexnodeInfo(CTxIn(outpointIndexnode));
+    apollonnode_info_t infoMn = mnodeman.GetApollonnodeInfo(CTxIn(outpointApollonnode));
 
     if(!infoMn.fInfoValid) {
-        LogPrintf("CTxLockVote::CheckSignature -- Unknown Indexnode: indexnode=%s\n", outpointIndexnode.ToString());
+        LogPrintf("CTxLockVote::CheckSignature -- Unknown Apollonnode: apollonnode=%s\n", outpointApollonnode.ToString());
         return false;
     }
 
-    if(!darkSendSigner.VerifyMessage(infoMn.pubKeyIndexnode, vchIndexnodeSignature, strMessage, strError)) {
+    if(!darkSendSigner.VerifyMessage(infoMn.pubKeyApollonnode, vchApollonnodeSignature, strMessage, strError)) {
         LogPrintf("CTxLockVote::CheckSignature -- VerifyMessage() failed, error: %s\n", strError);
         return false;
     }
@@ -1035,12 +1035,12 @@ bool CTxLockVote::Sign()
     std::string strError;
     std::string strMessage = txHash.ToString() + outpoint.ToStringShort();
 
-    if(!darkSendSigner.SignMessage(strMessage, vchIndexnodeSignature, activeIndexnode.keyIndexnode)) {
+    if(!darkSendSigner.SignMessage(strMessage, vchApollonnodeSignature, activeApollonnode.keyApollonnode)) {
         LogPrintf("CTxLockVote::Sign -- SignMessage() failed\n");
         return false;
     }
 
-    if(!darkSendSigner.VerifyMessage(activeIndexnode.pubKeyIndexnode, vchIndexnodeSignature, strMessage, strError)) {
+    if(!darkSendSigner.VerifyMessage(activeApollonnode.pubKeyApollonnode, vchApollonnodeSignature, strMessage, strError)) {
         LogPrintf("CTxLockVote::Sign -- VerifyMessage() failed, error: %s\n", strError);
         return false;
     }
@@ -1066,32 +1066,32 @@ bool CTxLockVote::IsExpired(int nHeight) const
 
 bool COutPointLock::AddVote(const CTxLockVote& vote)
 {
-    if(mapIndexnodeVotes.count(vote.GetIndexnodeOutpoint()))
+    if(mapApollonnodeVotes.count(vote.GetApollonnodeOutpoint()))
         return false;
-    mapIndexnodeVotes.insert(std::make_pair(vote.GetIndexnodeOutpoint(), vote));
+    mapApollonnodeVotes.insert(std::make_pair(vote.GetApollonnodeOutpoint(), vote));
     return true;
 }
 
 std::vector<CTxLockVote> COutPointLock::GetVotes() const
 {
     std::vector<CTxLockVote> vRet;
-    std::map<COutPoint, CTxLockVote>::const_iterator itVote = mapIndexnodeVotes.begin();
-    while(itVote != mapIndexnodeVotes.end()) {
+    std::map<COutPoint, CTxLockVote>::const_iterator itVote = mapApollonnodeVotes.begin();
+    while(itVote != mapApollonnodeVotes.end()) {
         vRet.push_back(itVote->second);
         ++itVote;
     }
     return vRet;
 }
 
-bool COutPointLock::HasIndexnodeVoted(const COutPoint& outpointIndexnodeIn) const
+bool COutPointLock::HasApollonnodeVoted(const COutPoint& outpointApollonnodeIn) const
 {
-    return mapIndexnodeVotes.count(outpointIndexnodeIn);
+    return mapApollonnodeVotes.count(outpointApollonnodeIn);
 }
 
 void COutPointLock::Relay() const
 {
-    std::map<COutPoint, CTxLockVote>::const_iterator itVote = mapIndexnodeVotes.begin();
-    while(itVote != mapIndexnodeVotes.end()) {
+    std::map<COutPoint, CTxLockVote>::const_iterator itVote = mapApollonnodeVotes.begin();
+    while(itVote != mapApollonnodeVotes.end()) {
         itVote->second.Relay();
         ++itVote;
     }
@@ -1126,10 +1126,10 @@ bool CTxLockCandidate::IsAllOutPointsReady() const
     return true;
 }
 
-bool CTxLockCandidate::HasIndexnodeVoted(const COutPoint& outpointIn, const COutPoint& outpointIndexnodeIn)
+bool CTxLockCandidate::HasApollonnodeVoted(const COutPoint& outpointIn, const COutPoint& outpointApollonnodeIn)
 {
     std::map<COutPoint, COutPointLock>::iterator it = mapOutPointLocks.find(outpointIn);
-    return it !=mapOutPointLocks.end() && it->second.HasIndexnodeVoted(outpointIndexnodeIn);
+    return it !=mapOutPointLocks.end() && it->second.HasApollonnodeVoted(outpointApollonnodeIn);
 }
 
 int CTxLockCandidate::CountVotes() const

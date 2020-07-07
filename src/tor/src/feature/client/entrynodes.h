@@ -123,7 +123,7 @@ struct entry_guard_t {
    *
    * This field is set to -1 if this guard is not confirmed.
    */
-  int confirmed_idx; /* -1 if not confirmed; otherwise the order that this
+  int confirmed_xap; /* -1 if not confirmed; otherwise the order that this
                       * item should occur in the CONFIRMED_GUARDS ordered
                       * list */
 
@@ -242,7 +242,7 @@ struct guard_selection_s {
    * Ordered list (from highest to lowest priority) of guards that we
    * have successfully contacted and decided to use. Every member of
    * this list is a member of sampled_entry_guards. Every member should
-   * have confirmed_on_date set, and have confirmed_idx greater than
+   * have confirmed_on_date set, and have confirmed_xap greater than
    * any earlier member of the list.
    *
    * This list is persistent. It is a subset of the elements in
@@ -267,9 +267,9 @@ struct guard_selection_s {
   /** When did we last successfully build a circuit or use a circuit? */
   time_t last_time_on_internet;
 
-  /** What confirmed_idx value should the next-added member of
+  /** What confirmed_xap value should the next-added member of
    * confirmed_entry_guards receive? */
-  int next_confirmed_idx;
+  int next_confirmed_xap;
 
 };
 

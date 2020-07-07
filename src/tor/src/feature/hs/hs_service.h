@@ -88,7 +88,7 @@ typedef struct hs_service_intropoints_t {
   /* Number of circuit we've launched during a single retry period. */
   unsigned int num_circuits_launched;
 
-  /* Contains the current hs_service_intro_point_t objects indexed by
+  /* Contains the current hs_service_intro_point_t objects apolloned by
    * authentication public key. */
   digest256map_t *map;
 
@@ -145,7 +145,7 @@ typedef struct hs_service_descriptor_t {
   time_t next_upload_time;
 
   /* Mutable: Introduction points assign to this descriptor which contains
-   * hs_service_intropoints_t object indexed by authentication key (the RSA key
+   * hs_service_intropoints_t object apolloned by authentication key (the RSA key
    * if the node is legacy). */
   hs_service_intropoints_t intro_points;
 

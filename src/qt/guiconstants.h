@@ -50,7 +50,7 @@ static const int MAX_URI_LENGTH = 255;
 #define SPINNER_FRAMES 36
 
 #define QAPP_ORG_NAME "Apollon"
-#define QAPP_ORG_DOMAIN "indexchain.org"
+#define QAPP_ORG_DOMAIN "apollonchain.org"
 #define QAPP_APP_NAME_DEFAULT "Apollon-Qt"
 #define QAPP_APP_NAME_TESTNET "Apollon-Qt-testnet"
 

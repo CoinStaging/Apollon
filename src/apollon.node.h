@@ -2,8 +2,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef INDEXNODE_H
-#define INDEXNODE_H
+#ifndef APOLLONNODE_H
+#define APOLLONNODE_H
 
 #include "key.h"
 #include "main.h"
@@ -12,24 +12,24 @@
 #include "timedata.h"
 #include "utiltime.h"
 
-class CIndexnode;
-class CIndexnodeBroadcast;
-class CIndexnodePing;
+class CApollonnode;
+class CApollonnodeBroadcast;
+class CApollonnodePing;
 
-static const int INDEXNODE_CHECK_SECONDS               =   5;
-static const int INDEXNODE_MIN_MNB_SECONDS             =   5 * 60; //BROADCAST_TIME
-static const int INDEXNODE_MIN_MNP_SECONDS             =  10 * 60; //PRE_ENABLE_TIME
-static const int INDEXNODE_EXPIRATION_SECONDS          =  65 * 60;
-static const int INDEXNODE_WATCHDOG_MAX_SECONDS        = 120 * 60;
-static const int INDEXNODE_NEW_START_REQUIRED_SECONDS  = 180 * 60;
-static const int INDEXNODE_COIN_REQUIRED  = 5000;
+static const int APOLLONNODE_CHECK_SECONDS               =   5;
+static const int APOLLONNODE_MIN_MNB_SECONDS             =   5 * 60; //BROADCAST_TIME
+static const int APOLLONNODE_MIN_MNP_SECONDS             =  10 * 60; //PRE_ENABLE_TIME
+static const int APOLLONNODE_EXPIRATION_SECONDS          =  65 * 60;
+static const int APOLLONNODE_WATCHDOG_MAX_SECONDS        = 120 * 60;
+static const int APOLLONNODE_NEW_START_REQUIRED_SECONDS  = 180 * 60;
+static const int APOLLONNODE_COIN_REQUIRED  = 5000;
 
-static const int INDEXNODE_POSE_BAN_MAX_SCORE          = 5;
+static const int APOLLONNODE_POSE_BAN_MAX_SCORE          = 5;
 //
-// The Indexnode Ping Class : Contains a different serialize method for sending pings from indexnodes throughout the network
+// The Apollonnode Ping Class : Contains a different serialize method for sending pings from apollonnodes throughout the network
 //
 
-class CIndexnodePing
+class CApollonnodePing
 {
 public:
     CTxIn vin;
@@ -38,14 +38,14 @@ public:
     std::vector<unsigned char> vchSig;
     //removed stop
 
-    CIndexnodePing() :
+    CApollonnodePing() :
         vin(),
         blockHash(),
         sigTime(0),
         vchSig()
         {}
 
-    CIndexnodePing(CTxIn& vinNew);
+    CApollonnodePing(CTxIn& vinNew);
 
     ADD_SERIALIZE_METHODS;
 
@@ -57,7 +57,7 @@ public:
         READWRITE(vchSig);
     }
 
-    void swap(CIndexnodePing& first, CIndexnodePing& second) // nothrow
+    void swap(CApollonnodePing& first, CApollonnodePing& second) // nothrow
     {
         // enable ADL (not necessary in our case, but good practice)
         using std::swap;
@@ -78,37 +78,37 @@ public:
         return ss.GetHash();
     }
 
-    bool IsExpired() { return GetTime() - sigTime > INDEXNODE_NEW_START_REQUIRED_SECONDS; }
+    bool IsExpired() { return GetTime() - sigTime > APOLLONNODE_NEW_START_REQUIRED_SECONDS; }
 
-    bool Sign(CKey& keyIndexnode, CPubKey& pubKeyIndexnode);
-    bool CheckSignature(CPubKey& pubKeyIndexnode, int &nDos);
+    bool Sign(CKey& keyApollonnode, CPubKey& pubKeyApollonnode);
+    bool CheckSignature(CPubKey& pubKeyApollonnode, int &nDos);
     bool SimpleCheck(int& nDos);
-    bool CheckAndUpdate(CIndexnode* pmn, bool fFromNewBroadcast, int& nDos);
+    bool CheckAndUpdate(CApollonnode* pmn, bool fFromNewBroadcast, int& nDos);
     void Relay();
 
-    CIndexnodePing& operator=(CIndexnodePing from)
+    CApollonnodePing& operator=(CApollonnodePing from)
     {
         swap(*this, from);
         return *this;
     }
-    friend bool operator==(const CIndexnodePing& a, const CIndexnodePing& b)
+    friend bool operator==(const CApollonnodePing& a, const CApollonnodePing& b)
     {
         return a.vin == b.vin && a.blockHash == b.blockHash;
     }
-    friend bool operator!=(const CIndexnodePing& a, const CIndexnodePing& b)
+    friend bool operator!=(const CApollonnodePing& a, const CApollonnodePing& b)
     {
         return !(a == b);
     }
 
 };
 
-struct indexnode_info_t
+struct apollonnode_info_t
 {
-    indexnode_info_t()
+    apollonnode_info_t()
         : vin(),
           addr(),
           pubKeyCollateralAddress(),
-          pubKeyIndexnode(),
+          pubKeyApollonnode(),
           sigTime(0),
           nLastDsq(0),
           nTimeLastChecked(0),
@@ -124,7 +124,7 @@ struct indexnode_info_t
     CTxIn vin;
     CService addr;
     CPubKey pubKeyCollateralAddress;
-    CPubKey pubKeyIndexnode;
+    CPubKey pubKeyApollonnode;
     int64_t sigTime; //mnb message time
     int64_t nLastDsq; //the dsq count from the last dsq broadcast of this node
     int64_t nTimeLastChecked;
@@ -138,10 +138,10 @@ struct indexnode_info_t
 };
 
 //
-// The Indexnode Class. For managing the Darksend process. It contains the input of the 1000DRK, signature to prove
+// The Apollonnode Class. For managing the Darksend process. It contains the input of the 1000DRK, signature to prove
 // it's the one who own that ip address and code for calculating the payment election.
 //
-class CIndexnode
+class CApollonnode
 {
 private:
     // critical section to protect the inner data structures
@@ -149,21 +149,21 @@ private:
 
 public:
     enum state {
-        INDEXNODE_PRE_ENABLED,
-        INDEXNODE_ENABLED,
-        INDEXNODE_EXPIRED,
-        INDEXNODE_OUTPOINT_SPENT,
-        INDEXNODE_UPDATE_REQUIRED,
-        INDEXNODE_WATCHDOG_EXPIRED,
-        INDEXNODE_NEW_START_REQUIRED,
-        INDEXNODE_POSE_BAN
+        APOLLONNODE_PRE_ENABLED,
+        APOLLONNODE_ENABLED,
+        APOLLONNODE_EXPIRED,
+        APOLLONNODE_OUTPOINT_SPENT,
+        APOLLONNODE_UPDATE_REQUIRED,
+        APOLLONNODE_WATCHDOG_EXPIRED,
+        APOLLONNODE_NEW_START_REQUIRED,
+        APOLLONNODE_POSE_BAN
     };
 
     CTxIn vin;
     CService addr;
     CPubKey pubKeyCollateralAddress;
-    CPubKey pubKeyIndexnode;
-    CIndexnodePing lastPing;
+    CPubKey pubKeyApollonnode;
+    CApollonnodePing lastPing;
     std::vector<unsigned char> vchSig;
     int64_t sigTime; //mnb message time
     int64_t nLastDsq; //the dsq count from the last dsq broadcast of this node
@@ -180,13 +180,13 @@ public:
     bool fAllowMixingTx;
     bool fUnitTest;
 
-    // KEEP TRACK OF GOVERNANCE ITEMS EACH INDEXNODE HAS VOTE UPON FOR RECALCULATION
+    // KEEP TRACK OF GOVERNANCE ITEMS EACH APOLLONNODE HAS VOTE UPON FOR RECALCULATION
     std::map<uint256, int> mapGovernanceObjectsVotedOn;
 
-    CIndexnode();
-    CIndexnode(const CIndexnode& other);
-    CIndexnode(const CIndexnodeBroadcast& mnb);
-    CIndexnode(CService addrNew, CTxIn vinNew, CPubKey pubKeyCollateralAddressNew, CPubKey pubKeyIndexnodeNew, int nProtocolVersionIn);
+    CApollonnode();
+    CApollonnode(const CApollonnode& other);
+    CApollonnode(const CApollonnodeBroadcast& mnb);
+    CApollonnode(CService addrNew, CTxIn vinNew, CPubKey pubKeyCollateralAddressNew, CPubKey pubKeyApollonnodeNew, int nProtocolVersionIn);
 
     ADD_SERIALIZE_METHODS;
 
@@ -196,7 +196,7 @@ public:
         READWRITE(vin);
         READWRITE(addr);
         READWRITE(pubKeyCollateralAddress);
-        READWRITE(pubKeyIndexnode);
+        READWRITE(pubKeyApollonnode);
         READWRITE(lastPing);
         READWRITE(vchSig);
         READWRITE(sigTime);
@@ -215,7 +215,7 @@ public:
         READWRITE(mapGovernanceObjectsVotedOn);
     }
 
-    void swap(CIndexnode& first, CIndexnode& second) // nothrow
+    void swap(CApollonnode& first, CApollonnode& second) // nothrow
     {
         // enable ADL (not necessary in our case, but good practice)
         using std::swap;
@@ -225,7 +225,7 @@ public:
         swap(first.vin, second.vin);
         swap(first.addr, second.addr);
         swap(first.pubKeyCollateralAddress, second.pubKeyCollateralAddress);
-        swap(first.pubKeyIndexnode, second.pubKeyIndexnode);
+        swap(first.pubKeyApollonnode, second.pubKeyApollonnode);
         swap(first.lastPing, second.lastPing);
         swap(first.vchSig, second.vchSig);
         swap(first.sigTime, second.sigTime);
@@ -248,7 +248,7 @@ public:
     // CALCULATE A RANK AGAINST OF GIVEN BLOCK
     arith_uint256 CalculateScore(const uint256& blockHash);
 
-    bool UpdateFromNewBroadcast(CIndexnodeBroadcast& mnb);
+    bool UpdateFromNewBroadcast(CApollonnodeBroadcast& mnb);
 
     void Check(bool fForce = false);
 
@@ -256,7 +256,7 @@ public:
 
     bool IsPingedWithin(int nSeconds, int64_t nTimeToCheckAt = -1)
     {
-        if(lastPing == CIndexnodePing()) return false;
+        if(lastPing == CApollonnodePing()) return false;
 
         if(nTimeToCheckAt == -1) {
             nTimeToCheckAt = GetAdjustedTime();
@@ -264,36 +264,36 @@ public:
         return nTimeToCheckAt - lastPing.sigTime < nSeconds;
     }
 
-    bool IsEnabled() { return nActiveState == INDEXNODE_ENABLED; }
-    bool IsPreEnabled() { return nActiveState == INDEXNODE_PRE_ENABLED; }
-    bool IsPoSeBanned() { return nActiveState == INDEXNODE_POSE_BAN; }
+    bool IsEnabled() { return nActiveState == APOLLONNODE_ENABLED; }
+    bool IsPreEnabled() { return nActiveState == APOLLONNODE_PRE_ENABLED; }
+    bool IsPoSeBanned() { return nActiveState == APOLLONNODE_POSE_BAN; }
     // NOTE: this one relies on nPoSeBanScore, not on nActiveState as everything else here
-    bool IsPoSeVerified() { return nPoSeBanScore <= -INDEXNODE_POSE_BAN_MAX_SCORE; }
-    bool IsExpired() { return nActiveState == INDEXNODE_EXPIRED; }
-    bool IsOutpointSpent() { return nActiveState == INDEXNODE_OUTPOINT_SPENT; }
-    bool IsUpdateRequired() { return nActiveState == INDEXNODE_UPDATE_REQUIRED; }
-    bool IsWatchdogExpired() { return nActiveState == INDEXNODE_WATCHDOG_EXPIRED; }
-    bool IsNewStartRequired() { return nActiveState == INDEXNODE_NEW_START_REQUIRED; }
+    bool IsPoSeVerified() { return nPoSeBanScore <= -APOLLONNODE_POSE_BAN_MAX_SCORE; }
+    bool IsExpired() { return nActiveState == APOLLONNODE_EXPIRED; }
+    bool IsOutpointSpent() { return nActiveState == APOLLONNODE_OUTPOINT_SPENT; }
+    bool IsUpdateRequired() { return nActiveState == APOLLONNODE_UPDATE_REQUIRED; }
+    bool IsWatchdogExpired() { return nActiveState == APOLLONNODE_WATCHDOG_EXPIRED; }
+    bool IsNewStartRequired() { return nActiveState == APOLLONNODE_NEW_START_REQUIRED; }
 
     static bool IsValidStateForAutoStart(int nActiveStateIn)
     {
-        return  nActiveStateIn == INDEXNODE_ENABLED ||
-                nActiveStateIn == INDEXNODE_PRE_ENABLED ||
-                nActiveStateIn == INDEXNODE_EXPIRED ||
-                nActiveStateIn == INDEXNODE_WATCHDOG_EXPIRED;
+        return  nActiveStateIn == APOLLONNODE_ENABLED ||
+                nActiveStateIn == APOLLONNODE_PRE_ENABLED ||
+                nActiveStateIn == APOLLONNODE_EXPIRED ||
+                nActiveStateIn == APOLLONNODE_WATCHDOG_EXPIRED;
     }
 
     bool IsValidForPayment();
 
-    bool IsMyIndexnode();
+    bool IsMyApollonnode();
 
     bool IsValidNetAddr();
     static bool IsValidNetAddr(CService addrIn);
 
-    void IncreasePoSeBanScore() { if(nPoSeBanScore < INDEXNODE_POSE_BAN_MAX_SCORE) nPoSeBanScore++; }
-    void DecreasePoSeBanScore() { if(nPoSeBanScore > -INDEXNODE_POSE_BAN_MAX_SCORE) nPoSeBanScore--; }
+    void IncreasePoSeBanScore() { if(nPoSeBanScore < APOLLONNODE_POSE_BAN_MAX_SCORE) nPoSeBanScore++; }
+    void DecreasePoSeBanScore() { if(nPoSeBanScore > -APOLLONNODE_POSE_BAN_MAX_SCORE) nPoSeBanScore--; }
 
-    indexnode_info_t GetInfo();
+    apollonnode_info_t GetInfo();
 
     static std::string StateToString(int nStateIn);
     std::string GetStateString() const;
@@ -302,7 +302,7 @@ public:
     UniValue ToJSON() const;
 
     void SetStatus(int newState);
-    void SetLastPing(CIndexnodePing newIndexnodePing);
+    void SetLastPing(CApollonnodePing newApollonnodePing);
     void SetTimeLastPaid(int64_t newTimeLastPaid);
     void SetBlockLastPaid(int newBlockLastPaid);
     void SetRank(int newRank);
@@ -311,7 +311,7 @@ public:
 
     int GetLastPaidTime() const { return nTimeLastPaid; }
     int GetLastPaidBlock() const { return nBlockLastPaid; }
-    void UpdateLastPaid(const CBlockIndex *pindex, int nMaxBlocksToScanBack);
+    void UpdateLastPaid(const CBlockApollon *papollon, int nMaxBlocksToScanBack);
 
     // KEEP TRACK OF EACH GOVERNANCE ITEM INCASE THIS NODE GOES OFFLINE, SO WE CAN RECALC THEIR STATUS
     void AddGovernanceVote(uint256 nGovernanceObjectHash);
@@ -322,16 +322,16 @@ public:
 
     void UpdateWatchdogVoteTime();
 
-    CIndexnode& operator=(CIndexnode from)
+    CApollonnode& operator=(CApollonnode from)
     {
         swap(*this, from);
         return *this;
     }
-    friend bool operator==(const CIndexnode& a, const CIndexnode& b)
+    friend bool operator==(const CApollonnode& a, const CApollonnode& b)
     {
         return a.vin == b.vin;
     }
-    friend bool operator!=(const CIndexnode& a, const CIndexnode& b)
+    friend bool operator!=(const CApollonnode& a, const CApollonnode& b)
     {
         return !(a.vin == b.vin);
     }
@@ -340,19 +340,19 @@ public:
 
 
 //
-// The Indexnode Broadcast Class : Contains a different serialize method for sending indexnodes through the network
+// The Apollonnode Broadcast Class : Contains a different serialize method for sending apollonnodes through the network
 //
 
-class CIndexnodeBroadcast : public CIndexnode
+class CApollonnodeBroadcast : public CApollonnode
 {
 public:
 
     bool fRecovery;
 
-    CIndexnodeBroadcast() : CIndexnode(), fRecovery(false) {}
-    CIndexnodeBroadcast(const CIndexnode& mn) : CIndexnode(mn), fRecovery(false) {}
-    CIndexnodeBroadcast(CService addrNew, CTxIn vinNew, CPubKey pubKeyCollateralAddressNew, CPubKey pubKeyIndexnodeNew, int nProtocolVersionIn) :
-        CIndexnode(addrNew, vinNew, pubKeyCollateralAddressNew, pubKeyIndexnodeNew, nProtocolVersionIn), fRecovery(false) {}
+    CApollonnodeBroadcast() : CApollonnode(), fRecovery(false) {}
+    CApollonnodeBroadcast(const CApollonnode& mn) : CApollonnode(mn), fRecovery(false) {}
+    CApollonnodeBroadcast(CService addrNew, CTxIn vinNew, CPubKey pubKeyCollateralAddressNew, CPubKey pubKeyApollonnodeNew, int nProtocolVersionIn) :
+        CApollonnode(addrNew, vinNew, pubKeyCollateralAddressNew, pubKeyApollonnodeNew, nProtocolVersionIn), fRecovery(false) {}
 
     ADD_SERIALIZE_METHODS;
 
@@ -361,7 +361,7 @@ public:
         READWRITE(vin);
         READWRITE(addr);
         READWRITE(pubKeyCollateralAddress);
-        READWRITE(pubKeyIndexnode);
+        READWRITE(pubKeyApollonnode);
         READWRITE(vchSig);
         READWRITE(sigTime);
         READWRITE(nProtocolVersion);
@@ -377,20 +377,20 @@ public:
         return ss.GetHash();
     }
 
-    /// Create Indexnode broadcast, needs to be relayed manually after that
-    static bool Create(CTxIn vin, CService service, CKey keyCollateralAddressNew, CPubKey pubKeyCollateralAddressNew, CKey keyIndexnodeNew, CPubKey pubKeyIndexnodeNew, std::string &strErrorRet, CIndexnodeBroadcast &mnbRet);
-    static bool Create(std::string strService, std::string strKey, std::string strTxHash, std::string strOutputIndex, std::string& strErrorRet, CIndexnodeBroadcast &mnbRet, bool fOffline = false);
+    /// Create Apollonnode broadcast, needs to be relayed manually after that
+    static bool Create(CTxIn vin, CService service, CKey keyCollateralAddressNew, CPubKey pubKeyCollateralAddressNew, CKey keyApollonnodeNew, CPubKey pubKeyApollonnodeNew, std::string &strErrorRet, CApollonnodeBroadcast &mnbRet);
+    static bool Create(std::string strService, std::string strKey, std::string strTxHash, std::string strOutputApollon, std::string& strErrorRet, CApollonnodeBroadcast &mnbRet, bool fOffline = false);
 
     bool SimpleCheck(int& nDos);
-    bool Update(CIndexnode* pmn, int& nDos);
+    bool Update(CApollonnode* pmn, int& nDos);
     bool CheckOutpoint(int& nDos);
 
     bool Sign(CKey& keyCollateralAddress);
     bool CheckSignature(int& nDos);
-    void RelayIndexNode();
+    void RelayApollonNode();
 };
 
-class CIndexnodeVerification
+class CApollonnodeVerification
 {
 public:
     CTxIn vin1;
@@ -401,7 +401,7 @@ public:
     std::vector<unsigned char> vchSig1;
     std::vector<unsigned char> vchSig2;
 
-    CIndexnodeVerification() :
+    CApollonnodeVerification() :
         vin1(),
         vin2(),
         addr(),
@@ -411,7 +411,7 @@ public:
         vchSig2()
         {}
 
-    CIndexnodeVerification(CService addr, int nonce, int nBlockHeight) :
+    CApollonnodeVerification(CService addr, int nonce, int nBlockHeight) :
         vin1(),
         vin2(),
         addr(addr),
@@ -447,7 +447,7 @@ public:
 
     void Relay() const
     {
-        CInv inv(MSG_INDEXNODE_VERIFY, GetHash());
+        CInv inv(MSG_APOLLONNODE_VERIFY, GetHash());
         RelayInv(inv);
     }
 };

@@ -180,7 +180,7 @@
         <translation>Peněženka je zašifrována</translation>
     </message>
     <message>
-        <source>%1 will close now to finish the encryption process. Remember that encrypting your wallet cannot fully protect your indexs from being stolen by malware infecting your computer.</source>
+        <source>%1 will close now to finish the encryption process. Remember that encrypting your wallet cannot fully protect your apollons from being stolen by malware infecting your computer.</source>
         <translation>%1 se teď ukončí, aby dokončil zašifrování. Pamatuj však, že pouhé zašifrování peněženky nemůže zabránit krádeži tvých Zcoinů malwarem, kterým se může počítač nakazit.</translation>
     </message>
     <message>
@@ -318,7 +318,7 @@
         <translation>Načíst &amp;URI...</translation>
     </message>
     <message>
-        <source>Reindexing blocks on disk...</source>
+        <source>Reapolloning blocks on disk...</source>
         <translation>Vytvářím nový apollon bloků na disku...</translation>
     </message>
     <message>
@@ -422,7 +422,7 @@
         <translation><numerusform>%n aktivní spojení do Zcoinové sítě</numerusform><numerusform>%n aktivní spojení do Zcoinové sítě</numerusform><numerusform>%n aktivních spojení do Zcoinové sítě</numerusform></translation>
     </message>
     <message>
-        <source>Indexing blocks on disk...</source>
+        <source>Apolloning blocks on disk...</source>
         <translation>Vytvářím apollon bloků na disku...</translation>
     </message>
     <message>
@@ -2134,7 +2134,7 @@
         <translation>Smaž tento záznam</translation>
     </message>
     <message>
-        <source>The fee will be deducted from the amount being sent. The recipient will receive less indexs than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
+        <source>The fee will be deducted from the amount being sent. The recipient will receive less apollons than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
         <translation>Poplatek se odečte od posílané částky. Příjemce tak dostane méně Zcoinů, než zadáš do pole Částka. Pokud vybereš více příjemců, tak se poplatek rovnoměrně rozloží.</translation>
     </message>
     <message>
@@ -2203,7 +2203,7 @@
         <translation>&amp;Podepiš zprávu</translation>
     </message>
     <message>
-        <source>You can sign messages/agreements with your addresses to prove you can receive indexs sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
+        <source>You can sign messages/agreements with your addresses to prove you can receive apollons sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
         <translation>Podepsáním zprávy/smlouvy svými adresami můžeš prokázat, že jsi na ně schopen přijmout Zcoiny. Buď opatrný a nepodepisuj nic vágního nebo náhodného; například při phishingových útocích můžeš být lákán, abys něco takového podepsal. Podepisuj pouze naprosto úplná a detailní prohlášení, se kterými souhlasíš.</translation>
     </message>
     <message>
@@ -2884,16 +2884,16 @@
         <translation>Prořezávání je nastaveno pod minimum %d MiB.  Použij, prosím, nějaké vyšší číslo.</translation>
     </message>
     <message>
-        <source>Prune: last wallet synchronisation goes beyond pruned data. You need to -reindex (download the whole blockchain again in case of pruned node)</source>
-        <translation>Prořezávání: poslední synchronizace peněženky proběhla před už prořezanými daty. Je třeba provést -reindex (tedy v případě prořezávacího režimu stáhnout znovu celý řetězec bloků)</translation>
+        <source>Prune: last wallet synchronisation goes beyond pruned data. You need to -reapollon (download the whole blockchain again in case of pruned node)</source>
+        <translation>Prořezávání: poslední synchronizace peněženky proběhla před už prořezanými daty. Je třeba provést -reapollon (tedy v případě prořezávacího režimu stáhnout znovu celý řetězec bloků)</translation>
     </message>
     <message>
-        <source>Reduce storage requirements by pruning (deleting) old blocks. This mode is incompatible with -txindex and -rescan. Warning: Reverting this setting requires re-downloading the entire blockchain. (default: 0 = disable pruning blocks, &gt;%u = target size in MiB to use for block files)</source>
-        <translation>Omezit nároky na úložný prostor prořezáváním (mazáním) starých bloků. Tento režim není slučitelný s -txindex ani -rescan. Upozornění: opětovná změna tohoto nastavení bude vyžadovat nové stažení celého řetězce bloků. (výchozí: 0 = bloky neprořezávat, &gt;%u = cílová velikost souborů s bloky, v MiB)</translation>
+        <source>Reduce storage requirements by pruning (deleting) old blocks. This mode is incompatible with -txapollon and -rescan. Warning: Reverting this setting requires re-downloading the entire blockchain. (default: 0 = disable pruning blocks, &gt;%u = target size in MiB to use for block files)</source>
+        <translation>Omezit nároky na úložný prostor prořezáváním (mazáním) starých bloků. Tento režim není slučitelný s -txapollon ani -rescan. Upozornění: opětovná změna tohoto nastavení bude vyžadovat nové stažení celého řetězce bloků. (výchozí: 0 = bloky neprořezávat, &gt;%u = cílová velikost souborů s bloky, v MiB)</translation>
     </message>
     <message>
-        <source>Rescans are not possible in pruned mode. You will need to use -reindex which will download the whole blockchain again.</source>
-        <translation>V prořezávacím režimu není možné přeskenovávat řetězec bloků. Musíš provést -reindex, což znovu stáhne celý řetězec bloků.</translation>
+        <source>Rescans are not possible in pruned mode. You will need to use -reapollon which will download the whole blockchain again.</source>
+        <translation>V prořezávacím režimu není možné přeskenovávat řetězec bloků. Musíš provést -reapollon, což znovu stáhne celý řetězec bloků.</translation>
     </message>
     <message>
         <source>Error: A fatal internal error occurred, see debug.log for details</source>
@@ -2996,8 +2996,8 @@
         <translation>Vždy vítat protějšky připojující se z dané podsítě či IP adresy. Lze zadat i vícekrát.</translation>
     </message>
     <message>
-        <source>You need to rebuild the database using -reindex-chainstate to change -txindex</source>
-        <translation>Je třeba přestavět databázi použitím -reindex-chainstate, aby bylo možné změnit -txindex</translation>
+        <source>You need to rebuild the database using -reapollon-chainstate to change -txapollon</source>
+        <translation>Je třeba přestavět databázi použitím -reapollon-chainstate, aby bylo možné změnit -txapollon</translation>
     </message>
     <message>
         <source>%s corrupt, salvage failed</source>
@@ -3152,8 +3152,8 @@
         <translation>Prořezávání nemůže být zkonfigurováno s negativní hodnotou.</translation>
     </message>
     <message>
-        <source>Prune mode is incompatible with -txindex.</source>
-        <translation>Prořezávací režim není kompatibilní s -txindex.</translation>
+        <source>Prune mode is incompatible with -txapollon.</source>
+        <translation>Prořezávací režim není kompatibilní s -txapollon.</translation>
     </message>
     <message>
         <source>Rebuild chain state and block apollon from the blk*.dat files on disk</source>
@@ -3292,8 +3292,8 @@
         <translation>Na vždy vítané protějšky se nevztahuje DoS klatba a jejich transakce jsou vždy přeposílány, i když už třeba jsou v transakčním zásobníku, což je užitečné např. pro bránu</translation>
     </message>
     <message>
-        <source>You need to rebuild the database using -reindex to go back to unpruned mode.  This will redownload the entire blockchain</source>
-        <translation>K návratu k neprořezávacímu režimu je potřeba přestavět databázi použitím -reindex.  Také se znovu stáhne celý řetězec bloků</translation>
+        <source>You need to rebuild the database using -reapollon to go back to unpruned mode.  This will redownload the entire blockchain</source>
+        <translation>K návratu k neprořezávacímu režimu je potřeba přestavět databázi použitím -reapollon.  Také se znovu stáhne celý řetězec bloků</translation>
     </message>
     <message>
         <source>(default: %u)</source>

@@ -471,7 +471,7 @@ struct hs_ident_edge_conn_t;
 struct hs_ident_dir_conn_t;
 struct hs_ident_circuit_t;
 
-typedef struct hsdir_index_t hsdir_index_t;
+typedef struct hsdir_apollon_t hsdir_apollon_t;
 
 /** Time interval for tracking replays of DH public keys received in
  * INTRODUCE2 cells.  Used only to avoid launching multiple

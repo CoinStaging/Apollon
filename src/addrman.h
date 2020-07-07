@@ -131,7 +131,7 @@ public:
  *        tried ones) is evicted from it, back to the "new" buckets.
  *    * Bucket selection is based on cryptographic hashing, using a randomly-generated 256-bit key, which should not
  *      be observable by adversaries.
- *    * Several indexes are kept for high performance. Defining DEBUG_ADDRMAN will introduce frequent (and expensive)
+ *    * Several apollones are kept for high performance. Defining DEBUG_ADDRMAN will introduce frequent (and expensive)
  *      consistency checks for the entire data structure.
  */
 
@@ -332,8 +332,8 @@ public:
             s << nSize;
             for (int i = 0; i < ADDRMAN_BUCKET_SIZE; i++) {
                 if (vvNew[bucket][i] != -1) {
-                    int nIndex = mapUnkIds[vvNew[bucket][i]];
-                    s << nIndex;
+                    int nApollon = mapUnkIds[vvNew[bucket][i]];
+                    s << nApollon;
                 }
             }
         }
@@ -414,14 +414,14 @@ public:
             int nSize = 0;
             s >> nSize;
             for (int n = 0; n < nSize; n++) {
-                int nIndex = 0;
-                s >> nIndex;
-                if (nIndex >= 0 && nIndex < nNew) {
-                    CAddrInfo &info = mapInfo[nIndex];
+                int nApollon = 0;
+                s >> nApollon;
+                if (nApollon >= 0 && nApollon < nNew) {
+                    CAddrInfo &info = mapInfo[nApollon];
                     int nUBucketPos = info.GetBucketPosition(nKey, true, bucket);
                     if (nVersion == 1 && nUBuckets == ADDRMAN_NEW_BUCKET_COUNT && vvNew[bucket][nUBucketPos] == -1 && info.nRefCount < ADDRMAN_NEW_BUCKETS_PER_ADDRESS) {
                         info.nRefCount++;
-                        vvNew[bucket][nUBucketPos] = nIndex;
+                        vvNew[bucket][nUBucketPos] = nApollon;
                     }
                 }
             }

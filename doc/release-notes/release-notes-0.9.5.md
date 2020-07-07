@@ -37,7 +37,7 @@ achieving its 951/1001 status.
 0.9.5 changelog
 ================
 
-- `74f29c2` Check pindexBestForkBase for null
+- `74f29c2` Check papollonBestForkBase for null
 - `9cd1dd9` Fix priority calculation in CreateTransaction
 - `6b4163b` Sanitize command strings before logging them.
 - `3230b32` Raise version of created blocks, and enforce DERSIG in mempool

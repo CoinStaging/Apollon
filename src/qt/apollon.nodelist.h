@@ -15,24 +15,24 @@
 #define MASTERNODELIST_FILTER_COOLDOWN_SECONDS            3
 
 namespace Ui {
-    class IndexnodeList;
+    class ApollonnodeList;
 }
 
 class ClientModel;
 class WalletModel;
 
 QT_BEGIN_NAMESPACE
-class QModelIndex;
+class QModelApollon;
 QT_END_NAMESPACE
 
-/** Indexnode Manager page widget */
-class IndexnodeList : public QWidget
+/** Apollonnode Manager page widget */
+class ApollonnodeList : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit IndexnodeList(const PlatformStyle *platformStyle, QWidget *parent = 0);
-    ~IndexnodeList();
+    explicit ApollonnodeList(const PlatformStyle *platformStyle, QWidget *parent = 0);
+    ~ApollonnodeList();
 
     void setClientModel(ClientModel *clientModel);
     void setWalletModel(WalletModel *walletModel);
@@ -45,7 +45,7 @@ private:
     bool fFilterUpdated;
 
 public Q_SLOTS:
-    void updateMyIndexnodeInfo(QString strAlias, QString strAddr, const COutPoint& outpoint);
+    void updateMyApollonnodeInfo(QString strAlias, QString strAddr, const COutPoint& outpoint);
     void updateMyNodeList(bool fForce = false);
     void updateNodeList();
 
@@ -53,14 +53,14 @@ Q_SIGNALS:
 
 private:
     QTimer *timer;
-    Ui::IndexnodeList *ui;
+    Ui::ApollonnodeList *ui;
     ClientModel *clientModel;
     WalletModel *walletModel;
 
-    // Protects tableWidgetIndexnodes
+    // Protects tableWidgetApollonnodes
     CCriticalSection cs_mnlist;
 
-    // Protects tableWidgetMyIndexnodes
+    // Protects tableWidgetMyApollonnodes
     CCriticalSection cs_mymnlist;
 
     QString strCurrentFilter;
@@ -71,7 +71,7 @@ private Q_SLOTS:
     void on_startButton_clicked();
     void on_startAllButton_clicked();
     void on_startMissingButton_clicked();
-    void on_tableWidgetMyIndexnodes_itemSelectionChanged();
+    void on_tableWidgetMyApollonnodes_itemSelectionChanged();
     void on_UpdateButton_clicked();
 };
 #endif // MASTERNODELIST_H

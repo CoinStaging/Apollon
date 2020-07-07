@@ -18,7 +18,7 @@ earlier versions of Bitcoin, then run the installer (on Windows) or just copy
 over /Applications/Bitcoin-Qt (on Mac) or bitcoind/bitcoin-qt (on Linux).
 
 If you are upgrading from version 0.7.2 or earlier, the first time you run
-0.9.0 your blockchain files will be re-indexed, which will take anywhere from 
+0.9.0 your blockchain files will be re-apolloned, which will take anywhere from 
 30 minutes to several hours, depending on the speed of your machine.
 
 On Windows, do not forget to uninstall all earlier versions of the Bitcoin
@@ -52,7 +52,7 @@ releases, so if you run 0.9 and then decide to switch back to a
 old release (due to 'pruned outputs' being omitted from the apollon of
 unspent transaction outputs).
 
-Running the old release with the -reindex option will rebuild the chainstate
+Running the old release with the -reapollon option will rebuild the chainstate
 data structures and correct the problem.
 
 Also, the first time you run a 0.8.x release on a 0.9 wallet it will rescan
@@ -210,7 +210,7 @@ Block-chain handling and storage:
 - Update leveldb to 1.15
 - Check for correct genesis (prevent cases where a datadir from the wrong
   network is accidentally loaded)
-- Allow txindex to be removed and add a reindex dialog
+- Allow txapollon to be removed and add a reapollon dialog
 - Log aborted block database rebuilds
 - Store orphan blocks in serialized form, to save memory
 - Limit the number of orphan blocks in memory to 750

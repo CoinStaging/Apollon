@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>IndexnodeList</class>
- <widget class="QWidget" name="IndexnodeList">
+ <class>ApollonnodeList</class>
+ <widget class="QWidget" name="ApollonnodeList">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -46,12 +46,12 @@
      </item>
      <item>
       <widget class="QTabWidget" name="tabWidget">
-       <property name="currentIndex">
+       <property name="currentApollon">
         <number>1</number>
        </property>
-       <widget class="QWidget" name="tabMyIndexnodes">
+       <widget class="QWidget" name="tabMyApollonnodes">
         <attribute name="title">
-         <string>My Indexnodes</string>
+         <string>My Apollonnodes</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_2">
          <item row="0" column="0">
@@ -67,14 +67,14 @@
              <item>
               <widget class="QLabel" name="updateNote">
                <property name="text">
-                <string>Note: Status of your indexnodes in local wallet can potentially be slightly incorrect.&lt;br /&gt;Always wait for wallet to sync additional data and then double check from another node&lt;br /&gt;if your indexnode should be running but you still do not see &quot;ENABLED&quot; in &quot;Status&quot; field.</string>
+                <string>Note: Status of your apollonnodes in local wallet can potentially be slightly incorrect.&lt;br /&gt;Always wait for wallet to sync additional data and then double check from another node&lt;br /&gt;if your apollonnode should be running but you still do not see &quot;ENABLED&quot; in &quot;Status&quot; field.</string>
                </property>
               </widget>
              </item>
             </layout>
            </item>
            <item>
-            <widget class="QTableWidget" name="tableWidgetMyIndexnodes">
+            <widget class="QTableWidget" name="tableWidgetMyApollonnodes">
              <property name="minimumSize">
               <size>
                <width>695</width>
@@ -202,13 +202,13 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="tabAllIndexnodes">
+       <widget class="QWidget" name="tabAllApollonnodes">
         <attribute name="title">
-         <string>All Indexnodes</string>
+         <string>All Apollonnodes</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout">
          <item row="1" column="0">
-          <widget class="QTableWidget" name="tableWidgetIndexnodes">
+          <widget class="QTableWidget" name="tableWidgetApollonnodes">
            <property name="editTriggers">
             <set>QAbstractItemView::NoEditTriggers</set>
            </property>
@@ -271,7 +271,7 @@
            <item>
             <widget class="QLineEdit" name="filterLineEdit">
              <property name="toolTip">
-              <string>Filter indexnode list</string>
+              <string>Filter apollonnode list</string>
              </property>
             </widget>
            </item>

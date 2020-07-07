@@ -254,7 +254,7 @@
         <translation>Otwórz URI...</translation>
     </message>
     <message>
-        <source>Reindexing blocks on disk...</source>
+        <source>Reapolloning blocks on disk...</source>
         <translation>Ponowne indeksowanie bloków na dysku...</translation>
     </message>
     <message>
@@ -358,7 +358,7 @@
         <translation><numerusform>%n aktywnych połączeń do sieci Apollon</numerusform><numerusform>%n aktywnych połączeń do sieci Apollon</numerusform><numerusform>%n aktywnych połączeń do sieci Apollon</numerusform></translation>
     </message>
     <message>
-        <source>Indexing blocks on disk...</source>
+        <source>Apolloning blocks on disk...</source>
         <translation>Indeksowanie bloków na dysku...</translation>
     </message>
     <message>
@@ -1786,8 +1786,8 @@
         <translation>Usuń ten wpis</translation>
     </message>
     <message>
-        <source>The fee will be deducted from the amount being sent. The recipient will receive less indexs than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
-        <translation>Opłata zostanie odjęta od kwoty wysyłane.Odbiorca otrzyma mniej niż indexs wpisz w polu kwoty. Jeśli wybrano kilku odbiorców, opłata jest podzielona równo.</translation>
+        <source>The fee will be deducted from the amount being sent. The recipient will receive less apollons than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
+        <translation>Opłata zostanie odjęta od kwoty wysyłane.Odbiorca otrzyma mniej niż apollons wpisz w polu kwoty. Jeśli wybrano kilku odbiorców, opłata jest podzielona równo.</translation>
     </message>
     <message>
         <source>S&amp;ubtract fee from amount</source>
@@ -1847,7 +1847,7 @@
         <translation>Podpi&amp;sz Wiadomość</translation>
     </message>
     <message>
-        <source>You can sign messages/agreements with your addresses to prove you can receive indexs sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
+        <source>You can sign messages/agreements with your addresses to prove you can receive apollons sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
         <translation>Możesz podpisywać wiadomości swoimi adresami aby udowodnić, że jesteś ich właścicielem. Uważaj, aby nie podpisywać niczego co wzbudza Twoje podejrzenia, ponieważ ktoś może stosować phishing próbując nakłonić Cię do ich podpisania. Akceptuj i podpisuj tylko w pełni zrozumiałe komunikaty i wiadomości.</translation>
     </message>
     <message>
@@ -2037,16 +2037,16 @@ Zwróć uwagę, że poprawnie zweryfikowana wiadomość potwierdza to, że nadaw
         <translation>Przycinanie skonfigurowano poniżej minimalnych %d MiB. Proszę użyć wyższej liczby.</translation>
     </message>
     <message>
-        <source>Prune: last wallet synchronisation goes beyond pruned data. You need to -reindex (download the whole blockchain again in case of pruned node)</source>
-        <translation>Prune: ostatnia synchronizacja portfela jest za danymi. Muszisz -reindexować (pobrać cały ciąg bloków ponownie w przypadku przyciętego węzła)</translation>
+        <source>Prune: last wallet synchronisation goes beyond pruned data. You need to -reapollon (download the whole blockchain again in case of pruned node)</source>
+        <translation>Prune: ostatnia synchronizacja portfela jest za danymi. Muszisz -reapollonować (pobrać cały ciąg bloków ponownie w przypadku przyciętego węzła)</translation>
     </message>
     <message>
-        <source>Reduce storage requirements by pruning (deleting) old blocks. This mode is incompatible with -txindex and -rescan. Warning: Reverting this setting requires re-downloading the entire blockchain. (default: 0 = disable pruning blocks, &gt;%u = target size in MiB to use for block files)</source>
-        <translation>Zredukuj wymaganą ilość miejsca na dysku poprzez usuwanie starych bloków. Ten tryb jest niekompatybilny z -txindex oraz -rescan. Ostrzeżenie: Wycofanie tego ustawienia wymaga ponownego pobrania całego łańcucha bloków. (domyślnie: 0 = wyłącz usuwanie bloków, &gt;%u = docelowy rozmiar w MiB jaki wykorzystać na pliki z blokami)</translation>
+        <source>Reduce storage requirements by pruning (deleting) old blocks. This mode is incompatible with -txapollon and -rescan. Warning: Reverting this setting requires re-downloading the entire blockchain. (default: 0 = disable pruning blocks, &gt;%u = target size in MiB to use for block files)</source>
+        <translation>Zredukuj wymaganą ilość miejsca na dysku poprzez usuwanie starych bloków. Ten tryb jest niekompatybilny z -txapollon oraz -rescan. Ostrzeżenie: Wycofanie tego ustawienia wymaga ponownego pobrania całego łańcucha bloków. (domyślnie: 0 = wyłącz usuwanie bloków, &gt;%u = docelowy rozmiar w MiB jaki wykorzystać na pliki z blokami)</translation>
     </message>
     <message>
-        <source>Rescans are not possible in pruned mode. You will need to use -reindex which will download the whole blockchain again.</source>
-        <translation>Ponowne skanowanie nie jest możliwe w trybie przycinania. Będzie trzeba użyć -reindex, co pobierze ponownie cały łańcuch bloków.</translation>
+        <source>Rescans are not possible in pruned mode. You will need to use -reapollon which will download the whole blockchain again.</source>
+        <translation>Ponowne skanowanie nie jest możliwe w trybie przycinania. Będzie trzeba użyć -reapollon, co pobierze ponownie cały łańcuch bloków.</translation>
     </message>
     <message>
         <source>Error: A fatal internal error occurred, see debug.log for details</source>
@@ -2145,8 +2145,8 @@ Zwróć uwagę, że poprawnie zweryfikowana wiadomość potwierdza to, że nadaw
         <translation>Dodawaj do białej listy węzły łączące się z podanej maski sieciowej lub adresu IP. Może być określona kilka razy.</translation>
     </message>
     <message>
-        <source>You need to rebuild the database using -reindex-chainstate to change -txindex</source>
-        <translation>Musisz przebudować bazę używając -reindex-chainstate aby zmienić -txindex</translation>
+        <source>You need to rebuild the database using -reapollon-chainstate to change -txapollon</source>
+        <translation>Musisz przebudować bazę używając -reapollon-chainstate aby zmienić -txapollon</translation>
     </message>
     <message>
         <source>%s corrupt, salvage failed</source>
@@ -2301,15 +2301,15 @@ Zwróć uwagę, że poprawnie zweryfikowana wiadomość potwierdza to, że nadaw
         <translation>Przycinanie nie może być skonfigurowane z negatywną wartością.</translation>
     </message>
     <message>
-        <source>Prune mode is incompatible with -txindex.</source>
-        <translation>Tryb ograniczony jest niekompatybilny z -txindex.</translation>
+        <source>Prune mode is incompatible with -txapollon.</source>
+        <translation>Tryb ograniczony jest niekompatybilny z -txapollon.</translation>
     </message>
     <message>
         <source>Rebuild chain state and block apollon from the blk*.dat files on disk</source>
         <translation>Odbuduj stan lańcucha i indeks bloków z obecnych na dysku plików blk*.dat</translation>
     </message>
     <message>
-        <source>Rebuild chain state from the currently indexed blocks</source>
+        <source>Rebuild chain state from the currently apolloned blocks</source>
         <translation>Odbuduj stan łańcucha z aktualnie zindeksowanych bloków</translation>
     </message>
     <message>

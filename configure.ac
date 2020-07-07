@@ -8,7 +8,7 @@ define(_CLIENT_VERSION_IS_RELEASE, true)
 define(_COPYRIGHT_YEAR, 2020)
 define(_COPYRIGHT_HOLDERS,[The %s developers])
 define(_COPYRIGHT_HOLDERS_SUBSTITUTION,[[Apollon Core]])
-AC_INIT([Apollon Core],[_CLIENT_VERSION_MAJOR._CLIENT_VERSION_MINOR._CLIENT_VERSION_REVISION._CLIENT_VERSION_BUILD],[https://github.com/IndexChain/Apollon/issues],[apollon],[https://indexchain.org/])
+AC_INIT([Apollon Core],[_CLIENT_VERSION_MAJOR._CLIENT_VERSION_MINOR._CLIENT_VERSION_REVISION._CLIENT_VERSION_BUILD],[https://github.com/ApollonChain/Apollon/issues],[apollon],[https://apollonchain.org/])
 AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_HEADERS([src/config/bitcoin-config.h])
 AC_CONFIG_AUX_DIR([build-aux])
@@ -19,7 +19,7 @@ AC_CONFIG_LINKS([src/crypto/x16Rv2/sph_md_helper.c:src/crypto/x16Rv2/sph_md_help
 AC_CONFIG_LINKS([src/crypto/x16Rv2/aes_helper.c:src/crypto/x16Rv2/aes_helper.c])
 AC_CONFIG_LINKS([src/crypto/x16Rv2/haval_helper.c:src/crypto/x16Rv2/haval_helper.c])
 
-BITCOIN_DAEMON_NAME=indexd
+BITCOIN_DAEMON_NAME=apollond
 BITCOIN_GUI_NAME=apollon-qt
 BITCOIN_CLI_NAME=apollon-cli
 BITCOIN_TX_NAME=apollon-tx
@@ -923,7 +923,7 @@ AC_SUBST(UNIVALUE_LIBS)
 
 BITCOIN_QT_PATH_PROGS([PROTOC], [protoc],$protoc_bin_path)
 
-AC_MSG_CHECKING([whether to build indexd])
+AC_MSG_CHECKING([whether to build apollond])
 AM_CONDITIONAL([BUILD_BITCOIND], [test x$build_bitcoind = xyes])
 AC_MSG_RESULT($build_bitcoind)
 
@@ -1046,7 +1046,7 @@ if test x$bitcoin_enable_qt != xno; then
     AC_MSG_WARN("xgettext is required to update qt translations")
   fi
 
-  AC_MSG_CHECKING([whether to build test_index-qt])
+  AC_MSG_CHECKING([whether to build test_apollon-qt])
   if test x$use_gui_tests$bitcoin_enable_qt_test = xyesyes; then
     AC_MSG_RESULT([yes])
     BUILD_TEST_QT="yes"

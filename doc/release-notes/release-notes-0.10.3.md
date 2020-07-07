@@ -29,7 +29,7 @@ backwards-compatible with pre-0.10 versions of Bitcoin Core or other software:
 
 * Blocks will be stored on disk out of order (in the order they are
 received, really), which makes it incompatible with some tools or
-other programs. Reindexing using earlier versions will also not work
+other programs. Reapolloning using earlier versions will also not work
 anymore as a result of this.
 
 * The block apollon database will now hold headers for which no block is
@@ -39,7 +39,7 @@ If you want to be able to downgrade smoothly, make a backup of your entire data
 directory. Without this your node will need start syncing (or importing from
 bootstrap.dat) anew afterwards. It is possible that the data from a completely
 synchronised 0.10 node may be usable in older versions as-is, but this is not
-supported and may break as soon as the older version attempts to reindex.
+supported and may break as soon as the older version attempts to reapollon.
 
 This does not affect wallet forward or backward compatibility.
 

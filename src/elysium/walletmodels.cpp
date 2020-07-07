@@ -8,7 +8,7 @@ SigmaMintChainState::SigmaMintChainState() noexcept : block(-1), group(0), apoll
 {
 }
 
-SigmaMintChainState::SigmaMintChainState(int block, SigmaMintGroup group, SigmaMintIndex apollon) noexcept :
+SigmaMintChainState::SigmaMintChainState(int block, SigmaMintGroup group, SigmaMintApollon apollon) noexcept :
     block(block),
     group(group),
     apollon(apollon)

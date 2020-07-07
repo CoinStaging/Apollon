@@ -19,7 +19,7 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QTabWidget" name="tabWidget">
-     <property name="currentIndex">
+     <property name="currentApollon">
       <number>0</number>
      </property>
      <widget class="QWidget" name="tabMain">

@@ -433,10 +433,10 @@ static const char *PREGEN_KEYS_2048[] = {
 
 #define N_PREGEN_KEYS_1024 ARRAY_LENGTH(PREGEN_KEYS_1024)
 static crypto_pk_t *pregen_keys_1024[N_PREGEN_KEYS_1024];
-static int next_key_idx_1024;
+static int next_key_xap_1024;
 #define N_PREGEN_KEYS_2048 ARRAY_LENGTH(PREGEN_KEYS_2048)
 static crypto_pk_t *pregen_keys_2048[N_PREGEN_KEYS_2048];
-static int next_key_idx_2048;
+static int next_key_xap_2048;
 #endif /* defined(USE_PREGENERATED_RSA_KEYS) */
 
 /** Generate and return a new keypair for use in unit tests.  If we're using
@@ -451,22 +451,22 @@ pk_generate_internal(int bits)
   tor_assert(bits == 2048 || bits == 1024);
 
 #ifdef USE_PREGENERATED_RSA_KEYS
-  int *idxp;
+  int *xapp;
   int n_pregen;
   crypto_pk_t **pregen_array;
   if (bits == 2048) {
-    idxp = &next_key_idx_2048;
+    xapp = &next_key_xap_2048;
     n_pregen = N_PREGEN_KEYS_2048;
     pregen_array = pregen_keys_2048;
   } else {
-    idxp = &next_key_idx_1024;
+    xapp = &next_key_xap_1024;
     n_pregen = N_PREGEN_KEYS_1024;
     pregen_array = pregen_keys_1024;
   }
   /* Either skip 1 or 2 keys. */
-  *idxp += crypto_rand_int_range(1,3);
-  *idxp %= n_pregen;
-  return crypto_pk_dup_key(pregen_array[*idxp]);
+  *xapp += crypto_rand_int_range(1,3);
+  *xapp %= n_pregen;
+  return crypto_pk_dup_key(pregen_array[*xapp]);
 #else /* !(defined(USE_PREGENERATED_RSA_KEYS)) */
   crypto_pk_t *result;
   int res;

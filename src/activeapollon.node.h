@@ -2,67 +2,67 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef ACTIVEINDEXNODE_H
-#define ACTIVEINDEXNODE_H
+#ifndef ACTIVEAPOLLONNODE_H
+#define ACTIVEAPOLLONNODE_H
 
 #include "net.h"
 #include "key.h"
 #include "wallet/wallet.h"
 
-class CActiveIndexnode;
+class CActiveApollonnode;
 
-static const int ACTIVE_INDEXNODE_INITIAL          = 0; // initial state
-static const int ACTIVE_INDEXNODE_SYNC_IN_PROCESS  = 1;
-static const int ACTIVE_INDEXNODE_INPUT_TOO_NEW    = 2;
-static const int ACTIVE_INDEXNODE_NOT_CAPABLE      = 3;
-static const int ACTIVE_INDEXNODE_STARTED          = 4;
+static const int ACTIVE_APOLLONNODE_INITIAL          = 0; // initial state
+static const int ACTIVE_APOLLONNODE_SYNC_IN_PROCESS  = 1;
+static const int ACTIVE_APOLLONNODE_INPUT_TOO_NEW    = 2;
+static const int ACTIVE_APOLLONNODE_NOT_CAPABLE      = 3;
+static const int ACTIVE_APOLLONNODE_STARTED          = 4;
 
-extern CActiveIndexnode activeIndexnode;
+extern CActiveApollonnode activeApollonnode;
 
-// Responsible for activating the Indexnode and pinging the network
-class CActiveIndexnode
+// Responsible for activating the Apollonnode and pinging the network
+class CActiveApollonnode
 {
 public:
-    enum indexnode_type_enum_t {
-        INDEXNODE_UNKNOWN = 0,
-        INDEXNODE_REMOTE  = 1,
-        INDEXNODE_LOCAL   = 2
+    enum apollonnode_type_enum_t {
+        APOLLONNODE_UNKNOWN = 0,
+        APOLLONNODE_REMOTE  = 1,
+        APOLLONNODE_LOCAL   = 2
     };
 
 private:
     // critical section to protect the inner data structures
     mutable CCriticalSection cs;
 
-    indexnode_type_enum_t eType;
+    apollonnode_type_enum_t eType;
 
     bool fPingerEnabled;
 
-    /// Ping Indexnode
-    bool SendIndexnodePing();
+    /// Ping Apollonnode
+    bool SendApollonnodePing();
 
 public:
-    // Keys for the active Indexnode
-    CPubKey pubKeyIndexnode;
-    CKey keyIndexnode;
+    // Keys for the active Apollonnode
+    CPubKey pubKeyApollonnode;
+    CKey keyApollonnode;
 
-    // Initialized while registering Indexnode
+    // Initialized while registering Apollonnode
     CTxIn vin;
     CService service;
 
-    int nState; // should be one of ACTIVE_INDEXNODE_XXXX
+    int nState; // should be one of ACTIVE_APOLLONNODE_XXXX
     std::string strNotCapableReason;
 
-    CActiveIndexnode()
-        : eType(INDEXNODE_UNKNOWN),
+    CActiveApollonnode()
+        : eType(APOLLONNODE_UNKNOWN),
           fPingerEnabled(false),
-          pubKeyIndexnode(),
-          keyIndexnode(),
+          pubKeyApollonnode(),
+          keyApollonnode(),
           vin(),
           service(),
-          nState(ACTIVE_INDEXNODE_INITIAL)
+          nState(ACTIVE_APOLLONNODE_INITIAL)
     {}
 
-    /// Manage state of active Indexnode
+    /// Manage state of active Apollonnode
     void ManageState();
 
     // Change state if different and publish update

@@ -1,10 +1,10 @@
 #
 # The hidden service subsystem has two type of apollon. The first type is a
 # value that each node in the network gets assigned to using their identity
-# key which is their position in the hashring. (hs_build_hsdir_index()).
+# key which is their position in the hashring. (hs_build_hsdir_apollon()).
 #
 # The second type is a value that both the client and service computes to
-# store/fetch the descriptor on the hashring. (hs_build_hs_index()).
+# store/fetch the descriptor on the hashring. (hs_build_hs_apollon()).
 #
 
 import sys
@@ -27,7 +27,7 @@ if sys.version_info < (3, 6):
         sys.exit(1)
 
 # The first apollon we'll build is the position apollon in the hashring that is
-# constructed by the hs_build_hsdir_index() function. Construction is:
+# constructed by the hs_build_hsdir_apollon() function. Construction is:
 #   SHA3-256("node-xap" | node_identity |
 #            shared_random_value | INT_8(period_length) | INT_8(period_num) )
 
@@ -43,12 +43,12 @@ PERIOD_NUM = 42
 
 data = struct.pack('!8s32s32sQQ', PREFIX, IDENTITY, SRV, PERIOD_NUM,
                                   PERIOD_LEN)
-hsdir_index = hashlib.sha3_256(data).hexdigest()
+hsdir_apollon = hashlib.sha3_256(data).hexdigest()
 
-print("[hs_build_hsdir_index] %s" % (hsdir_index))
+print("[hs_build_hsdir_apollon] %s" % (hsdir_apollon))
 
 # The second apollon we'll build is where the HS stores and the client fetches
-# the descriptor on the hashring. It is constructed by the hs_build_hs_index()
+# the descriptor on the hashring. It is constructed by the hs_build_hs_apollon()
 # function and the construction is:
 #   SHA3-256("store-at-xap" | blinded_public_key |
 #            INT_8(replicanum) | INT_8(period_num) | INT_8(period_length) )
@@ -65,6 +65,6 @@ PERIOD_NUM = 42
 
 data = struct.pack('!12s32sQQQ', PREFIX, PUBKEY, REPLICA_NUM, PERIOD_LEN,
                                    PERIOD_NUM)
-hs_index = hashlib.sha3_256(data).hexdigest()
+hs_apollon = hashlib.sha3_256(data).hexdigest()
 
-print("[hs_build_hs_index]   %s" % (hs_index))
+print("[hs_build_hs_apollon]   %s" % (hs_apollon))

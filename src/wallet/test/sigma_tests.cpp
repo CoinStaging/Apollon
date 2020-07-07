@@ -27,7 +27,7 @@ static const CBitcoinAddress randomAddr1("aBydwLXzmGc7j4mr4CVf461NvBjBFk71U1");
 static const CBitcoinAddress randomAddr2("aLTSv7QbTZbkgorYEhbNx2gH4hGYNLsoGv");
 static const CBitcoinAddress randomAddr3("a6r15E8Q9gqgWZSLLxZRQs4CWNkaaP5Y5b");
 
-static std::list<std::pair<uint256, CBlockIndex>> blocks;
+static std::list<std::pair<uint256, CBlockApollon>> blocks;
 
 struct WalletSigmaTestingSetup : WalletTestingSetup
 {

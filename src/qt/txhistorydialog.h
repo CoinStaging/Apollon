@@ -17,7 +17,7 @@ class WalletModel;
 
 QT_BEGIN_NAMESPACE
 class QMenu;
-class QModelIndex;
+class QModelApollon;
 class QPoint;
 class QResizeEvent;
 class QString;
@@ -83,7 +83,7 @@ public Q_SLOTS:
     void ReinitTXHistoryTable();
 
 Q_SIGNALS:
-    void doubleClicked(const QModelIndex& xap);
+    void doubleClicked(const QModelApollon& xap);
     // Fired when a message should be reported to the user
     void message(const QString &title, const QString &message, unsigned int style);
 };

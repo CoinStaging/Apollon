@@ -31,7 +31,7 @@ namespace RPCServer
     void OnPostCommand(boost::function<void (const CRPCCommand&)> slot);
 }
 
-class CBlockIndex;
+class CBlockApollon;
 class CNetAddr;
 
 /** Wrapper for UniValue::VType, which includes typeAny:
@@ -187,7 +187,7 @@ extern std::vector<unsigned char> ParseHexO(const UniValue& o, std::string strKe
 
 extern CAmount AmountFromValue(const UniValue& value);
 extern UniValue ValueFromAmount(const CAmount& amount);
-extern double GetDifficulty(const CBlockIndex* blockindex = NULL);
+extern double GetDifficulty(const CBlockApollon* blockapollon = NULL);
 extern double GetPoSKernelPS();
 extern std::string HelpRequiringPassphrase();
 extern UniValue JSONRPCExecOne(const UniValue& req);
@@ -203,9 +203,9 @@ extern UniValue getaddressbalance(const UniValue& params, bool fHelp);
 extern UniValue getpoolinfo(const UniValue& params, bool fHelp);
 extern UniValue spork(const UniValue& params, bool fHelp);
 extern UniValue createsporkkeypair(const UniValue& params, bool fHelp);
-extern UniValue indexnode(const UniValue& params, bool fHelp);
-extern UniValue indexnodelist(const UniValue& params, bool fHelp);
-extern UniValue indexnodebroadcast(const UniValue& params, bool fHelp);
+extern UniValue apollonnode(const UniValue& params, bool fHelp);
+extern UniValue apollonnodelist(const UniValue& params, bool fHelp);
+extern UniValue apollonnodebroadcast(const UniValue& params, bool fHelp);
 extern UniValue insync(const UniValue& params, bool fHelp);
 
 extern void EnsureWalletIsUnlocked();

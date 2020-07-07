@@ -150,7 +150,7 @@
         <translation>Odpri &amp;URI ...</translation>
     </message>
     <message>
-        <source>Reindexing blocks on disk...</source>
+        <source>Reapolloning blocks on disk...</source>
         <translation>Poustvarjam kazalo blokov na disku ...</translation>
     </message>
     <message>
@@ -254,7 +254,7 @@
         <translation><numerusform>%n aktivna povezava v omrežje Apollon</numerusform><numerusform>%n aktivni povezavi v omrežje Apollon</numerusform><numerusform>%n aktivne povezave v omrežje Apollon</numerusform><numerusform>%n aktivnih povezav v omrežje Apollon</numerusform></translation>
     </message>
     <message>
-        <source>Indexing blocks on disk...</source>
+        <source>Apolloning blocks on disk...</source>
         <translation>Indeksirani bloki na disku ...</translation>
     </message>
     <message>
@@ -1402,7 +1402,7 @@
         <translation>Izpraznite vsebino polja</translation>
     </message>
     <message>
-        <source>The fee will be deducted from the amount being sent. The recipient will receive less indexs than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
+        <source>The fee will be deducted from the amount being sent. The recipient will receive less apollons than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
         <translation>Znesek plačila bo zmanjšan za znesek provizije. Prejemnik bo prejel manjše število kovancev, kot je bil vnešeni znesek. Če je prejemnikov več, bo provizija med njih enakomerno porazdeljena.</translation>
     </message>
     <message>
@@ -1459,7 +1459,7 @@
         <translation>&amp;Podpiši sporočilo</translation>
     </message>
     <message>
-        <source>You can sign messages/agreements with your addresses to prove you can receive indexs sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
+        <source>You can sign messages/agreements with your addresses to prove you can receive apollons sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
         <translation>S svojimi naslovi lahko podpisujete sporočila ali pogodbe in s tem dokazujete, da na teh naslovih lahko prejemate kovance. Bodite previdni in ne podpisujte ničesar nejasnega ali naključnega, ker vas zlikovci preko ribarjenja (phishing) lahko prelisičijo, da na njih prepišete svojo identiteto. Podpisujte samo podrobno opisane izjave, s katerimi se strinjate.</translation>
     </message>
     <message>
@@ -1728,8 +1728,8 @@
         <translation>Negativne vrednosti parametra funkcije obrezovanja niso sprejemljive.</translation>
     </message>
     <message>
-        <source>Prune mode is incompatible with -txindex.</source>
-        <translation>Funkcija obrezovanja ni združljiva z opcijo -txindex.</translation>
+        <source>Prune mode is incompatible with -txapollon.</source>
+        <translation>Funkcija obrezovanja ni združljiva z opcijo -txapollon.</translation>
     </message>
     <message>
         <source>Set database cache size in megabytes (%d to %d, default: %d)</source>

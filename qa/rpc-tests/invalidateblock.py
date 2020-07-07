@@ -26,7 +26,7 @@ class InvalidateTest(BitcoinTestFramework):
         self.nodes.append(start_node(2, self.options.tmpdir, ["-debug"]))
         
     def run_test(self):
-        print("Make sure we repopulate setBlockIndexCandidates after InvalidateBlock:")
+        print("Make sure we repopulate setBlockApollonCandidates after InvalidateBlock:")
         print("Mine 4 blocks on Node 0")
         self.nodes[0].generate(4)
         assert(self.nodes[0].getblockcount() == 4)

@@ -327,7 +327,7 @@ class WalletTest (BitcoinTestFramework):
         # # maintenance tests
         # maintenance = [
         #     '-rescan',
-        #     '-reindex',
+        #     '-reapollon',
         #     '-zapwallettxes=1',
         #     '-zapwallettxes=2',
         #     # disabled until issue is fixed: https://github.com/bitcoin/bitcoin/issues/7463
@@ -339,8 +339,8 @@ class WalletTest (BitcoinTestFramework):
         #     stop_nodes(self.nodes)
         #     # set lower ancestor limit for later
         #     self.nodes = start_nodes(3, self.options.tmpdir, [[m, "-limitancestorcount="+str(chainlimit)]] * 3)
-        #     while m == '-reindex' and [block_count] * 3 != [self.nodes[i].getblockcount() for i in range(3)]:
-        #         # reindex will leave rpc warm up "early"; Wait for it to finish
+        #     while m == '-reapollon' and [block_count] * 3 != [self.nodes[i].getblockcount() for i in range(3)]:
+        #         # reapollon will leave rpc warm up "early"; Wait for it to finish
         #         time.sleep(0.1)
         #     assert_equal(balance_nodes, [self.nodes[i].getbalance() for i in range(3)])
 

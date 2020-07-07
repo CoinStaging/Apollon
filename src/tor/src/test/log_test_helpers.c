@@ -253,7 +253,7 @@ mock_dump_saved_logs(void)
 
   puts("  Captured logs:");
   SMARTLIST_FOREACH_BEGIN(saved_logs, const mock_saved_log_entry_t *, m) {
-    printf("% 5d. %s: %s\n", m_sl_idx + 1,
+    printf("% 5d. %s: %s\n", m_sl_xap + 1,
            log_level_to_string(m->severity),
            escaped(m->generated_msg));
   } SMARTLIST_FOREACH_END(m);

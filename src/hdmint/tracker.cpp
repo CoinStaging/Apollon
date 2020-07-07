@@ -477,9 +477,9 @@ bool CHDMintTracker::UpdateMetaStatus(const std::set<uint256>& setMempool, CMint
 
         bool isUpdated = false;
 
-        // An orphan tx if hashblock is in mapBlockIndex but not in chain active
-        if (mapBlockIndex.count(hashBlock)){
-            if(!chainActive.Contains(mapBlockIndex.at(hashBlock))) {
+        // An orphan tx if hashblock is in mapBlockApollon but not in chain active
+        if (mapBlockApollon.count(hashBlock)){
+            if(!chainActive.Contains(mapBlockApollon.at(hashBlock))) {
                 LogPrintf("%s : Found orphaned mint txid=%s\n", __func__, mint.txid.GetHex());
                 mint.isUsed = false;
                 mint.nHeight = 0;

@@ -85,7 +85,7 @@ MetaDExDialog::MetaDExDialog(QWidget *parent) :
     connect(ui->sellAmountSaleLE, SIGNAL(textEdited(const QString &)), this, SLOT(RecalcSellValues()));
     connect(ui->sellAmountDesiredLE, SIGNAL(textEdited(const QString &)), this, SLOT(RecalcSellValues()));
     connect(ui->sellUnitPriceLE, SIGNAL(textEdited(const QString &)), this, SLOT(RecalcSellValues()));
-    connect(ui->sellList, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(ShowDetails()));
+    connect(ui->sellList, SIGNAL(doubleClicked(QModelApollon)), this, SLOT(ShowDetails()));
     connect(ui->sellButton, SIGNAL(clicked()), this, SLOT(sendTrade()));
 
     FullRefresh();
@@ -98,14 +98,14 @@ MetaDExDialog::~MetaDExDialog()
 
 uint32_t MetaDExDialog::GetPropForSale()
 {
-    QString propStr = ui->comboPairTokenA->itemData(ui->comboPairTokenA->currentIndex()).toString();
+    QString propStr = ui->comboPairTokenA->itemData(ui->comboPairTokenA->currentApollon()).toString();
     if (propStr.isEmpty()) return 0;
     return propStr.toUInt();
 }
 
 uint32_t MetaDExDialog::GetPropDesired()
 {
-    QString propStr = ui->comboPairTokenB->itemData(ui->comboPairTokenB->currentIndex()).toString();
+    QString propStr = ui->comboPairTokenB->itemData(ui->comboPairTokenB->currentApollon()).toString();
     if (propStr.isEmpty()) return 0;
     return propStr.toUInt();
 }
@@ -149,7 +149,7 @@ void MetaDExDialog::PopulateAddresses()
             }
         }
         int xap = ui->comboAddress->findText(currentSetAddress);
-        if (xap != -1) { ui->comboAddress->setCurrentIndex(xap); }
+        if (xap != -1) { ui->comboAddress->setCurrentApollon(xap); }
     }
     UpdateBalance();
 }
@@ -180,19 +180,19 @@ void MetaDExDialog::UpdateProperties()
     }
 
     if (ui->comboPairTokenA->count() > 1) {
-        int idxA = ui->comboPairTokenA->findText(currentSetPropA);
-        if (idxA != -1) {
-            ui->comboPairTokenA->setCurrentIndex(idxA);
+        int xapA = ui->comboPairTokenA->findText(currentSetPropA);
+        if (xapA != -1) {
+            ui->comboPairTokenA->setCurrentApollon(xapA);
         } else {
-            ui->comboPairTokenA->setCurrentIndex(0);
+            ui->comboPairTokenA->setCurrentApollon(0);
         }
     }
     if (ui->comboPairTokenB->count() > 2) {
-        int idxB = ui->comboPairTokenB->findText(currentSetPropB);
-        if (idxB != -1) {
-            ui->comboPairTokenB->setCurrentIndex(idxB);
+        int xapB = ui->comboPairTokenB->findText(currentSetPropB);
+        if (xapB != -1) {
+            ui->comboPairTokenB->setCurrentApollon(xapB);
         } else {
-            ui->comboPairTokenB->setCurrentIndex(1);
+            ui->comboPairTokenB->setCurrentApollon(1);
         }
     }
 }
@@ -227,8 +227,8 @@ void MetaDExDialog::UpdateBalance()
 // Change markets when one of the property selector combos is changed
 void MetaDExDialog::SwitchMarket()
 {
-    QString propAStr = ui->comboPairTokenA->itemData(ui->comboPairTokenA->currentIndex()).toString();
-    QString propBStr = ui->comboPairTokenB->itemData(ui->comboPairTokenB->currentIndex()).toString();
+    QString propAStr = ui->comboPairTokenA->itemData(ui->comboPairTokenA->currentApollon()).toString();
+    QString propBStr = ui->comboPairTokenB->itemData(ui->comboPairTokenB->currentApollon()).toString();
     if (propAStr.isEmpty() || propBStr.isEmpty()) {
         PrintToLog("QTERROR: Empty variable switching property markets.  PropA=%s, PropB=%s\n",propAStr.toStdString(),propBStr.toStdString());
         return;
@@ -299,8 +299,8 @@ void MetaDExDialog::FullRefresh()
 // Inverts the pair
 void MetaDExDialog::InvertPair()
 {
-    QString propAStr = ui->comboPairTokenA->itemData(ui->comboPairTokenA->currentIndex()).toString();
-    QString propBStr = ui->comboPairTokenB->itemData(ui->comboPairTokenB->currentIndex()).toString();
+    QString propAStr = ui->comboPairTokenA->itemData(ui->comboPairTokenA->currentApollon()).toString();
+    QString propBStr = ui->comboPairTokenB->itemData(ui->comboPairTokenB->currentApollon()).toString();
     QString currentSetPropA = ui->comboPairTokenA->currentText();
     QString currentSetPropB = ui->comboPairTokenB->currentText();
     if (propAStr.isEmpty() || propBStr.isEmpty()) {
@@ -314,19 +314,19 @@ void MetaDExDialog::InvertPair()
     propA = tempB;
 
     if (ui->comboPairTokenA->count() > 1) {
-        int idxA = ui->comboPairTokenA->findText(currentSetPropB);
-        if (idxA != -1) {
-            ui->comboPairTokenA->setCurrentIndex(idxA);
+        int xapA = ui->comboPairTokenA->findText(currentSetPropB);
+        if (xapA != -1) {
+            ui->comboPairTokenA->setCurrentApollon(xapA);
         } else {
-            ui->comboPairTokenA->setCurrentIndex(0);
+            ui->comboPairTokenA->setCurrentApollon(0);
         }
     }
     if (ui->comboPairTokenB->count() > 2) {
-        int idxB = ui->comboPairTokenB->findText(currentSetPropA);
-        if (idxB != -1) {
-            ui->comboPairTokenB->setCurrentIndex(idxB);
+        int xapB = ui->comboPairTokenB->findText(currentSetPropA);
+        if (xapB != -1) {
+            ui->comboPairTokenB->setCurrentApollon(xapB);
         } else {
-            ui->comboPairTokenB->setCurrentIndex(1);
+            ui->comboPairTokenB->setCurrentApollon(1);
         }
     }
 
@@ -353,8 +353,8 @@ void MetaDExDialog::UpdateOffers()
         for (md_PricesMap::iterator it = prices.begin(); it != prices.end(); ++it) { // loop through the sell prices for the property
             std::string unitPriceStr;
             bool includesMe = false;
-            md_Set & indexes = (it->second);
-            for (md_Set::iterator it = indexes.begin(); it != indexes.end(); ++it) { // multiple sell offers can exist at the same price, sum them for the UI
+            md_Set & apollones = (it->second);
+            for (md_Set::iterator it = apollones.begin(); it != apollones.end(); ++it) { // multiple sell offers can exist at the same price, sum them for the UI
                 const CMPMetaDEx& obj = *it;
                 if ((obj.getDesProperty() != GetPropDesired())) continue; // not the property we're interested in
                 if (IsMyAddress(obj.getAddr())) includesMe = true;

@@ -63,7 +63,7 @@
     </message>
     <message>
         <source>These are your Apollon addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
-        <translation>Detta är dina Apollon adresser för att skicka betalningar. Kolla alltid summan och den mottagande adressen innan du skickar indexs.</translation>
+        <translation>Detta är dina Apollon adresser för att skicka betalningar. Kolla alltid summan och den mottagande adressen innan du skickar apollons.</translation>
     </message>
     <message>
         <source>These are your Apollon addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
@@ -181,7 +181,7 @@ Var vänlig och försök igen.</translation>
         <translation>Plånbok krypterad</translation>
     </message>
     <message>
-        <source>%1 will close now to finish the encryption process. Remember that encrypting your wallet cannot fully protect your indexs from being stolen by malware infecting your computer.</source>
+        <source>%1 will close now to finish the encryption process. Remember that encrypting your wallet cannot fully protect your apollons from being stolen by malware infecting your computer.</source>
         <translation>%1 kommer nu att stänga ner för att färdigställa krypteringen. Tänk på att en krypterad plånbok inte skyddar mot stöld om din dator är infekterad med en keylogger.</translation>
     </message>
     <message>
@@ -319,12 +319,12 @@ Var vänlig och försök igen.</translation>
         <translation>Öppna &amp;URI...</translation>
     </message>
     <message>
-        <source>Reindexing blocks on disk...</source>
-        <translation>Återindexerar block på disken...</translation>
+        <source>Reapolloning blocks on disk...</source>
+        <translation>Återapollonerar block på disken...</translation>
     </message>
     <message>
         <source>Send coins to a Apollon address</source>
-        <translation>Skicka indexs till en Apollon-adress</translation>
+        <translation>Skicka apollons till en Apollon-adress</translation>
     </message>
     <message>
         <source>Backup wallet to another location</source>
@@ -423,8 +423,8 @@ Var vänlig och försök igen.</translation>
         <translation><numerusform>%n aktiva anslutningar till Apollon-nätverket.</numerusform><numerusform>%n aktiva anslutningar till Apollon-nätverket.</numerusform></translation>
     </message>
     <message>
-        <source>Indexing blocks on disk...</source>
-        <translation>Indexerar block på disken...</translation>
+        <source>Apolloning blocks on disk...</source>
+        <translation>Apollonerar block på disken...</translation>
     </message>
     <message>
         <source>Processing blocks on disk...</source>
@@ -1783,8 +1783,8 @@ Var vänlig och försök igen.</translation>
         <translation>Radera denna post</translation>
     </message>
     <message>
-        <source>The fee will be deducted from the amount being sent. The recipient will receive less indexs than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
-        <translation>Avgiften dras från beloppet som skickas. Mottagaren kommer att få mindre indexs än du angivit i belopp-fältet. Om flera mottagare valts kommer avgiften delas jämt.</translation>
+        <source>The fee will be deducted from the amount being sent. The recipient will receive less apollons than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
+        <translation>Avgiften dras från beloppet som skickas. Mottagaren kommer att få mindre apollons än du angivit i belopp-fältet. Om flera mottagare valts kommer avgiften delas jämt.</translation>
     </message>
     <message>
         <source>S&amp;ubtract fee from amount</source>
@@ -1844,8 +1844,8 @@ Var vänlig och försök igen.</translation>
         <translation>&amp;Signera Meddelande</translation>
     </message>
     <message>
-        <source>You can sign messages/agreements with your addresses to prove you can receive indexs sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
-        <translation>Du kan underteckna meddelanden/avtal med dina adresser för att bevisa att du kan ta emot indexs som skickats till dem. Var försiktig så du inte undertecknar något oklart eller konstigt, eftersom phishing-angrepp kan försöka få dig att underteckna din identitet till dem. Underteckna endast väldetaljerade meddelanden som du godkänner.</translation>
+        <source>You can sign messages/agreements with your addresses to prove you can receive apollons sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
+        <translation>Du kan underteckna meddelanden/avtal med dina adresser för att bevisa att du kan ta emot apollons som skickats till dem. Var försiktig så du inte undertecknar något oklart eller konstigt, eftersom phishing-angrepp kan försöka få dig att underteckna din identitet till dem. Underteckna endast väldetaljerade meddelanden som du godkänner.</translation>
     </message>
     <message>
         <source>The Apollon address to sign the message with</source>
@@ -2033,16 +2033,16 @@ Var vänlig och försök igen.</translation>
         <translation>Beskärning konfigurerad under miniminivån %d MiB. Vänligen använd ett högre värde.</translation>
     </message>
     <message>
-        <source>Prune: last wallet synchronisation goes beyond pruned data. You need to -reindex (download the whole blockchain again in case of pruned node)</source>
-        <translation>Beskärning: sista plånbokssynkroniseringen ligger utanför beskuren data. Du måste använda -reindex (ladda ner hela blockkedjan igen eftersom noden beskurits)</translation>
+        <source>Prune: last wallet synchronisation goes beyond pruned data. You need to -reapollon (download the whole blockchain again in case of pruned node)</source>
+        <translation>Beskärning: sista plånbokssynkroniseringen ligger utanför beskuren data. Du måste använda -reapollon (ladda ner hela blockkedjan igen eftersom noden beskurits)</translation>
     </message>
     <message>
-        <source>Reduce storage requirements by pruning (deleting) old blocks. This mode is incompatible with -txindex and -rescan. Warning: Reverting this setting requires re-downloading the entire blockchain. (default: 0 = disable pruning blocks, &gt;%u = target size in MiB to use for block files)</source>
-        <translation>Minska lagringsbehovet genom att beskära (ta bort) gamla block. Detta läge är inkompatibelt med -txindex och -rescan. Varning: Ändras denna inställning måste hela blockkedjan laddas ner igen. (förvalt: 0 = inaktivera beskärning av block, &gt;%u = målstorlek i MiB att använda för blockfiler)</translation>
+        <source>Reduce storage requirements by pruning (deleting) old blocks. This mode is incompatible with -txapollon and -rescan. Warning: Reverting this setting requires re-downloading the entire blockchain. (default: 0 = disable pruning blocks, &gt;%u = target size in MiB to use for block files)</source>
+        <translation>Minska lagringsbehovet genom att beskära (ta bort) gamla block. Detta läge är inkompatibelt med -txapollon och -rescan. Varning: Ändras denna inställning måste hela blockkedjan laddas ner igen. (förvalt: 0 = inaktivera beskärning av block, &gt;%u = målstorlek i MiB att använda för blockfiler)</translation>
     </message>
     <message>
-        <source>Rescans are not possible in pruned mode. You will need to use -reindex which will download the whole blockchain again.</source>
-        <translation>Omskanningar kan inte göras i beskuret läge. Du måste använda -reindex vilket kommer ladda ner hela blockkedjan igen.</translation>
+        <source>Rescans are not possible in pruned mode. You will need to use -reapollon which will download the whole blockchain again.</source>
+        <translation>Omskanningar kan inte göras i beskuret läge. Du måste använda -reapollon vilket kommer ladda ner hela blockkedjan igen.</translation>
     </message>
     <message>
         <source>Error: A fatal internal error occurred, see debug.log for details</source>
@@ -2165,8 +2165,8 @@ Var vänlig och försök igen.</translation>
         <translation>Vitlista klienter som ansluter från angivna nätmasker eller IP-adresser. Kan specificeras flera gånger.</translation>
     </message>
     <message>
-        <source>You need to rebuild the database using -reindex-chainstate to change -txindex</source>
-        <translation>Du måste återskapa databasen med -reindex-chainstate för att ändra -txindex</translation>
+        <source>You need to rebuild the database using -reapollon-chainstate to change -txapollon</source>
+        <translation>Du måste återskapa databasen med -reapollon-chainstate för att ändra -txapollon</translation>
     </message>
     <message>
         <source>%s corrupt, salvage failed</source>
@@ -2198,7 +2198,7 @@ Var vänlig och försök igen.</translation>
     </message>
     <message>
         <source>Change apollon out of range</source>
-        <translation>Förändringsindexet utom räckhåll</translation>
+        <translation>Förändringsapollonet utom räckhåll</translation>
     </message>
     <message>
         <source>Connect only to the specified node(s)</source>
@@ -2345,16 +2345,16 @@ Var vänlig och försök igen.</translation>
         <translation>Beskärning kan inte konfigureras med ett negativt värde.</translation>
     </message>
     <message>
-        <source>Prune mode is incompatible with -txindex.</source>
-        <translation>Beskärningsläge är inkompatibel med -txindex.</translation>
+        <source>Prune mode is incompatible with -txapollon.</source>
+        <translation>Beskärningsläge är inkompatibel med -txapollon.</translation>
     </message>
     <message>
         <source>Rebuild chain state and block apollon from the blk*.dat files on disk</source>
         <translation>Återskapa blockkedjans status och apollon från blk*.dat filer på disken</translation>
     </message>
     <message>
-        <source>Rebuild chain state from the currently indexed blocks</source>
-        <translation>Återskapa blockkedjans status från aktuella indexerade block</translation>
+        <source>Rebuild chain state from the currently apolloned blocks</source>
+        <translation>Återskapa blockkedjans status från aktuella apollonerade block</translation>
     </message>
     <message>
         <source>Rewinding blocks...</source>
@@ -2501,8 +2501,8 @@ Var vänlig och försök igen.</translation>
         <translation>Vitlistade klienter kan inte bli DoS-bannade och deras transaktioner reläas alltid, även om dom redan är i mempoolen, användbart för t.ex en gateway  </translation>
     </message>
     <message>
-        <source>You need to rebuild the database using -reindex to go back to unpruned mode.  This will redownload the entire blockchain</source>
-        <translation>Du måste bygga om databasen genom att använda -reindex för att återgå till obeskärt läge. Detta kommer att ladda ner hela blockkedjan.</translation>
+        <source>You need to rebuild the database using -reapollon to go back to unpruned mode.  This will redownload the entire blockchain</source>
+        <translation>Du måste bygga om databasen genom att använda -reapollon för att återgå till obeskärt läge. Detta kommer att ladda ner hela blockkedjan.</translation>
     </message>
     <message>
         <source>(default: %u)</source>
@@ -2690,7 +2690,7 @@ Var vänlig och försök igen.</translation>
     </message>
     <message>
         <source>Maintain a full transaction apollon, used by the getrawtransaction rpc call (default: %u)</source>
-        <translation>Upprätthåll ett fullständigt transaktionsindex, som används av getrawtransaction rpc-anrop (förval: %u)</translation>
+        <translation>Upprätthåll ett fullständigt transaktionsapollon, som används av getrawtransaction rpc-anrop (förval: %u)</translation>
     </message>
     <message>
         <source>Number of seconds to keep misbehaving peers from reconnecting (default: %u)</source>
@@ -2826,11 +2826,11 @@ Var vänlig och försök igen.</translation>
     </message>
     <message>
         <source>Insufficient funds</source>
-        <translation>Otillräckligt med indexs</translation>
+        <translation>Otillräckligt med apollons</translation>
     </message>
     <message>
         <source>Loading block apollon...</source>
-        <translation>Laddar blockindex...</translation>
+        <translation>Laddar blockapollon...</translation>
     </message>
     <message>
         <source>Add a node to connect to and attempt to keep the connection open</source>

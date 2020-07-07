@@ -2,16 +2,16 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "activeindexnode.h"
+#include "activeapollonnode.h"
 #include "coincontrol.h"
 #include "consensus/validation.h"
 #include "darksend.h"
 //#include "governance.h"
 #include "init.h"
 #include "instantx.h"
-#include "indexnode-payments.h"
-#include "indexnode-sync.h"
-#include "indexnodeman.h"
+#include "apollonnode-payments.h"
+#include "apollonnode-sync.h"
+#include "apollonnodeman.h"
 #include "script/sign.h"
 #include "txmempool.h"
 #include "util.h"
@@ -33,7 +33,7 @@ std::vector <CAmount> vecPrivateSendDenominations;
 
 void CDarksendPool::ProcessMessage(CNode *pfrom, std::string &strCommand, CDataStream &vRecv) {
     if (fLiteMode) return; // ignore all Apollon related functionality
-    if (!indexnodeSync.IsBlockchainSynced()) return;
+    if (!apollonnodeSync.IsBlockchainSynced()) return;
 
     if (strCommand == NetMsgType::DSACCEPT) {
 
@@ -43,8 +43,8 @@ void CDarksendPool::ProcessMessage(CNode *pfrom, std::string &strCommand, CDataS
             return;
         }
 
-        if (!fIndexNode) {
-            LogPrintf("DSACCEPT -- not a Indexnode!\n");
+        if (!fApollonNode) {
+            LogPrintf("DSACCEPT -- not a Apollonnode!\n");
             PushStatus(pfrom, STATUS_REJECTED, ERR_NOT_A_MN);
             return;
         }
@@ -62,7 +62,7 @@ void CDarksendPool::ProcessMessage(CNode *pfrom, std::string &strCommand, CDataS
 
         LogPrint("privatesend", "DSACCEPT -- nDenom %d (%s)  txCollateral %s", nDenom, GetDenominationsToString(nDenom), txCollateral.ToString());
 
-        CIndexnode *pmn = mnodeman.Find(activeIndexnode.vin);
+        CApollonnode *pmn = mnodeman.Find(activeApollonnode.vin);
         if (pmn == NULL) {
             PushStatus(pfrom, STATUS_REJECTED, ERR_MN_LIST);
             return;
@@ -114,10 +114,10 @@ void CDarksendPool::ProcessMessage(CNode *pfrom, std::string &strCommand, CDataS
 
         if (dsq.IsExpired() || dsq.nTime > GetTime() + PRIVATESEND_QUEUE_TIMEOUT) return;
 
-        CIndexnode *pmn = mnodeman.Find(dsq.vin);
+        CApollonnode *pmn = mnodeman.Find(dsq.vin);
         if (pmn == NULL) return;
 
-        if (!dsq.CheckSignature(pmn->pubKeyIndexnode)) {
+        if (!dsq.CheckSignature(pmn->pubKeyApollonnode)) {
             // we probably have outdated info
             mnodeman.AskForMN(pfrom, dsq.vin);
             return;
@@ -125,14 +125,14 @@ void CDarksendPool::ProcessMessage(CNode *pfrom, std::string &strCommand, CDataS
 
         // if the queue is ready, submit if we can
         if (dsq.fReady) {
-            if (!pSubmittedToIndexnode) return;
-            if ((CNetAddr) pSubmittedToIndexnode->addr != (CNetAddr) pmn->addr) {
-                LogPrintf("DSQUEUE -- message doesn't match current Indexnode: pSubmittedToIndexnode=%s, addr=%s\n", pSubmittedToIndexnode->addr.ToString(), pmn->addr.ToString());
+            if (!pSubmittedToApollonnode) return;
+            if ((CNetAddr) pSubmittedToApollonnode->addr != (CNetAddr) pmn->addr) {
+                LogPrintf("DSQUEUE -- message doesn't match current Apollonnode: pSubmittedToApollonnode=%s, addr=%s\n", pSubmittedToApollonnode->addr.ToString(), pmn->addr.ToString());
                 return;
             }
 
             if (nState == POOL_STATE_QUEUE) {
-                LogPrint("privatesend", "DSQUEUE -- PrivateSend queue (%s) is ready on indexnode %s\n", dsq.ToString(), pmn->addr.ToString());
+                LogPrint("privatesend", "DSQUEUE -- PrivateSend queue (%s) is ready on apollonnode %s\n", dsq.ToString(), pmn->addr.ToString());
                 SubmitDenominate();
             }
         } else {
@@ -140,7 +140,7 @@ void CDarksendPool::ProcessMessage(CNode *pfrom, std::string &strCommand, CDataS
             q, vecDarksendQueue) {
                 if (q.vin == dsq.vin) {
                     // no way same mn can send another "not yet ready" dsq this soon
-                    LogPrint("privatesend", "DSQUEUE -- Indexnode %s is sending WAY too many dsq messages\n", pmn->addr.ToString());
+                    LogPrint("privatesend", "DSQUEUE -- Apollonnode %s is sending WAY too many dsq messages\n", pmn->addr.ToString());
                     return;
                 }
             }
@@ -149,15 +149,15 @@ void CDarksendPool::ProcessMessage(CNode *pfrom, std::string &strCommand, CDataS
             LogPrint("privatesend", "DSQUEUE -- nLastDsq: %d  threshold: %d  nDsqCount: %d\n", pmn->nLastDsq, nThreshold, mnodeman.nDsqCount);
             //don't allow a few nodes to dominate the queuing process
             if (pmn->nLastDsq != 0 && nThreshold > mnodeman.nDsqCount) {
-                LogPrint("privatesend", "DSQUEUE -- Indexnode %s is sending too many dsq messages\n", pmn->addr.ToString());
+                LogPrint("privatesend", "DSQUEUE -- Apollonnode %s is sending too many dsq messages\n", pmn->addr.ToString());
                 return;
             }
             mnodeman.nDsqCount++;
             pmn->nLastDsq = mnodeman.nDsqCount;
             pmn->fAllowMixingTx = true;
 
-            LogPrint("privatesend", "DSQUEUE -- new PrivateSend queue (%s) from indexnode %s\n", dsq.ToString(), pmn->addr.ToString());
-            if (pSubmittedToIndexnode && pSubmittedToIndexnode->vin.prevout == dsq.vin.prevout) {
+            LogPrint("privatesend", "DSQUEUE -- new PrivateSend queue (%s) from apollonnode %s\n", dsq.ToString(), pmn->addr.ToString());
+            if (pSubmittedToApollonnode && pSubmittedToApollonnode->vin.prevout == dsq.vin.prevout) {
                 dsq.fTried = true;
             }
             vecDarksendQueue.push_back(dsq);
@@ -172,8 +172,8 @@ void CDarksendPool::ProcessMessage(CNode *pfrom, std::string &strCommand, CDataS
             return;
         }
 
-        if (!fIndexNode) {
-            LogPrintf("DSVIN -- not a Indexnode!\n");
+        if (!fApollonNode) {
+            LogPrintf("DSVIN -- not a Apollonnode!\n");
             PushStatus(pfrom, STATUS_REJECTED, ERR_NOT_A_MN);
             return;
         }
@@ -283,14 +283,14 @@ void CDarksendPool::ProcessMessage(CNode *pfrom, std::string &strCommand, CDataS
             return;
         }
 
-        if (fIndexNode) {
-            // LogPrintf("DSSTATUSUPDATE -- Can't run on a Indexnode!\n");
+        if (fApollonNode) {
+            // LogPrintf("DSSTATUSUPDATE -- Can't run on a Apollonnode!\n");
             return;
         }
 
-        if (!pSubmittedToIndexnode) return;
-        if ((CNetAddr) pSubmittedToIndexnode->addr != (CNetAddr) pfrom->addr) {
-            //LogPrintf("DSSTATUSUPDATE -- message doesn't match current Indexnode: pSubmittedToIndexnode %s addr %s\n", pSubmittedToIndexnode->addr.ToString(), pfrom->addr.ToString());
+        if (!pSubmittedToApollonnode) return;
+        if ((CNetAddr) pSubmittedToApollonnode->addr != (CNetAddr) pfrom->addr) {
+            //LogPrintf("DSSTATUSUPDATE -- message doesn't match current Apollonnode: pSubmittedToApollonnode %s addr %s\n", pSubmittedToApollonnode->addr.ToString(), pfrom->addr.ToString());
             return;
         }
 
@@ -332,8 +332,8 @@ void CDarksendPool::ProcessMessage(CNode *pfrom, std::string &strCommand, CDataS
             return;
         }
 
-        if (!fIndexNode) {
-            LogPrintf("DSSIGNFINALTX -- not a Indexnode!\n");
+        if (!fApollonNode) {
+            LogPrintf("DSSIGNFINALTX -- not a Apollonnode!\n");
             return;
         }
 
@@ -342,18 +342,18 @@ void CDarksendPool::ProcessMessage(CNode *pfrom, std::string &strCommand, CDataS
 
         LogPrint("privatesend", "DSSIGNFINALTX -- vecTxIn.size() %s\n", vecTxIn.size());
 
-        int nTxInIndex = 0;
+        int nTxInApollon = 0;
         int nTxInsCount = (int) vecTxIn.size();
 
         BOOST_FOREACH(
         const CTxIn txin, vecTxIn) {
-            nTxInIndex++;
+            nTxInApollon++;
             if (!AddScriptSig(txin)) {
-                LogPrint("privatesend", "DSSIGNFINALTX -- AddScriptSig() failed at %d/%d, session: %d\n", nTxInIndex, nTxInsCount, nSessionID);
+                LogPrint("privatesend", "DSSIGNFINALTX -- AddScriptSig() failed at %d/%d, session: %d\n", nTxInApollon, nTxInsCount, nSessionID);
                 RelayStatus(STATUS_REJECTED);
                 return;
             }
-            LogPrint("privatesend", "DSSIGNFINALTX -- AddScriptSig() %d/%d success\n", nTxInIndex, nTxInsCount);
+            LogPrint("privatesend", "DSSIGNFINALTX -- AddScriptSig() %d/%d success\n", nTxInApollon, nTxInsCount);
         }
         // all is good
         CheckPool();
@@ -365,14 +365,14 @@ void CDarksendPool::ProcessMessage(CNode *pfrom, std::string &strCommand, CDataS
             return;
         }
 
-        if (fIndexNode) {
-            // LogPrintf("DSFINALTX -- Can't run on a Indexnode!\n");
+        if (fApollonNode) {
+            // LogPrintf("DSFINALTX -- Can't run on a Apollonnode!\n");
             return;
         }
 
-        if (!pSubmittedToIndexnode) return;
-        if ((CNetAddr) pSubmittedToIndexnode->addr != (CNetAddr) pfrom->addr) {
-            //LogPrintf("DSFINALTX -- message doesn't match current Indexnode: pSubmittedToIndexnode %s addr %s\n", pSubmittedToIndexnode->addr.ToString(), pfrom->addr.ToString());
+        if (!pSubmittedToApollonnode) return;
+        if ((CNetAddr) pSubmittedToApollonnode->addr != (CNetAddr) pfrom->addr) {
+            //LogPrintf("DSFINALTX -- message doesn't match current Apollonnode: pSubmittedToApollonnode %s addr %s\n", pSubmittedToApollonnode->addr.ToString(), pfrom->addr.ToString());
             return;
         }
 
@@ -397,14 +397,14 @@ void CDarksendPool::ProcessMessage(CNode *pfrom, std::string &strCommand, CDataS
             return;
         }
 
-        if (fIndexNode) {
-            // LogPrintf("DSCOMPLETE -- Can't run on a Indexnode!\n");
+        if (fApollonNode) {
+            // LogPrintf("DSCOMPLETE -- Can't run on a Apollonnode!\n");
             return;
         }
 
-        if (!pSubmittedToIndexnode) return;
-        if ((CNetAddr) pSubmittedToIndexnode->addr != (CNetAddr) pfrom->addr) {
-            LogPrint("privatesend", "DSCOMPLETE -- message doesn't match current Indexnode: pSubmittedToIndexnode=%s  addr=%s\n", pSubmittedToIndexnode->addr.ToString(), pfrom->addr.ToString());
+        if (!pSubmittedToApollonnode) return;
+        if ((CNetAddr) pSubmittedToApollonnode->addr != (CNetAddr) pfrom->addr) {
+            LogPrint("privatesend", "DSCOMPLETE -- message doesn't match current Apollonnode: pSubmittedToApollonnode=%s  addr=%s\n", pSubmittedToApollonnode->addr.ToString(), pfrom->addr.ToString());
             return;
         }
 
@@ -454,7 +454,7 @@ void CDarksendPool::InitDenominations() {
 void CDarksendPool::ResetPool() {
     nCachedLastSuccessBlock = 0;
     txMyCollateral = CMutableTransaction();
-    vecIndexnodesUsed.clear();
+    vecApollonnodesUsed.clear();
     UnlockCoins();
     SetNull();
 }
@@ -466,7 +466,7 @@ void CDarksendPool::SetNull() {
     // Client side
     nEntriesCount = 0;
     fLastEntryAccepted = false;
-    pSubmittedToIndexnode = NULL;
+    pSubmittedToApollonnode = NULL;
 
     // Both sides
     nState = POOL_STATE_IDLE;
@@ -521,7 +521,7 @@ std::string CDarksendPool::GetStatus() {
     nStatusMessageProgress += 10;
     std::string strSuffix = "";
 
-    if ((pCurrentBlockIndex && pCurrentBlockIndex->nHeight - nCachedLastSuccessBlock < nMinBlockSpacing) || !indexnodeSync.GetBlockchainSynced())
+    if ((pCurrentBlockApollon && pCurrentBlockApollon->nHeight - nCachedLastSuccessBlock < nMinBlockSpacing) || !apollonnodeSync.GetBlockchainSynced())
         return strAutoDenomResult;
 
     switch (nState) {
@@ -531,7 +531,7 @@ std::string CDarksendPool::GetStatus() {
             if (nStatusMessageProgress % 70 <= 30) strSuffix = ".";
             else if (nStatusMessageProgress % 70 <= 50) strSuffix = "..";
             else if (nStatusMessageProgress % 70 <= 70) strSuffix = "...";
-            return strprintf(_("Submitted to indexnode, waiting in queue %s"), strSuffix);;
+            return strprintf(_("Submitted to apollonnode, waiting in queue %s"), strSuffix);;
         case POOL_STATE_ACCEPTING_ENTRIES:
             if (nEntriesCount == 0) {
                 nStatusMessageProgress = 0;
@@ -543,11 +543,11 @@ std::string CDarksendPool::GetStatus() {
                 }
                 return _("PrivateSend request complete:") + " " + _("Your transaction was accepted into the pool!");
             } else {
-                if (nStatusMessageProgress % 70 <= 40) return strprintf(_("Submitted following entries to indexnode: %u / %d"), nEntriesCount, GetMaxPoolTransactions());
+                if (nStatusMessageProgress % 70 <= 40) return strprintf(_("Submitted following entries to apollonnode: %u / %d"), nEntriesCount, GetMaxPoolTransactions());
                 else if (nStatusMessageProgress % 70 <= 50) strSuffix = ".";
                 else if (nStatusMessageProgress % 70 <= 60) strSuffix = "..";
                 else if (nStatusMessageProgress % 70 <= 70) strSuffix = "...";
-                return strprintf(_("Submitted to indexnode, waiting for more entries ( %u / %d ) %s"), nEntriesCount, GetMaxPoolTransactions(), strSuffix);
+                return strprintf(_("Submitted to apollonnode, waiting for more entries ( %u / %d ) %s"), nEntriesCount, GetMaxPoolTransactions(), strSuffix);
             }
         case POOL_STATE_SIGNING:
             if (nStatusMessageProgress % 70 <= 40) return _("Found enough users, signing ...");
@@ -565,10 +565,10 @@ std::string CDarksendPool::GetStatus() {
 }
 
 //
-// Check the mixing progress and send client updates if a Indexnode
+// Check the mixing progress and send client updates if a Apollonnode
 //
 void CDarksendPool::CheckPool() {
-    if (fIndexNode) {
+    if (fApollonNode) {
         LogPrint("privatesend", "CDarksendPool::CheckPool -- entries count %lu\n", GetEntriesCount());
 
         // If entries are full, create finalized transaction
@@ -623,7 +623,7 @@ void CDarksendPool::CreateFinalTransaction() {
 }
 
 void CDarksendPool::CommitFinalTransaction() {
-    if (!fIndexNode) return; // check and relay final tx only on indexnode
+    if (!fApollonNode) return; // check and relay final tx only on apollonnode
 
     CTransaction finalTransaction = CTransaction(finalMutableTransaction);
     uint256 hashTx = finalTransaction.GetHash();
@@ -646,9 +646,9 @@ void CDarksendPool::CommitFinalTransaction() {
 
     LogPrintf("CDarksendPool::CommitFinalTransaction -- CREATING DSTX\n");
 
-    // create and sign indexnode dstx transaction
+    // create and sign apollonnode dstx transaction
     if (!mapDarksendBroadcastTxes.count(hashTx)) {
-        CDarksendBroadcastTx dstx(finalTransaction, activeIndexnode.vin, GetAdjustedTime());
+        CDarksendBroadcastTx dstx(finalTransaction, activeApollonnode.vin, GetAdjustedTime());
         dstx.Sign();
         mapDarksendBroadcastTxes.insert(std::make_pair(hashTx, dstx));
     }
@@ -677,12 +677,12 @@ void CDarksendPool::CommitFinalTransaction() {
 // a client submits a transaction then refused to sign, there must be a cost. Otherwise they
 // would be able to do this over and over again and bring the mixing to a hault.
 //
-// How does this work? Messages to Indexnodes come in via NetMsgType::DSVIN, these require a valid collateral
-// transaction for the client to be able to enter the pool. This transaction is kept by the Indexnode
+// How does this work? Messages to Apollonnodes come in via NetMsgType::DSVIN, these require a valid collateral
+// transaction for the client to be able to enter the pool. This transaction is kept by the Apollonnode
 // until the transaction is either complete or fails.
 //
 void CDarksendPool::ChargeFees() {
-    if (!fIndexNode) return;
+    if (!fApollonNode) return;
 
     //we don't need to charge collateral for every offence.
     if (GetRandInt(100) > 33) return;
@@ -762,7 +762,7 @@ void CDarksendPool::ChargeFees() {
     adds up to a cost of 0.001DRK per transaction on average.
 */
 void CDarksendPool::ChargeRandomFees() {
-    if (!fIndexNode) return;
+    if (!fApollonNode) return;
 
     LOCK(cs_main);
 
@@ -802,10 +802,10 @@ void CDarksendPool::CheckTimeout() {
         }
     }
 
-    if (!fEnablePrivateSend && !fIndexNode) return;
+    if (!fEnablePrivateSend && !fApollonNode) return;
 
     // catching hanging sessions
-    if (!fIndexNode) {
+    if (!fApollonNode) {
         switch (nState) {
             case POOL_STATE_ERROR:
                 LogPrint("privatesend", "CDarksendPool::CheckTimeout -- Pool error -- Running CheckPool\n");
@@ -820,7 +820,7 @@ void CDarksendPool::CheckTimeout() {
         }
     }
 
-    int nLagTime = fIndexNode ? 0 : 10000; // if we're the client, give the server a few extra seconds before resetting.
+    int nLagTime = fApollonNode ? 0 : 10000; // if we're the client, give the server a few extra seconds before resetting.
     int nTimeout = (nState == POOL_STATE_SIGNING) ? PRIVATESEND_SIGNING_TIMEOUT : PRIVATESEND_QUEUE_TIMEOUT;
     bool fTimeout = GetTimeMillis() - nTimeLastSuccessfulStep >= nTimeout * 1000 + nLagTime;
 
@@ -841,12 +841,12 @@ void CDarksendPool::CheckTimeout() {
     which is the active state right before merging the transaction
 */
 void CDarksendPool::CheckForCompleteQueue() {
-    if (!fEnablePrivateSend && !fIndexNode) return;
+    if (!fEnablePrivateSend && !fApollonNode) return;
 
     if (nState == POOL_STATE_QUEUE && IsSessionReady()) {
         SetState(POOL_STATE_ACCEPTING_ENTRIES);
 
-        CDarksendQueue dsq(nSessionDenom, activeIndexnode.vin, GetTime(), true);
+        CDarksendQueue dsq(nSessionDenom, activeApollonnode.vin, GetTime(), true);
         LogPrint("privatesend", "CDarksendPool::CheckForCompleteQueue -- queue is ready, signing and relaying (%s)\n", dsq.ToString());
         dsq.Sign();
         dsq.Relay();
@@ -860,7 +860,7 @@ bool CDarksendPool::IsInputScriptSigValid(const CTxIn &txin) {
     txNew.vout.clear();
 
     int i = 0;
-    int nTxInIndex = -1;
+    int nTxInApollon = -1;
     CScript sigPubKey = CScript();
 
     BOOST_FOREACH(CDarkSendEntry & entry, vecEntries)
@@ -875,19 +875,19 @@ bool CDarksendPool::IsInputScriptSigValid(const CTxIn &txin) {
             txNew.vin.push_back(txdsin);
 
             if (txdsin.prevout == txin.prevout) {
-                nTxInIndex = i;
+                nTxInApollon = i;
                 sigPubKey = txdsin.prevPubKey;
             }
             i++;
         }
     }
 
-    if (nTxInIndex >= 0) { //might have to do this one input at a time?
-        txNew.vin[nTxInIndex].scriptSig = txin.scriptSig;
-        const CAmount &amount = txNew.vout[nTxInIndex].nValue;
+    if (nTxInApollon >= 0) { //might have to do this one input at a time?
+        txNew.vin[nTxInApollon].scriptSig = txin.scriptSig;
+        const CAmount &amount = txNew.vout[nTxInApollon].nValue;
         LogPrint("privatesend", "CDarksendPool::IsInputScriptSigValid -- verifying scriptSig %s\n", ScriptToAsmStr(txin.scriptSig).substr(0, 24));
-//        if(!VerifyScript(txNew.vin[nTxInIndex].scriptSig, sigPubKey, SCRIPT_VERIFY_P2SH | SCRIPT_VERIFY_STRICTENC, MutableTransactionSignatureChecker(&txNew, nTxInIndex, amount))) {
-//            LogPrint("privatesend", "CDarksendPool::IsInputScriptSigValid -- VerifyScript() failed on input %d\n", nTxInIndex);
+//        if(!VerifyScript(txNew.vin[nTxInApollon].scriptSig, sigPubKey, SCRIPT_VERIFY_P2SH | SCRIPT_VERIFY_STRICTENC, MutableTransactionSignatureChecker(&txNew, nTxInApollon, amount))) {
+//            LogPrint("privatesend", "CDarksendPool::IsInputScriptSigValid -- VerifyScript() failed on input %d\n", nTxInApollon);
 //            return false;
 //        }
     } else {
@@ -960,7 +960,7 @@ bool CDarksendPool::IsCollateralValid(const CTransaction &txCollateral) {
 // Add a clients transaction to the pool
 //
 bool CDarksendPool::AddEntry(const CDarkSendEntry &entryNew, PoolMessage &nMessageIDRet) {
-    if (!fIndexNode) return false;
+    if (!fApollonNode) return false;
 
     BOOST_FOREACH(CTxIn
     txin, entryNew.vecTxDSIn) {
@@ -1060,12 +1060,12 @@ bool CDarksendPool::IsSignaturesComplete() {
 }
 
 //
-// Execute a mixing denomination via a Indexnode.
+// Execute a mixing denomination via a Apollonnode.
 // This is only ran from clients
 //
 bool CDarksendPool::SendDenominate(const std::vector <CTxIn> &vecTxIn, const std::vector <CTxOut> &vecTxOut) {
-    if (fIndexNode) {
-        LogPrintf("CDarksendPool::SendDenominate -- PrivateSend from a Indexnode is not supported currently.\n");
+    if (fApollonNode) {
+        LogPrintf("CDarksendPool::SendDenominate -- PrivateSend from a Apollonnode is not supported currently.\n");
         return false;
     }
 
@@ -1083,9 +1083,9 @@ bool CDarksendPool::SendDenominate(const std::vector <CTxIn> &vecTxIn, const std
     txin, vecTxIn)
     vecOutPointLocked.push_back(txin.prevout);
 
-    // we should already be connected to a Indexnode
+    // we should already be connected to a Apollonnode
     if (!nSessionID) {
-        LogPrintf("CDarksendPool::SendDenominate -- No Indexnode has been selected yet.\n");
+        LogPrintf("CDarksendPool::SendDenominate -- No Apollonnode has been selected yet.\n");
         UnlockCoins();
         SetNull();
         return false;
@@ -1142,18 +1142,18 @@ bool CDarksendPool::SendDenominate(const std::vector <CTxIn> &vecTxIn, const std
     return true;
 }
 
-// Incoming message from Indexnode updating the progress of mixing
+// Incoming message from Apollonnode updating the progress of mixing
 bool CDarksendPool::CheckPoolStateUpdate(PoolState nStateNew, int nEntriesCountNew, PoolStatusUpdate nStatusUpdate, PoolMessage nMessageID, int nSessionIDNew) {
-    if (fIndexNode) return false;
+    if (fApollonNode) return false;
 
     // do not update state when mixing client state is one of these
     if (nState == POOL_STATE_IDLE || nState == POOL_STATE_ERROR || nState == POOL_STATE_SUCCESS) return false;
 
-    strAutoDenomResult = _("Indexnode:") + " " + GetMessageByID(nMessageID);
+    strAutoDenomResult = _("Apollonnode:") + " " + GetMessageByID(nMessageID);
 
     // if rejected at any state
     if (nStatusUpdate == STATUS_REJECTED) {
-        LogPrintf("CDarksendPool::CheckPoolStateUpdate -- entry is rejected by Indexnode\n");
+        LogPrintf("CDarksendPool::CheckPoolStateUpdate -- entry is rejected by Apollonnode\n");
         UnlockCoins();
         SetNull();
         SetState(POOL_STATE_ERROR);
@@ -1182,12 +1182,12 @@ bool CDarksendPool::CheckPoolStateUpdate(PoolState nStateNew, int nEntriesCountN
 }
 
 //
-// After we receive the finalized transaction from the Indexnode, we must
+// After we receive the finalized transaction from the Apollonnode, we must
 // check it to make sure it's what we want, then sign it if we agree.
 // If we refuse to sign, it's possible we'll be charged collateral
 //
 bool CDarksendPool::SignFinalTransaction(const CTransaction &finalTransactionNew, CNode *pnode) {
-    if (fIndexNode || pnode == NULL) return false;
+    if (fApollonNode || pnode == NULL) return false;
 
     finalMutableTransaction = finalTransactionNew;
     LogPrintf("CDarksendPool::SignFinalTransaction -- finalMutableTransaction=%s", finalMutableTransaction.ToString());
@@ -1200,19 +1200,19 @@ bool CDarksendPool::SignFinalTransaction(const CTransaction &finalTransactionNew
         BOOST_FOREACH(
         const CTxDSIn txdsin, entry.vecTxDSIn) {
             /* Sign my transaction and all outputs */
-            int nMyInputIndex = -1;
+            int nMyInputApollon = -1;
             CScript prevPubKey = CScript();
             CTxIn txin = CTxIn();
 
             for (unsigned int i = 0; i < finalMutableTransaction.vin.size(); i++) {
                 if (finalMutableTransaction.vin[i] == txdsin) {
-                    nMyInputIndex = i;
+                    nMyInputApollon = i;
                     prevPubKey = txdsin.prevPubKey;
                     txin = txdsin;
                 }
             }
 
-            if (nMyInputIndex >= 0) { //might have to do this one input at a time?
+            if (nMyInputApollon >= 0) { //might have to do this one input at a time?
                 int nFoundOutputsCount = 0;
                 CAmount nValue1 = 0;
                 CAmount nValue2 = 0;
@@ -1244,15 +1244,15 @@ bool CDarksendPool::SignFinalTransaction(const CTransaction &finalTransactionNew
 
                 const CKeyStore &keystore = *pwalletMain;
 
-                LogPrint("privatesend", "CDarksendPool::SignFinalTransaction -- Signing my input %i\n", nMyInputIndex);
+                LogPrint("privatesend", "CDarksendPool::SignFinalTransaction -- Signing my input %i\n", nMyInputApollon);
                 CAmount amount;
-                if (!SignSignature(keystore, prevPubKey, finalMutableTransaction, nMyInputIndex, amount, int(SIGHASH_ALL | SIGHASH_ANYONECANPAY))) { // changes scriptSig
+                if (!SignSignature(keystore, prevPubKey, finalMutableTransaction, nMyInputApollon, amount, int(SIGHASH_ALL | SIGHASH_ANYONECANPAY))) { // changes scriptSig
                     LogPrint("privatesend", "CDarksendPool::SignFinalTransaction -- Unable to sign my own transaction!\n");
                     // not sure what to do here, it will timeout...?
                 }
 
-                sigs.push_back(finalMutableTransaction.vin[nMyInputIndex]);
-                LogPrint("privatesend", "CDarksendPool::SignFinalTransaction -- nMyInputIndex: %d, sigs.size(): %d, scriptSig=%s\n", nMyInputIndex, (int) sigs.size(), ScriptToAsmStr(finalMutableTransaction.vin[nMyInputIndex].scriptSig));
+                sigs.push_back(finalMutableTransaction.vin[nMyInputApollon]);
+                LogPrint("privatesend", "CDarksendPool::SignFinalTransaction -- nMyInputApollon: %d, sigs.size(): %d, scriptSig=%s\n", nMyInputApollon, (int) sigs.size(), ScriptToAsmStr(finalMutableTransaction.vin[nMyInputApollon].scriptSig));
             }
         }
     }
@@ -1265,8 +1265,8 @@ bool CDarksendPool::SignFinalTransaction(const CTransaction &finalTransactionNew
         return false;
     }
 
-    // push all of our signatures to the Indexnode
-    LogPrintf("CDarksendPool::SignFinalTransaction -- pushing sigs to the indexnode, finalMutableTransaction=%s", finalMutableTransaction.ToString());
+    // push all of our signatures to the Apollonnode
+    LogPrintf("CDarksendPool::SignFinalTransaction -- pushing sigs to the apollonnode, finalMutableTransaction=%s", finalMutableTransaction.ToString());
     pnode->PushMessage(NetMsgType::DSSIGNFINALTX, sigs);
     SetState(POOL_STATE_SIGNING);
     nTimeLastSuccessfulStep = GetTimeMillis();
@@ -1287,11 +1287,11 @@ void CDarksendPool::NewBlock() {
 
 // mixing transaction was completed (failed or successful)
 void CDarksendPool::CompletedTransaction(PoolMessage nMessageID) {
-    if (fIndexNode) return;
+    if (fApollonNode) return;
 
     if (nMessageID == MSG_SUCCESS) {
         LogPrintf("CompletedTransaction -- success\n");
-        nCachedLastSuccessBlock = pCurrentBlockIndex->nHeight;
+        nCachedLastSuccessBlock = pCurrentBlockApollon->nHeight;
     } else {
         LogPrintf("CompletedTransaction -- error\n");
     }
@@ -1304,11 +1304,11 @@ void CDarksendPool::CompletedTransaction(PoolMessage nMessageID) {
 // Passively run mixing in the background to anonymize funds based on the given configuration.
 //
 bool CDarksendPool::DoAutomaticDenominating(bool fDryRun) {
-    if (!fEnablePrivateSend || fIndexNode || !pCurrentBlockIndex) return false;
+    if (!fEnablePrivateSend || fApollonNode || !pCurrentBlockApollon) return false;
     if (!pwalletMain || pwalletMain->IsLocked(true)) return false;
     if (nState != POOL_STATE_IDLE) return false;
 
-    if (!indexnodeSync.IsIndexnodeListSynced()) {
+    if (!apollonnodeSync.IsApollonnodeListSynced()) {
         strAutoDenomResult = _("Can't mix while sync in progress.");
         return false;
     }
@@ -1389,15 +1389,15 @@ bool CDarksendPool::DoAutomaticDenominating(bool fDryRun) {
         return false;
     }
 
-    if (!fPrivateSendMultiSession && pCurrentBlockIndex->nHeight - nCachedLastSuccessBlock < nMinBlockSpacing) {
+    if (!fPrivateSendMultiSession && pCurrentBlockApollon->nHeight - nCachedLastSuccessBlock < nMinBlockSpacing) {
         LogPrintf("CDarksendPool::DoAutomaticDenominating -- Last successful PrivateSend action was too recent\n");
         strAutoDenomResult = _("Last successful PrivateSend action was too recent.");
         return false;
     }
 
     if (mnodeman.size() == 0) {
-        LogPrint("privatesend", "CDarksendPool::DoAutomaticDenominating -- No Indexnodes detected\n");
-        strAutoDenomResult = _("No Indexnodes detected.");
+        LogPrint("privatesend", "CDarksendPool::DoAutomaticDenominating -- No Apollonnodes detected\n");
+        strAutoDenomResult = _("No Apollonnodes detected.");
         return false;
     }
 
@@ -1451,7 +1451,7 @@ bool CDarksendPool::DoAutomaticDenominating(bool fDryRun) {
         return false;
     }
 
-    // Initial phase, find a Indexnode
+    // Initial phase, find a Apollonnode
     // Clean if there is anything left from previous session
     UnlockCoins();
     SetNull();
@@ -1482,14 +1482,14 @@ bool CDarksendPool::DoAutomaticDenominating(bool fDryRun) {
 
     int nMnCountEnabled = mnodeman.CountEnabled(MIN_PRIVATESEND_PEER_PROTO_VERSION);
 
-    // If we've used 90% of the Indexnode list then drop the oldest first ~30%
+    // If we've used 90% of the Apollonnode list then drop the oldest first ~30%
     int nThreshold_high = nMnCountEnabled * 0.9;
     int nThreshold_low = nThreshold_high * 0.7;
-    LogPrint("privatesend", "Checking vecIndexnodesUsed: size: %d, threshold: %d\n", (int) vecIndexnodesUsed.size(), nThreshold_high);
+    LogPrint("privatesend", "Checking vecApollonnodesUsed: size: %d, threshold: %d\n", (int) vecApollonnodesUsed.size(), nThreshold_high);
 
-    if ((int) vecIndexnodesUsed.size() > nThreshold_high) {
-        vecIndexnodesUsed.erase(vecIndexnodesUsed.begin(), vecIndexnodesUsed.begin() + vecIndexnodesUsed.size() - nThreshold_low);
-        LogPrint("privatesend", "  vecIndexnodesUsed: new size: %d, threshold: %d\n", (int) vecIndexnodesUsed.size(), nThreshold_high);
+    if ((int) vecApollonnodesUsed.size() > nThreshold_high) {
+        vecApollonnodesUsed.erase(vecApollonnodesUsed.begin(), vecApollonnodesUsed.begin() + vecApollonnodesUsed.size() - nThreshold_low);
+        LogPrint("privatesend", "  vecApollonnodesUsed: new size: %d, threshold: %d\n", (int) vecApollonnodesUsed.size(), nThreshold_high);
     }
 
     bool fUseQueue = GetRandInt(100) > 33;
@@ -1505,9 +1505,9 @@ bool CDarksendPool::DoAutomaticDenominating(bool fDryRun) {
 
             if (dsq.IsExpired()) continue;
 
-            CIndexnode *pmn = mnodeman.Find(dsq.vin);
+            CApollonnode *pmn = mnodeman.Find(dsq.vin);
             if (pmn == NULL) {
-                LogPrintf("CDarksendPool::DoAutomaticDenominating -- dsq indexnode is not in indexnode list, indexnode=%s\n", dsq.vin.prevout.ToStringShort());
+                LogPrintf("CDarksendPool::DoAutomaticDenominating -- dsq apollonnode is not in apollonnode list, apollonnode=%s\n", dsq.vin.prevout.ToStringShort());
                 continue;
             }
 
@@ -1535,7 +1535,7 @@ bool CDarksendPool::DoAutomaticDenominating(bool fDryRun) {
                 continue;
             }
 
-            vecIndexnodesUsed.push_back(dsq.vin);
+            vecApollonnodesUsed.push_back(dsq.vin);
 
             CNode *pnodeFound = NULL;
             {
@@ -1550,11 +1550,11 @@ bool CDarksendPool::DoAutomaticDenominating(bool fDryRun) {
                 }
             }
 
-            LogPrintf("CDarksendPool::DoAutomaticDenominating -- attempt to connect to indexnode from queue, addr=%s\n", pmn->addr.ToString());
-            // connect to Indexnode and submit the queue request
-            CNode *pnode = (pnodeFound && pnodeFound->fIndexnode) ? pnodeFound : ConnectNode(CAddress(pmn->addr, NODE_NETWORK), NULL, false, true);
+            LogPrintf("CDarksendPool::DoAutomaticDenominating -- attempt to connect to apollonnode from queue, addr=%s\n", pmn->addr.ToString());
+            // connect to Apollonnode and submit the queue request
+            CNode *pnode = (pnodeFound && pnodeFound->fApollonnode) ? pnodeFound : ConnectNode(CAddress(pmn->addr, NODE_NETWORK), NULL, false, true);
             if (pnode) {
-                pSubmittedToIndexnode = pmn;
+                pSubmittedToApollonnode = pmn;
                 nSessionDenom = dsq.nDenom;
 
                 pnode->PushMessage(NetMsgType::DSACCEPT, nSessionDenom, txMyCollateral);
@@ -1569,7 +1569,7 @@ bool CDarksendPool::DoAutomaticDenominating(bool fDryRun) {
                 return true;
             } else {
                 LogPrintf("CDarksendPool::DoAutomaticDenominating -- can't connect, addr=%s\n", pmn->addr.ToString());
-                strAutoDenomResult = _("Error connecting to Indexnode.");
+                strAutoDenomResult = _("Error connecting to Apollonnode.");
                 continue;
             }
         }
@@ -1592,17 +1592,17 @@ bool CDarksendPool::DoAutomaticDenominating(bool fDryRun) {
 
     // otherwise, try one randomly
     while (nTries < 10) {
-        CIndexnode *pmn = mnodeman.FindRandomNotInVec(vecIndexnodesUsed, MIN_PRIVATESEND_PEER_PROTO_VERSION);
+        CApollonnode *pmn = mnodeman.FindRandomNotInVec(vecApollonnodesUsed, MIN_PRIVATESEND_PEER_PROTO_VERSION);
         if (pmn == NULL) {
-            LogPrintf("CDarksendPool::DoAutomaticDenominating -- Can't find random indexnode!\n");
-            strAutoDenomResult = _("Can't find random Indexnode.");
+            LogPrintf("CDarksendPool::DoAutomaticDenominating -- Can't find random apollonnode!\n");
+            strAutoDenomResult = _("Can't find random Apollonnode.");
             return false;
         }
-        vecIndexnodesUsed.push_back(pmn->vin);
+        vecApollonnodesUsed.push_back(pmn->vin);
 
         if (pmn->nLastDsq != 0 && pmn->nLastDsq + nMnCountEnabled / 5 > mnodeman.nDsqCount) {
-            LogPrintf("CDarksendPool::DoAutomaticDenominating -- Too early to mix on this indexnode!"
-                              " indexnode=%s  addr=%s  nLastDsq=%d  CountEnabled/5=%d  nDsqCount=%d\n",
+            LogPrintf("CDarksendPool::DoAutomaticDenominating -- Too early to mix on this apollonnode!"
+                              " apollonnode=%s  addr=%s  nLastDsq=%d  CountEnabled/5=%d  nDsqCount=%d\n",
                       pmn->vin.prevout.ToStringShort(), pmn->addr.ToString(), pmn->nLastDsq,
                       nMnCountEnabled / 5, mnodeman.nDsqCount);
             nTries++;
@@ -1623,11 +1623,11 @@ bool CDarksendPool::DoAutomaticDenominating(bool fDryRun) {
             }
         }
 
-        LogPrintf("CDarksendPool::DoAutomaticDenominating -- attempt %d connection to Indexnode %s\n", nTries, pmn->addr.ToString());
-        CNode *pnode = (pnodeFound && pnodeFound->fIndexnode) ? pnodeFound : ConnectNode(CAddress(pmn->addr, NODE_NETWORK), NULL, false, true);
+        LogPrintf("CDarksendPool::DoAutomaticDenominating -- attempt %d connection to Apollonnode %s\n", nTries, pmn->addr.ToString());
+        CNode *pnode = (pnodeFound && pnodeFound->fApollonnode) ? pnodeFound : ConnectNode(CAddress(pmn->addr, NODE_NETWORK), NULL, false, true);
         if (pnode) {
             LogPrintf("CDarksendPool::DoAutomaticDenominating -- connected, addr=%s\n", pmn->addr.ToString());
-            pSubmittedToIndexnode = pmn;
+            pSubmittedToApollonnode = pmn;
 
             std::vector <CAmount> vecAmounts;
             pwalletMain->ConvertList(vecTxIn, vecAmounts);
@@ -1653,7 +1653,7 @@ bool CDarksendPool::DoAutomaticDenominating(bool fDryRun) {
         }
     }
 
-    strAutoDenomResult = _("No compatible Indexnode found.");
+    strAutoDenomResult = _("No compatible Apollonnode found.");
     return false;
 }
 
@@ -1881,7 +1881,7 @@ bool CDarksendPool::MakeCollateralAmounts(const CompactTallyItem &tallyItem) {
         return false;
     }
 
-    nCachedLastSuccessBlock = pCurrentBlockIndex->nHeight;
+    nCachedLastSuccessBlock = pCurrentBlockApollon->nHeight;
 
     return true;
 }
@@ -2022,7 +2022,7 @@ bool CDarksendPool::CreateDenominated(const CompactTallyItem &tallyItem, bool fC
     }
 
     // use the same nCachedLastSuccessBlock as for DS mixing to prevent race
-    nCachedLastSuccessBlock = pCurrentBlockIndex->nHeight;
+    nCachedLastSuccessBlock = pCurrentBlockApollon->nHeight;
     LogPrintf("CDarksendPool::CreateDenominated -- txid=%s\n", wtx.GetHash().GetHex());
 
     return true;
@@ -2041,7 +2041,7 @@ bool CDarksendPool::IsOutputsCompatibleWithSessionDenom(const std::vector <CTxDS
 }
 
 bool CDarksendPool::IsAcceptableDenomAndCollateral(int nDenom, CTransaction txCollateral, PoolMessage &nMessageIDRet) {
-    if (!fIndexNode) return false;
+    if (!fApollonNode) return false;
 
     // is denom even smth legit?
     std::vector<int> vecBits;
@@ -2062,7 +2062,7 @@ bool CDarksendPool::IsAcceptableDenomAndCollateral(int nDenom, CTransaction txCo
 }
 
 bool CDarksendPool::CreateNewSession(int nDenom, CTransaction txCollateral, PoolMessage &nMessageIDRet) {
-    if (!fIndexNode || nSessionID != 0) return false;
+    if (!fApollonNode || nSessionID != 0) return false;
 
     // new session can only be started in idle mode
     if (nState != POOL_STATE_IDLE) {
@@ -2085,7 +2085,7 @@ bool CDarksendPool::CreateNewSession(int nDenom, CTransaction txCollateral, Pool
 
     if (!fUnitTest) {
         //broadcast that I'm accepting entries, only if it's the first entry through
-        CDarksendQueue dsq(nDenom, activeIndexnode.vin, GetTime(), false);
+        CDarksendQueue dsq(nDenom, activeApollonnode.vin, GetTime(), false);
         LogPrint("privatesend", "CDarksendPool::CreateNewSession -- signing and relaying new queue: %s\n", dsq.ToString());
         dsq.Sign();
         dsq.Relay();
@@ -2100,7 +2100,7 @@ bool CDarksendPool::CreateNewSession(int nDenom, CTransaction txCollateral, Pool
 }
 
 bool CDarksendPool::AddUserToExistingSession(int nDenom, CTransaction txCollateral, PoolMessage &nMessageIDRet) {
-    if (!fIndexNode || nSessionID == 0 || IsSessionReady()) return false;
+    if (!fApollonNode || nSessionID == 0 || IsSessionReady()) return false;
 
     if (!IsAcceptableDenomAndCollateral(nDenom, txCollateral, nMessageIDRet)) {
         return false;
@@ -2275,15 +2275,15 @@ std::string CDarksendPool::GetMessageByID(PoolMessage nMessageID) {
         case ERR_MAXIMUM:
             return _("Value more than PrivateSend pool maximum allows.");
         case ERR_MN_LIST:
-            return _("Not in the Indexnode list.");
+            return _("Not in the Apollonnode list.");
         case ERR_MODE:
             return _("Incompatible mode.");
         case ERR_NON_STANDARD_PUBKEY:
             return _("Non-standard public key detected.");
         case ERR_NOT_A_MN:
-            return _("This is not a Indexnode.");
+            return _("This is not a Apollonnode.");
         case ERR_QUEUE_FULL:
-            return _("Indexnode queue is full.");
+            return _("Apollonnode queue is full.");
         case ERR_RECENT:
             return _("Last PrivateSend was too recent.");
         case ERR_SESSION:
@@ -2311,7 +2311,7 @@ bool CDarkSendSigner::IsVinAssociatedWithPubkey(const CTxIn &txin, const CPubKey
     uint256 hash;
     if (GetTransaction(txin.prevout.hash, tx, Params().GetConsensus(), hash, true)) {
         BOOST_FOREACH(CTxOut out, tx.vout)
-        if (out.nValue == INDEXNODE_COIN_REQUIRED * COIN && out.scriptPubKey == payee) return true;
+        if (out.nValue == APOLLONNODE_COIN_REQUIRED * COIN && out.scriptPubKey == payee) return true;
     }
 
     return false;
@@ -2375,24 +2375,24 @@ bool CDarkSendEntry::AddScriptSig(const CTxIn &txin) {
 }
 
 bool CDarksendQueue::Sign() {
-    if (!fIndexNode) return false;
+    if (!fApollonNode) return false;
 
     std::string strMessage = vin.ToString() + boost::lexical_cast<std::string>(nDenom) + boost::lexical_cast<std::string>(nTime) + boost::lexical_cast<std::string>(fReady);
 
-    if (!darkSendSigner.SignMessage(strMessage, vchSig, activeIndexnode.keyIndexnode)) {
+    if (!darkSendSigner.SignMessage(strMessage, vchSig, activeApollonnode.keyApollonnode)) {
         LogPrintf("CDarksendQueue::Sign -- SignMessage() failed, %s\n", ToString());
         return false;
     }
 
-    return CheckSignature(activeIndexnode.pubKeyIndexnode);
+    return CheckSignature(activeApollonnode.pubKeyApollonnode);
 }
 
-bool CDarksendQueue::CheckSignature(const CPubKey &pubKeyIndexnode) {
+bool CDarksendQueue::CheckSignature(const CPubKey &pubKeyApollonnode) {
     std::string strMessage = vin.ToString() + boost::lexical_cast<std::string>(nDenom) + boost::lexical_cast<std::string>(nTime) + boost::lexical_cast<std::string>(fReady);
     std::string strError = "";
 
-    if (!darkSendSigner.VerifyMessage(pubKeyIndexnode, vchSig, strMessage, strError)) {
-        LogPrintf("CDarksendQueue::CheckSignature -- Got bad Indexnode queue signature: %s; error: %s\n", ToString(), strError);
+    if (!darkSendSigner.VerifyMessage(pubKeyApollonnode, vchSig, strMessage, strError)) {
+        LogPrintf("CDarksendQueue::CheckSignature -- Got bad Apollonnode queue signature: %s; error: %s\n", ToString(), strError);
         return false;
     }
 
@@ -2410,23 +2410,23 @@ bool CDarksendQueue::Relay() {
 }
 
 bool CDarksendBroadcastTx::Sign() {
-    if (!fIndexNode) return false;
+    if (!fApollonNode) return false;
 
     std::string strMessage = tx.GetHash().ToString() + boost::lexical_cast<std::string>(sigTime);
 
-    if (!darkSendSigner.SignMessage(strMessage, vchSig, activeIndexnode.keyIndexnode)) {
+    if (!darkSendSigner.SignMessage(strMessage, vchSig, activeApollonnode.keyApollonnode)) {
         LogPrintf("CDarksendBroadcastTx::Sign -- SignMessage() failed\n");
         return false;
     }
 
-    return CheckSignature(activeIndexnode.pubKeyIndexnode);
+    return CheckSignature(activeApollonnode.pubKeyApollonnode);
 }
 
-bool CDarksendBroadcastTx::CheckSignature(const CPubKey &pubKeyIndexnode) {
+bool CDarksendBroadcastTx::CheckSignature(const CPubKey &pubKeyApollonnode) {
     std::string strMessage = tx.GetHash().ToString() + boost::lexical_cast<std::string>(sigTime);
     std::string strError = "";
 
-    if (!darkSendSigner.VerifyMessage(pubKeyIndexnode, vchSig, strMessage, strError)) {
+    if (!darkSendSigner.VerifyMessage(pubKeyApollonnode, vchSig, strMessage, strError)) {
         LogPrintf("CDarksendBroadcastTx::CheckSignature -- Got bad dstx signature, error: %s\n", strError);
         return false;
     }
@@ -2442,9 +2442,9 @@ void CDarksendPool::RelayFinalTransaction(const CTransaction &txFinal) {
 }
 
 void CDarksendPool::RelayIn(const CDarkSendEntry &entry) {
-    if (!pSubmittedToIndexnode) return;
+    if (!pSubmittedToApollonnode) return;
 
-    CNode *pnode = FindNode(pSubmittedToIndexnode->addr);
+    CNode *pnode = FindNode(pSubmittedToApollonnode->addr);
     if (pnode != NULL) {
         LogPrintf("CDarksendPool::RelayIn -- found master, relaying message to %s\n", pnode->addr.ToString());
         pnode->PushMessage(NetMsgType::DSVIN, entry);
@@ -2471,8 +2471,8 @@ void CDarksendPool::RelayCompletedTransaction(PoolMessage nMessageID) {
 }
 
 void CDarksendPool::SetState(PoolState nStateNew) {
-    if (fIndexNode && (nStateNew == POOL_STATE_ERROR || nStateNew == POOL_STATE_SUCCESS)) {
-        LogPrint("privatesend", "CDarksendPool::SetState -- Can't set state to ERROR or SUCCESS as a Indexnode. \n");
+    if (fApollonNode && (nStateNew == POOL_STATE_ERROR || nStateNew == POOL_STATE_SUCCESS)) {
+        LogPrint("privatesend", "CDarksendPool::SetState -- Can't set state to ERROR or SUCCESS as a Apollonnode. \n");
         return;
     }
 
@@ -2480,11 +2480,11 @@ void CDarksendPool::SetState(PoolState nStateNew) {
     nState = nStateNew;
 }
 
-void CDarksendPool::UpdatedBlockTip(const CBlockIndex *pindex) {
-    pCurrentBlockIndex = pindex;
-    LogPrint("privatesend", "CDarksendPool::UpdatedBlockTip -- pCurrentBlockIndex->nHeight: %d\n", pCurrentBlockIndex->nHeight);
+void CDarksendPool::UpdatedBlockTip(const CBlockApollon *papollon) {
+    pCurrentBlockApollon = papollon;
+    LogPrint("privatesend", "CDarksendPool::UpdatedBlockTip -- pCurrentBlockApollon->nHeight: %d\n", pCurrentBlockApollon->nHeight);
 
-    if (!fLiteMode && indexnodeSync.IsIndexnodeListSynced()) {
+    if (!fLiteMode && apollonnodeSync.IsApollonnodeListSynced()) {
         NewBlock();
     }
 }
@@ -2507,28 +2507,28 @@ void ThreadCheckDarkSendPool() {
         MilliSleep(1000);
 
         // try to sync from all available nodes, one step at a time
-        indexnodeSync.ProcessTick();
+        apollonnodeSync.ProcessTick();
 
-        if (indexnodeSync.GetBlockchainSynced() && !ShutdownRequested()) {
+        if (apollonnodeSync.GetBlockchainSynced() && !ShutdownRequested()) {
 
             nTick++;
 
-            // make sure to check all indexnodes first
+            // make sure to check all apollonnodes first
             mnodeman.Check();
 
             // check if we should activate or ping every few minutes,
             // slightly postpone first run to give net thread a chance to connect to some peers
-            if (nTick % INDEXNODE_MIN_MNP_SECONDS == 15)
-                activeIndexnode.ManageState();
+            if (nTick % APOLLONNODE_MIN_MNP_SECONDS == 15)
+                activeApollonnode.ManageState();
 
             if (nTick % 60 == 0) {
-                mnodeman.ProcessIndexnodeConnections();
+                mnodeman.ProcessApollonnodeConnections();
                 mnodeman.CheckAndRemove();
                 mnpayments.CheckAndRemove();
                 instantsend.CheckAndRemove();
-                GetMainSignals().NotifyIndexnodeList();
+                GetMainSignals().NotifyApollonnodeList();
             }
-            if (fIndexNode && (nTick % (60 * 5) == 0)) {
+            if (fApollonNode && (nTick % (60 * 5) == 0)) {
                 mnodeman.DoFullVerificationStep();
             }
 

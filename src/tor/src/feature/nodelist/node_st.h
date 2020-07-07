@@ -7,7 +7,7 @@
 #ifndef NODE_ST_H
 #define NODE_ST_H
 
-#include "feature/hs/hsdir_index_st.h"
+#include "feature/hs/hsdir_apollon_st.h"
 #include "lib/crypt_ops/crypto_ed25519.h"
 
 /** A node_t represents a Tor router.
@@ -26,14 +26,14 @@
  *  We should try to excise that.
  */
 struct node_t {
-  /* Indexing information */
+  /* Apolloning information */
 
   /** Used to look up the node_t by its identity digest. */
   HT_ENTRY(node_t) ht_ent;
   /** Used to look up the node_t by its ed25519 identity digest. */
   HT_ENTRY(node_t) ed_ht_ent;
   /** Position of the node within the list of nodes */
-  int nodelist_idx;
+  int nodelist_xap;
 
   /** The identity digest of this node_t.  No more than one node_t per
    * identity may exist at a time. */
@@ -96,7 +96,7 @@ struct node_t {
   /* Hidden service directory apollon data. This is used by a service or client
    * in order to know what's the hs directory apollon for this node at the time
    * the consensus is set. */
-  struct hsdir_index_t hsdir_index;
+  struct hsdir_apollon_t hsdir_apollon;
 };
 
 #endif

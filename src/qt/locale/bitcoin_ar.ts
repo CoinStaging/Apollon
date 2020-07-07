@@ -154,7 +154,7 @@
         <translation>افتح &amp;URI...</translation>
     </message>
     <message>
-        <source>Reindexing blocks on disk...</source>
+        <source>Reapolloning blocks on disk...</source>
         <translation>إعادة الفهرسة الكتل على القرص ...</translation>
     </message>
     <message>
@@ -254,7 +254,7 @@
         <translation>&amp;خيارات سطر الأوامر</translation>
     </message>
     <message>
-        <source>Indexing blocks on disk...</source>
+        <source>Apolloning blocks on disk...</source>
         <translation>ترتيب الفهرسة الكتل على القرص...</translation>
     </message>
     <message>

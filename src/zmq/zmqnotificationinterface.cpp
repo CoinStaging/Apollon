@@ -128,12 +128,12 @@ void CZMQNotificationInterface::Shutdown()
     }
 }
 
-void CZMQNotificationInterface::UpdatedBlockTip(const CBlockIndex *pindex)
+void CZMQNotificationInterface::UpdatedBlockTip(const CBlockApollon *papollon)
 {
     for (std::list<CZMQAbstractNotifier*>::iterator i = notifiers.begin(); i!=notifiers.end(); )
     {
         CZMQAbstractNotifier *notifier = *i;
-        if (notifier->NotifyBlock(pindex))
+        if (notifier->NotifyBlock(papollon))
         {
             i++;
         }
@@ -145,7 +145,7 @@ void CZMQNotificationInterface::UpdatedBlockTip(const CBlockIndex *pindex)
     }
 }
 
-void CZMQNotificationInterface::SyncTransaction(const CTransaction& tx, const CBlockIndex* pindex, const CBlock* pblock)
+void CZMQNotificationInterface::SyncTransaction(const CTransaction& tx, const CBlockApollon* papollon, const CBlock* pblock)
 {
     for (std::list<CZMQAbstractNotifier*>::iterator i = notifiers.begin(); i!=notifiers.end(); )
     {

@@ -726,11 +726,11 @@ bool ReadKeyValue(CWallet *pwallet, CDataStream &ssKey, CDataStream &ssValue,
         } else if (strType == "defaultkey") {
             ssValue >> pwallet->vchDefaultKey;
         } else if (strType == "pool") {
-            int64_t nIndex;
-            ssKey >> nIndex;
+            int64_t nApollon;
+            ssKey >> nApollon;
             CKeyPool keypool;
             ssValue >> keypool;
-            pwallet->setKeyPool.insert(nIndex);
+            pwallet->setKeyPool.insert(nApollon);
 
             // If no metadata exists yet, create a default with the pool key's
             // creation time. Note that this may be overwritten by actually

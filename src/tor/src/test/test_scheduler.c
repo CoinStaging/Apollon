@@ -1096,9 +1096,9 @@ test_scheduler_kist_pending_list(void *arg)
   channel_register(chan1);
   channel_register(chan2);
   tt_int_op(chan1->scheduler_state, OP_EQ, SCHED_CHAN_IDLE);
-  tt_int_op(chan1->sched_heap_idx, OP_EQ, -1);
+  tt_int_op(chan1->sched_heap_xap, OP_EQ, -1);
   tt_int_op(chan2->scheduler_state, OP_EQ, SCHED_CHAN_IDLE);
-  tt_int_op(chan2->sched_heap_idx, OP_EQ, -1);
+  tt_int_op(chan2->sched_heap_xap, OP_EQ, -1);
 
   /* Once a channel becomes OPEN, it always have at least one cell in it so
    * the scheduler is notified that the channel wants to write so this is the

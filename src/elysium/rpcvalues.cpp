@@ -196,7 +196,7 @@ CPubKey ParsePubKeyOrAddress(const UniValue& value)
     return pubKey;
 }
 
-uint32_t ParseOutputIndex(const UniValue& value)
+uint32_t ParseOutputApollon(const UniValue& value)
 {
     int nOut = value.get_int();
     if (nOut < 0) {
@@ -221,11 +221,11 @@ std::vector<PrevTxsEntry> ParsePrevTxs(const UniValue& value)
         UniValue prevOut = p.get_obj();
 
         uint256 txid = ParseHashO(prevOut, "txid");
-        UniValue outputIndex = find_value(prevOut, "vout");
+        UniValue outputApollon = find_value(prevOut, "vout");
         UniValue outputValue = find_value(prevOut, "value");
         std::vector<unsigned char> pkData(ParseHexO(prevOut, "scriptPubKey"));
 
-        uint32_t nOut = ParseOutputIndex(outputIndex);
+        uint32_t nOut = ParseOutputApollon(outputApollon);
         int64_t nValue = AmountFromValue(outputValue);
         CScript scriptPubKey(pkData.begin(), pkData.end());
 

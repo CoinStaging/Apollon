@@ -180,7 +180,7 @@
         <translation>Бумажник зашифрован</translation>
     </message>
     <message>
-        <source>%1 will close now to finish the encryption process. Remember that encrypting your wallet cannot fully protect your indexs from being stolen by malware infecting your computer.</source>
+        <source>%1 will close now to finish the encryption process. Remember that encrypting your wallet cannot fully protect your apollons from being stolen by malware infecting your computer.</source>
         <translation>Сейчас %1 закроется для завершения процесса шифрования. Помните, что шифрование вашего бумажника не может полностью защитить ваши биткоины от кражи с помощью инфицирования вашего компьютера вредоносным ПО.</translation>
     </message>
     <message>
@@ -318,7 +318,7 @@
         <translation>Открыть &amp;URI...</translation>
     </message>
     <message>
-        <source>Reindexing blocks on disk...</source>
+        <source>Reapolloning blocks on disk...</source>
         <translation>Идёт переиндексация блоков на диске...</translation>
     </message>
     <message>
@@ -422,7 +422,7 @@
         <translation><numerusform>%n активных соединений с сетью Apollon</numerusform><numerusform>%n активных соединений с сетью Apollon</numerusform><numerusform>%n активных соединений с сетью Apollon</numerusform><numerusform>%n активных соединений с сетью Apollon</numerusform></translation>
     </message>
     <message>
-        <source>Indexing blocks on disk...</source>
+        <source>Apolloning blocks on disk...</source>
         <translation>Индексация блоков на диске...</translation>
     </message>
     <message>
@@ -2202,7 +2202,7 @@
         <translation>Удалить эту запись</translation>
     </message>
     <message>
-        <source>The fee will be deducted from the amount being sent. The recipient will receive less indexs than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
+        <source>The fee will be deducted from the amount being sent. The recipient will receive less apollons than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
         <translation>С отправляемой суммы будет удержана комиссия. Получателю придёт меньше биткоинов, чем вы вводите в поле количества. Если выбрано несколько получателей, комиссия распределяется поровну.</translation>
     </message>
     <message>
@@ -2271,7 +2271,7 @@
         <translation>&amp;Подписать сообщение</translation>
     </message>
     <message>
-        <source>You can sign messages/agreements with your addresses to prove you can receive indexs sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
+        <source>You can sign messages/agreements with your addresses to prove you can receive apollons sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
         <translation>Вы можете подписывать сообщения/соглашения своими адресами, чтобы доказать свою возможность получать биткоины на них. Будьте осторожны, не подписывайте что-то неопределённое или случайное, так как фишинговые атаки могут обманным путём заставить вас подписать нежелательные сообщения. Подписывайте только те сообщения, с которыми вы согласны вплоть до мелочей.</translation>
     </message>
     <message>
@@ -2948,16 +2948,16 @@
         <translation>Удаление блоков выставлено ниже, чем минимум в %d Мб. Пожалуйста, используйте большее значение.</translation>
     </message>
     <message>
-        <source>Prune: last wallet synchronisation goes beyond pruned data. You need to -reindex (download the whole blockchain again in case of pruned node)</source>
-        <translation>Удаление: последняя синхронизация кошелька вышла за рамки удаленных данных. Вам нужен -reindex (скачать всю  цепь блоков в случае удаленного узла)</translation>
+        <source>Prune: last wallet synchronisation goes beyond pruned data. You need to -reapollon (download the whole blockchain again in case of pruned node)</source>
+        <translation>Удаление: последняя синхронизация кошелька вышла за рамки удаленных данных. Вам нужен -reapollon (скачать всю  цепь блоков в случае удаленного узла)</translation>
     </message>
     <message>
-        <source>Reduce storage requirements by pruning (deleting) old blocks. This mode is incompatible with -txindex and -rescan. Warning: Reverting this setting requires re-downloading the entire blockchain. (default: 0 = disable pruning blocks, &gt;%u = target size in MiB to use for block files)</source>
-        <translation>Уменьшить размер хранилища за счёт удаления (обрезания) старых блоков. Этот режим несовместим с -txindex и  -rescan. Внимание: переключение этой опции обратно потребует полной загрузки цепи блоков. (по умолчанию: 0 = отключить удаление блоков, &gt;%u = целевой размер в Мб для файлов блоков)</translation>
+        <source>Reduce storage requirements by pruning (deleting) old blocks. This mode is incompatible with -txapollon and -rescan. Warning: Reverting this setting requires re-downloading the entire blockchain. (default: 0 = disable pruning blocks, &gt;%u = target size in MiB to use for block files)</source>
+        <translation>Уменьшить размер хранилища за счёт удаления (обрезания) старых блоков. Этот режим несовместим с -txapollon и  -rescan. Внимание: переключение этой опции обратно потребует полной загрузки цепи блоков. (по умолчанию: 0 = отключить удаление блоков, &gt;%u = целевой размер в Мб для файлов блоков)</translation>
     </message>
     <message>
-        <source>Rescans are not possible in pruned mode. You will need to use -reindex which will download the whole blockchain again.</source>
-        <translation>Повторное сканирование не возможно в режиме удаления. Вам надо будет использовать -reindex, который загрузит заново всю цепь блоков.</translation>
+        <source>Rescans are not possible in pruned mode. You will need to use -reapollon which will download the whole blockchain again.</source>
+        <translation>Повторное сканирование не возможно в режиме удаления. Вам надо будет использовать -reapollon, который загрузит заново всю цепь блоков.</translation>
     </message>
     <message>
         <source>Error: A fatal internal error occurred, see debug.log for details</source>
@@ -3080,8 +3080,8 @@
         <translation>Вносить в белый список участников, подключающихся с указанной маски сети или IP. Можно использовать многократно.</translation>
     </message>
     <message>
-        <source>You need to rebuild the database using -reindex-chainstate to change -txindex</source>
-        <translation>Вам необходимо пересобрать базы данных с помощью -reindex-chainstate, чтобы изменить -txindex</translation>
+        <source>You need to rebuild the database using -reapollon-chainstate to change -txapollon</source>
+        <translation>Вам необходимо пересобрать базы данных с помощью -reapollon-chainstate, чтобы изменить -txapollon</translation>
     </message>
     <message>
         <source>%s corrupt, salvage failed</source>
@@ -3252,15 +3252,15 @@
         <translation>Удаление блоков не может использовать отрицательное значение.</translation>
     </message>
     <message>
-        <source>Prune mode is incompatible with -txindex.</source>
-        <translation>Режим удаления блоков несовместим с -txindex.</translation>
+        <source>Prune mode is incompatible with -txapollon.</source>
+        <translation>Режим удаления блоков несовместим с -txapollon.</translation>
     </message>
     <message>
         <source>Rebuild chain state and block apollon from the blk*.dat files on disk</source>
         <translation>Перестроить состояние цепи блоков и индекс блоков из blk*.dat файлов с диска</translation>
     </message>
     <message>
-        <source>Rebuild chain state from the currently indexed blocks</source>
+        <source>Rebuild chain state from the currently apolloned blocks</source>
         <translation>Перестроить индекс цепи из текущих индексированных блоков</translation>
     </message>
     <message>
@@ -3416,8 +3416,8 @@
         <translation>Участники из белого списка не могуть быть забанены за DoS, и их транзакции всегда транслируются, даже если они уже содержатся в памяти. Полезно, например, для шлюза.</translation>
     </message>
     <message>
-        <source>You need to rebuild the database using -reindex to go back to unpruned mode.  This will redownload the entire blockchain</source>
-        <translation>Вам необходимо пересобрать базу данных с помощью -reindex, чтобы вернуться к полному режиму. Это приведёт к перезагрузке всей цепи блоков</translation>
+        <source>You need to rebuild the database using -reapollon to go back to unpruned mode.  This will redownload the entire blockchain</source>
+        <translation>Вам необходимо пересобрать базу данных с помощью -reapollon, чтобы вернуться к полному режиму. Это приведёт к перезагрузке всей цепи блоков</translation>
     </message>
     <message>
         <source>(default: %u)</source>

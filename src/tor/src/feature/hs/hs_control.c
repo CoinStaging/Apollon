@@ -30,7 +30,7 @@ hs_control_desc_event_requested(const ed25519_public_key_t *onion_pk,
                                 const routerstatus_t *hsdir_rs)
 {
   char onion_address[HS_SERVICE_ADDR_LEN_BASE32 + 1];
-  const uint8_t *hsdir_index;
+  const uint8_t *hsdir_apollon;
   const node_t *hsdir_node;
 
   tor_assert(onion_pk);
@@ -41,17 +41,17 @@ hs_control_desc_event_requested(const ed25519_public_key_t *onion_pk,
 
   /* Get the node from the routerstatus object to get the HSDir apollon used for
    * this request. We can't have a routerstatus entry without a node and we
-   * can't pick a node without an hsdir_index. */
+   * can't pick a node without an hsdir_apollon. */
   hsdir_node = node_get_by_id(hsdir_rs->identity_digest);
   tor_assert(hsdir_node);
   /* This is a fetch event. */
-  hsdir_index = hsdir_node->hsdir_index.fetch;
+  hsdir_apollon = hsdir_node->hsdir_apollon.fetch;
 
   /* Trigger the event. */
   control_event_hs_descriptor_requested(onion_address, REND_NO_AUTH,
                                         hsdir_rs->identity_digest,
                                         base64_blinded_pk,
-                                        hex_str((const char *) hsdir_index,
+                                        hex_str((const char *) hsdir_apollon,
                                                 DIGEST256_LEN));
   memwipe(onion_address, 0, sizeof(onion_address));
 }
@@ -140,14 +140,14 @@ void
 hs_control_desc_event_upload(const char *onion_address,
                              const char *hsdir_id_digest,
                              const ed25519_public_key_t *blinded_pk,
-                             const uint8_t *hsdir_index)
+                             const uint8_t *hsdir_apollon)
 {
   char base64_blinded_pk[ED25519_BASE64_LEN + 1];
 
   tor_assert(onion_address);
   tor_assert(hsdir_id_digest);
   tor_assert(blinded_pk);
-  tor_assert(hsdir_index);
+  tor_assert(hsdir_apollon);
 
   /* Build base64 encoded blinded key. */
   IF_BUG_ONCE(ed25519_public_to_base64(base64_blinded_pk, blinded_pk) < 0) {
@@ -156,7 +156,7 @@ hs_control_desc_event_upload(const char *onion_address,
 
   control_event_hs_descriptor_upload(onion_address, hsdir_id_digest,
                                      base64_blinded_pk,
-                                     hex_str((const char *) hsdir_index,
+                                     hex_str((const char *) hsdir_apollon,
                                              DIGEST256_LEN));
 }
 

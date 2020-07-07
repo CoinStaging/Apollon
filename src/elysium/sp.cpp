@@ -193,9 +193,9 @@ uint32_t CMPSPInfo::putSP(uint8_t ecosystem, const Entry& info)
     leveldb::Slice slSpValue(&ssSpValue[0], ssSpValue.size());
 
     // DB key for identifier lookup entry
-    CDataStream ssTxIndexKey(SER_DISK, CLIENT_VERSION);
-    ssTxIndexKey << std::make_pair('t', info.txid);
-    leveldb::Slice slTxIndexKey(&ssTxIndexKey[0], ssTxIndexKey.size());
+    CDataStream ssTxApollonKey(SER_DISK, CLIENT_VERSION);
+    ssTxApollonKey << std::make_pair('t', info.txid);
+    leveldb::Slice slTxApollonKey(&ssTxApollonKey[0], ssTxApollonKey.size());
 
     // DB value for identifier
     CDataStream ssTxValue(SER_DISK, CLIENT_VERSION);
@@ -208,7 +208,7 @@ uint32_t CMPSPInfo::putSP(uint8_t ecosystem, const Entry& info)
     if (!pdb->Get(readoptions, slSpKey, &existingEntry).IsNotFound() && slSpValue.compare(existingEntry) != 0) {
         std::string strError = strprintf("writing SP %d to DB, when a different SP already exists for that identifier", propertyId);
         PrintToLog("%s() ERROR: %s\n", __func__, strError);
-    } else if (!pdb->Get(readoptions, slTxIndexKey, &existingEntry).IsNotFound() && slTxValue.compare(existingEntry) != 0) {
+    } else if (!pdb->Get(readoptions, slTxApollonKey, &existingEntry).IsNotFound() && slTxValue.compare(existingEntry) != 0) {
         std::string strError = strprintf("writing apollon txid %s : SP %d is overwriting a different value", info.txid.ToString(), propertyId);
         PrintToLog("%s() ERROR: %s\n", __func__, strError);
     }
@@ -216,7 +216,7 @@ uint32_t CMPSPInfo::putSP(uint8_t ecosystem, const Entry& info)
     // atomically write both the the SP and the apollon to the database
     leveldb::WriteBatch batch;
     batch.Put(slSpKey, slSpValue);
-    batch.Put(slTxIndexKey, slTxValue);
+    batch.Put(slTxApollonKey, slTxValue);
 
     leveldb::Status status = pdb->Write(syncoptions, &batch);
 
@@ -288,20 +288,20 @@ uint32_t CMPSPInfo::findSPByTX(const uint256& txid) const
     uint32_t propertyId = 0;
 
     // DB key for identifier lookup entry
-    CDataStream ssTxIndexKey(SER_DISK, CLIENT_VERSION);
-    ssTxIndexKey << std::make_pair('t', txid);
-    leveldb::Slice slTxIndexKey(&ssTxIndexKey[0], ssTxIndexKey.size());
+    CDataStream ssTxApollonKey(SER_DISK, CLIENT_VERSION);
+    ssTxApollonKey << std::make_pair('t', txid);
+    leveldb::Slice slTxApollonKey(&ssTxApollonKey[0], ssTxApollonKey.size());
 
     // DB value for identifier
-    std::string strTxIndexValue;
-    if (!pdb->Get(readoptions, slTxIndexKey, &strTxIndexValue).ok()) {
+    std::string strTxApollonValue;
+    if (!pdb->Get(readoptions, slTxApollonKey, &strTxApollonValue).ok()) {
         std::string strError = strprintf("failed to find property created with %s", txid.GetHex());
         PrintToLog("%s(): ERROR: %s", __func__, strError);
         return 0;
     }
 
     try {
-        CDataStream ssValue(strTxIndexValue.data(), strTxIndexValue.data() + strTxIndexValue.size(), SER_DISK, CLIENT_VERSION);
+        CDataStream ssValue(strTxApollonValue.data(), strTxApollonValue.data() + strTxApollonValue.size(), SER_DISK, CLIENT_VERSION);
         ssValue >> propertyId;
     } catch (const std::exception& e) {
         PrintToLog("%s(): ERROR: %s\n", __func__, e.what());
@@ -339,11 +339,11 @@ int64_t CMPSPInfo::popBlock(const uint256& block_hash)
             // need to roll this SP back
             if (info.update_block == info.creation_block) {
                 // this is the block that created this SP, so delete the SP and the tx apollon entry
-                CDataStream ssTxIndexKey(SER_DISK, CLIENT_VERSION);
-                ssTxIndexKey << std::make_pair('t', info.txid);
-                leveldb::Slice slTxIndexKey(&ssTxIndexKey[0], ssTxIndexKey.size());
+                CDataStream ssTxApollonKey(SER_DISK, CLIENT_VERSION);
+                ssTxApollonKey << std::make_pair('t', info.txid);
+                leveldb::Slice slTxApollonKey(&ssTxApollonKey[0], ssTxApollonKey.size());
                 commitBatch.Delete(slSpKey);
-                commitBatch.Delete(slTxIndexKey);
+                commitBatch.Delete(slTxApollonKey);
             } else {
                 uint32_t propertyId = 0;
                 try {
@@ -482,12 +482,12 @@ int CMPSPInfo::getDenominationRemainingConfirmation(
 
     int targetBlock =
         std::max(chainActive.Height() - target + 1, 0);
-    CBlockIndex *lastBlockHasDenomination = nullptr;
+    CBlockApollon *lastBlockHasDenomination = nullptr;
 
     while (
         denomination < info.denominations.size() &&
         (lastBlockHasDenomination =
-            GetBlockIndex(info.update_block))->nHeight > targetBlock) {
+            GetBlockApollon(info.update_block))->nHeight > targetBlock) {
         if (!getPrevVersion(propertyId, info)) {
             break;
         }
@@ -953,12 +953,12 @@ void elysium::eraseMaxedCrowdsale(const std::string& address, int64_t blockTime,
     }
 }
 
-unsigned int elysium::eraseExpiredCrowdsale(const CBlockIndex* pBlockIndex)
+unsigned int elysium::eraseExpiredCrowdsale(const CBlockApollon* pBlockApollon)
 {
-    if (pBlockIndex == NULL) return 0;
+    if (pBlockApollon == NULL) return 0;
 
-    const int64_t blockTime = pBlockIndex->GetBlockTime();
-    const int blockHeight = pBlockIndex->nHeight;
+    const int64_t blockTime = pBlockApollon->GetBlockTime();
+    const int blockHeight = pBlockApollon->nHeight;
     unsigned int how_many_erased = 0;
     CrowdMap::iterator my_it = my_crowds.begin();
 
@@ -987,7 +987,7 @@ unsigned int elysium::eraseExpiredCrowdsale(const CBlockIndex* pBlockIndex)
             sp.missedTokens = missedTokens;
 
             // update SP with this data
-            sp.update_block = pBlockIndex->GetBlockHash();
+            sp.update_block = pBlockApollon->GetBlockHash();
             assert(_my_sps->updateSP(crowdsale.getPropertyId(), sp));
 
             // update values

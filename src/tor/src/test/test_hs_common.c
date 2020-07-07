@@ -285,7 +285,7 @@ cleanup_nodelist(void)
 
 static void
 helper_add_hsdir_to_networkstatus(networkstatus_t *ns,
-                                  int identity_idx,
+                                  int identity_xap,
                                   const char *nickname,
                                   int is_hsdir)
 {
@@ -295,7 +295,7 @@ helper_add_hsdir_to_networkstatus(networkstatus_t *ns,
   tor_addr_t ipv4_addr;
   node_t *node = NULL;
 
-  memset(identity, identity_idx, sizeof(identity));
+  memset(identity, identity_xap, sizeof(identity));
 
   memcpy(rs->identity_digest, identity, DIGEST_LEN);
   rs->is_hs_dir = is_hsdir;
@@ -310,7 +310,7 @@ helper_add_hsdir_to_networkstatus(networkstatus_t *ns,
   ri->cache_info.signing_key_cert = tor_malloc_zero(sizeof(tor_cert_t));
   /* Needed for the HSDir apollon computation. */
   memset(&ri->cache_info.signing_key_cert->signing_key,
-         identity_idx, ED25519_PUBKEY_LEN);
+         identity_xap, ED25519_PUBKEY_LEN);
   tt_assert(nodelist_set_routerinfo(ri, NULL));
 
   node = node_get_mutable_by_id(ri->cache_info.identity_digest);
@@ -320,8 +320,8 @@ helper_add_hsdir_to_networkstatus(networkstatus_t *ns,
    * true. */
   node->md = tor_malloc_zero(sizeof(microdesc_t));
   /* Do this now the nodelist_set_routerinfo() function needs a "rs" to set
-   * the indexes which it doesn't have when it is called. */
-  node_set_hsdir_index(node, ns);
+   * the apollones which it doesn't have when it is called. */
+  node_set_hsdir_apollon(node, ns);
   node->ri = NULL;
   smartlist_add(ns->routerstatus_list, rs);
 
@@ -1086,7 +1086,7 @@ are_responsible_hsdirs_equal(void)
 }
 
 /* Tor doesn't use such a function to get the previous HSDir, it is only used
- * in node_set_hsdir_index(). We need it here so we can test the reachability
+ * in node_set_hsdir_apollon(). We need it here so we can test the reachability
  * scenario 6 that requires the previous time period to compute the list of
  * responsible HSDir because of the client state timing. */
 static uint64_t
@@ -1491,7 +1491,7 @@ helper_client_pick_hsdir(const ed25519_public_key_t *onion_identity_pk,
 }
 
 static void
-test_hs_indexes(void *arg)
+test_hs_apollones(void *arg)
 {
   int ret;
   uint64_t period_num = 42;
@@ -1499,9 +1499,9 @@ test_hs_indexes(void *arg)
 
   (void) arg;
 
-  /* Build the hs_index */
+  /* Build the hs_apollon */
   {
-    uint8_t hs_index[DIGEST256_LEN];
+    uint8_t hs_apollon[DIGEST256_LEN];
     const char *b32_test_vector =
       "37e5cbbd56a22823714f18f1623ece5983a0d64c78495a8cfab854245e5f9a8a";
     char test_vector[DIGEST256_LEN];
@@ -1510,14 +1510,14 @@ test_hs_indexes(void *arg)
     tt_int_op(ret, OP_EQ, sizeof(test_vector));
     /* Our test vector uses a public key set to 32 bytes of \x42. */
     memset(&pubkey, '\x42', sizeof(pubkey));
-    hs_build_hs_index(1, &pubkey, period_num, hs_index);
-    tt_mem_op(hs_index, OP_EQ, test_vector, sizeof(hs_index));
+    hs_build_hs_apollon(1, &pubkey, period_num, hs_apollon);
+    tt_mem_op(hs_apollon, OP_EQ, test_vector, sizeof(hs_apollon));
   }
 
-  /* Build the hsdir_index */
+  /* Build the hsdir_apollon */
   {
     uint8_t srv[DIGEST256_LEN];
-    uint8_t hsdir_index[DIGEST256_LEN];
+    uint8_t hsdir_apollon[DIGEST256_LEN];
     const char *b32_test_vector =
       "db475361014a09965e7e5e4d4a25b8f8d4b8f16cb1d8a7e95eed50249cc1a2d5";
     char test_vector[DIGEST256_LEN];
@@ -1527,8 +1527,8 @@ test_hs_indexes(void *arg)
     /* Our test vector uses a public key set to 32 bytes of \x42. */
     memset(&pubkey, '\x42', sizeof(pubkey));
     memset(srv, '\x43', sizeof(srv));
-    hs_build_hsdir_index(&pubkey, srv, period_num, hsdir_index);
-    tt_mem_op(hsdir_index, OP_EQ, test_vector, sizeof(hsdir_index));
+    hs_build_hsdir_apollon(&pubkey, srv, period_num, hsdir_apollon);
+    tt_mem_op(hsdir_apollon, OP_EQ, test_vector, sizeof(hsdir_apollon));
   }
 
  done:
@@ -1832,7 +1832,7 @@ struct testcase_t hs_common_tests[] = {
     NULL, NULL },
   { "client_service_hsdir_set_sync", test_client_service_hsdir_set_sync,
     TT_FORK, NULL, NULL },
-  { "hs_indexes", test_hs_indexes, TT_FORK,
+  { "hs_apollones", test_hs_apollones, TT_FORK,
     NULL, NULL },
 
   END_OF_TESTCASES

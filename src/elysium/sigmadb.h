@@ -47,7 +47,7 @@ public:
     ~SigmaDatabase() override;
 
 public:
-    std::pair<SigmaMintGroup, SigmaMintIndex> RecordMint(
+    std::pair<SigmaMintGroup, SigmaMintApollon> RecordMint(
         PropertyId propertyId,
         SigmaDenomination denomination,
         const SigmaPublicKey& pubKey,
@@ -96,7 +96,7 @@ public:
     uint16_t groupSize;
 
 public:
-    boost::signals2::signal<void(PropertyId, SigmaDenomination, SigmaMintGroup, SigmaMintIndex, const SigmaPublicKey&, int)> MintAdded;
+    boost::signals2::signal<void(PropertyId, SigmaDenomination, SigmaMintGroup, SigmaMintApollon, const SigmaPublicKey&, int)> MintAdded;
     boost::signals2::signal<void(PropertyId, SigmaDenomination, const SigmaPublicKey&)> MintRemoved;
     boost::signals2::signal<void(PropertyId, SigmaDenomination, const secp_primitives::Scalar&, const uint256&)> SpendAdded;
     boost::signals2::signal<void(PropertyId, SigmaDenomination, const secp_primitives::Scalar&)> SpendRemoved;

@@ -109,7 +109,7 @@
     /* How many elements will we allow in the table before resizing it? */ \
     unsigned hth_load_limit;                                            \
     /* Position of hth_table_length in the primes table. */             \
-    int hth_prime_idx;                                                  \
+    int hth_prime_xap;                                                  \
   }
 
 #define HT_INITIALIZER()                        \
@@ -241,7 +241,7 @@ ht_string_hash(const char *s)
     head->hth_table = NULL;                                             \
     head->hth_n_entries = 0;                                            \
     head->hth_load_limit = 0;                                           \
-    head->hth_prime_idx = -1;                                           \
+    head->hth_prime_xap = -1;                                           \
   }                                                                     \
   /* Helper: returns a pointer to the right location in the table       \
    * 'head' to find or insert the element 'elm'. */                     \
@@ -433,18 +433,18 @@ ht_string_hash(const char *s)
   name##_HT_GROW(struct name *head, unsigned size)                      \
   {                                                                     \
     unsigned new_len, new_load_limit;                                   \
-    int prime_idx;                                                      \
+    int prime_xap;                                                      \
     struct type **new_table;                                            \
-    if (head->hth_prime_idx == (int)name##_N_PRIMES - 1)                \
+    if (head->hth_prime_xap == (int)name##_N_PRIMES - 1)                \
       return 0;                                                         \
     if (head->hth_load_limit > size)                                    \
       return 0;                                                         \
-    prime_idx = head->hth_prime_idx;                                    \
+    prime_xap = head->hth_prime_xap;                                    \
     do {                                                                \
-      new_len = name##_PRIMES[++prime_idx];                             \
+      new_len = name##_PRIMES[++prime_xap];                             \
       new_load_limit = (unsigned)(load*new_len);                        \
     } while (new_load_limit <= size &&                                  \
-             prime_idx < (int)name##_N_PRIMES);                         \
+             prime_xap < (int)name##_N_PRIMES);                         \
     if ((new_table = reallocarrayfn(NULL, new_len, sizeof(struct type*)))) { \
       unsigned b;                                                       \
       memset(new_table, 0, new_len*sizeof(struct type*));               \
@@ -485,7 +485,7 @@ ht_string_hash(const char *s)
       head->hth_table = new_table;                                      \
     }                                                                   \
     head->hth_table_length = new_len;                                   \
-    head->hth_prime_idx = prime_idx;                                    \
+    head->hth_prime_xap = prime_xap;                                    \
     head->hth_load_limit = new_load_limit;                              \
     return 0;                                                           \
   }                                                                     \
@@ -508,17 +508,17 @@ ht_string_hash(const char *s)
     struct type *elm;                                                   \
     if (!head->hth_table_length) {                                      \
       if (!head->hth_table && !head->hth_n_entries &&                   \
-          !head->hth_load_limit && head->hth_prime_idx == -1)           \
+          !head->hth_load_limit && head->hth_prime_xap == -1)           \
         return 0;                                                       \
       else                                                              \
         return 1;                                                       \
     }                                                                   \
-    if (!head->hth_table || head->hth_prime_idx < 0 ||                  \
+    if (!head->hth_table || head->hth_prime_xap < 0 ||                  \
         !head->hth_load_limit)                                          \
       return 2;                                                         \
     if (head->hth_n_entries > head->hth_load_limit)                     \
       return 3;                                                         \
-    if (head->hth_table_length != name##_PRIMES[head->hth_prime_idx])   \
+    if (head->hth_table_length != name##_PRIMES[head->hth_prime_xap])   \
       return 4;                                                         \
     if (head->hth_load_limit != (unsigned)(load*head->hth_table_length)) \
       return 5;                                                         \

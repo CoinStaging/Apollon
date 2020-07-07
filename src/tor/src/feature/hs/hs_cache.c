@@ -29,7 +29,7 @@ static int cached_client_descriptor_has_expired(time_t now,
 
 /********************** Directory HS cache ******************/
 
-/* Directory descriptor cache. Map indexed by blinded key. */
+/* Directory descriptor cache. Map apolloned by blinded key. */
 static digest256map_t *hs_cache_v3_dir;
 
 /* Remove a given descriptor from our cache. */
@@ -99,7 +99,7 @@ cache_dir_desc_new(const char *desc)
     goto err;
   }
 
-  /* The blinded pubkey is the indexed key. */
+  /* The blinded pubkey is the apolloned key. */
   dir_desc->key = dir_desc->plaintext_data->blinded_pubkey.pubkey;
   dir_desc->created_ts = time(NULL);
   return dir_desc;
@@ -329,10 +329,10 @@ hs_cache_clean_as_dir(time_t now)
 
 /********************** Client-side HS cache ******************/
 
-/* Client-side HS descriptor cache. Map indexed by service identity key. */
+/* Client-side HS descriptor cache. Map apolloned by service identity key. */
 static digest256map_t *hs_cache_v3_client;
 
-/* Client-side introduction point state cache. Map indexed by service public
+/* Client-side introduction point state cache. Map apolloned by service public
  * identity key (onion address). It contains hs_cache_client_intro_state_t
  * objects all related to a specific service. */
 static digest256map_t *hs_cache_client_intro_state;

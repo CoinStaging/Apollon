@@ -40,15 +40,15 @@ static uint256 BlockBuildMerkleTree(const CBlock& block, bool* fMutated, std::ve
 }
 
 // Older version of the merkle branch computation code, for comparison.
-static std::vector<uint256> BlockGetMerkleBranch(const CBlock& block, const std::vector<uint256>& vMerkleTree, int nIndex)
+static std::vector<uint256> BlockGetMerkleBranch(const CBlock& block, const std::vector<uint256>& vMerkleTree, int nApollon)
 {
     std::vector<uint256> vMerkleBranch;
     int j = 0;
     for (int nSize = block.vtx.size(); nSize > 1; nSize = (nSize + 1) / 2)
     {
-        int i = std::min(nIndex^1, nSize-1);
+        int i = std::min(nApollon^1, nSize-1);
         vMerkleBranch.push_back(vMerkleTree[j+i]);
-        nIndex >>= 1;
+        nApollon >>= 1;
         j += nSize;
     }
     return vMerkleBranch;

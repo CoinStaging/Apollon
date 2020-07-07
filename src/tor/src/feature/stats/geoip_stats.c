@@ -15,7 +15,7 @@
  *
  * The geoip lookup tables are implemented as sorted lists of disjoint address
  * ranges, each mapping to a singleton geoip_country_t.  These country objects
- * are also indexed by their names in a hashtable.
+ * are also apolloned by their names in a hashtable.
  *
  * The tables are populated from disk at startup by the geoip_load_file()
  * function.  For more information on the file format they read, see that
@@ -44,7 +44,7 @@
 
 /** Number of entries in n_v3_ns_requests */
 static size_t n_v3_ns_requests_len = 0;
-/** Array, indexed by country apollon, of number of v3 networkstatus requests
+/** Array, apolloned by country apollon, of number of v3 networkstatus requests
  * received from that country */
 static uint32_t *n_v3_ns_requests;
 
@@ -262,13 +262,13 @@ geoip_note_client_seen(geoip_client_action_t action,
     ent->last_seen_in_minutes = 0;
 
   if (action == GEOIP_CLIENT_NETWORKSTATUS) {
-    int country_idx = geoip_get_country_by_addr(addr);
-    if (country_idx < 0)
-      country_idx = 0; /** unresolved requests are stored at apollon 0. */
-    IF_BUG_ONCE(country_idx > COUNTRY_MAX) {
+    int country_xap = geoip_get_country_by_addr(addr);
+    if (country_xap < 0)
+      country_xap = 0; /** unresolved requests are stored at apollon 0. */
+    IF_BUG_ONCE(country_xap > COUNTRY_MAX) {
       return;
     }
-    increment_v3_ns_request((country_t) country_idx);
+    increment_v3_ns_request((country_t) country_xap);
   }
 }
 
@@ -733,7 +733,7 @@ geoip_get_dirreq_history(dirreq_type_t type)
                         * by law of nature or something, but a millisecond
                         * is a bit greater than "instantly" */
       bytes_per_second = (uint32_t)(1000 * ent->response_size / time_diff_);
-      dltimes[ent_sl_idx] = bytes_per_second;
+      dltimes[ent_sl_xap] = bytes_per_second;
     } SMARTLIST_FOREACH_END(ent);
     median_uint32(dltimes, complete); /* sorts as a side effect. */
     buf_add_printf(buf,
@@ -884,8 +884,8 @@ geoip_get_request_history(void)
   SMARTLIST_FOREACH_BEGIN(geoip_get_countries(), const geoip_country_t *, c) {
       uint32_t tot = 0;
       c_hist_t *ent;
-      if ((size_t)c_sl_idx < n_v3_ns_requests_len)
-        tot = n_v3_ns_requests[c_sl_idx];
+      if ((size_t)c_sl_xap < n_v3_ns_requests_len)
+        tot = n_v3_ns_requests[c_sl_xap];
       else
         tot = 0;
       if (!tot)

@@ -43,11 +43,11 @@
     </message>
     <message>
         <source>Choose the address to send coins to</source>
-        <translation>Vælg adresse at sende indexs til</translation>
+        <translation>Vælg adresse at sende apollons til</translation>
     </message>
     <message>
         <source>Choose the address to receive coins with</source>
-        <translation>Vælg adresse at modtage indexs med</translation>
+        <translation>Vælg adresse at modtage apollons med</translation>
     </message>
     <message>
         <source>C&amp;hoose</source>
@@ -63,7 +63,7 @@
     </message>
     <message>
         <source>These are your Apollon addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
-        <translation>Disse er dine Apollon-adresser til afsendelse af betalinger. Tjek altid beløb og modtagelsesadresse, inden du sender indexs.</translation>
+        <translation>Disse er dine Apollon-adresser til afsendelse af betalinger. Tjek altid beløb og modtagelsesadresse, inden du sender apollons.</translation>
     </message>
     <message>
         <source>These are your Apollon addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
@@ -180,7 +180,7 @@
         <translation>Tegnebog krypteret</translation>
     </message>
     <message>
-        <source>%1 will close now to finish the encryption process. Remember that encrypting your wallet cannot fully protect your indexs from being stolen by malware infecting your computer.</source>
+        <source>%1 will close now to finish the encryption process. Remember that encrypting your wallet cannot fully protect your apollons from being stolen by malware infecting your computer.</source>
         <translation>%1 vil nu lukke for at færdiggøre krypteringsprocessen. Husk at kryptering af din tegnebog kan ikke beskytte dine Apollon fuldt ud mod at blive stjålet af eventuel malware, der måtte have inficeret din computer.</translation>
     </message>
     <message>
@@ -318,12 +318,12 @@
         <translation>&amp;Åbn URI…</translation>
     </message>
     <message>
-        <source>Reindexing blocks on disk...</source>
+        <source>Reapolloning blocks on disk...</source>
         <translation>Genindekserer blokke på disken…</translation>
     </message>
     <message>
         <source>Send coins to a Apollon address</source>
-        <translation>Send indexs til en Apollon-adresse</translation>
+        <translation>Send apollons til en Apollon-adresse</translation>
     </message>
     <message>
         <source>Backup wallet to another location</source>
@@ -422,7 +422,7 @@
         <translation><numerusform>%n aktiv forbindelse til Apollon-netværket</numerusform><numerusform>%n aktive forbindelser til Apollon-netværket</numerusform></translation>
     </message>
     <message>
-        <source>Indexing blocks on disk...</source>
+        <source>Apolloning blocks on disk...</source>
         <translation>Genindekserer blokke på disken…</translation>
     </message>
     <message>
@@ -1158,7 +1158,7 @@
     </message>
     <message>
         <source>Choose the default subdivision unit to show in the interface and when sending coins.</source>
-        <translation>Vælg standard for underopdeling af enhed, som skal vises i brugergrænsefladen og ved afsendelse af indexs.</translation>
+        <translation>Vælg standard for underopdeling af enhed, som skal vises i brugergrænsefladen og ved afsendelse af apollons.</translation>
     </message>
     <message>
         <source>Whether to show coin control features or not.</source>
@@ -1904,7 +1904,7 @@
     <name>SendCoinsDialog</name>
     <message>
         <source>Send Coins</source>
-        <translation>Send indexs</translation>
+        <translation>Send apollons</translation>
     </message>
     <message>
         <source>Coin Control Features</source>
@@ -2104,7 +2104,7 @@
     </message>
     <message>
         <source>Confirm send coins</source>
-        <translation>Bekræft afsendelse af indexs</translation>
+        <translation>Bekræft afsendelse af apollons</translation>
     </message>
     <message>
         <source>The recipient address is not valid. Please recheck.</source>
@@ -2132,7 +2132,7 @@
     </message>
     <message>
         <source>The transaction was rejected! This might happen if some of the coins in your wallet were already spent, such as if you used a copy of wallet.dat and coins were spent in the copy but not marked as spent here.</source>
-        <translation>Transaktionen blev afvist! Dette kan ske, hvis nogle af dine indexs i din tegnebog allerede er brugt, som hvis du brugte en kopi af wallet.dat og dine indexs er blevet brugt i kopien, men ikke er markeret som brugt her.</translation>
+        <translation>Transaktionen blev afvist! Dette kan ske, hvis nogle af dine apollons i din tegnebog allerede er brugt, som hvis du brugte en kopi af wallet.dat og dine apollons er blevet brugt i kopien, men ikke er markeret som brugt her.</translation>
     </message>
     <message>
         <source>A fee higher than %1 is considered an absurdly high fee.</source>
@@ -2206,7 +2206,7 @@
         <translation>Fjern denne indgang</translation>
     </message>
     <message>
-        <source>The fee will be deducted from the amount being sent. The recipient will receive less indexs than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
+        <source>The fee will be deducted from the amount being sent. The recipient will receive less apollons than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
         <translation>Gebyret vil blive trukket fra det sendte beløb. Modtageren vil modtage færre Apollon, end du indtaster i beløbfeltet. Hvis flere modtagere vælges, vil gebyret deles ligeligt.</translation>
     </message>
     <message>
@@ -2275,8 +2275,8 @@
         <translation>&amp;Singér besked</translation>
     </message>
     <message>
-        <source>You can sign messages/agreements with your addresses to prove you can receive indexs sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
-        <translation>Du kan signere beskeder/aftaler med dine adresser for at bevise, at du kan modtage indexs, der bliver sendt til adresserne. Vær forsigtig med ikke at signere noget vagt eller tilfældigt, da eventuelle phishing-angreb kan snyde dig til at overlade din identitet til dem. Signér kun fuldt ud detaljerede udsagn, som du er enig i.</translation>
+        <source>You can sign messages/agreements with your addresses to prove you can receive apollons sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
+        <translation>Du kan signere beskeder/aftaler med dine adresser for at bevise, at du kan modtage apollons, der bliver sendt til adresserne. Vær forsigtig med ikke at signere noget vagt eller tilfældigt, da eventuelle phishing-angreb kan snyde dig til at overlade din identitet til dem. Signér kun fuldt ud detaljerede udsagn, som du er enig i.</translation>
     </message>
     <message>
         <source>The Apollon address to sign the message with</source>
@@ -2561,7 +2561,7 @@
     </message>
     <message>
         <source>Generated coins must mature %1 blocks before they can be spent. When you generated this block, it was broadcast to the network to be added to the block chain. If it fails to get into the chain, its state will change to "not accepted" and it won't be spendable. This may occasionally happen if another node generates a block within a few seconds of yours.</source>
-        <translation>Minede indexs skal modne %1 blokke, før de kan bruges. Da du genererede denne blok, blev den transmitteret til netværket for at blive føjet til blokkæden. Hvis det ikke lykkes at få den i kæden, vil dens tilstand ændres til "ikke accepteret", og den vil ikke kunne bruges. Dette kan ske nu og da, hvis en anden knude udvinder en blok inden for nogle få sekunder fra din.</translation>
+        <translation>Minede apollons skal modne %1 blokke, før de kan bruges. Da du genererede denne blok, blev den transmitteret til netværket for at blive føjet til blokkæden. Hvis det ikke lykkes at få den i kæden, vil dens tilstand ændres til "ikke accepteret", og den vil ikke kunne bruges. Dette kan ske nu og da, hvis en anden knude udvinder en blok inden for nogle få sekunder fra din.</translation>
     </message>
     <message>
         <source>Debug information</source>
@@ -2887,7 +2887,7 @@
     <name>WalletModel</name>
     <message>
         <source>Send Coins</source>
-        <translation>Send indexs</translation>
+        <translation>Send apollons</translation>
     </message>
 </context>
 <context>
@@ -2956,16 +2956,16 @@
         <translation>Beskæring er sat under minimumsgrænsen på %d MiB. Brug venligst et større tal.</translation>
     </message>
     <message>
-        <source>Prune: last wallet synchronisation goes beyond pruned data. You need to -reindex (download the whole blockchain again in case of pruned node)</source>
-        <translation>Beskæring: Seneste synkronisering rækker udover beskårne data. Du er nødt til at bruge -reindex (downloade hele blokkæden igen i fald af beskåret knude)</translation>
+        <source>Prune: last wallet synchronisation goes beyond pruned data. You need to -reapollon (download the whole blockchain again in case of pruned node)</source>
+        <translation>Beskæring: Seneste synkronisering rækker udover beskårne data. Du er nødt til at bruge -reapollon (downloade hele blokkæden igen i fald af beskåret knude)</translation>
     </message>
     <message>
-        <source>Reduce storage requirements by pruning (deleting) old blocks. This mode is incompatible with -txindex and -rescan. Warning: Reverting this setting requires re-downloading the entire blockchain. (default: 0 = disable pruning blocks, &gt;%u = target size in MiB to use for block files)</source>
-        <translation>Reducér lagringskravene ved at beskære (slette) gamle blokke. Denne tilstand er ikke kompatibel med -txindex og -rescan. Advarsel: Fortrydelse af denne indstilling kræver gendownload af hele blokkæden. (standard: 0 = slå beskæring af blokke fra, &gt;%u = målstørrelse i MiB der skal bruges på blokfiler)</translation>
+        <source>Reduce storage requirements by pruning (deleting) old blocks. This mode is incompatible with -txapollon and -rescan. Warning: Reverting this setting requires re-downloading the entire blockchain. (default: 0 = disable pruning blocks, &gt;%u = target size in MiB to use for block files)</source>
+        <translation>Reducér lagringskravene ved at beskære (slette) gamle blokke. Denne tilstand er ikke kompatibel med -txapollon og -rescan. Advarsel: Fortrydelse af denne indstilling kræver gendownload af hele blokkæden. (standard: 0 = slå beskæring af blokke fra, &gt;%u = målstørrelse i MiB der skal bruges på blokfiler)</translation>
     </message>
     <message>
-        <source>Rescans are not possible in pruned mode. You will need to use -reindex which will download the whole blockchain again.</source>
-        <translation>Genindlæsninger er ikke mulige i beskåret tilstand. Du er nødt til at bruge -reindex, hvilket vil downloade hele blokkæden igen.</translation>
+        <source>Rescans are not possible in pruned mode. You will need to use -reapollon which will download the whole blockchain again.</source>
+        <translation>Genindlæsninger er ikke mulige i beskåret tilstand. Du er nødt til at bruge -reapollon, hvilket vil downloade hele blokkæden igen.</translation>
     </message>
     <message>
         <source>Error: A fatal internal error occurred, see debug.log for details</source>
@@ -3092,8 +3092,8 @@
         <translation>Sæt andre knuder, der forbinder fra den angivne netmaske eller IP, på hvidliste. Kan angives flere gange.</translation>
     </message>
     <message>
-        <source>You need to rebuild the database using -reindex-chainstate to change -txindex</source>
-        <translation>Du er nødt til at genopbygge databasen ved hjælp af -reindex-chainstate for at ændre -txindex</translation>
+        <source>You need to rebuild the database using -reapollon-chainstate to change -txapollon</source>
+        <translation>Du er nødt til at genopbygge databasen ved hjælp af -reapollon-chainstate for at ændre -txapollon</translation>
     </message>
     <message>
         <source>%s corrupt, salvage failed</source>
@@ -3272,15 +3272,15 @@
         <translation>Beskæring kan ikke opsættes med en negativ værdi.</translation>
     </message>
     <message>
-        <source>Prune mode is incompatible with -txindex.</source>
-        <translation>Beskæringstilstand er ikke kompatibel med -txindex.</translation>
+        <source>Prune mode is incompatible with -txapollon.</source>
+        <translation>Beskæringstilstand er ikke kompatibel med -txapollon.</translation>
     </message>
     <message>
         <source>Rebuild chain state and block apollon from the blk*.dat files on disk</source>
         <translation>Genopbyg kædetilstand og blokindeks fra blk*.dat-filerne på disken</translation>
     </message>
     <message>
-        <source>Rebuild chain state from the currently indexed blocks</source>
+        <source>Rebuild chain state from the currently apolloned blocks</source>
         <translation>Genopbyg kædetilstand ud fra de aktuelt indekserede blokke</translation>
     </message>
     <message>
@@ -3436,8 +3436,8 @@
         <translation>Andre knuder på hvidliste kan ikke DoS-bandlyses, og deres transaktioner videresendes altid, selv hvis de allerede er i hukommelsespuljen. Brugbart til fx et adgangspunkt</translation>
     </message>
     <message>
-        <source>You need to rebuild the database using -reindex to go back to unpruned mode.  This will redownload the entire blockchain</source>
-        <translation>Du er nødt til at genopbygge databasen ved hjælp af -reindex for at gå tilbage til ikke-beskåret tilstand. Dette vil downloade hele blokkæden igen</translation>
+        <source>You need to rebuild the database using -reapollon to go back to unpruned mode.  This will redownload the entire blockchain</source>
+        <translation>Du er nødt til at genopbygge databasen ved hjælp af -reapollon for at gå tilbage til ikke-beskåret tilstand. Dette vil downloade hele blokkæden igen</translation>
     </message>
     <message>
         <source>(default: %u)</source>

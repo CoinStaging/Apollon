@@ -259,48 +259,48 @@ test_container_smartlist_strings(void *arg)
             smartlist_bsearch(sl, " AND", cmp_without_first_));
   tt_ptr_op(NULL,OP_EQ, smartlist_bsearch(sl, " ANz", cmp_without_first_));
 
-  /* Test bsearch_idx */
+  /* Test bsearch_xap */
   {
     int f;
     smartlist_t *tmp = NULL;
 
-    tt_int_op(0,OP_EQ,smartlist_bsearch_idx(sl," aaa",cmp_without_first_,&f));
+    tt_int_op(0,OP_EQ,smartlist_bsearch_xap(sl," aaa",cmp_without_first_,&f));
     tt_int_op(f,OP_EQ, 0);
-    tt_int_op(0,OP_EQ, smartlist_bsearch_idx(sl," and",cmp_without_first_,&f));
+    tt_int_op(0,OP_EQ, smartlist_bsearch_xap(sl," and",cmp_without_first_,&f));
     tt_int_op(f,OP_EQ, 1);
-    tt_int_op(1,OP_EQ, smartlist_bsearch_idx(sl," arm",cmp_without_first_,&f));
+    tt_int_op(1,OP_EQ, smartlist_bsearch_xap(sl," arm",cmp_without_first_,&f));
     tt_int_op(f,OP_EQ, 0);
     tt_int_op(1,OP_EQ,
-              smartlist_bsearch_idx(sl," arma",cmp_without_first_,&f));
+              smartlist_bsearch_xap(sl," arma",cmp_without_first_,&f));
     tt_int_op(f,OP_EQ, 1);
     tt_int_op(2,OP_EQ,
-              smartlist_bsearch_idx(sl," armb",cmp_without_first_,&f));
+              smartlist_bsearch_xap(sl," armb",cmp_without_first_,&f));
     tt_int_op(f,OP_EQ, 0);
     tt_int_op(7,OP_EQ,
-              smartlist_bsearch_idx(sl," zzzz",cmp_without_first_,&f));
+              smartlist_bsearch_xap(sl," zzzz",cmp_without_first_,&f));
     tt_int_op(f,OP_EQ, 0);
 
     /* Test trivial cases for list of length 0 or 1 */
     tmp = smartlist_new();
-    tt_int_op(0,OP_EQ, smartlist_bsearch_idx(tmp, "foo",
+    tt_int_op(0,OP_EQ, smartlist_bsearch_xap(tmp, "foo",
                                      compare_strs_for_bsearch_, &f));
     tt_int_op(f,OP_EQ, 0);
     smartlist_insert(tmp, 0, (void *)("bar"));
-    tt_int_op(1,OP_EQ, smartlist_bsearch_idx(tmp, "foo",
+    tt_int_op(1,OP_EQ, smartlist_bsearch_xap(tmp, "foo",
                                      compare_strs_for_bsearch_, &f));
     tt_int_op(f,OP_EQ, 0);
-    tt_int_op(0,OP_EQ, smartlist_bsearch_idx(tmp, "aaa",
+    tt_int_op(0,OP_EQ, smartlist_bsearch_xap(tmp, "aaa",
                                      compare_strs_for_bsearch_, &f));
     tt_int_op(f,OP_EQ, 0);
-    tt_int_op(0,OP_EQ, smartlist_bsearch_idx(tmp, "bar",
+    tt_int_op(0,OP_EQ, smartlist_bsearch_xap(tmp, "bar",
                                      compare_strs_for_bsearch_, &f));
     tt_int_op(f,OP_EQ, 1);
     /* ... and one for length 2 */
     smartlist_insert(tmp, 1, (void *)("foo"));
-    tt_int_op(1,OP_EQ, smartlist_bsearch_idx(tmp, "foo",
+    tt_int_op(1,OP_EQ, smartlist_bsearch_xap(tmp, "foo",
                                      compare_strs_for_bsearch_, &f));
     tt_int_op(f,OP_EQ, 1);
-    tt_int_op(2,OP_EQ, smartlist_bsearch_idx(tmp, "goo",
+    tt_int_op(2,OP_EQ, smartlist_bsearch_xap(tmp, "goo",
                                      compare_strs_for_bsearch_, &f));
     tt_int_op(f,OP_EQ, 0);
     smartlist_free(tmp);

@@ -40,7 +40,7 @@ Building
       ln -s /mnt/c/Users/<username>/apollon apollon 
 
  4. Clone git resository into newly created directory and go to the right branch
-      git clone https://github.com/IndexChain/Apollon.git
+      git clone https://github.com/ApollonChain/Apollon.git
       cd apollon
       git checkout core_upgrade
     Configure git to always use LF and (optionally) specify your name/email. Global Windows git settings (if set)
@@ -136,7 +136,7 @@ Free option
      <PipeLaunchOptions xmlns="http://schemas.microsoft.com/vstudio/MDDDebuggerOptions/2014"
         PipePath="C:\msys64\usr\bin\gdb.exe"
         PipeArguments="--interpreter=mi"
-        ExePath="C:/Users/<username>/apollon/src/indexd.exe" ExeArguments=""
+        ExePath="C:/Users/<username>/apollon/src/apollond.exe" ExeArguments=""
         TargetArchitecture="X64"
         WorkingDirectory="C:/Users/<username>/apollon"
         AdditionalSOLibSearchPath="">

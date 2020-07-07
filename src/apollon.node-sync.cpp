@@ -2,50 +2,50 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "activeindexnode.h"
+#include "activeapollonnode.h"
 #include "checkpoints.h"
 #include "main.h"
-#include "indexnode.h"
-#include "indexnode-payments.h"
-#include "indexnode-sync.h"
-#include "indexnodeman.h"
+#include "apollonnode.h"
+#include "apollonnode-payments.h"
+#include "apollonnode-sync.h"
+#include "apollonnodeman.h"
 #include "netfulfilledman.h"
 #include "spork.h"
 #include "util.h"
 #include "validationinterface.h"
 
-class CIndexnodeSync;
+class CApollonnodeSync;
 
-CIndexnodeSync indexnodeSync;
+CApollonnodeSync apollonnodeSync;
 
-bool CIndexnodeSync::CheckNodeHeight(CNode *pnode, bool fDisconnectStuckNodes) {
+bool CApollonnodeSync::CheckNodeHeight(CNode *pnode, bool fDisconnectStuckNodes) {
     CNodeStateStats stats;
     if (!GetNodeStateStats(pnode->id, stats) || stats.nCommonHeight == -1 || stats.nSyncHeight == -1) return false; // not enough info about this peer
 
     // Check blocks and headers, allow a small error margin of 1 block
-    if (pCurrentBlockIndex->nHeight - 1 > stats.nCommonHeight) {
+    if (pCurrentBlockApollon->nHeight - 1 > stats.nCommonHeight) {
         // This peer probably stuck, don't sync any additional data from it
         if (fDisconnectStuckNodes) {
             // Disconnect to free this connection slot for another peer.
             pnode->fDisconnect = true;
-            LogPrintf("CIndexnodeSync::CheckNodeHeight -- disconnecting from stuck peer, nHeight=%d, nCommonHeight=%d, peer=%d\n",
-                      pCurrentBlockIndex->nHeight, stats.nCommonHeight, pnode->id);
+            LogPrintf("CApollonnodeSync::CheckNodeHeight -- disconnecting from stuck peer, nHeight=%d, nCommonHeight=%d, peer=%d\n",
+                      pCurrentBlockApollon->nHeight, stats.nCommonHeight, pnode->id);
         } else {
-            LogPrintf("CIndexnodeSync::CheckNodeHeight -- skipping stuck peer, nHeight=%d, nCommonHeight=%d, peer=%d\n",
-                      pCurrentBlockIndex->nHeight, stats.nCommonHeight, pnode->id);
+            LogPrintf("CApollonnodeSync::CheckNodeHeight -- skipping stuck peer, nHeight=%d, nCommonHeight=%d, peer=%d\n",
+                      pCurrentBlockApollon->nHeight, stats.nCommonHeight, pnode->id);
         }
         return false;
-    } else if (pCurrentBlockIndex->nHeight < stats.nSyncHeight - 1) {
+    } else if (pCurrentBlockApollon->nHeight < stats.nSyncHeight - 1) {
         // This peer announced more headers than we have blocks currently
-        LogPrint("indexnode", "CIndexnodeSync::CheckNodeHeight -- skipping peer, who announced more headers than we have blocks currently, nHeight=%d, nSyncHeight=%d, peer=%d\n",
-                  pCurrentBlockIndex->nHeight, stats.nSyncHeight, pnode->id);
+        LogPrint("apollonnode", "CApollonnodeSync::CheckNodeHeight -- skipping peer, who announced more headers than we have blocks currently, nHeight=%d, nSyncHeight=%d, peer=%d\n",
+                  pCurrentBlockApollon->nHeight, stats.nSyncHeight, pnode->id);
         return false;
     }
 
     return true;
 }
 
-bool CIndexnodeSync::GetBlockchainSynced(bool fBlockAccepted){
+bool CApollonnodeSync::GetBlockchainSynced(bool fBlockAccepted){
     bool currentBlockchainSynced = fBlockchainSynced;
     IsBlockchainSynced(fBlockAccepted);
     if(currentBlockchainSynced != fBlockchainSynced){
@@ -54,7 +54,7 @@ bool CIndexnodeSync::GetBlockchainSynced(bool fBlockAccepted){
     return fBlockchainSynced;
 }
 
-bool CIndexnodeSync::IsBlockchainSynced(bool fBlockAccepted) {
+bool CApollonnodeSync::IsBlockchainSynced(bool fBlockAccepted) {
     static int64_t nTimeLastProcess = GetTime();
     static int nSkipped = 0;
     static bool fFirstBlockAccepted = false;
@@ -62,13 +62,13 @@ bool CIndexnodeSync::IsBlockchainSynced(bool fBlockAccepted) {
     // If the last call to this function was more than 60 minutes ago 
     // (client was in sleep mode) reset the sync process
     if (GetTime() - nTimeLastProcess > 60 * 60) {
-        LogPrintf("CIndexnodeSync::IsBlockchainSynced time-check fBlockchainSynced=%s\n", 
+        LogPrintf("CApollonnodeSync::IsBlockchainSynced time-check fBlockchainSynced=%s\n", 
                   fBlockchainSynced);
         Reset();
         fBlockchainSynced = false;
     }
 
-    if (!pCurrentBlockIndex || !pindexBestHeader || fImporting || fReindex) 
+    if (!pCurrentBlockApollon || !papollonBestHeader || fImporting || fReapollon) 
         return false;
 
     if (fBlockAccepted) {
@@ -84,15 +84,15 @@ bool CIndexnodeSync::IsBlockchainSynced(bool fBlockAccepted) {
         // Dont skip on REGTEST to make the tests run faster.
         if(Params().NetworkIDString() != CBaseChainParams::REGTEST) {
             // skip if we already checked less than 1 tick ago.
-            if (GetTime() - nTimeLastProcess < INDEXNODE_SYNC_TICK_SECONDS) {
+            if (GetTime() - nTimeLastProcess < APOLLONNODE_SYNC_TICK_SECONDS) {
                 nSkipped++;
                 return fBlockchainSynced;
             }
         }
     }
 
-    LogPrint("indexnode-sync", 
-             "CIndexnodeSync::IsBlockchainSynced -- state before check: %ssynced, skipped %d times\n", 
+    LogPrint("apollonnode-sync", 
+             "CApollonnodeSync::IsBlockchainSynced -- state before check: %ssynced, skipped %d times\n", 
              fBlockchainSynced ? "" : "not ", 
              nSkipped);
 
@@ -104,14 +104,14 @@ bool CIndexnodeSync::IsBlockchainSynced(bool fBlockAccepted) {
     }
 
     if (fCheckpointsEnabled && 
-        pCurrentBlockIndex->nHeight < Checkpoints::GetTotalBlocksEstimate(Params().Checkpoints())) {
+        pCurrentBlockApollon->nHeight < Checkpoints::GetTotalBlocksEstimate(Params().Checkpoints())) {
         
         return false;
     }
 
     std::vector < CNode * > vNodesCopy = CopyNodeVector();
     // We have enough peers and assume most of them are synced
-    if (vNodesCopy.size() >= INDEXNODE_SYNC_ENOUGH_PEERS) {
+    if (vNodesCopy.size() >= APOLLONNODE_SYNC_ENOUGH_PEERS) {
         // Check to see how many of our peers are (almost) at the same height as we are
         int nNodesAtSameHeight = 0;
         BOOST_FOREACH(CNode * pnode, vNodesCopy)
@@ -122,8 +122,8 @@ bool CIndexnodeSync::IsBlockchainSynced(bool fBlockAccepted) {
             }
             nNodesAtSameHeight++;
             // if we have decent number of such peers, most likely we are synced now
-            if (nNodesAtSameHeight >= INDEXNODE_SYNC_ENOUGH_PEERS) {
-                LogPrintf("CIndexnodeSync::IsBlockchainSynced -- found enough peers on the same height as we are, done\n");
+            if (nNodesAtSameHeight >= APOLLONNODE_SYNC_ENOUGH_PEERS) {
+                LogPrintf("CApollonnodeSync::IsBlockchainSynced -- found enough peers on the same height as we are, done\n");
                 fBlockchainSynced = true;
                 ReleaseNodeVector(vNodesCopy);
                 return fBlockchainSynced;
@@ -139,100 +139,100 @@ bool CIndexnodeSync::IsBlockchainSynced(bool fBlockAccepted) {
     }
 
     // same as !IsInitialBlockDownload() but no cs_main needed here
-    int64_t nMaxBlockTime = std::max(pCurrentBlockIndex->GetBlockTime(), pindexBestHeader->GetBlockTime());
-    fBlockchainSynced = pindexBestHeader->nHeight - pCurrentBlockIndex->nHeight < 24 * 6 &&
+    int64_t nMaxBlockTime = std::max(pCurrentBlockApollon->GetBlockTime(), papollonBestHeader->GetBlockTime());
+    fBlockchainSynced = papollonBestHeader->nHeight - pCurrentBlockApollon->nHeight < 24 * 6 &&
                         GetTime() - nMaxBlockTime < Params().MaxTipAge();
     return fBlockchainSynced;
 }
 
-void CIndexnodeSync::Fail() {
+void CApollonnodeSync::Fail() {
     nTimeLastFailure = GetTime();
-    nRequestedIndexnodeAssets = INDEXNODE_SYNC_FAILED;
+    nRequestedApollonnodeAssets = APOLLONNODE_SYNC_FAILED;
     GetMainSignals().UpdateSyncStatus();
 }
 
-void CIndexnodeSync::Reset() {
-    nRequestedIndexnodeAssets = INDEXNODE_SYNC_INITIAL;
-    nRequestedIndexnodeAttempt = 0;
+void CApollonnodeSync::Reset() {
+    nRequestedApollonnodeAssets = APOLLONNODE_SYNC_INITIAL;
+    nRequestedApollonnodeAttempt = 0;
     nTimeAssetSyncStarted = GetTime();
-    nTimeLastIndexnodeList = GetTime();
+    nTimeLastApollonnodeList = GetTime();
     nTimeLastPaymentVote = GetTime();
     nTimeLastGovernanceItem = GetTime();
     nTimeLastFailure = 0;
     nCountFailures = 0;
 }
 
-std::string CIndexnodeSync::GetAssetName() {
-    switch (nRequestedIndexnodeAssets) {
-        case (INDEXNODE_SYNC_INITIAL):
-            return "INDEXNODE_SYNC_INITIAL";
-        case (INDEXNODE_SYNC_SPORKS):
-            return "INDEXNODE_SYNC_SPORKS";
-        case (INDEXNODE_SYNC_LIST):
-            return "INDEXNODE_SYNC_LIST";
-        case (INDEXNODE_SYNC_MNW):
-            return "INDEXNODE_SYNC_MNW";
-        case (INDEXNODE_SYNC_FAILED):
-            return "INDEXNODE_SYNC_FAILED";
-        case INDEXNODE_SYNC_FINISHED:
-            return "INDEXNODE_SYNC_FINISHED";
+std::string CApollonnodeSync::GetAssetName() {
+    switch (nRequestedApollonnodeAssets) {
+        case (APOLLONNODE_SYNC_INITIAL):
+            return "APOLLONNODE_SYNC_INITIAL";
+        case (APOLLONNODE_SYNC_SPORKS):
+            return "APOLLONNODE_SYNC_SPORKS";
+        case (APOLLONNODE_SYNC_LIST):
+            return "APOLLONNODE_SYNC_LIST";
+        case (APOLLONNODE_SYNC_MNW):
+            return "APOLLONNODE_SYNC_MNW";
+        case (APOLLONNODE_SYNC_FAILED):
+            return "APOLLONNODE_SYNC_FAILED";
+        case APOLLONNODE_SYNC_FINISHED:
+            return "APOLLONNODE_SYNC_FINISHED";
         default:
             return "UNKNOWN";
     }
 }
 
-void CIndexnodeSync::SwitchToNextAsset() {
-    switch (nRequestedIndexnodeAssets) {
-        case (INDEXNODE_SYNC_FAILED):
+void CApollonnodeSync::SwitchToNextAsset() {
+    switch (nRequestedApollonnodeAssets) {
+        case (APOLLONNODE_SYNC_FAILED):
             throw std::runtime_error("Can't switch to next asset from failed, should use Reset() first!");
             break;
-        case (INDEXNODE_SYNC_INITIAL):
+        case (APOLLONNODE_SYNC_INITIAL):
             ClearFulfilledRequests();
-            nRequestedIndexnodeAssets = INDEXNODE_SYNC_SPORKS;
-            LogPrintf("CIndexnodeSync::SwitchToNextAsset -- Starting %s\n", GetAssetName());
+            nRequestedApollonnodeAssets = APOLLONNODE_SYNC_SPORKS;
+            LogPrintf("CApollonnodeSync::SwitchToNextAsset -- Starting %s\n", GetAssetName());
             break;
-        case (INDEXNODE_SYNC_SPORKS):
-            nTimeLastIndexnodeList = GetTime();
-            nRequestedIndexnodeAssets = INDEXNODE_SYNC_LIST;
-            LogPrintf("CIndexnodeSync::SwitchToNextAsset -- Starting %s\n", GetAssetName());
+        case (APOLLONNODE_SYNC_SPORKS):
+            nTimeLastApollonnodeList = GetTime();
+            nRequestedApollonnodeAssets = APOLLONNODE_SYNC_LIST;
+            LogPrintf("CApollonnodeSync::SwitchToNextAsset -- Starting %s\n", GetAssetName());
             break;
-        case (INDEXNODE_SYNC_LIST):
+        case (APOLLONNODE_SYNC_LIST):
             nTimeLastPaymentVote = GetTime();
-            nRequestedIndexnodeAssets = INDEXNODE_SYNC_MNW;
-            LogPrintf("CIndexnodeSync::SwitchToNextAsset -- Starting %s\n", GetAssetName());
+            nRequestedApollonnodeAssets = APOLLONNODE_SYNC_MNW;
+            LogPrintf("CApollonnodeSync::SwitchToNextAsset -- Starting %s\n", GetAssetName());
             break;
 
-        case (INDEXNODE_SYNC_MNW):
+        case (APOLLONNODE_SYNC_MNW):
             nTimeLastGovernanceItem = GetTime();
-            LogPrintf("CIndexnodeSync::SwitchToNextAsset -- Sync has finished\n");
-            nRequestedIndexnodeAssets = INDEXNODE_SYNC_FINISHED;
+            LogPrintf("CApollonnodeSync::SwitchToNextAsset -- Sync has finished\n");
+            nRequestedApollonnodeAssets = APOLLONNODE_SYNC_FINISHED;
             break;
     }
-    nRequestedIndexnodeAttempt = 0;
+    nRequestedApollonnodeAttempt = 0;
     nTimeAssetSyncStarted = GetTime();
     GetMainSignals().UpdateSyncStatus();
 }
 
-std::string CIndexnodeSync::GetSyncStatus() {
-    switch (indexnodeSync.nRequestedIndexnodeAssets) {
-        case INDEXNODE_SYNC_INITIAL:
+std::string CApollonnodeSync::GetSyncStatus() {
+    switch (apollonnodeSync.nRequestedApollonnodeAssets) {
+        case APOLLONNODE_SYNC_INITIAL:
             return _("Synchronization pending...");
-        case INDEXNODE_SYNC_SPORKS:
+        case APOLLONNODE_SYNC_SPORKS:
             return _("Synchronizing sporks...");
-        case INDEXNODE_SYNC_LIST:
-            return _("Synchronizing indexnodes...");
-        case INDEXNODE_SYNC_MNW:
-            return _("Synchronizing indexnode payments...");
-        case INDEXNODE_SYNC_FAILED:
+        case APOLLONNODE_SYNC_LIST:
+            return _("Synchronizing apollonnodes...");
+        case APOLLONNODE_SYNC_MNW:
+            return _("Synchronizing apollonnode payments...");
+        case APOLLONNODE_SYNC_FAILED:
             return _("Synchronization failed");
-        case INDEXNODE_SYNC_FINISHED:
+        case APOLLONNODE_SYNC_FINISHED:
             return _("Synchronization finished");
         default:
             return "";
     }
 }
 
-void CIndexnodeSync::ProcessMessage(CNode *pfrom, std::string &strCommand, CDataStream &vRecv) {
+void CApollonnodeSync::ProcessMessage(CNode *pfrom, std::string &strCommand, CDataStream &vRecv) {
     if (strCommand == NetMsgType::SYNCSTATUSCOUNT) { //Sync status count
 
         //do not care about stats if sync process finished or failed
@@ -246,42 +246,42 @@ void CIndexnodeSync::ProcessMessage(CNode *pfrom, std::string &strCommand, CData
     }
 }
 
-void CIndexnodeSync::ClearFulfilledRequests() {
+void CApollonnodeSync::ClearFulfilledRequests() {
     TRY_LOCK(cs_vNodes, lockRecv);
     if (!lockRecv) return;
 
     BOOST_FOREACH(CNode * pnode, vNodes)
     {
         netfulfilledman.RemoveFulfilledRequest(pnode->addr, "spork-sync");
-        netfulfilledman.RemoveFulfilledRequest(pnode->addr, "indexnode-list-sync");
-        netfulfilledman.RemoveFulfilledRequest(pnode->addr, "indexnode-payment-sync");
+        netfulfilledman.RemoveFulfilledRequest(pnode->addr, "apollonnode-list-sync");
+        netfulfilledman.RemoveFulfilledRequest(pnode->addr, "apollonnode-payment-sync");
         netfulfilledman.RemoveFulfilledRequest(pnode->addr, "full-sync");
     }
 }
 
-void CIndexnodeSync::ProcessTick() {
+void CApollonnodeSync::ProcessTick() {
     static int nTick = 0;
-    if (nTick++ % INDEXNODE_SYNC_TICK_SECONDS != 0) return;
-    if (!pCurrentBlockIndex) return;
+    if (nTick++ % APOLLONNODE_SYNC_TICK_SECONDS != 0) return;
+    if (!pCurrentBlockApollon) return;
 
-    //the actual count of indexnodes we have currently
-    int nMnCount = mnodeman.CountIndexnodes();
+    //the actual count of apollonnodes we have currently
+    int nMnCount = mnodeman.CountApollonnodes();
 
-    LogPrint("ProcessTick", "CIndexnodeSync::ProcessTick -- nTick %d nMnCount %d\n", nTick, nMnCount);
+    LogPrint("ProcessTick", "CApollonnodeSync::ProcessTick -- nTick %d nMnCount %d\n", nTick, nMnCount);
 
     // INITIAL SYNC SETUP / LOG REPORTING
-    double nSyncProgress = double(nRequestedIndexnodeAttempt + (nRequestedIndexnodeAssets - 1) * 8) / (8 * 4);
-    LogPrint("ProcessTick", "CIndexnodeSync::ProcessTick -- nTick %d nRequestedIndexnodeAssets %d nRequestedIndexnodeAttempt %d nSyncProgress %f\n", nTick, nRequestedIndexnodeAssets, nRequestedIndexnodeAttempt, nSyncProgress);
-    uiInterface.NotifyAdditionalDataSyncProgressChanged(pCurrentBlockIndex->nHeight, nSyncProgress);
+    double nSyncProgress = double(nRequestedApollonnodeAttempt + (nRequestedApollonnodeAssets - 1) * 8) / (8 * 4);
+    LogPrint("ProcessTick", "CApollonnodeSync::ProcessTick -- nTick %d nRequestedApollonnodeAssets %d nRequestedApollonnodeAttempt %d nSyncProgress %f\n", nTick, nRequestedApollonnodeAssets, nRequestedApollonnodeAttempt, nSyncProgress);
+    uiInterface.NotifyAdditionalDataSyncProgressChanged(pCurrentBlockApollon->nHeight, nSyncProgress);
 
     // RESET SYNCING INCASE OF FAILURE
     {
         if (IsSynced()) {
             /*
-                Resync if we lost all indexnodes from sleep/wake or failed to sync originally
+                Resync if we lost all apollonnodes from sleep/wake or failed to sync originally
             */
             if (nMnCount == 0) {
-                LogPrintf("CIndexnodeSync::ProcessTick -- WARNING: not enough data, restarting sync\n");
+                LogPrintf("CApollonnodeSync::ProcessTick -- WARNING: not enough data, restarting sync\n");
                 Reset();
             } else {
                 std::vector < CNode * > vNodesCopy = CopyNodeVector();
@@ -299,13 +299,13 @@ void CIndexnodeSync::ProcessTick() {
         }
     }
 
-    if (Params().NetworkIDString() != CBaseChainParams::REGTEST && !IsBlockchainSynced() && nRequestedIndexnodeAssets > INDEXNODE_SYNC_SPORKS) {
-        nTimeLastIndexnodeList = GetTime();
+    if (Params().NetworkIDString() != CBaseChainParams::REGTEST && !IsBlockchainSynced() && nRequestedApollonnodeAssets > APOLLONNODE_SYNC_SPORKS) {
+        nTimeLastApollonnodeList = GetTime();
         nTimeLastPaymentVote = GetTime();
         nTimeLastGovernanceItem = GetTime();
         return;
     }
-    if (nRequestedIndexnodeAssets == INDEXNODE_SYNC_INITIAL || (nRequestedIndexnodeAssets == INDEXNODE_SYNC_SPORKS && IsBlockchainSynced())) {
+    if (nRequestedApollonnodeAssets == APOLLONNODE_SYNC_INITIAL || (nRequestedApollonnodeAssets == APOLLONNODE_SYNC_SPORKS && IsBlockchainSynced())) {
         SwitchToNextAsset();
     }
 
@@ -313,26 +313,26 @@ void CIndexnodeSync::ProcessTick() {
 
     BOOST_FOREACH(CNode * pnode, vNodesCopy)
     {
-        // Don't try to sync any data from outbound "indexnode" connections -
+        // Don't try to sync any data from outbound "apollonnode" connections -
         // they are temporary and should be considered unreliable for a sync process.
-        // Inbound connection this early is most likely a "indexnode" connection
+        // Inbound connection this early is most likely a "apollonnode" connection
         // initialted from another node, so skip it too.
-        if (pnode->fIndexnode || (fIndexNode && pnode->fInbound)) continue;
+        if (pnode->fApollonnode || (fApollonNode && pnode->fInbound)) continue;
 
         // QUICK MODE (REGTEST ONLY!)
         if (Params().NetworkIDString() == CBaseChainParams::REGTEST) {
-            if (nRequestedIndexnodeAttempt <= 2) {
+            if (nRequestedApollonnodeAttempt <= 2) {
                 pnode->PushMessage(NetMsgType::GETSPORKS); //get current network sporks
-            } else if (nRequestedIndexnodeAttempt < 4) {
+            } else if (nRequestedApollonnodeAttempt < 4) {
                 mnodeman.DsegUpdate(pnode);
-            } else if (nRequestedIndexnodeAttempt < 6) {
-                int nMnCount = mnodeman.CountIndexnodes();
-                pnode->PushMessage(NetMsgType::INDEXNODEPAYMENTSYNC, nMnCount); //sync payment votes
+            } else if (nRequestedApollonnodeAttempt < 6) {
+                int nMnCount = mnodeman.CountApollonnodes();
+                pnode->PushMessage(NetMsgType::APOLLONNODEPAYMENTSYNC, nMnCount); //sync payment votes
             } else {
-                nRequestedIndexnodeAssets = INDEXNODE_SYNC_FINISHED;
+                nRequestedApollonnodeAssets = APOLLONNODE_SYNC_FINISHED;
                 GetMainSignals().UpdateSyncStatus();
             }
-            nRequestedIndexnodeAttempt++;
+            nRequestedApollonnodeAttempt++;
             ReleaseNodeVector(vNodesCopy);
             return;
         }
@@ -343,7 +343,7 @@ void CIndexnodeSync::ProcessTick() {
                 // We already fully synced from this node recently,
                 // disconnect to free this connection slot for another peer.
                 pnode->fDisconnect = true;
-                LogPrintf("CIndexnodeSync::ProcessTick -- disconnecting from recently synced peer %d\n", pnode->id);
+                LogPrintf("CApollonnodeSync::ProcessTick -- disconnecting from recently synced peer %d\n", pnode->id);
                 continue;
             }
 
@@ -354,19 +354,19 @@ void CIndexnodeSync::ProcessTick() {
                 netfulfilledman.AddFulfilledRequest(pnode->addr, "spork-sync");
                 // get current network sporks
                 pnode->PushMessage(NetMsgType::GETSPORKS);
-                LogPrintf("CIndexnodeSync::ProcessTick -- nTick %d nRequestedIndexnodeAssets %d -- requesting sporks from peer %d\n", nTick, nRequestedIndexnodeAssets, pnode->id);
+                LogPrintf("CApollonnodeSync::ProcessTick -- nTick %d nRequestedApollonnodeAssets %d -- requesting sporks from peer %d\n", nTick, nRequestedApollonnodeAssets, pnode->id);
                 continue; // always get sporks first, switch to the next node without waiting for the next tick
             }
 
-            // MNLIST : SYNC INDEXNODE LIST FROM OTHER CONNECTED CLIENTS
+            // MNLIST : SYNC APOLLONNODE LIST FROM OTHER CONNECTED CLIENTS
 
-            if (nRequestedIndexnodeAssets == INDEXNODE_SYNC_LIST) {
+            if (nRequestedApollonnodeAssets == APOLLONNODE_SYNC_LIST) {
                 // check for timeout first
-                if (nTimeLastIndexnodeList < GetTime() - INDEXNODE_SYNC_TIMEOUT_SECONDS) {
-                    LogPrintf("CIndexnodeSync::ProcessTick -- nTick %d nRequestedIndexnodeAssets %d -- timeout\n", nTick, nRequestedIndexnodeAssets);
-                    if (nRequestedIndexnodeAttempt == 0) {
-                        LogPrintf("CIndexnodeSync::ProcessTick -- ERROR: failed to sync %s\n", GetAssetName());
-                        // there is no way we can continue without indexnode list, fail here and try later
+                if (nTimeLastApollonnodeList < GetTime() - APOLLONNODE_SYNC_TIMEOUT_SECONDS) {
+                    LogPrintf("CApollonnodeSync::ProcessTick -- nTick %d nRequestedApollonnodeAssets %d -- timeout\n", nTick, nRequestedApollonnodeAssets);
+                    if (nRequestedApollonnodeAttempt == 0) {
+                        LogPrintf("CApollonnodeSync::ProcessTick -- ERROR: failed to sync %s\n", GetAssetName());
+                        // there is no way we can continue without apollonnode list, fail here and try later
                         Fail();
                         ReleaseNodeVector(vNodesCopy);
                         return;
@@ -377,11 +377,11 @@ void CIndexnodeSync::ProcessTick() {
                 }
 
                 // only request once from each peer
-                if (netfulfilledman.HasFulfilledRequest(pnode->addr, "indexnode-list-sync")) continue;
-                netfulfilledman.AddFulfilledRequest(pnode->addr, "indexnode-list-sync");
+                if (netfulfilledman.HasFulfilledRequest(pnode->addr, "apollonnode-list-sync")) continue;
+                netfulfilledman.AddFulfilledRequest(pnode->addr, "apollonnode-list-sync");
 
-                if (pnode->nVersion < mnpayments.GetMinIndexnodePaymentsProto()) continue;
-                nRequestedIndexnodeAttempt++;
+                if (pnode->nVersion < mnpayments.GetMinApollonnodePaymentsProto()) continue;
+                nRequestedApollonnodeAttempt++;
 
                 mnodeman.DsegUpdate(pnode);
 
@@ -389,17 +389,17 @@ void CIndexnodeSync::ProcessTick() {
                 return; //this will cause each peer to get one request each six seconds for the various assets we need
             }
 
-            // MNW : SYNC INDEXNODE PAYMENT VOTES FROM OTHER CONNECTED CLIENTS
+            // MNW : SYNC APOLLONNODE PAYMENT VOTES FROM OTHER CONNECTED CLIENTS
 
-            if (nRequestedIndexnodeAssets == INDEXNODE_SYNC_MNW) {
-                LogPrint("mnpayments", "CIndexnodeSync::ProcessTick -- nTick %d nRequestedIndexnodeAssets %d nTimeLastPaymentVote %lld GetTime() %lld diff %lld\n", nTick, nRequestedIndexnodeAssets, nTimeLastPaymentVote, GetTime(), GetTime() - nTimeLastPaymentVote);
+            if (nRequestedApollonnodeAssets == APOLLONNODE_SYNC_MNW) {
+                LogPrint("mnpayments", "CApollonnodeSync::ProcessTick -- nTick %d nRequestedApollonnodeAssets %d nTimeLastPaymentVote %lld GetTime() %lld diff %lld\n", nTick, nRequestedApollonnodeAssets, nTimeLastPaymentVote, GetTime(), GetTime() - nTimeLastPaymentVote);
                 // check for timeout first
-                // This might take a lot longer than INDEXNODE_SYNC_TIMEOUT_SECONDS minutes due to new blocks,
+                // This might take a lot longer than APOLLONNODE_SYNC_TIMEOUT_SECONDS minutes due to new blocks,
                 // but that should be OK and it should timeout eventually.
-                if (nTimeLastPaymentVote < GetTime() - INDEXNODE_SYNC_TIMEOUT_SECONDS) {
-                    LogPrintf("CIndexnodeSync::ProcessTick -- nTick %d nRequestedIndexnodeAssets %d -- timeout\n", nTick, nRequestedIndexnodeAssets);
-                    if (nRequestedIndexnodeAttempt == 0) {
-                        LogPrintf("CIndexnodeSync::ProcessTick -- ERROR: failed to sync %s\n", GetAssetName());
+                if (nTimeLastPaymentVote < GetTime() - APOLLONNODE_SYNC_TIMEOUT_SECONDS) {
+                    LogPrintf("CApollonnodeSync::ProcessTick -- nTick %d nRequestedApollonnodeAssets %d -- timeout\n", nTick, nRequestedApollonnodeAssets);
+                    if (nRequestedApollonnodeAttempt == 0) {
+                        LogPrintf("CApollonnodeSync::ProcessTick -- ERROR: failed to sync %s\n", GetAssetName());
                         // probably not a good idea to proceed without winner list
                         Fail();
                         ReleaseNodeVector(vNodesCopy);
@@ -413,22 +413,22 @@ void CIndexnodeSync::ProcessTick() {
                 // check for data
                 // if mnpayments already has enough blocks and votes, switch to the next asset
                 // try to fetch data from at least two peers though
-                if (nRequestedIndexnodeAttempt > 1 && mnpayments.IsEnoughData()) {
-                    LogPrintf("CIndexnodeSync::ProcessTick -- nTick %d nRequestedIndexnodeAssets %d -- found enough data\n", nTick, nRequestedIndexnodeAssets);
+                if (nRequestedApollonnodeAttempt > 1 && mnpayments.IsEnoughData()) {
+                    LogPrintf("CApollonnodeSync::ProcessTick -- nTick %d nRequestedApollonnodeAssets %d -- found enough data\n", nTick, nRequestedApollonnodeAssets);
                     SwitchToNextAsset();
                     ReleaseNodeVector(vNodesCopy);
                     return;
                 }
 
                 // only request once from each peer
-                if (netfulfilledman.HasFulfilledRequest(pnode->addr, "indexnode-payment-sync")) continue;
-                netfulfilledman.AddFulfilledRequest(pnode->addr, "indexnode-payment-sync");
+                if (netfulfilledman.HasFulfilledRequest(pnode->addr, "apollonnode-payment-sync")) continue;
+                netfulfilledman.AddFulfilledRequest(pnode->addr, "apollonnode-payment-sync");
 
-                if (pnode->nVersion < mnpayments.GetMinIndexnodePaymentsProto()) continue;
-                nRequestedIndexnodeAttempt++;
+                if (pnode->nVersion < mnpayments.GetMinApollonnodePaymentsProto()) continue;
+                nRequestedApollonnodeAttempt++;
 
                 // ask node for all payment votes it has (new nodes will only return votes for future payments)
-                pnode->PushMessage(NetMsgType::INDEXNODEPAYMENTSYNC, mnpayments.GetStorageLimit());
+                pnode->PushMessage(NetMsgType::APOLLONNODEPAYMENTSYNC, mnpayments.GetStorageLimit());
                 // ask node for missing pieces only (old nodes will not be asked)
                 mnpayments.RequestLowDataPaymentBlocks(pnode);
 
@@ -442,6 +442,6 @@ void CIndexnodeSync::ProcessTick() {
     ReleaseNodeVector(vNodesCopy);
 }
 
-void CIndexnodeSync::UpdatedBlockTip(const CBlockIndex *pindex) {
-    pCurrentBlockIndex = pindex;
+void CApollonnodeSync::UpdatedBlockTip(const CBlockApollon *papollon) {
+    pCurrentBlockApollon = papollon;
 }

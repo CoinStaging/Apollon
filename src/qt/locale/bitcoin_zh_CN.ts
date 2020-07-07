@@ -180,7 +180,7 @@
         <translation>钱包已加密</translation>
     </message>
     <message>
-        <source>%1 will close now to finish the encryption process. Remember that encrypting your wallet cannot fully protect your indexs from being stolen by malware infecting your computer.</source>
+        <source>%1 will close now to finish the encryption process. Remember that encrypting your wallet cannot fully protect your apollons from being stolen by malware infecting your computer.</source>
         <translation>%1 现在要关闭，以完成加密过程。请注意，加密钱包不能完全防止入侵你的电脑的恶意程序偷取钱币。</translation>
     </message>
     <message>
@@ -318,7 +318,7 @@
         <translation>打开 &amp;URI...</translation>
     </message>
     <message>
-        <source>Reindexing blocks on disk...</source>
+        <source>Reapolloning blocks on disk...</source>
         <translation>正在为数据块重建索引...</translation>
     </message>
     <message>
@@ -422,7 +422,7 @@
         <translation><numerusform>%n 个到零币网络的活动连接</numerusform></translation>
     </message>
     <message>
-        <source>Indexing blocks on disk...</source>
+        <source>Apolloning blocks on disk...</source>
         <translation>正在为数据块建立索引...</translation>
     </message>
     <message>
@@ -2080,7 +2080,7 @@
         <translation>移除此项</translation>
     </message>
     <message>
-        <source>The fee will be deducted from the amount being sent. The recipient will receive less indexs than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
+        <source>The fee will be deducted from the amount being sent. The recipient will receive less apollons than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
         <translation>交易费将从发送总额中扣除。接收人将收到比您在金额框中输入的更少的零币。如果选中了多个收件人，交易费平分。</translation>
     </message>
     <message>
@@ -2145,7 +2145,7 @@
         <translation>签名消息(&amp;S)</translation>
     </message>
     <message>
-        <source>You can sign messages/agreements with your addresses to prove you can receive indexs sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
+        <source>You can sign messages/agreements with your addresses to prove you can receive apollons sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
         <translation>您可以用你的地址对消息/协议进行签名，以证明您可以接收发送到该地址的零币。注意不要对任何模棱两可或者随机的消息进行签名，以免遭受钓鱼式攻击。请确保消息内容准确的表达了您的真实意愿。</translation>
     </message>
     <message>
@@ -2469,16 +2469,16 @@
         <translation>修剪值被设置为低于最小值%d MiB，请使用更大的数值。</translation>
     </message>
     <message>
-        <source>Prune: last wallet synchronisation goes beyond pruned data. You need to -reindex (download the whole blockchain again in case of pruned node)</source>
-        <translation>修剪：最后的钱包同步超过了修剪的数据。你需要通过 -reindex (重新下载整个区块链以防修剪节点)</translation>
+        <source>Prune: last wallet synchronisation goes beyond pruned data. You need to -reapollon (download the whole blockchain again in case of pruned node)</source>
+        <translation>修剪：最后的钱包同步超过了修剪的数据。你需要通过 -reapollon (重新下载整个区块链以防修剪节点)</translation>
     </message>
     <message>
-        <source>Reduce storage requirements by pruning (deleting) old blocks. This mode is incompatible with -txindex and -rescan. Warning: Reverting this setting requires re-downloading the entire blockchain. (default: 0 = disable pruning blocks, &gt;%u = target size in MiB to use for block files)</source>
-        <translation>通过修剪(删除)旧数据块减少存储需求。此模式与 -txindex 和 -rescan不兼容。警告：还原此设置需要重新下载整个区块链。(默认: 0 = 禁用修剪数据块， &gt;%u = 数据块文件目标大小，单位 MiB)</translation>
+        <source>Reduce storage requirements by pruning (deleting) old blocks. This mode is incompatible with -txapollon and -rescan. Warning: Reverting this setting requires re-downloading the entire blockchain. (default: 0 = disable pruning blocks, &gt;%u = target size in MiB to use for block files)</source>
+        <translation>通过修剪(删除)旧数据块减少存储需求。此模式与 -txapollon 和 -rescan不兼容。警告：还原此设置需要重新下载整个区块链。(默认: 0 = 禁用修剪数据块， &gt;%u = 数据块文件目标大小，单位 MiB)</translation>
     </message>
     <message>
-        <source>Rescans are not possible in pruned mode. You will need to use -reindex which will download the whole blockchain again.</source>
-        <translation>无法在开启修剪的状态下重扫描，请使用 -reindex重新下载完整的区块链。</translation>
+        <source>Rescans are not possible in pruned mode. You will need to use -reapollon which will download the whole blockchain again.</source>
+        <translation>无法在开启修剪的状态下重扫描，请使用 -reapollon重新下载完整的区块链。</translation>
     </message>
     <message>
         <source>Error: A fatal internal error occurred, see debug.log for details</source>
@@ -2600,7 +2600,7 @@
     </message>
     <message>
         <source>Corrupted block database detected</source>
-        <translation>检测发现数据块数据库损坏。请使用 -reindex参数重启客户端。</translation>
+        <translation>检测发现数据块数据库损坏。请使用 -reapollon参数重启客户端。</translation>
     </message>
     <message>
         <source>Debugging/Testing options:</source>
@@ -2703,8 +2703,8 @@
         <translation>修剪不能配置一个负数。</translation>
     </message>
     <message>
-        <source>Prune mode is incompatible with -txindex.</source>
-        <translation>修剪模式与 -txindex 不兼容。</translation>
+        <source>Prune mode is incompatible with -txapollon.</source>
+        <translation>修剪模式与 -txapollon 不兼容。</translation>
     </message>
     <message>
         <source>Set database cache size in megabytes (%d to %d, default: %d)</source>
@@ -2831,8 +2831,8 @@
         <translation>白名单节点不能被DoS banned ，且转发所有来自他们的交易(即便这些交易已经存在于mempool中)，常用于网关 </translation>
     </message>
     <message>
-        <source>You need to rebuild the database using -reindex to go back to unpruned mode.  This will redownload the entire blockchain</source>
-        <translation>您需要使用 -reindex 重新构建数据库以返回未修剪的模式。这将重新下载整个区块链</translation>
+        <source>You need to rebuild the database using -reapollon to go back to unpruned mode.  This will redownload the entire blockchain</source>
+        <translation>您需要使用 -reapollon 重新构建数据库以返回未修剪的模式。这将重新下载整个区块链</translation>
     </message>
     <message>
         <source>(default: %u)</source>

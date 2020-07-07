@@ -1841,7 +1841,7 @@ choose_good_exit_server_general(router_crn_flags_t flags)
   the_nodes = nodelist_get_list();
   n_supported = tor_calloc(smartlist_len(the_nodes), sizeof(int));
   SMARTLIST_FOREACH_BEGIN(the_nodes, const node_t *, node) {
-    const int i = node_sl_idx;
+    const int i = node_sl_xap;
     if (router_digest_is_me(node->identity)) {
       n_supported[i] = -1;
 //      log_fn(LOG_DEBUG,"Skipping node %s -- it's me.", router->nickname);
@@ -1941,7 +1941,7 @@ choose_good_exit_server_general(router_crn_flags_t flags)
     smartlist_t *supporting = smartlist_new();
 
     SMARTLIST_FOREACH(the_nodes, const node_t *, node, {
-      if (n_supported[node_sl_idx] == best_support)
+      if (n_supported[node_sl_xap] == best_support)
         smartlist_add(supporting, (void*)node);
     });
 
@@ -1976,7 +1976,7 @@ choose_good_exit_server_general(router_crn_flags_t flags)
       /* try once to pick only from routers that satisfy a needed port,
        * then if there are none, pick from any that support exiting. */
       SMARTLIST_FOREACH_BEGIN(the_nodes, const node_t *, node) {
-        if (n_supported[node_sl_idx] != -1 &&
+        if (n_supported[node_sl_xap] != -1 &&
             (attempt || node_handles_some_port(node, needed_ports))) {
 //          log_fn(LOG_DEBUG,"Try %d: '%s' is a possibility.",
 //                 try, router->nickname);

@@ -35,7 +35,7 @@ uint8_t ParseMetaDExAction(const UniValue& value);
 CTransaction ParseTransaction(const UniValue& value);
 CMutableTransaction ParseMutableTransaction(const UniValue& value);
 CPubKey ParsePubKeyOrAddress(const UniValue& value);
-uint32_t ParseOutputIndex(const UniValue& value);
+uint32_t ParseOutputApollon(const UniValue& value);
 /** Parses previous transaction outputs. */
 std::vector<PrevTxsEntry> ParsePrevTxs(const UniValue& value);
 

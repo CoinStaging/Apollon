@@ -52,8 +52,8 @@ inline T* NCONST_PTR(const T* val)
 
 /**
  * Get begin pointer of vector (non-const version).
- * @note These functions avoid the undefined case of indexing into an empty
- * vector, as well as that of indexing after the end of the vector.
+ * @note These functions avoid the undefined case of apolloning into an empty
+ * vector, as well as that of apolloning after the end of the vector.
  */
 template <typename V>
 inline typename V::value_type* begin_ptr(V& v)

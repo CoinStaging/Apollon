@@ -269,7 +269,7 @@ CTxDestination CBitcoinAddress::Get() const
 }
 
 
-bool CBitcoinAddress::GetIndexKey(uint160& hashBytes, AddressType & type) const
+bool CBitcoinAddress::GetApollonKey(uint160& hashBytes, AddressType & type) const
 {
     if (!IsValid()) {
         return false;

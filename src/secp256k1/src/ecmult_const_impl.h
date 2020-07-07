@@ -23,7 +23,7 @@
 #define ECMULT_CONST_TABLE_GET_GE(r,pre,n,w) do { \
     int m; \
     int abs_n = (n) * (((n) > 0) * 2 - 1); \
-    int idx_n = abs_n / 2; \
+    int xap_n = abs_n / 2; \
     secp256k1_fe neg_y; \
     VERIFY_CHECK(((n) & 1) == 1); \
     VERIFY_CHECK((n) >= -((1 << ((w)-1)) - 1)); \
@@ -33,8 +33,8 @@
     for (m = 0; m < ECMULT_TABLE_SIZE(w); m++) { \
         /* This loop is used to avoid secret data in array indices. See
          * the comment in ecmult_gen_impl.h for rationale. */ \
-        secp256k1_fe_cmov(&(r)->x, &(pre)[m].x, m == idx_n); \
-        secp256k1_fe_cmov(&(r)->y, &(pre)[m].y, m == idx_n); \
+        secp256k1_fe_cmov(&(r)->x, &(pre)[m].x, m == xap_n); \
+        secp256k1_fe_cmov(&(r)->y, &(pre)[m].y, m == xap_n); \
     } \
     (r)->infinity = 0; \
     secp256k1_fe_negate(&neg_y, &(r)->y, 1); \

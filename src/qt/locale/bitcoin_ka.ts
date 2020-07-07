@@ -138,7 +138,7 @@
         <translation>&amp;URI-ის გახსნა...</translation>
     </message>
     <message>
-        <source>Reindexing blocks on disk...</source>
+        <source>Reapolloning blocks on disk...</source>
         <translation>დისკზე ბლოკების რეინდექსაცია...</translation>
     </message>
     <message>

@@ -135,7 +135,7 @@ BOOST_AUTO_TEST_CASE(zerocoin_mintspend_v3)
         {
             CValidationState state;
             const CChainParams& chainparams = Params();
-            InvalidateBlock(state, chainparams, mapBlockIndex[b.GetHash()]);
+            InvalidateBlock(state, chainparams, mapBlockApollon[b.GetHash()]);
         }
 
         BOOST_CHECK_MESSAGE(mempool.size() == 1, "Mempool should get the transaction of disconnected block");

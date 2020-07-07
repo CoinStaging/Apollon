@@ -37,7 +37,7 @@ The interface is defined in the C header `bitcoinconsensus.h` located in  `src/s
 
 ##### Errors
 - `bitcoinconsensus_ERR_OK` - No errors with input parameters *(see the return value of `bitcoinconsensus_verify_script` for the verification status)*
-- `bitcoinconsensus_ERR_TX_INDEX` - An invalid apollon for `txTo`
+- `bitcoinconsensus_ERR_TX_APOLLON` - An invalid apollon for `txTo`
 - `bitcoinconsensus_ERR_TX_SIZE_MISMATCH` - `txToLen` did not match with the size of `txTo`
 - `bitcoinconsensus_ERR_DESERIALIZE` - An error deserializing `txTo`
 - `bitcoinconsensus_ERR_AMOUNT_REQUIRED` - Input amount is required if WITNESS is used

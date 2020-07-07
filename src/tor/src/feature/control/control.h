@@ -223,14 +223,14 @@ void control_event_hs_descriptor_requested(const char *onion_address,
                                            rend_auth_type_t auth_type,
                                            const char *id_digest,
                                            const char *desc_id,
-                                           const char *hsdir_index);
+                                           const char *hsdir_apollon);
 void control_event_hs_descriptor_created(const char *onion_address,
                                          const char *desc_id,
                                          int replica);
 void control_event_hs_descriptor_upload(const char *onion_address,
                                         const char *desc_id,
                                         const char *hs_dir,
-                                        const char *hsdir_index);
+                                        const char *hsdir_apollon);
 void control_event_hs_descriptor_upload_end(const char *action,
                                             const char *onion_address,
                                             const char *hs_dir,

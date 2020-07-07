@@ -7,15 +7,15 @@ from test_framework.util import *
 
 from pprint import pprint
 
-# Zapwallettxes, rescan, reindex, reindex-chainstate are not affect existing transactions
+# Zapwallettxes, rescan, reapollon, reapollon-chainstate are not affect existing transactions
 
 
 #1. Generate some blocks
-#2. Mint indexs
-#3. 2 Spend indexs in different time
-#4. Send indexs
+#2. Mint apollons
+#3. 2 Spend apollons in different time
+#4. Send apollons
 #5. Gerate blocks
-#6. Remint some indexs
+#6. Remint some apollons
 #7. Mint sigma coins
 #8. 2 Spend in different time
 #9. Send
@@ -25,9 +25,9 @@ from pprint import pprint
 #13. Check all transactions shown properly as before restart 
 #14. Restart with rescan
 #15. Check all transactions shown properly as before restart 
-#16. Restart with reindex
+#16. Restart with reapollon
 #17. Check all transactions shown properly as before restart 
-#18. Restart with reindex-chainstate
+#18. Restart with reapollon-chainstate
 #19. Check all transactions shown properly as before restart 
 
 class TransactionsVerAfterRestartTest(BitcoinTestFramework):
@@ -48,25 +48,25 @@ class TransactionsVerAfterRestartTest(BitcoinTestFramework):
         self.nodes[0].generate(101)
         self.sync_all()
 
-        index_denoms = [1, 10, 25, 50, 100]
+        apollon_denoms = [1, 10, 25, 50, 100]
 
-        #2. Mint indexs
-        for denom in index_denoms:
+        #2. Mint apollons
+        for denom in apollon_denoms:
             self.nodes[0].mintzerocoin(denom)
             self.nodes[0].mintzerocoin(denom)
 
-        #3. 2 Spend indexs
+        #3. 2 Spend apollons
         self.nodes[0].generate(10)
         self.nodes[0].spendzerocoin(1)
         self.nodes[0].spendzerocoin(10)
 
-        #4. Send indexs
+        #4. Send apollons
         self.nodes[0].sendtoaddress('TNZMs3dtwRddC5BuZ9zQUdvksPUjmJPRfL', 25)
 
         #5. Gerate blocks
         self.nodes[0].generate(290)
 
-        #6. Remint some indexs
+        #6. Remint some apollons
         self.nodes[0].remintzerocointosigma(50)
 
         self.nodes[0].generate(10)
@@ -133,37 +133,37 @@ class TransactionsVerAfterRestartTest(BitcoinTestFramework):
             'List of transactions after restart with rescan unexpectedly changed.'
 
         last_block_height = self.nodes[0].getinfo()["blocks"]
-        transactions_before_reindex = self.nodes[0].listtransactions("*", 1000)
+        transactions_before_reapollon = self.nodes[0].listtransactions("*", 1000)
 
         self.nodes[0].stop()
         bitcoind_processes[0].wait()
 
-        #16. Restart with reindex
-        self.nodes[0] = start_node(0,self.options.tmpdir, ["-reindex"])
+        #16. Restart with reapollon
+        self.nodes[0] = start_node(0,self.options.tmpdir, ["-reapollon"])
 
         while self.nodes[0].getinfo()["blocks"] != last_block_height:
             time.sleep(1)
 
         #17. Check all transactions shown properly as before restart
-        tx_before = sorted(transactions_before_reindex, key=lambda k: k['txid'], reverse=True)
-        tx_after_reindex = sorted(self.nodes[0].listtransactions("*", 1000), key=lambda k: k['txid'], reverse=True)
+        tx_before = sorted(transactions_before_reapollon, key=lambda k: k['txid'], reverse=True)
+        tx_after_reapollon = sorted(self.nodes[0].listtransactions("*", 1000), key=lambda k: k['txid'], reverse=True)
 
-        assert tx_before == tx_after_reindex, \
-            'List of transactions after restart with reindex unexpectedly changed.'
+        assert tx_before == tx_after_reapollon, \
+            'List of transactions after restart with reapollon unexpectedly changed.'
 
         self.nodes[0].stop()
         bitcoind_processes[0].wait()
 
-        #18. Restart with reindex-chainstate
-        self.nodes[0] = start_node(0,self.options.tmpdir, ["-reindex-chainstate"])
+        #18. Restart with reapollon-chainstate
+        self.nodes[0] = start_node(0,self.options.tmpdir, ["-reapollon-chainstate"])
 
         time.sleep(5)
         
         #19. Check all transactions shown properly as before restart
-        tx_after_reindex_chainstate = sorted(self.nodes[0].listtransactions("*", 1000), key=lambda k: k['txid'], reverse=True)
+        tx_after_reapollon_chainstate = sorted(self.nodes[0].listtransactions("*", 1000), key=lambda k: k['txid'], reverse=True)
 
-        assert tx_before == tx_after_reindex_chainstate, \
-            'List of transactions after restart with reindex-chainstate unexpectedly changed.'
+        assert tx_before == tx_after_reapollon_chainstate, \
+            'List of transactions after restart with reapollon-chainstate unexpectedly changed.'
 
 
 

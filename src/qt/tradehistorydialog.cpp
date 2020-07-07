@@ -48,7 +48,7 @@
 #include <QHeaderView>
 #include <QIcon>
 #include <QMenu>
-#include <QModelIndex>
+#include <QModelApollon>
 #include <QPoint>
 #include <QResizeEvent>
 #include <QSortFilterProxyModel>
@@ -121,7 +121,7 @@ TradeHistoryDialog::TradeHistoryDialog(QWidget *parent) :
     contextMenu->addAction(copyTxIDAction);
     contextMenu->addAction(showDetailsAction);
     connect(ui->tradeHistoryTable, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextualMenu(QPoint)));
-    connect(ui->tradeHistoryTable, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(showDetails()));
+    connect(ui->tradeHistoryTable, SIGNAL(doubleClicked(QModelApollon)), this, SLOT(showDetails()));
     connect(ui->hideInactiveTrades, SIGNAL(stateChanged(int)), this, SLOT(RepopulateTradeHistoryTable(int)));
     connect(copyTxIDAction, SIGNAL(triggered()), this, SLOT(copyTxID()));
     connect(showDetailsAction, SIGNAL(triggered()), this, SLOT(showDetails()));
@@ -176,8 +176,8 @@ void TradeHistoryDialog::UpdateTradeHistoryTable(bool forceUpdate)
             tradeHistoryProxy.setSourceModel(tradeHistoryAbstractModel);
             tradeHistoryProxy.setFilterKeyColumn(0);
             tradeHistoryProxy.setFilterFixedString(QString::fromStdString(txid.GetHex()));
-            QModelIndex rowIndex = tradeHistoryProxy.mapToSource(tradeHistoryProxy.apollon(0,0));
-            if (rowIndex.isValid()) continue;
+            QModelApollon rowApollon = tradeHistoryProxy.mapToSource(tradeHistoryProxy.apollon(0,0));
+            if (rowApollon.isValid()) continue;
 
             // new entry is required, append a new row (sorting will take care of ordering)
             int newRow = ui->tradeHistoryTable->rowCount();
@@ -188,8 +188,8 @@ void TradeHistoryDialog::UpdateTradeHistoryTable(bool forceUpdate)
             QDateTime txTime;
             if (objTH.blockHeight > 0) {
                 LOCK(cs_main);
-                CBlockIndex* pBlkIdx = chainActive[objTH.blockHeight];
-                if (NULL != pBlkIdx) txTime.setTime_t(pBlkIdx->GetBlockTime());
+                CBlockApollon* pBlkXap = chainActive[objTH.blockHeight];
+                if (NULL != pBlkXap) txTime.setTime_t(pBlkXap->GetBlockTime());
                 dateCell->setData(Qt::DisplayRole, txTime);
             } else {
                 dateCell->setData(Qt::DisplayRole, QString::fromStdString("Unconfirmed"));
@@ -333,8 +333,8 @@ int TradeHistoryDialog::PopulateTradeHistoryMap()
                 tradeHistoryProxy.setSourceModel(tradeHistoryAbstractModel);
                 tradeHistoryProxy.setFilterKeyColumn(0);
                 tradeHistoryProxy.setFilterFixedString(QString::fromStdString(hash.GetHex()));
-                QModelIndex rowIndex = tradeHistoryProxy.mapToSource(tradeHistoryProxy.apollon(0,0)); // map to the row in the actual table
-                if(rowIndex.isValid()) ui->tradeHistoryTable->removeRow(rowIndex.row()); // delete the pending tx row, it'll be readded as a proper confirmed transaction
+                QModelApollon rowApollon = tradeHistoryProxy.mapToSource(tradeHistoryProxy.apollon(0,0)); // map to the row in the actual table
+                if(rowApollon.isValid()) ui->tradeHistoryTable->removeRow(rowApollon.row()); // delete the pending tx row, it'll be readded as a proper confirmed transaction
                 ui->tradeHistoryTable->setSortingEnabled(true); // re-enable sorting
             }
         }
@@ -343,10 +343,10 @@ int TradeHistoryDialog::PopulateTradeHistoryMap()
         CTransaction wtx;
         uint256 blockHash;
         if (!GetTransaction(hash, wtx, Params().GetConsensus(), blockHash, true)) continue;
-        if (blockHash.IsNull() || NULL == GetBlockIndex(blockHash)) continue;
-        CBlockIndex* pBlockIndex = GetBlockIndex(blockHash);
-        if (NULL == pBlockIndex) continue;
-        int blockHeight = pBlockIndex->nHeight;
+        if (blockHash.IsNull() || NULL == GetBlockApollon(blockHash)) continue;
+        CBlockApollon* pBlockApollon = GetBlockApollon(blockHash);
+        if (NULL == pBlockApollon) continue;
+        int blockHeight = pBlockApollon->nHeight;
 
         // setup some variables
         CMPTransaction mp_obj;
@@ -542,7 +542,7 @@ void TradeHistoryDialog::setClientModel(ClientModel *model)
 
 void TradeHistoryDialog::contextualMenu(const QPoint &point)
 {
-    QModelIndex apollon = ui->tradeHistoryTable->indexAt(point);
+    QModelApollon apollon = ui->tradeHistoryTable->apollonAt(point);
     if(apollon.isValid()) contextMenu->exec(QCursor::pos());
 }
 

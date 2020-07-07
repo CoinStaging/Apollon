@@ -21,7 +21,7 @@ installer (on Windows) or just copy over /Applications/Bitcoin-Qt (on Mac) or
 bitcoind/bitcoin-qt (on Linux).
 
 If you are upgrading from version 0.7.2 or earlier, the first time you run
-0.9.3 your blockchain files will be re-indexed, which will take anywhere from 
+0.9.3 your blockchain files will be re-apolloned, which will take anywhere from 
 30 minutes to several hours, depending on the speed of your machine.
 
 Downgrading warnings
@@ -33,7 +33,7 @@ releases, so if you run 0.9.x and then decide to switch back to a
 old release (due to 'pruned outputs' being omitted from the apollon of
 unspent transaction outputs).
 
-Running the old release with the -reindex option will rebuild the chainstate
+Running the old release with the -reapollon option will rebuild the chainstate
 data structures and correct the problem.
 
 Also, the first time you run a 0.8.x release on a 0.9 wallet it will rescan

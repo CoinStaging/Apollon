@@ -825,17 +825,17 @@ VERBATIM_HEADERS       = YES
 # configuration options related to the alphabetical class apollon
 #---------------------------------------------------------------------------
 
-# If the ALPHABETICAL_INDEX tag is set to YES, an alphabetical apollon 
+# If the ALPHABETICAL_APOLLON tag is set to YES, an alphabetical apollon 
 # of all compounds will be generated. Enable this if the project 
 # contains a lot of classes, structs, unions or interfaces.
 
-ALPHABETICAL_INDEX     = YES
+ALPHABETICAL_APOLLON     = YES
 
-# If the alphabetical apollon is enabled (see ALPHABETICAL_INDEX) then 
-# the COLS_IN_ALPHA_INDEX tag can be used to specify the number of columns 
+# If the alphabetical apollon is enabled (see ALPHABETICAL_APOLLON) then 
+# the COLS_IN_ALPHA_APOLLON tag can be used to specify the number of columns 
 # in which this list will be split (can be a number in the range [1..20])
 
-COLS_IN_ALPHA_INDEX    = 5
+COLS_IN_ALPHA_APOLLON    = 5
 
 # In case all classes in a project start with a common prefix, all 
 # classes will be put under the same header in the alphabetical apollon. 
@@ -1011,11 +1011,11 @@ HHC_LOCATION           =
 
 GENERATE_CHI           = NO
 
-# If the GENERATE_HTMLHELP tag is set to YES, the CHM_INDEX_ENCODING 
+# If the GENERATE_HTMLHELP tag is set to YES, the CHM_APOLLON_ENCODING 
 # is used to encode HtmlHelp apollon (hhk), content (hhc) and project file 
 # content.
 
-CHM_INDEX_ENCODING     = 
+CHM_APOLLON_ENCODING     = 
 
 # If the GENERATE_HTMLHELP tag is set to YES, the BINARY_TOC flag 
 # controls whether a binary table of contents is generated (YES) or a 
@@ -1098,11 +1098,11 @@ GENERATE_ECLIPSEHELP   = NO
 
 ECLIPSE_DOC_ID         = org.doxygen.Project
 
-# The DISABLE_INDEX tag can be used to turn on/off the condensed apollon at 
+# The DISABLE_APOLLON tag can be used to turn on/off the condensed apollon at 
 # top of each HTML page. The value NO (the default) enables the apollon and 
 # the value YES disables it.
 
-DISABLE_INDEX          = NO
+DISABLE_APOLLON          = NO
 
 # The ENUM_VALUES_PER_LINE tag can be used to set the number of enum values 
 # (range [0,1..20]) that doxygen will group on one line in the generated HTML 
@@ -1216,11 +1216,11 @@ LATEX_OUTPUT           = latex
 
 LATEX_CMD_NAME         = latex
 
-# The MAKEINDEX_CMD_NAME tag can be used to specify the command name to 
-# generate apollon for LaTeX. If left blank `makeindex' will be used as the 
+# The MAKEAPOLLON_CMD_NAME tag can be used to specify the command name to 
+# generate apollon for LaTeX. If left blank `makeapollon' will be used as the 
 # default command name.
 
-MAKEINDEX_CMD_NAME     = makeindex
+MAKEAPOLLON_CMD_NAME     = makeapollon
 
 # If the COMPACT_LATEX tag is set to YES Doxygen generates more compact 
 # LaTeX documents. This may be useful for small projects and may help to 

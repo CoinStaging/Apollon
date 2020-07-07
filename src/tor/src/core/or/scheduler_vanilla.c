@@ -60,7 +60,7 @@ vanilla_scheduler_run(void)
     /* Pop off a channel */
     chan = smartlist_pqueue_pop(cp,
                                 scheduler_compare_channels,
-                                offsetof(channel_t, sched_heap_idx));
+                                offsetof(channel_t, sched_heap_xap));
     IF_BUG_ONCE(!chan) {
       /* Some-freaking-how a NULL got into the channels_pending. That should
        * never happen, but it should be harmless to ignore it and keep looping.
@@ -144,7 +144,7 @@ vanilla_scheduler_run(void)
       scheduler_set_channel_state(readd_chan, SCHED_CHAN_PENDING);
       smartlist_pqueue_add(cp,
                            scheduler_compare_channels,
-                           offsetof(channel_t, sched_heap_idx),
+                           offsetof(channel_t, sched_heap_xap),
                            readd_chan);
     } SMARTLIST_FOREACH_END(readd_chan);
     smartlist_free(to_readd);
