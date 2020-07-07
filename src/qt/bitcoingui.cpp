@@ -36,8 +36,8 @@
 #include "ui_interface.h"
 #include "util.h"
 
-#include "apollonnode-sync.h"
-#include "apollonnodelist.h"
+#include "indexnode-sync.h"
+#include "indexnodelist.h"
 #include "elysium_qtutils.h"
 #include "zc2sigmapage.h"
 
@@ -133,7 +133,7 @@ BitcoinGUI::BitcoinGUI(const PlatformStyle *platformStyle, const NetworkStyle *n
     openAction(0),
     showHelpMessageAction(0),
     zc2SigmaAction(0),
-    apollonnodeAction(0),
+    indexnodeAction(0),
     trayIcon(0),
     trayIconMenu(0),
     notificator(0),
@@ -362,16 +362,16 @@ void BitcoinGUI::createActions()
 #ifdef ENABLE_WALLET
     // These showNormalIfMinimized are needed because Send Coins and Receive Coins
     // can be triggered from the tray menu, and need to show the GUI to be useful.
-    apollonnodeAction = new QAction(platformStyle->MultiStatesIcon(":/icons/apollonnodes"), tr("&Apollonnodes"), this);
-    apollonnodeAction->setStatusTip(tr("Browse apollonnodes"));
-    apollonnodeAction->setToolTip(apollonnodeAction->statusTip());
-    apollonnodeAction->setCheckable(true);
+    indexnodeAction = new QAction(platformStyle->MultiStatesIcon(":/icons/indexnodes"), tr("&Indexnodes"), this);
+    indexnodeAction->setStatusTip(tr("Browse indexnodes"));
+    indexnodeAction->setToolTip(indexnodeAction->statusTip());
+    indexnodeAction->setCheckable(true);
 #ifdef Q_OS_MAC
-    apollonnodeAction->setShortcut(QKeySequence(Qt::CTRL + key++));
+    indexnodeAction->setShortcut(QKeySequence(Qt::CTRL + key++));
 #else
-    apollonnodeAction->setShortcut(QKeySequence(Qt::ALT +  key++));
+    indexnodeAction->setShortcut(QKeySequence(Qt::ALT +  key++));
 #endif
-    tabGroup->addAction(apollonnodeAction);
+    tabGroup->addAction(indexnodeAction);
 #endif
 
 #ifdef ENABLE_ELYSIUM
@@ -395,8 +395,8 @@ void BitcoinGUI::createActions()
 #endif
 
 #ifdef ENABLE_WALLET
-    connect(apollonnodeAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
-    connect(apollonnodeAction, SIGNAL(triggered()), this, SLOT(gotoApollonnodePage()));
+    connect(indexnodeAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
+    connect(indexnodeAction, SIGNAL(triggered()), this, SLOT(gotoIndexnodePage()));
 	connect(overviewAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
 	connect(overviewAction, SIGNAL(triggered()), this, SLOT(gotoOverviewPage()));
 	connect(sendCoinsAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
@@ -571,7 +571,7 @@ void BitcoinGUI::createToolBars()
         appNavigationBar->addAction(receiveCoinsAction);
         appNavigationBar->addAction(historyAction);
         appNavigationBar->addAction(sigmaAction);
-        appNavigationBar->addAction(apollonnodeAction);
+        appNavigationBar->addAction(indexnodeAction);
 
 #ifdef ENABLE_ELYSIUM
         if (isElysiumEnabled()) {
@@ -697,7 +697,7 @@ void BitcoinGUI::setWalletActionsEnabled(bool enabled)
     receiveCoinsMenuAction->setEnabled(enabled);
     historyAction->setEnabled(enabled);
     sigmaAction->setEnabled(enabled);
-    apollonnodeAction->setEnabled(enabled);
+    indexnodeAction->setEnabled(enabled);
     encryptWalletAction->setEnabled(enabled);
     unlockWalletForStakingAction->setEnabled(enabled);
     lockWalletAction->setEnabled(enabled);
@@ -869,11 +869,11 @@ void BitcoinGUI::gotoToolboxPage()
 }
 #endif
 
-void BitcoinGUI::gotoApollonnodePage()
+void BitcoinGUI::gotoIndexnodePage()
 {
     QSettings settings;
-    apollonnodeAction->setChecked(true);
-    if (walletFrame) walletFrame->gotoApollonnodePage();
+    indexnodeAction->setChecked(true);
+    if (walletFrame) walletFrame->gotoIndexnodePage();
 }
 
 void BitcoinGUI::gotoReceiveCoinsPage()
@@ -946,20 +946,20 @@ void BitcoinGUI::setNumBlocks(int count, const QDateTime& blockDate, double nVer
             break;
         case BLOCK_SOURCE_DISK:
             if (header) {
-                progressBarLabel->setText(tr("Apolloning blocks on disk..."));
+                progressBarLabel->setText(tr("Indexing blocks on disk..."));
             } else {
                 progressBarLabel->setText(tr("Processing blocks on disk..."));
             }
             break;
-        case BLOCK_SOURCE_REAPOLLON:
-            progressBarLabel->setText(tr("Reapolloning blocks on disk..."));
+        case BLOCK_SOURCE_REINDEX:
+            progressBarLabel->setText(tr("Reindexing blocks on disk..."));
             break;
         case BLOCK_SOURCE_NONE:
             if (header) {
                 return;
             }
             if(vNodes.size() == 0){
-            // Case: not Importing, not Reapolloning and no network connection
+            // Case: not Importing, not Reindexing and no network connection
             progressBarLabel->setText(tr("No block source available..."));
             }
             break;
@@ -972,7 +972,7 @@ void BitcoinGUI::setNumBlocks(int count, const QDateTime& blockDate, double nVer
 
     tooltip = tr("Processed %n block(s) of transaction history.", "", count);
 
-    if(!apollonnodeSync.GetBlockchainSynced())
+    if(!indexnodeSync.GetBlockchainSynced())
     {
         // Represent time from last generated block in human readable text
         QString timeBehindText;
@@ -1050,12 +1050,12 @@ void BitcoinGUI::setAdditionalDataSyncProgress(int count, double nSyncProgress)
 
     // Set icon state: spinning if catching up, tick otherwise
 
-    if(apollonnodeSync.GetBlockchainSynced())
+    if(indexnodeSync.GetBlockchainSynced())
     {
         QString strSyncStatus;
         tooltip = tr("Up to date") + QString(".<br>") + tooltip;
 
-        if(apollonnodeSync.IsSynced()) {
+        if(indexnodeSync.IsSynced()) {
             progressBarLabel->setVisible(false);
             progressBar->setVisible(false);
             labelBlocksIcon->setPixmap(platformStyle->SingleColorIcon(":/icons/synced").pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
@@ -1076,7 +1076,7 @@ void BitcoinGUI::setAdditionalDataSyncProgress(int count, double nSyncProgress)
             progressBar->setValue(nSyncProgress * 1000000000.0 + 0.5);
         }
 
-        strSyncStatus = QString(apollonnodeSync.GetSyncStatus().c_str());
+        strSyncStatus = QString(indexnodeSync.GetSyncStatus().c_str());
         progressBarLabel->setText(strSyncStatus);
         tooltip = strSyncStatus + QString("<br>") + tooltip;
     }

@@ -36,18 +36,18 @@ uint32_t GetLatestBlockTime()
 }
 
 /**
- * @return The CBlockApollon, or NULL, if the block isn't available.
+ * @return The CBlockIndex, or NULL, if the block isn't available.
  */
-CBlockApollon* GetBlockApollon(const uint256& hash)
+CBlockIndex* GetBlockIndex(const uint256& hash)
 {
-    CBlockApollon* pBlockApollon = NULL;
+    CBlockIndex* pBlockIndex = NULL;
     LOCK(cs_main);
-    BlockMap::const_iterator it = mapBlockApollon.find(hash);
-    if (it != mapBlockApollon.end()) {
-        pBlockApollon = it->second;
+    BlockMap::const_iterator it = mapBlockIndex.find(hash);
+    if (it != mapBlockIndex.end()) {
+        pBlockIndex = it->second;
     }
 
-    return pBlockApollon;
+    return pBlockIndex;
 }
 
 bool MainNet()

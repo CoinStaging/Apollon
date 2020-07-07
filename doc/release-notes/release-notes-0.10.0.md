@@ -29,7 +29,7 @@ backwards-compatible with older versions of Bitcoin Core or other software:
 
 * Blocks will be stored on disk out of order (in the order they are
 received, really), which makes it incompatible with some tools or
-other programs. Reapolloning using earlier versions will also not work
+other programs. Reindexing using earlier versions will also not work
 anymore as a result of this.
 
 * The block apollon database will now hold headers for which no block is
@@ -39,7 +39,7 @@ If you want to be able to downgrade smoothly, make a backup of your entire data
 directory. Without this your node will need start syncing (or importing from
 bootstrap.dat) anew afterwards. It is possible that the data from a completely
 synchronised 0.10 node may be usable in older versions as-is, but this is not
-supported and may break as soon as the older version attempts to reapollon.
+supported and may break as soon as the older version attempts to reindex.
 
 This does not affect wallet forward or backward compatibility.
 
@@ -145,7 +145,7 @@ plain HTTP instead of JSON-RPC.
 Assuming a local RPC server running on port 8332, it is possible to request:
 - Blocks: http://localhost:8332/rest/block/*HASH*.*EXT*
 - Blocks without transactions: http://localhost:8332/rest/block/notxdetails/*HASH*.*EXT*
-- Transactions (requires `-txapollon`): http://localhost:8332/rest/tx/*HASH*.*EXT*
+- Transactions (requires `-txindex`): http://localhost:8332/rest/tx/*HASH*.*EXT*
 
 In every case, *EXT* can be `bin` (for raw binary data), `hex` (for hex-encoded
 binary) or `json`.
@@ -215,7 +215,7 @@ The following RPCs have optional support for watch-only:
 RPC documentation for those methods for more information.
 
 Compared to using `getrawtransaction`, this mechanism does not require
-`-txapollon`, scales better, integrates better with the wallet, and is compatible
+`-txindex`, scales better, integrates better with the wallet, and is compatible
 with future block chain pruning functionality. It does mean that all relevant
 addresses need to added to the wallet before the payment, though.
 
@@ -393,29 +393,29 @@ Command-line options:
 - `bdd5b58` Add option `-sysperms` to disable 077 umask (create new files with system default umask)
 - `cbe39a3` Add "bitcoin-tx" command line utility and supporting modules
 - `dbca89b` Trigger -alertnotify if network is upgrading without you
-- `ad96e7c` Make -reapollon cope with out-of-order blocks
-- `16d5194` Skip reapolloned blocks individually
+- `ad96e7c` Make -reindex cope with out-of-order blocks
+- `16d5194` Skip reindexed blocks individually
 - `ec01243` --tracerpc option for regression tests
 - `f654f00` Change -genproclimit default to 1
 - `3c77714` Make -proxy set all network types, avoiding a connect leak
-- `57be955` Remove -printblock, -printblocktree, and -printblockapollon
+- `57be955` Remove -printblock, -printblocktree, and -printblockindex
 - `ad3d208` remove -maxorphanblocks config parameter since it is no longer functional
 
 Block and transaction handling:
 - `7a0e84d` ProcessGetData(): abort if a block file is missing from disk
-- `8c93bf4` LoadBlockApollonDB(): Require block db reapollon if any `blk*.dat` files are missing
+- `8c93bf4` LoadBlockIndexDB(): Require block db reindex if any `blk*.dat` files are missing
 - `77339e5` Get rid of the static chainMostWork (optimization)
 - `4e0eed8` Allow ActivateBestChain to release its lock on cs_main
 - `18e7216` Push cs_mains down in ProcessBlock
 - `fa126ef` Avoid undefined behavior using CFlatData in CScript serialization
 - `7f3b4e9` Relax IsStandard rules for pay-to-script-hash transactions
-- `c9a0918` Add a skiplist to the CBlockApollon structure
+- `c9a0918` Add a skiplist to the CBlockIndex structure
 - `bc42503` Use unordered_map for CCoinsViewCache with salted hash (optimization)
 - `d4d3fbd` Do not flush the cache after every block outside of IBD (optimization)
 - `ad08d0b` Bugfix: make CCoinsViewMemPool support pruned entries in underlying cache
-- `5734d4d` Only remove actualy failed blocks from setBlockApollonValid
+- `5734d4d` Only remove actualy failed blocks from setBlockIndexValid
 - `d70bc52` Rework block processing benchmark code
-- `714a3e6` Only keep setBlockApollonValid entries that are possible improvements
+- `714a3e6` Only keep setBlockIndexValid entries that are possible improvements
 - `ea100c7` Reduce maximum coinscache size during verification (reduce memory usage)
 - `4fad8e6` Reject transactions with excessive numbers of sigops
 - `b0875eb` Allow BatchWrite to destroy its input, reducing copying (optimization)
@@ -428,7 +428,7 @@ Block and transaction handling:
 - `ed6d1a2` Keep information about all block files in memory
 - `a48f2d6` Abstract context-dependent block checking from acceptance
 - `7e615f5` Fixed mempool sync after sending a transaction
-- `51ce901` Improve chainstate/blockapollon disk writing policy
+- `51ce901` Improve chainstate/blockindex disk writing policy
 - `a206950` Introduce separate flushing modes
 - `9ec75c5` Add a locking mechanism to IsInitialBlockDownload to ensure it never goes from false to true
 - `868d041` Remove coinbase-dependant transactions during reorg

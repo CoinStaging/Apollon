@@ -22,7 +22,7 @@
 #include "splashscreen.h"
 #include "utilitydialog.h"
 #include "winshutdownmonitor.h"
-#include "apollonnodeconfig.h"
+#include "indexnodeconfig.h"
 #include <hybridui/styleSheet.h>
 
 #ifdef ENABLE_WALLET
@@ -131,7 +131,7 @@ static void initTranslations(QTranslator &qtTranslatorBase, QTranslator &qtTrans
 
     // Convert to "de" only by truncating "_DE"
     QString lang = lang_territory;
-    lang.truncate(lang_territory.lastApollonOf('_'));
+    lang.truncate(lang_territory.lastIndexOf('_'));
 
     // Load language files for configured locale:
     // - First load the translator for the base language, without territory
@@ -677,11 +677,11 @@ int main(int argc, char *argv[])
     initTranslations(qtTranslatorBase, qtTranslator, translatorBase, translator);
 
 #ifdef ENABLE_WALLET
-    /// 7a. parse apollonnode.conf
+    /// 7a. parse indexnode.conf
     std::string strErr;
-    if(!apollonnodeConfig.read(strErr)) {
+    if(!indexnodeConfig.read(strErr)) {
         QMessageBox::critical(0, QObject::tr("Apollon Core"),
-                              QObject::tr("Error reading apollonnode configuration file: %1").arg(strErr.c_str()));
+                              QObject::tr("Error reading indexnode configuration file: %1").arg(strErr.c_str()));
         return EXIT_FAILURE;
     }
 

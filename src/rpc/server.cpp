@@ -272,16 +272,16 @@ static const CRPCCommand vRPCCommands[] =
     { "control",            "help",                   &help,                   true  },
     { "control",            "stop",                   &stop,                   true  },
         /* Address apollon */
-    { "addressapollon",       "getaddressmempool",      &getaddressmempool,      true  },
-    { "addressapollon",       "getaddressutxos",        &getaddressutxos,        false },
-    { "addressapollon",       "getaddressdeltas",       &getaddressdeltas,       false },
-    { "addressapollon",       "getaddresstxids",        &getaddresstxids,        false },
-    { "addressapollon",       "getaddressbalance",      &getaddressbalance,      false },
+    { "addressindex",       "getaddressmempool",      &getaddressmempool,      true  },
+    { "addressindex",       "getaddressutxos",        &getaddressutxos,        false },
+    { "addressindex",       "getaddressdeltas",       &getaddressdeltas,       false },
+    { "addressindex",       "getaddresstxids",        &getaddresstxids,        false },
+    { "addressindex",       "getaddressbalance",      &getaddressbalance,      false },
         /* Apollon features */
-    { "apollon",               "apollonnode",                 &apollonnode,                  true  },
+    { "apollon",               "indexnode",                 &indexnode,                  true  },
     { "apollon",               "insync",                &insync,                 true  },
-    { "apollon",               "apollonnodelist",             &apollonnodelist,              true  },
-    { "apollon",               "apollonnodebroadcast",        &apollonnodebroadcast,         true  },
+    { "apollon",               "indexnodelist",             &indexnodelist,              true  },
+    { "apollon",               "indexnodebroadcast",        &indexnodebroadcast,         true  },
     { "apollon",               "spork",                 &spork,                  true  },
     { "apollon" ,              "createsporkkeypair",    &createsporkkeypair,     true  },
     { "apollon",               "getpoolinfo",           &getpoolinfo,            true  },
@@ -289,12 +289,12 @@ static const CRPCCommand vRPCCommands[] =
 
 CRPCTable::CRPCTable()
 {
-    unsigned int vcxap;
-    for (vcxap = 0; vcxap < (sizeof(vRPCCommands) / sizeof(vRPCCommands[0])); vcxap++)
+    unsigned int vcidx;
+    for (vcidx = 0; vcidx < (sizeof(vRPCCommands) / sizeof(vRPCCommands[0])); vcidx++)
     {
         const CRPCCommand *pcmd;
 
-        pcmd = &vRPCCommands[vcxap];
+        pcmd = &vRPCCommands[vcidx];
         mapCommands[pcmd->name] = pcmd;
     }
 }
@@ -432,8 +432,8 @@ UniValue JSONRPCExecOne(const UniValue& req)
 std::string JSONRPCExecBatch(const UniValue& vReq)
 {
     UniValue ret(UniValue::VARR);
-    for (unsigned int reqXap = 0; reqXap < vReq.size(); reqXap++)
-        ret.push_back(JSONRPCExecOne(vReq[reqXap]));
+    for (unsigned int reqIdx = 0; reqIdx < vReq.size(); reqIdx++)
+        ret.push_back(JSONRPCExecOne(vReq[reqIdx]));
 
     return ret.write() + "\n";
 }

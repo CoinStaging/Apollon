@@ -30,7 +30,7 @@ backwards-compatible with pre-0.10 versions of Bitcoin Core or other software:
 
 * Blocks will be stored on disk out of order (in the order they are
 received, really), which makes it incompatible with some tools or
-other programs. Reapolloning using earlier versions will also not work
+other programs. Reindexing using earlier versions will also not work
 anymore as a result of this.
 
 * The block apollon database will now hold headers for which no block is
@@ -40,7 +40,7 @@ If you want to be able to downgrade smoothly, make a backup of your entire data
 directory. Without this your node will need start syncing (or importing from
 bootstrap.dat) anew afterwards. It is possible that the data from a completely
 synchronised 0.10 node may be usable in older versions as-is, but this is not
-supported and may break as soon as the older version attempts to reapollon.
+supported and may break as soon as the older version attempts to reindex.
 
 This does not affect wallet forward or backward compatibility. There are no
 known problems when downgrading from 0.11.x to 0.10.x.
@@ -100,12 +100,12 @@ version FIXME or any version from FIXME onward.
 Windows bug fix for corrupted UTXO database on unclean shutdowns
 ----------------------------------------------------------------
 
-Several Windows users reported that they often need to reapollon the
+Several Windows users reported that they often need to reindex the
 entire blockchain after an unclean shutdown of Bitcoin Core on Windows
 (or an unclean shutdown of Windows itself). Although unclean shutdowns
 remain unsafe, this release no longer relies on memory-mapped files for
 the UTXO database, which significantly reduced the frequency of unclean
-shutdowns leading to required reapollones during testing.
+shutdowns leading to required reindexes during testing.
 
 For more information, see: <https://github.com/bitcoin/bitcoin/pull/6917>
 

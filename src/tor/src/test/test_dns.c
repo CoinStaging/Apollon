@@ -597,7 +597,7 @@ NS(test_main)(void *arg)
   cached_resolve_t *cache_entry = tor_malloc_zero(sizeof(cached_resolve_t));
   cache_entry->magic = CACHED_RESOLVE_MAGIC;
   cache_entry->state = CACHE_STATE_PENDING;
-  cache_entry->minheap_xap = -1;
+  cache_entry->minheap_idx = -1;
   cache_entry->expire = time(NULL) + 60 * 60;
 
   (void)arg;
@@ -678,7 +678,7 @@ NS(test_main)(void *arg)
   cached_resolve_t *cache_entry = tor_malloc_zero(sizeof(cached_resolve_t));
   cache_entry->magic = CACHED_RESOLVE_MAGIC;
   cache_entry->state = CACHE_STATE_CACHED;
-  cache_entry->minheap_xap = -1;
+  cache_entry->minheap_idx = -1;
   cache_entry->expire = time(NULL) + 60 * 60;
 
   (void)arg;

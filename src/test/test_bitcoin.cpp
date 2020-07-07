@@ -56,7 +56,7 @@ BasicTestingSetup::BasicTestingSetup(const std::string& chainName)
     SetupNetworking();
     SoftSetBoolArg("-dandelion", false);
     fPrintToDebugLog = false; // don't want to write to debug.log file
-    fCheckBlockApollon = true;
+    fCheckBlockIndex = true;
     SoftSetBoolArg("-dandelion", false);
     SelectParams(chainName);
     SoftSetBoolArg("-dandelion", false);
@@ -80,7 +80,7 @@ TestingSetup::TestingSetup(const std::string& chainName, std::string suf) : Basi
         RegisterAllCoreAPICommands(tableAPI);
 #endif
         ClearDatadirCache();
-        pathTemp = GetTempPath() / strprintf("test_apollon_%lu_%i", (unsigned long)GetTime(), (int)(GetRand(100000)));
+        pathTemp = GetTempPath() / strprintf("test_index_%lu_%i", (unsigned long)GetTime(), (int)(GetRand(100000)));
         boost::filesystem::create_directories(pathTemp);
         mapArgs["-datadir"] = pathTemp.string();
         mempool.setSanityCheck(1.0);
@@ -90,7 +90,7 @@ TestingSetup::TestingSetup(const std::string& chainName, std::string suf) : Basi
         pwalletMain = new CWallet(string("wallet_test.dat"));
         static bool fFirstRun = true;
         pwalletMain->LoadWallet(fFirstRun);
-        InitBlockApollon(chainparams);
+        InitBlockIndex(chainparams);
         {
             CValidationState state;
             bool ok = ActivateBestChain(state, chainparams);
@@ -131,7 +131,7 @@ TestingSetup::~TestingSetup()
 #endif
     threadGroup.interrupt_all();
     threadGroup.join_all();
-    UnloadBlockApollon();
+    UnloadBlockIndex();
     delete pwalletMain;
     pwalletMain = NULL;
     delete pcoinsTip;

@@ -10,15 +10,15 @@
 #include <boost/shared_ptr.hpp>
 
 class CBlock;
-class CBlockApollon;
+class CBlockIndex;
 struct CBlockLocator;
-class CBlockApollon;
+class CBlockIndex;
 class CReserveScript;
 class CTransaction;
 class CValidationInterface;
 class CValidationState;
 class uint256;
-class CApollonnode;
+class CIndexnode;
 
 // These functions dispatch to one or all registered wallets
 
@@ -29,12 +29,12 @@ void UnregisterValidationInterface(CValidationInterface* pwalletIn);
 /** Unregister all wallets from core */
 void UnregisterAllValidationInterfaces();
 /** Push an updated transaction to all registered wallets */
-void SyncWithWallets(const CTransaction& tx, const CBlockApollon *papollon, const CBlock* pblock = NULL);
+void SyncWithWallets(const CTransaction& tx, const CBlockIndex *pindex, const CBlock* pblock = NULL);
 
 class CValidationInterface {
 protected:
-    virtual void UpdatedBlockTip(const CBlockApollon *papollon) {}
-    virtual void SyncTransaction(const CTransaction &tx, const CBlockApollon *papollon, const CBlock *pblock) {}
+    virtual void UpdatedBlockTip(const CBlockIndex *pindex) {}
+    virtual void SyncTransaction(const CTransaction &tx, const CBlockIndex *pindex, const CBlock *pblock) {}
     virtual void WalletTransaction(const CTransaction &tx) {}
     virtual void SetBestChain(const CBlockLocator &locator) {}
     virtual void UpdatedTransaction(const uint256 &hash) {}
@@ -45,11 +45,11 @@ protected:
     virtual void ResetRequestCount(const uint256 &hash) {};
     virtual void NumConnectionsChanged() {}
     virtual void UpdateSyncStatus() {}
-    virtual void UpdatedApollonnode(CApollonnode &apollonnode) {}
+    virtual void UpdatedIndexnode(CIndexnode &indexnode) {}
     virtual void UpdatedMintStatus(std::string update) {};
     virtual void UpdatedSettings(std::string update) {};
     virtual void NotifyAPIStatus() {}
-    virtual void NotifyApollonnodeList() {}
+    virtual void NotifyIndexnodeList() {}
     virtual void UpdatedBalance() {}
     friend void ::RegisterValidationInterface(CValidationInterface*);
     friend void ::UnregisterValidationInterface(CValidationInterface*);
@@ -58,9 +58,9 @@ protected:
 
 struct CMainSignals {
     /** Notifies listeners of updated block chain tip */
-    boost::signals2::signal<void (const CBlockApollon *)> UpdatedBlockTip;
+    boost::signals2::signal<void (const CBlockIndex *)> UpdatedBlockTip;
     /** Notifies listeners of updated transaction data (transaction, and optionally the block it is found in). */
-    boost::signals2::signal<void (const CTransaction &, const CBlockApollon *papollon, const CBlock *)> SyncTransaction;
+    boost::signals2::signal<void (const CTransaction &, const CBlockIndex *pindex, const CBlock *)> SyncTransaction;
     /** Notifies listeners of an updated transaction without new data (for now: a coinbase potentially becoming visible). */
     boost::signals2::signal<void (const CTransaction &)> WalletTransaction;
     /** Notifies listeners of a valid wallet transaction (decoupled from SyncTransaction in order to allow wallet update). */
@@ -81,16 +81,16 @@ struct CMainSignals {
     boost::signals2::signal<void ()> NumConnectionsChanged;
     /** Notifies listeners of change of blockchain syncing state */
     boost::signals2::signal<void ()> UpdateSyncStatus;
-    /** Notifies listeners of change to a Apollonnode entry */
-    boost::signals2::signal<void (CApollonnode &)> UpdatedApollonnode;
+    /** Notifies listeners of change to a Indexnode entry */
+    boost::signals2::signal<void (CIndexnode &)> UpdatedIndexnode;
     /** Notifies listeners of an updated mint status */
     boost::signals2::signal<void (std::string)> UpdatedMintStatus;
     /** Notifies listeners of settings following an update */
     boost::signals2::signal<void (std::string)> UpdatedSettings;
     /** Notifies listeners of API status */
     boost::signals2::signal<void ()> NotifyAPIStatus;
-    /** Notifies listeners of Apollonnode list */
-    boost::signals2::signal<void ()> NotifyApollonnodeList;
+    /** Notifies listeners of Indexnode list */
+    boost::signals2::signal<void ()> NotifyIndexnodeList;
     /** Notifies listeners of balance */
     boost::signals2::signal<void ()> UpdatedBalance;
 };

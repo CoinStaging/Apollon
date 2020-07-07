@@ -65,12 +65,12 @@ bool CheckSigmaTransaction(
   bool fStatefulSigmaCheck,
   CSigmaTxInfo *zerocoinTxInfo);
 
-void DisconnectTipSigma(CBlock &block, CBlockApollon *papollonDelete);
+void DisconnectTipSigma(CBlock &block, CBlockIndex *pindexDelete);
 
 bool ConnectBlockSigma(
   CValidationState& state,
   const CChainParams& chainparams,
-  CBlockApollon* papollonNew,
+  CBlockIndex* pindexNew,
   const CBlock *pblock,
   bool fJustCheck=false);
 
@@ -82,7 +82,7 @@ bool GetOutPoint(COutPoint& outPoint, const sigma::PublicCoin &pubCoin);
 bool GetOutPoint(COutPoint& outPoint, const GroupElement &pubCoinValue);
 bool GetOutPoint(COutPoint& outPoint, const uint256 &pubCoinValueHash);
 
-bool BuildSigmaStateFromApollon(CChain *chain);
+bool BuildSigmaStateFromIndex(CChain *chain);
 
 Scalar GetSigmaSpendSerialNumber(const CTransaction &tx, const CTxIn &txin);
 CAmount GetSigmaSpendInput(const CTransaction &tx);
@@ -91,15 +91,15 @@ CAmount GetSigmaSpendInput(const CTransaction &tx);
  * State of minted/spent coins as extracted from the apollon
  */
 class CSigmaState {
-friend bool BuildSigmaStateFromApollon(CChain *, set<CBlockApollon *> &);
+friend bool BuildSigmaStateFromIndex(CChain *, set<CBlockIndex *> &);
 public:
     // First and last block where mint with given denomination and id was seen
     struct SigmaCoinGroupInfo {
         SigmaCoinGroupInfo() : firstBlock(NULL), lastBlock(NULL), nCoins(0) {}
 
         // first and last blocks having coins with given denomination and id minted
-        CBlockApollon *firstBlock;
-        CBlockApollon *lastBlock;
+        CBlockIndex *firstBlock;
+        CBlockIndex *lastBlock;
         // total number of minted coins with such parameters
         int nCoins;
     };
@@ -116,16 +116,16 @@ public:
     CSigmaState();
 
     // Add mins in block, automatically assigning id to it
-    void AddMintsToStateAndBlockApollon(CBlockApollon *apollon, const CBlock* pblock);
+    void AddMintsToStateAndBlockIndex(CBlockIndex *apollon, const CBlock* pblock);
 
     // Add serial to the list of used ones
     void AddSpend(const Scalar &serial, CoinDenomination denom, int coinGroupId);
 
     // Add everything from the block to the state
-    void AddBlock(CBlockApollon *apollon);
+    void AddBlock(CBlockIndex *apollon);
 
     // Disconnect block from the chain rolling back mints and spends
-    void RemoveBlock(CBlockApollon *apollon);
+    void RemoveBlock(CBlockIndex *apollon);
 
     // Query coin group with given denomination and id
     bool GetCoinGroupInfo(sigma::CoinDenomination denomination,

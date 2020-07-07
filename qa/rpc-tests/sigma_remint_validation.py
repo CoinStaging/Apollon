@@ -18,21 +18,21 @@ class RemintSigmaValidationTest(BitcoinTestFramework):
         return start_nodes(self.num_nodes, self.options.tmpdir)
 
 
-    # 1. All denoms except apollont not acceptable
+    # 1. All denoms except indext not acceptable
     # 2. All other inputs except valid ints not acceptable
     def run_test(self):
         getcontext().prec = 6
         self.nodes[0].generate(101)
         self.sync_all()
 
-        apollon_denoms = [1, 10, 25, 50, 100]
-        for denom in apollon_denoms:
+        index_denoms = [1, 10, 25, 50, 100]
+        for denom in index_denoms:
             self.nodes[0].mintzerocoin(denom)
             self.nodes[0].mintzerocoin(denom)
 
         self.nodes[0].generate(300)
 
-        # 1. All denoms except apollont not acceptable
+        # 1. All denoms except indext not acceptable
         assert_raises(JSONRPCException, self.nodes[0].remintzerocointosigma, 5)
         assert_raises(JSONRPCException, self.nodes[0].remintzerocointosigma, 0.1)
         assert_raises(JSONRPCException, self.nodes[0].remintzerocointosigma, -1)
@@ -43,7 +43,7 @@ class RemintSigmaValidationTest(BitcoinTestFramework):
         assert_raises(JSONRPCException, self.nodes[0].remintzerocointosigma, "test")
         assert_raises(JSONRPCException, self.nodes[0].remintzerocointosigma, [1, "1"])
 
-        for denom in apollon_denoms:
+        for denom in index_denoms:
             try:
                 self.nodes[0].remintzerocointosigma(denom)
                 self.nodes[0].remintzerocointosigma(denom)

@@ -19,12 +19,12 @@ namespace leveldb {
 
 struct TableBuilder::Rep {
   Options options;
-  Options apollon_block_options;
+  Options index_block_options;
   WritableFile* file;
   uint64_t offset;
   Status status;
   BlockBuilder data_block;
-  BlockBuilder apollon_block;
+  BlockBuilder index_block;
   std::string last_key;
   int64_t num_entries;
   bool closed;          // Either Finish() or Abandon() has been called.
@@ -38,25 +38,25 @@ struct TableBuilder::Rep {
   // entries in the first block and < all entries in subsequent
   // blocks.
   //
-  // Invariant: r->pending_apollon_entry is true only if data_block is empty.
-  bool pending_apollon_entry;
+  // Invariant: r->pending_index_entry is true only if data_block is empty.
+  bool pending_index_entry;
   BlockHandle pending_handle;  // Handle to add to apollon block
 
   std::string compressed_output;
 
   Rep(const Options& opt, WritableFile* f)
       : options(opt),
-        apollon_block_options(opt),
+        index_block_options(opt),
         file(f),
         offset(0),
         data_block(&options),
-        apollon_block(&apollon_block_options),
+        index_block(&index_block_options),
         num_entries(0),
         closed(false),
         filter_block(opt.filter_policy == NULL ? NULL
                      : new FilterBlockBuilder(opt.filter_policy)),
-        pending_apollon_entry(false) {
-    apollon_block_options.block_restart_interval = 1;
+        pending_index_entry(false) {
+    index_block_options.block_restart_interval = 1;
   }
 };
 
@@ -84,8 +84,8 @@ Status TableBuilder::ChangeOptions(const Options& options) {
   // Note that any live BlockBuilders point to rep_->options and therefore
   // will automatically pick up the updated options.
   rep_->options = options;
-  rep_->apollon_block_options = options;
-  rep_->apollon_block_options.block_restart_interval = 1;
+  rep_->index_block_options = options;
+  rep_->index_block_options.block_restart_interval = 1;
   return Status::OK();
 }
 
@@ -97,13 +97,13 @@ void TableBuilder::Add(const Slice& key, const Slice& value) {
     assert(r->options.comparator->Compare(key, Slice(r->last_key)) > 0);
   }
 
-  if (r->pending_apollon_entry) {
+  if (r->pending_index_entry) {
     assert(r->data_block.empty());
     r->options.comparator->FindShortestSeparator(&r->last_key, key);
     std::string handle_encoding;
     r->pending_handle.EncodeTo(&handle_encoding);
-    r->apollon_block.Add(r->last_key, Slice(handle_encoding));
-    r->pending_apollon_entry = false;
+    r->index_block.Add(r->last_key, Slice(handle_encoding));
+    r->pending_index_entry = false;
   }
 
   if (r->filter_block != NULL) {
@@ -125,10 +125,10 @@ void TableBuilder::Flush() {
   assert(!r->closed);
   if (!ok()) return;
   if (r->data_block.empty()) return;
-  assert(!r->pending_apollon_entry);
+  assert(!r->pending_index_entry);
   WriteBlock(&r->data_block, &r->pending_handle);
   if (ok()) {
-    r->pending_apollon_entry = true;
+    r->pending_index_entry = true;
     r->status = r->file->Flush();
   }
   if (r->filter_block != NULL) {
@@ -202,7 +202,7 @@ Status TableBuilder::Finish() {
   assert(!r->closed);
   r->closed = true;
 
-  BlockHandle filter_block_handle, metaapollon_block_handle, apollon_block_handle;
+  BlockHandle filter_block_handle, metaindex_block_handle, index_block_handle;
 
   // Write filter block
   if (ok() && r->filter_block != NULL) {
@@ -210,39 +210,39 @@ Status TableBuilder::Finish() {
                   &filter_block_handle);
   }
 
-  // Write metaapollon block
+  // Write metaindex block
   if (ok()) {
-    BlockBuilder meta_apollon_block(&r->options);
+    BlockBuilder meta_index_block(&r->options);
     if (r->filter_block != NULL) {
       // Add mapping from "filter.Name" to location of filter data
       std::string key = "filter.";
       key.append(r->options.filter_policy->Name());
       std::string handle_encoding;
       filter_block_handle.EncodeTo(&handle_encoding);
-      meta_apollon_block.Add(key, handle_encoding);
+      meta_index_block.Add(key, handle_encoding);
     }
 
     // TODO(postrelease): Add stats and other meta blocks
-    WriteBlock(&meta_apollon_block, &metaapollon_block_handle);
+    WriteBlock(&meta_index_block, &metaindex_block_handle);
   }
 
   // Write apollon block
   if (ok()) {
-    if (r->pending_apollon_entry) {
+    if (r->pending_index_entry) {
       r->options.comparator->FindShortSuccessor(&r->last_key);
       std::string handle_encoding;
       r->pending_handle.EncodeTo(&handle_encoding);
-      r->apollon_block.Add(r->last_key, Slice(handle_encoding));
-      r->pending_apollon_entry = false;
+      r->index_block.Add(r->last_key, Slice(handle_encoding));
+      r->pending_index_entry = false;
     }
-    WriteBlock(&r->apollon_block, &apollon_block_handle);
+    WriteBlock(&r->index_block, &index_block_handle);
   }
 
   // Write footer
   if (ok()) {
     Footer footer;
-    footer.set_metaapollon_handle(metaapollon_block_handle);
-    footer.set_apollon_handle(apollon_block_handle);
+    footer.set_metaindex_handle(metaindex_block_handle);
+    footer.set_index_handle(index_block_handle);
     std::string footer_encoding;
     footer.EncodeTo(&footer_encoding);
     r->status = r->file->Append(footer_encoding);

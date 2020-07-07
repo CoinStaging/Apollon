@@ -53,7 +53,7 @@ static uint32_t secp256k1_rand_int(uint32_t range) {
      *   bits numbers until one below M is found, and return it modulo range
      * The second mechanism consumes A more bits of entropy in every iteration,
      * but may need fewer iterations due to M being closer to 2**(B+A) then
-     * range is to 2**B. The array below (apolloned by B) contains a 0 when the
+     * range is to 2**B. The array below (indexed by B) contains a 0 when the
      * first mechanism is to be used, and the number A otherwise.
      */
     static const int addbits[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 1, 0};

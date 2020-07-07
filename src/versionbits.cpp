@@ -21,67 +21,67 @@ const struct BIP9DeploymentInfo VersionBitsDeploymentInfo[Consensus::MAX_VERSION
     }
 };
 
-ThresholdState AbstractThresholdConditionChecker::GetStateFor(const CBlockApollon* papollonPrev, const Consensus::Params& params, ThresholdConditionCache& cache) const
+ThresholdState AbstractThresholdConditionChecker::GetStateFor(const CBlockIndex* pindexPrev, const Consensus::Params& params, ThresholdConditionCache& cache) const
 {
     int nPeriod = Period(params);
     int nThreshold = Threshold(params);
     int64_t nTimeStart = BeginTime(params);
     int64_t nTimeTimeout = EndTime(params);
 
-    // A block's state is always the same as that of the first of its period, so it is computed based on a papollonPrev whose height equals a multiple of nPeriod - 1.
-    if (papollonPrev != NULL) {
-        papollonPrev = papollonPrev->GetAncestor(papollonPrev->nHeight - ((papollonPrev->nHeight + 1) % nPeriod));
+    // A block's state is always the same as that of the first of its period, so it is computed based on a pindexPrev whose height equals a multiple of nPeriod - 1.
+    if (pindexPrev != NULL) {
+        pindexPrev = pindexPrev->GetAncestor(pindexPrev->nHeight - ((pindexPrev->nHeight + 1) % nPeriod));
     }
 
-    // Walk backwards in steps of nPeriod to find a papollonPrev whose information is known
-    std::vector<const CBlockApollon*> vToCompute;
-    while (cache.count(papollonPrev) == 0) {
-        if (papollonPrev == NULL) {
+    // Walk backwards in steps of nPeriod to find a pindexPrev whose information is known
+    std::vector<const CBlockIndex*> vToCompute;
+    while (cache.count(pindexPrev) == 0) {
+        if (pindexPrev == NULL) {
             // The genesis block is by definition defined.
-            cache[papollonPrev] = THRESHOLD_DEFINED;
+            cache[pindexPrev] = THRESHOLD_DEFINED;
             break;
         }
-        if (papollonPrev->GetMedianTimePast() < nTimeStart) {
+        if (pindexPrev->GetMedianTimePast() < nTimeStart) {
             // Optimization: don't recompute down further, as we know every earlier block will be before the start time
-            cache[papollonPrev] = THRESHOLD_DEFINED;
+            cache[pindexPrev] = THRESHOLD_DEFINED;
             break;
         }
-        vToCompute.push_back(papollonPrev);
-        papollonPrev = papollonPrev->GetAncestor(papollonPrev->nHeight - nPeriod);
+        vToCompute.push_back(pindexPrev);
+        pindexPrev = pindexPrev->GetAncestor(pindexPrev->nHeight - nPeriod);
     }
 
-    // At this point, cache[papollonPrev] is known
-    assert(cache.count(papollonPrev));
-    ThresholdState state = cache[papollonPrev];
+    // At this point, cache[pindexPrev] is known
+    assert(cache.count(pindexPrev));
+    ThresholdState state = cache[pindexPrev];
 
-    // Now walk forward and compute the state of descendants of papollonPrev
+    // Now walk forward and compute the state of descendants of pindexPrev
     while (!vToCompute.empty()) {
         ThresholdState stateNext = state;
-        papollonPrev = vToCompute.back();
+        pindexPrev = vToCompute.back();
         vToCompute.pop_back();
 
         switch (state) {
             case THRESHOLD_DEFINED: {
-                if (papollonPrev->GetMedianTimePast() >= nTimeTimeout) {
+                if (pindexPrev->GetMedianTimePast() >= nTimeTimeout) {
                     stateNext = THRESHOLD_FAILED;
-                } else if (papollonPrev->GetMedianTimePast() >= nTimeStart) {
+                } else if (pindexPrev->GetMedianTimePast() >= nTimeStart) {
                     stateNext = THRESHOLD_STARTED;
                 }
                 break;
             }
             case THRESHOLD_STARTED: {
-                if (papollonPrev->GetMedianTimePast() >= nTimeTimeout) {
+                if (pindexPrev->GetMedianTimePast() >= nTimeTimeout) {
                     stateNext = THRESHOLD_FAILED;
                     break;
                 }
                 // We need to count
-                const CBlockApollon* papollonCount = papollonPrev;
+                const CBlockIndex* pindexCount = pindexPrev;
                 int count = 0;
                 for (int i = 0; i < nPeriod; i++) {
-                    if (Condition(papollonCount, params)) {
+                    if (Condition(pindexCount, params)) {
                         count++;
                     }
-                    papollonCount = papollonCount->pprev;
+                    pindexCount = pindexCount->pprev;
                 }
                 if (count >= nThreshold) {
                     stateNext = THRESHOLD_LOCKED_IN;
@@ -99,7 +99,7 @@ ThresholdState AbstractThresholdConditionChecker::GetStateFor(const CBlockApollo
                 break;
             }
         }
-        cache[papollonPrev] = state = stateNext;
+        cache[pindexPrev] = state = stateNext;
     }
 
     return state;
@@ -120,9 +120,9 @@ protected:
     int Period(const Consensus::Params& params) const { return params.nMinerConfirmationWindow; }
     int Threshold(const Consensus::Params& params) const { return params.nRuleChangeActivationThreshold; }
 
-    bool Condition(const CBlockApollon* papollon, const Consensus::Params& params) const
+    bool Condition(const CBlockIndex* pindex, const Consensus::Params& params) const
     {
-        return (((papollon->nVersion & VERSIONBITS_TOP_MASK) == VERSIONBITS_TOP_BITS) && (papollon->nVersion & Mask(params)) != 0);
+        return (((pindex->nVersion & VERSIONBITS_TOP_MASK) == VERSIONBITS_TOP_BITS) && (pindex->nVersion & Mask(params)) != 0);
     }
 
 public:
@@ -132,9 +132,9 @@ public:
 
 }
 
-ThresholdState VersionBitsState(const CBlockApollon* papollonPrev, const Consensus::Params& params, Consensus::DeploymentPos pos, VersionBitsCache& cache)
+ThresholdState VersionBitsState(const CBlockIndex* pindexPrev, const Consensus::Params& params, Consensus::DeploymentPos pos, VersionBitsCache& cache)
 {
-    return VersionBitsConditionChecker(pos).GetStateFor(papollonPrev, params, cache.caches[pos]);
+    return VersionBitsConditionChecker(pos).GetStateFor(pindexPrev, params, cache.caches[pos]);
 }
 
 uint32_t VersionBitsMask(const Consensus::Params& params, Consensus::DeploymentPos pos)

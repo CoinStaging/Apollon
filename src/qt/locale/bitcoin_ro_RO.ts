@@ -150,8 +150,8 @@
         <translation>Deschide &amp;URI...</translation>
     </message>
     <message>
-        <source>Reapolloning blocks on disk...</source>
-        <translation>Se reapollonează blocurile pe disc...</translation>
+        <source>Reindexing blocks on disk...</source>
+        <translation>Se reindexează blocurile pe disc...</translation>
     </message>
     <message>
         <source>Send coins to a Apollon address</source>
@@ -741,7 +741,7 @@
         <translation>&amp;Unitatea de măsură pentru afişarea sumelor:</translation>
     </message>
     <message>
-        <source>Choose the default subdivision unit to show in the interface and when sending apollons.</source>
+        <source>Choose the default subdivision unit to show in the interface and when sending indexs.</source>
         <translation>Alegeţi subdiviziunea folosită la afişarea interfeţei şi la trimiterea de apollon.</translation>
     </message>
     <message>

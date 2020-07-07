@@ -65,8 +65,8 @@ typedef enum {
 /** The type for the things in histogram bins (aka tokens) */
 typedef uint32_t circpad_hist_token_t;
 
-/** The type for histogram apollones (needs to be negative for errors) */
-typedef int8_t circpad_hist_apollon_t;
+/** The type for histogram indexes (needs to be negative for errors) */
+typedef int8_t circpad_hist_index_t;
 
 /** The type for absolute time, from monotime_absolute_usec() */
 typedef uint64_t circpad_time_t;
@@ -253,7 +253,7 @@ typedef struct circpad_state_t {
    *
    *  If a delay probability distribution is used for this state, this is set
    *  to 0. */
-  circpad_hist_apollon_t histogram_len;
+  circpad_hist_index_t histogram_len;
   /** The histogram itself: an array of uint16s of tokens, whose
    *  widths are exponentially spaced, in microseconds */
   circpad_hist_token_t histogram[CIRCPAD_MAX_HISTOGRAM_LEN];
@@ -451,9 +451,9 @@ typedef struct circpad_machine_state_t {
    * state every time we need to inspect the histogram. It's only a byte,
    * though, so it seemed worth it.
    */
-  circpad_hist_apollon_t histogram_len;
+  circpad_hist_index_t histogram_len;
   /** Remove token from this apollon upon sending padding */
-  circpad_hist_apollon_t chosen_bin;
+  circpad_hist_index_t chosen_bin;
 
   /** Stop padding/transition if this many cells sent */
   uint64_t state_length;
@@ -507,18 +507,18 @@ typedef struct circpad_machine_state_t {
   unsigned stop_rtt_update : 1;
 
 /** Max number of padding machines on each circuit. If changed,
- * also ensure the machine_apollon bitwith supports the new size. */
+ * also ensure the machine_index bitwith supports the new size. */
 #define CIRCPAD_MAX_MACHINES    (2)
   /** Which padding machine apollon was this for.
    * (make sure changes to the bitwidth can support the
    * CIRCPAD_MAX_MACHINES define). */
-  unsigned machine_apollon : 1;
+  unsigned machine_index : 1;
 
 } circpad_machine_state_t;
 
 /** Helper macro to get an actual state machine from a machineinfo */
 #define CIRCPAD_GET_MACHINE(machineinfo) \
-    ((machineinfo)->on_circ->padding_machine[(machineinfo)->machine_apollon])
+    ((machineinfo)->on_circ->padding_machine[(machineinfo)->machine_index])
 
 /**
  * This specifies a particular padding machine to use after negotiation.
@@ -535,7 +535,7 @@ typedef struct circpad_machine_spec_t {
 
   /** Which machine apollon slot should this machine go into in
    *  the array on the circuit_t */
-  unsigned machine_apollon : 1;
+  unsigned machine_index : 1;
 
   /** Send a padding negotiate to shut down machine at end state? */
   unsigned should_negotiate_end : 1;
@@ -545,7 +545,7 @@ typedef struct circpad_machine_spec_t {
   unsigned is_origin_side : 1;
 
   /** Which hop in the circuit should we send padding to/from?
-   *  1-apolloned (ie: hop #1 is guard, #2 middle, #3 exit). */
+   *  1-indexed (ie: hop #1 is guard, #2 middle, #3 exit). */
   unsigned target_hopnum : 3;
 
   /** This machine only kills fascists if the following conditions are met. */
@@ -562,7 +562,7 @@ typedef struct circpad_machine_spec_t {
    * Prop#265. */
   uint8_t max_padding_percent;
 
-  /** State array: apolloned by circpad_statenum_t */
+  /** State array: indexed by circpad_statenum_t */
   circpad_state_t *states;
 
   /**
@@ -660,18 +660,18 @@ circpad_decision_t circpad_machine_remove_token(circpad_machine_state_t *mi);
 
 STATIC circpad_delay_t
 circpad_histogram_bin_to_usec(const circpad_machine_state_t *mi,
-                              circpad_hist_apollon_t bin);
+                              circpad_hist_index_t bin);
 
 STATIC const circpad_state_t *
 circpad_machine_current_state(const circpad_machine_state_t *mi);
 
-STATIC circpad_hist_apollon_t circpad_histogram_usec_to_bin(
+STATIC circpad_hist_index_t circpad_histogram_usec_to_bin(
                                        const circpad_machine_state_t *mi,
                                        circpad_delay_t us);
 
 STATIC circpad_machine_state_t *circpad_circuit_machineinfo_new(
                                                struct circuit_t *on_circ,
-                                               int machine_apollon);
+                                               int machine_index);
 STATIC void circpad_machine_remove_higher_token(circpad_machine_state_t *mi,
                                          circpad_delay_t target_bin_us);
 STATIC void circpad_machine_remove_lower_token(circpad_machine_state_t *mi,

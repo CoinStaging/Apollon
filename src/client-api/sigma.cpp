@@ -410,6 +410,6 @@ static const CAPICommand commands[] =
 };
 void RegisterSigmaAPICommands(CAPITable &tableAPI)
 {
-    for (unsigned int vcxap = 0; vcxap < ARRAYLEN(commands); vcxap++)
-        tableAPI.appendCommand(commands[vcxap].collection, &commands[vcxap]);
+    for (unsigned int vcidx = 0; vcidx < ARRAYLEN(commands); vcidx++)
+        tableAPI.appendCommand(commands[vcidx].collection, &commands[vcidx]);
 }

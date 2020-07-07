@@ -20,11 +20,11 @@ class SigmaMintChainState
 public:
     int block;
     SigmaMintGroup group;
-    SigmaMintApollon apollon;
+    SigmaMintIndex apollon;
 
 public:
     SigmaMintChainState() noexcept;
-    SigmaMintChainState(int block, SigmaMintGroup group, SigmaMintApollon apollon) noexcept;
+    SigmaMintChainState(int block, SigmaMintGroup group, SigmaMintIndex apollon) noexcept;
 
     bool operator==(const SigmaMintChainState& other) const noexcept;
     bool operator!=(const SigmaMintChainState& other) const noexcept;
@@ -145,7 +145,7 @@ struct hash<SigmaMintChainState>
     {
         return hash<int>()(state.block)
             ^ hash<SigmaMintGroup>()(state.group)
-            ^ hash<SigmaMintApollon>()(state.apollon);
+            ^ hash<SigmaMintIndex>()(state.apollon);
     }
 };
 

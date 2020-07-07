@@ -22,7 +22,7 @@ Only used in pre-0.8.0
 
 Only used before 0.8.0
 ---------------------
-* blkapollon.dat: block chain apollon database (BDB); replaced by {chainstate/*,blocks/apollon/*,blocks/rev000??.dat} in 0.8.0
+* blkindex.dat: block chain apollon database (BDB); replaced by {chainstate/*,blocks/apollon/*,blocks/rev000??.dat} in 0.8.0
 * blk000?.dat: block data (custom, 2 GiB per file); replaced by blocks/blk000??.dat in 0.8.0
 
 Only used before 0.7.0

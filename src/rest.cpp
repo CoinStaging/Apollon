@@ -59,11 +59,11 @@ struct CCoin {
 };
 
 extern void TxToJSON(const CTransaction& tx, const uint256 hashBlock, UniValue& entry);
-extern UniValue blockToJSON(const CBlock& block, const CBlockApollon* blockapollon, bool txDetails = false);
+extern UniValue blockToJSON(const CBlock& block, const CBlockIndex* blockindex, bool txDetails = false);
 extern UniValue mempoolInfoToJSON();
 extern UniValue mempoolToJSON(bool fVerbose = false);
 extern void ScriptPubKeyToJSON(const CScript& scriptPubKey, UniValue& out, bool fIncludeHex);
-extern UniValue blockheaderToJSON(const CBlockApollon* blockapollon);
+extern UniValue blockheaderToJSON(const CBlockIndex* blockindex);
 
 static bool RESTERR(HTTPRequest* req, enum HTTPStatusCode status, string message)
 {
@@ -148,24 +148,24 @@ static bool rest_headers(HTTPRequest* req,
     if (!ParseHashStr(hashStr, hash))
         return RESTERR(req, HTTP_BAD_REQUEST, "Invalid hash: " + hashStr);
 
-    std::vector<const CBlockApollon *> headers;
+    std::vector<const CBlockIndex *> headers;
     headers.reserve(count);
     {
         LOCK(cs_main);
-        BlockMap::const_iterator it = mapBlockApollon.find(hash);
-        const CBlockApollon *papollon = (it != mapBlockApollon.end()) ? it->second : NULL;
-        while (papollon != NULL && chainActive.Contains(papollon)) {
-            headers.push_back(papollon);
+        BlockMap::const_iterator it = mapBlockIndex.find(hash);
+        const CBlockIndex *pindex = (it != mapBlockIndex.end()) ? it->second : NULL;
+        while (pindex != NULL && chainActive.Contains(pindex)) {
+            headers.push_back(pindex);
             if (headers.size() == (unsigned long)count)
                 break;
-            papollon = chainActive.Next(papollon);
+            pindex = chainActive.Next(pindex);
         }
     }
 
     CDataStream ssHeader(SER_NETWORK, PROTOCOL_VERSION);
-    BOOST_FOREACH(const CBlockApollon *papollon, headers) {
+    BOOST_FOREACH(const CBlockIndex *pindex, headers) {
     	CBlock block;
-    	ReadBlockFromDisk(block, papollon, Params().GetConsensus());
+    	ReadBlockFromDisk(block, pindex, Params().GetConsensus());
         ssHeader << block.GetBlockHeader();
     }
 
@@ -185,8 +185,8 @@ static bool rest_headers(HTTPRequest* req,
     }
     case RF_JSON: {
         UniValue jsonHeaders(UniValue::VARR);
-        BOOST_FOREACH(const CBlockApollon *papollon, headers) {
-            jsonHeaders.push_back(blockheaderToJSON(papollon));
+        BOOST_FOREACH(const CBlockIndex *pindex, headers) {
+            jsonHeaders.push_back(blockheaderToJSON(pindex));
         }
         string strJSON = jsonHeaders.write() + "\n";
         req->WriteHeader("Content-Type", "application/json");
@@ -216,17 +216,17 @@ static bool rest_block(HTTPRequest* req,
         return RESTERR(req, HTTP_BAD_REQUEST, "Invalid hash: " + hashStr);
 
     CBlock block;
-    CBlockApollon* pblockapollon = NULL;
+    CBlockIndex* pblockindex = NULL;
     {
         LOCK(cs_main);
-        if (mapBlockApollon.count(hash) == 0)
+        if (mapBlockIndex.count(hash) == 0)
             return RESTERR(req, HTTP_NOT_FOUND, hashStr + " not found");
 
-        pblockapollon = mapBlockApollon[hash];
-        if (fHavePruned && !(pblockapollon->nStatus & BLOCK_HAVE_DATA) && pblockapollon->nTx > 0)
+        pblockindex = mapBlockIndex[hash];
+        if (fHavePruned && !(pblockindex->nStatus & BLOCK_HAVE_DATA) && pblockindex->nTx > 0)
             return RESTERR(req, HTTP_NOT_FOUND, hashStr + " not available (pruned data)");
 
-        if (!ReadBlockFromDisk(block, pblockapollon, Params().GetConsensus()))
+        if (!ReadBlockFromDisk(block, pblockindex, Params().GetConsensus()))
             return RESTERR(req, HTTP_NOT_FOUND, hashStr + " not found");
     }
 
@@ -249,7 +249,7 @@ static bool rest_block(HTTPRequest* req,
     }
 
     case RF_JSON: {
-        UniValue objBlock = blockToJSON(block, pblockapollon, showTxDetails);
+        UniValue objBlock = blockToJSON(block, pblockindex, showTxDetails);
         string strJSON = objBlock.write() + "\n";
         req->WriteHeader("Content-Type", "application/json");
         req->WriteReply(HTTP_OK, strJSON);

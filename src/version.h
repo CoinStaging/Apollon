@@ -20,7 +20,7 @@ static const int GETHEADERS_VERSION = 90020;
 //! disconnect from peers older than this proto version
 static const int MIN_PEER_PROTO_VERSION = PROTOCOL_VERSION - 1;
 
-//! disconnect from all older peers after Apollonnode payment HF
+//! disconnect from all older peers after Indexnode payment HF
 static const int MIN_PEER_PROTO_VERSION_AFTER_UPDATE = PROTOCOL_VERSION;
 
 //! nTime field added to CAddress, starting with this version;

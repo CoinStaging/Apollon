@@ -23,7 +23,7 @@ packages:
 - "python"
 - "rename"
 remotes:
-- "url": "https://github.com/ApollonChain/Apollon"
+- "url": "https://github.com/IndexChain/Apollon"
   "dir": "Apollon"
 files: []
 script: |

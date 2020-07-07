@@ -4,7 +4,7 @@
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #
-# Test -reapollon and -reapollon-chainstate with CheckBlockIndex
+# Test -reindex and -reindex-chainstate with CheckBlockIndex
 #
 from test_framework.test_framework import BitcoinTestFramework
 from test_framework.util import (
@@ -14,7 +14,7 @@ from test_framework.util import (
 )
 import time
 
-class ReapollonTest(BitcoinTestFramework):
+class ReindexTest(BitcoinTestFramework):
 
     def __init__(self):
         super().__init__()
@@ -24,11 +24,11 @@ class ReapollonTest(BitcoinTestFramework):
     def setup_network(self):
         self.nodes = start_nodes(self.num_nodes, self.options.tmpdir)
 
-    def reapollon(self, justchainstate=False):
+    def reindex(self, justchainstate=False):
         self.nodes[0].generate(3)
         blockcount = self.nodes[0].getblockcount()
         stop_nodes(self.nodes)
-        extra_args = [["-debug", "-reapollon-chainstate" if justchainstate else "-reapollon", "-checkblockapollon=1"]]
+        extra_args = [["-debug", "-reindex-chainstate" if justchainstate else "-reindex", "-checkblockindex=1"]]
         self.nodes = start_nodes(self.num_nodes, self.options.tmpdir, extra_args)
         while self.nodes[0].getblockcount() < blockcount:
             time.sleep(0.1)
@@ -36,10 +36,10 @@ class ReapollonTest(BitcoinTestFramework):
         print("Success")
 
     def run_test(self):
-        self.reapollon(False)
-        self.reapollon(True)
-        self.reapollon(False)
-        self.reapollon(True)
+        self.reindex(False)
+        self.reindex(True)
+        self.reindex(False)
+        self.reindex(True)
 
 if __name__ == '__main__':
-    ReapollonTest().main()
+    ReindexTest().main()

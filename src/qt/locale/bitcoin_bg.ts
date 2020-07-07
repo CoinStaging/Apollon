@@ -162,7 +162,7 @@
         <translation>Отвори &amp;URI...</translation>
     </message>
     <message>
-        <source>Reapolloning blocks on disk...</source>
+        <source>Reindexing blocks on disk...</source>
         <translation>Повторно индексиране на блоковете на диска...</translation>
     </message>
     <message>
@@ -266,7 +266,7 @@
         <translation><numerusform>%n активна връзка към Биткойн мрежата</numerusform><numerusform>%n активни връзки към Биткойн мрежата</numerusform></translation>
     </message>
     <message>
-        <source>Apolloning blocks on disk...</source>
+        <source>Indexing blocks on disk...</source>
         <translation>Индексиране на блокове на диска...</translation>
     </message>
     <message>

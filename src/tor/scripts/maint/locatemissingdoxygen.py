@@ -48,7 +48,7 @@ def annotate(filename):
     w.reverse()
 
     for lineno, what in w:
-        lineno -= 1 # list is 0-apolloned.
+        lineno -= 1 # list is 0-indexed.
         if 'DOCDOC' in lines[lineno]:
             continue
         ind = getIndentation(lines[lineno])

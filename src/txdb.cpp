@@ -21,16 +21,16 @@ using namespace std;
 
 static const char DB_COINS = 'c';
 static const char DB_BLOCK_FILES = 'f';
-static const char DB_TXAPOLLON = 't';
-static const char DB_ADDRESSAPOLLON = 'a';
-static const char DB_ADDRESSUNSPENTAPOLLON = 'u';
-static const char DB_TIMESTAMPAPOLLON = 's';
-static const char DB_SPENTAPOLLON = 'p';
-static const char DB_BLOCK_APOLLON = 'b';
+static const char DB_TXINDEX = 't';
+static const char DB_ADDRESSINDEX = 'a';
+static const char DB_ADDRESSUNSPENTINDEX = 'u';
+static const char DB_TIMESTAMPINDEX = 's';
+static const char DB_SPENTINDEX = 'p';
+static const char DB_BLOCK_INDEX = 'b';
 
 static const char DB_BEST_BLOCK = 'B';
 static const char DB_FLAG = 'F';
-static const char DB_REAPOLLON_FLAG = 'R';
+static const char DB_REINDEX_FLAG = 'R';
 static const char DB_LAST_BLOCK = 'l';
 static const char DB_TOTAL_SUPPLY = 'S';
 
@@ -84,15 +84,15 @@ bool CBlockTreeDB::ReadBlockFileInfo(int nFile, CBlockFileInfo &info) {
     return Read(make_pair(DB_BLOCK_FILES, nFile), info);
 }
 
-bool CBlockTreeDB::WriteReapolloning(bool fReapolloning) {
-    if (fReapolloning)
-        return Write(DB_REAPOLLON_FLAG, '1');
+bool CBlockTreeDB::WriteReindexing(bool fReindexing) {
+    if (fReindexing)
+        return Write(DB_REINDEX_FLAG, '1');
     else
-        return Erase(DB_REAPOLLON_FLAG);
+        return Erase(DB_REINDEX_FLAG);
 }
 
-bool CBlockTreeDB::ReadReapolloning(bool &fReapolloning) {
-    fReapolloning = Exists(DB_REAPOLLON_FLAG);
+bool CBlockTreeDB::ReadReindexing(bool &fReindexing) {
+    fReindexing = Exists(DB_REINDEX_FLAG);
     return true;
 }
 
@@ -144,68 +144,68 @@ void CCoinsViewDBCursor::Next()
         keyTmp.first = 0; // Invalidate cached key after last record so that Valid() and GetKey() return false
 }
 
-bool CBlockTreeDB::WriteBatchSync(const std::vector<std::pair<int, const CBlockFileInfo*> >& fileInfo, int nLastFile, const std::vector<const CBlockApollon*>& blockinfo) {
+bool CBlockTreeDB::WriteBatchSync(const std::vector<std::pair<int, const CBlockFileInfo*> >& fileInfo, int nLastFile, const std::vector<const CBlockIndex*>& blockinfo) {
     CDBBatch batch(*this);
     for (std::vector<std::pair<int, const CBlockFileInfo*> >::const_iterator it=fileInfo.begin(); it != fileInfo.end(); it++) {
         batch.Write(make_pair(DB_BLOCK_FILES, it->first), *it->second);
     }
     batch.Write(DB_LAST_BLOCK, nLastFile);
-    for (std::vector<const CBlockApollon*>::const_iterator it=blockinfo.begin(); it != blockinfo.end(); it++) {
-    	batch.Write(make_pair(DB_BLOCK_APOLLON, (*it)->GetBlockHash()), CDiskBlockApollon(*it));
+    for (std::vector<const CBlockIndex*>::const_iterator it=blockinfo.begin(); it != blockinfo.end(); it++) {
+    	batch.Write(make_pair(DB_BLOCK_INDEX, (*it)->GetBlockHash()), CDiskBlockIndex(*it));
     }
     return WriteBatch(batch, true);
 }
 
-bool CBlockTreeDB::ReadTxApollon(const uint256 &txid, CDiskTxPos &pos) {
-    return Read(make_pair(DB_TXAPOLLON, txid), pos);
+bool CBlockTreeDB::ReadTxIndex(const uint256 &txid, CDiskTxPos &pos) {
+    return Read(make_pair(DB_TXINDEX, txid), pos);
 }
 
-bool CBlockTreeDB::WriteTxApollon(const std::vector<std::pair<uint256, CDiskTxPos> >&vect) {
+bool CBlockTreeDB::WriteTxIndex(const std::vector<std::pair<uint256, CDiskTxPos> >&vect) {
     CDBBatch batch(*this);
     for (std::vector<std::pair<uint256,CDiskTxPos> >::const_iterator it=vect.begin(); it!=vect.end(); it++)
-        batch.Write(make_pair(DB_TXAPOLLON, it->first), it->second);
+        batch.Write(make_pair(DB_TXINDEX, it->first), it->second);
     return WriteBatch(batch);
 }
 
-bool CBlockTreeDB::ReadSpentApollon(CSpentApollonKey &key, CSpentApollonValue &value) {
-    return Read(make_pair(DB_SPENTAPOLLON, key), value);
+bool CBlockTreeDB::ReadSpentIndex(CSpentIndexKey &key, CSpentIndexValue &value) {
+    return Read(make_pair(DB_SPENTINDEX, key), value);
 }
 
-bool CBlockTreeDB::UpdateSpentApollon(const std::vector<std::pair<CSpentApollonKey, CSpentApollonValue> >&vect) {
+bool CBlockTreeDB::UpdateSpentIndex(const std::vector<std::pair<CSpentIndexKey, CSpentIndexValue> >&vect) {
     CDBBatch batch(*this);
-    for (std::vector<std::pair<CSpentApollonKey,CSpentApollonValue> >::const_iterator it=vect.begin(); it!=vect.end(); it++) {
+    for (std::vector<std::pair<CSpentIndexKey,CSpentIndexValue> >::const_iterator it=vect.begin(); it!=vect.end(); it++) {
         if (it->second.IsNull()) {
-            batch.Erase(make_pair(DB_SPENTAPOLLON, it->first));
+            batch.Erase(make_pair(DB_SPENTINDEX, it->first));
         } else {
-            batch.Write(make_pair(DB_SPENTAPOLLON, it->first), it->second);
+            batch.Write(make_pair(DB_SPENTINDEX, it->first), it->second);
         }
     }
     return WriteBatch(batch);
 }
 
-bool CBlockTreeDB::UpdateAddressUnspentApollon(const std::vector<std::pair<CAddressUnspentKey, CAddressUnspentValue > >&vect) {
+bool CBlockTreeDB::UpdateAddressUnspentIndex(const std::vector<std::pair<CAddressUnspentKey, CAddressUnspentValue > >&vect) {
     CDBBatch batch(*this);
     for (std::vector<std::pair<CAddressUnspentKey, CAddressUnspentValue> >::const_iterator it=vect.begin(); it!=vect.end(); it++) {
         if (it->second.IsNull()) {
-            batch.Erase(make_pair(DB_ADDRESSUNSPENTAPOLLON, it->first));
+            batch.Erase(make_pair(DB_ADDRESSUNSPENTINDEX, it->first));
         } else {
-            batch.Write(make_pair(DB_ADDRESSUNSPENTAPOLLON, it->first), it->second);
+            batch.Write(make_pair(DB_ADDRESSUNSPENTINDEX, it->first), it->second);
         }
     }
     return WriteBatch(batch);
 }
 
-bool CBlockTreeDB::ReadAddressUnspentApollon(uint160 addressHash, AddressType type,
+bool CBlockTreeDB::ReadAddressUnspentIndex(uint160 addressHash, AddressType type,
                                            std::vector<std::pair<CAddressUnspentKey, CAddressUnspentValue> > &unspentOutputs) {
 
     boost::scoped_ptr<CDBIterator> pcursor(NewIterator());
 
-    pcursor->Seek(make_pair(DB_ADDRESSUNSPENTAPOLLON, CAddressApollonIteratorKey(type, addressHash)));
+    pcursor->Seek(make_pair(DB_ADDRESSUNSPENTINDEX, CAddressIndexIteratorKey(type, addressHash)));
 
     while (pcursor->Valid()) {
         boost::this_thread::interruption_point();
         std::pair<char,CAddressUnspentKey> key;
-        if (pcursor->GetKey(key) && key.first == DB_ADDRESSUNSPENTAPOLLON && key.second.hashBytes == addressHash) {
+        if (pcursor->GetKey(key) && key.first == DB_ADDRESSUNSPENTINDEX && key.second.hashBytes == addressHash) {
             CAddressUnspentValue nValue;
             if (pcursor->GetValue(nValue)) {
                 unspentOutputs.push_back(make_pair(key.second, nValue));
@@ -221,42 +221,42 @@ bool CBlockTreeDB::ReadAddressUnspentApollon(uint160 addressHash, AddressType ty
     return true;
 }
 
-bool CBlockTreeDB::WriteAddressApollon(const std::vector<std::pair<CAddressApollonKey, CAmount > >&vect) {
+bool CBlockTreeDB::WriteAddressIndex(const std::vector<std::pair<CAddressIndexKey, CAmount > >&vect) {
     CDBBatch batch(*this);
-    for (std::vector<std::pair<CAddressApollonKey, CAmount> >::const_iterator it=vect.begin(); it!=vect.end(); it++)
-    batch.Write(make_pair(DB_ADDRESSAPOLLON, it->first), it->second);
+    for (std::vector<std::pair<CAddressIndexKey, CAmount> >::const_iterator it=vect.begin(); it!=vect.end(); it++)
+    batch.Write(make_pair(DB_ADDRESSINDEX, it->first), it->second);
     return WriteBatch(batch);
 }
 
-bool CBlockTreeDB::EraseAddressApollon(const std::vector<std::pair<CAddressApollonKey, CAmount > >&vect) {
+bool CBlockTreeDB::EraseAddressIndex(const std::vector<std::pair<CAddressIndexKey, CAmount > >&vect) {
     CDBBatch batch(*this);
-    for (std::vector<std::pair<CAddressApollonKey, CAmount> >::const_iterator it=vect.begin(); it!=vect.end(); it++)
-    batch.Erase(make_pair(DB_ADDRESSAPOLLON, it->first));
+    for (std::vector<std::pair<CAddressIndexKey, CAmount> >::const_iterator it=vect.begin(); it!=vect.end(); it++)
+    batch.Erase(make_pair(DB_ADDRESSINDEX, it->first));
     return WriteBatch(batch);
 }
 
-bool CBlockTreeDB::ReadAddressApollon(uint160 addressHash, AddressType type,
-                                    std::vector<std::pair<CAddressApollonKey, CAmount> > &addressApollon,
+bool CBlockTreeDB::ReadAddressIndex(uint160 addressHash, AddressType type,
+                                    std::vector<std::pair<CAddressIndexKey, CAmount> > &addressIndex,
                                     int start, int end) {
 
     boost::scoped_ptr<CDBIterator> pcursor(NewIterator());
 
     if (start > 0 && end > 0) {
-        pcursor->Seek(make_pair(DB_ADDRESSAPOLLON, CAddressApollonIteratorHeightKey(type, addressHash, start)));
+        pcursor->Seek(make_pair(DB_ADDRESSINDEX, CAddressIndexIteratorHeightKey(type, addressHash, start)));
     } else {
-        pcursor->Seek(make_pair(DB_ADDRESSAPOLLON, CAddressApollonIteratorKey(type, addressHash)));
+        pcursor->Seek(make_pair(DB_ADDRESSINDEX, CAddressIndexIteratorKey(type, addressHash)));
     }
 
     while (pcursor->Valid()) {
         boost::this_thread::interruption_point();
-        std::pair<char,CAddressApollonKey> key;
-        if (pcursor->GetKey(key) && key.first == DB_ADDRESSAPOLLON && key.second.hashBytes == addressHash && key.second.type == type) {
+        std::pair<char,CAddressIndexKey> key;
+        if (pcursor->GetKey(key) && key.first == DB_ADDRESSINDEX && key.second.hashBytes == addressHash && key.second.type == type) {
             if (end > 0 && key.second.blockHeight > end) {
                 break;
             }
             CAmount nValue;
             if (pcursor->GetValue(nValue)) {
-                addressApollon.push_back(make_pair(key.second, nValue));
+                addressIndex.push_back(make_pair(key.second, nValue));
                 pcursor->Next();
             } else {
                 return error("failed to get address apollon value");
@@ -270,22 +270,22 @@ bool CBlockTreeDB::ReadAddressApollon(uint160 addressHash, AddressType type,
 }
 
 
-bool CBlockTreeDB::WriteTimestampApollon(const CTimestampApollonKey &timestampApollon) {
+bool CBlockTreeDB::WriteTimestampIndex(const CTimestampIndexKey &timestampIndex) {
     CDBBatch batch(*this);
-    batch.Write(make_pair(DB_TIMESTAMPAPOLLON, timestampApollon), 0);
+    batch.Write(make_pair(DB_TIMESTAMPINDEX, timestampIndex), 0);
     return WriteBatch(batch);
 }
 
-bool CBlockTreeDB::ReadTimestampApollon(const unsigned int &high, const unsigned int &low, std::vector<uint256> &hashes) {
+bool CBlockTreeDB::ReadTimestampIndex(const unsigned int &high, const unsigned int &low, std::vector<uint256> &hashes) {
 
     boost::scoped_ptr<CDBIterator> pcursor(NewIterator());
 
-    pcursor->Seek(make_pair(DB_TIMESTAMPAPOLLON, CTimestampApollonIteratorKey(low)));
+    pcursor->Seek(make_pair(DB_TIMESTAMPINDEX, CTimestampIndexIteratorKey(low)));
 
     while (pcursor->Valid()) {
         boost::this_thread::interruption_point();
-        std::pair<char, CTimestampApollonKey> key;
-        if (pcursor->GetKey(key) && key.first == DB_TIMESTAMPAPOLLON && key.second.timestamp <= high) {
+        std::pair<char, CTimestampIndexKey> key;
+        if (pcursor->GetKey(key) && key.first == DB_TIMESTAMPINDEX && key.second.timestamp <= high) {
             hashes.push_back(key.second.blockHash);
             pcursor->Next();
         } else {
@@ -308,56 +308,56 @@ bool CBlockTreeDB::ReadFlag(const std::string &name, bool &fValue) {
     return true;
 }
 
-bool CBlockTreeDB::LoadBlockApollonGuts(boost::function<CBlockApollon*(const uint256&)> insertBlockApollon)
+bool CBlockTreeDB::LoadBlockIndexGuts(boost::function<CBlockIndex*(const uint256&)> insertBlockIndex)
 {
     auto consensusParams = Params().GetConsensus();
-    LogPrintf("CBlockTreeDB::LoadBlockApollonGuts\n");
+    LogPrintf("CBlockTreeDB::LoadBlockIndexGuts\n");
     //bool fTestNet = (Params().NetworkIDString() == CBaseChainParams::TESTNET);
     boost::scoped_ptr<CDBIterator> pcursor(NewIterator());
 
-    pcursor->Seek(make_pair(DB_BLOCK_APOLLON, uint256()));
+    pcursor->Seek(make_pair(DB_BLOCK_INDEX, uint256()));
 
-    // Load mapBlockApollon
+    // Load mapBlockIndex
     while (pcursor->Valid()) {
         boost::this_thread::interruption_point();
         std::pair<char, uint256> key;
-        if (pcursor->GetKey(key) && key.first == DB_BLOCK_APOLLON) {
-            CDiskBlockApollon diskapollon;
-            if (pcursor->GetValue(diskapollon)) {
+        if (pcursor->GetKey(key) && key.first == DB_BLOCK_INDEX) {
+            CDiskBlockIndex diskindex;
+            if (pcursor->GetValue(diskindex)) {
                 // Construct block apollon object
-            	//if(diskapollon.hashBlock != uint256()
-            	//	&& diskapollon.hashPrev != uint256()){
+            	//if(diskindex.hashBlock != uint256()
+            	//	&& diskindex.hashPrev != uint256()){
 
-                CBlockApollon* papollonNew    = insertBlockApollon(diskapollon.GetBlockHash());
-                papollonNew->pprev 		  = insertBlockApollon(diskapollon.hashPrev);
+                CBlockIndex* pindexNew    = insertBlockIndex(diskindex.GetBlockHash());
+                pindexNew->pprev 		  = insertBlockIndex(diskindex.hashPrev);
 
-                papollonNew->nHeight        = diskapollon.nHeight;
-                papollonNew->nFile          = diskapollon.nFile;
-                papollonNew->nDataPos       = diskapollon.nDataPos;
-                papollonNew->nUndoPos       = diskapollon.nUndoPos;
-                papollonNew->nVersion       = diskapollon.nVersion;
-                papollonNew->hashMerkleRoot = diskapollon.hashMerkleRoot;
-                papollonNew->nTime          = diskapollon.nTime;
-                papollonNew->nBits          = diskapollon.nBits;
-                papollonNew->nNonce         = diskapollon.nNonce;
-                papollonNew->nStatus        = diskapollon.nStatus;
-                papollonNew->nTx            = diskapollon.nTx;
+                pindexNew->nHeight        = diskindex.nHeight;
+                pindexNew->nFile          = diskindex.nFile;
+                pindexNew->nDataPos       = diskindex.nDataPos;
+                pindexNew->nUndoPos       = diskindex.nUndoPos;
+                pindexNew->nVersion       = diskindex.nVersion;
+                pindexNew->hashMerkleRoot = diskindex.hashMerkleRoot;
+                pindexNew->nTime          = diskindex.nTime;
+                pindexNew->nBits          = diskindex.nBits;
+                pindexNew->nNonce         = diskindex.nNonce;
+                pindexNew->nStatus        = diskindex.nStatus;
+                pindexNew->nTx            = diskindex.nTx;
 
-                papollonNew->accumulatorChanges = diskapollon.accumulatorChanges;
-                papollonNew->mintedPubCoins     = diskapollon.mintedPubCoins;
-                papollonNew->spentSerials       = diskapollon.spentSerials;
+                pindexNew->accumulatorChanges = diskindex.accumulatorChanges;
+                pindexNew->mintedPubCoins     = diskindex.mintedPubCoins;
+                pindexNew->spentSerials       = diskindex.spentSerials;
 
-                papollonNew->sigmaMintedPubCoins   = diskapollon.sigmaMintedPubCoins;
-                papollonNew->sigmaSpentSerials     = diskapollon.sigmaSpentSerials;
-                papollonNew->nStakeModifier = diskapollon.nStakeModifier;
-                papollonNew->vchBlockSig    = diskapollon.vchBlockSig; // qtum
+                pindexNew->sigmaMintedPubCoins   = diskindex.sigmaMintedPubCoins;
+                pindexNew->sigmaSpentSerials     = diskindex.sigmaSpentSerials;
+                pindexNew->nStakeModifier = diskindex.nStakeModifier;
+                pindexNew->vchBlockSig    = diskindex.vchBlockSig; // qtum
 
-                if (papollonNew->nNonce != 0 && !CheckProofOfWork(papollonNew->GetBlockHash(), papollonNew->nBits, consensusParams))
-                        return error("LoadBlockApollon(): CheckProofOfWork failed: %s", papollonNew->ToString());
+                if (pindexNew->nNonce != 0 && !CheckProofOfWork(pindexNew->GetBlockHash(), pindexNew->nBits, consensusParams))
+                        return error("LoadBlockIndex(): CheckProofOfWork failed: %s", pindexNew->ToString());
 
                 pcursor->Next();
             } else {
-                return error("LoadBlockApollon() : failed to read value");
+                return error("LoadBlockIndex() : failed to read value");
             }
         } else {
             break;
@@ -367,31 +367,31 @@ bool CBlockTreeDB::LoadBlockApollonGuts(boost::function<CBlockApollon*(const uin
     return true;
 }
 
-int CBlockTreeDB::GetBlockApollonVersion()
+int CBlockTreeDB::GetBlockIndexVersion()
 {
     // Get random block apollon entry, check its version. The only reason for these functions to exist
     // is to check if the apollon is from previous version and needs to be rebuilt. Comparison of ANY
-    // record version to threshold value would be enough to decide if reapollon is needed.
+    // record version to threshold value would be enough to decide if reindex is needed.
 
-    return GetBlockApollonVersion(uint256());
+    return GetBlockIndexVersion(uint256());
 }
 
-int CBlockTreeDB::GetBlockApollonVersion(uint256 const & blockHash)
+int CBlockTreeDB::GetBlockIndexVersion(uint256 const & blockHash)
 {
     boost::scoped_ptr<CDBIterator> pcursor(NewIterator());
-    pcursor->Seek(make_pair(DB_BLOCK_APOLLON, blockHash));
+    pcursor->Seek(make_pair(DB_BLOCK_INDEX, blockHash));
     uint256 const zero_hash = uint256();
     while (pcursor->Valid()) {
         boost::this_thread::interruption_point();
         std::pair<char, uint256> key;
-        if (pcursor->GetKey(key) && key.first == DB_BLOCK_APOLLON) {
+        if (pcursor->GetKey(key) && key.first == DB_BLOCK_INDEX) {
             if (blockHash != zero_hash && key.second != blockHash) {
                 pcursor->Next();
                 continue;
             }
-            CDiskBlockApollon diskapollon;
-            if (pcursor->GetValue(diskapollon))
-                return diskapollon.nDiskBlockVersion;
+            CDiskBlockIndex diskindex;
+            if (pcursor->GetValue(diskindex))
+                return diskindex.nDiskBlockVersion;
         } else {
 	    break;
         }
@@ -420,22 +420,22 @@ bool CBlockTreeDB::ReadTotalSupply(CAmount & supply)
 
 /******************************************************************************/
 
-CDbApollonHelper::CDbApollonHelper(bool addressApollon_, bool spentApollon_)
+CDbIndexHelper::CDbIndexHelper(bool addressIndex_, bool spentIndex_)
 {
-    if (addressApollon_) {
-        addressApollon.reset(AddressApollon());
-        addressUnspentApollon.reset(AddressUnspentApollon());
+    if (addressIndex_) {
+        addressIndex.reset(AddressIndex());
+        addressUnspentIndex.reset(AddressUnspentIndex());
     }
 
-    if (spentApollon_)
-        spentApollon.reset(SpentApollon());
+    if (spentIndex_)
+        spentIndex.reset(SpentIndex());
 }
 
 namespace {
 
-using AddressApollonPtr = boost::optional<CDbApollonHelper::AddressApollon>;
-using AddressUnspentApollonPtr = boost::optional<CDbApollonHelper::AddressUnspentApollon>;
-using SpentApollonPtr = boost::optional<CDbApollonHelper::SpentApollon>;
+using AddressIndexPtr = boost::optional<CDbIndexHelper::AddressIndex>;
+using AddressUnspentIndexPtr = boost::optional<CDbIndexHelper::AddressUnspentIndex>;
+using SpentIndexPtr = boost::optional<CDbIndexHelper::SpentIndex>;
 
 std::pair<AddressType, uint160> classifyAddress(txnouttype type, vector<vector<unsigned char> > const & addresses)
 {
@@ -455,7 +455,7 @@ std::pair<AddressType, uint160> classifyAddress(txnouttype type, vector<vector<u
 }
 
 void handleInput(CTxIn const & input, size_t inputNo, uint256 const & txHash, int height, int txNumber, CCoinsViewCache const & view,
-        AddressApollonPtr & addressApollon, AddressUnspentApollonPtr & addressUnspentApollon, SpentApollonPtr & spentApollon)
+        AddressIndexPtr & addressIndex, AddressUnspentIndexPtr & addressUnspentIndex, SpentIndexPtr & spentIndex)
 {
     const CCoins* coins = view.AccessCoins(input.prevout.hash);
     const CTxOut &prevout = coins->vout[input.prevout.n];
@@ -464,7 +464,7 @@ void handleInput(CTxIn const & input, size_t inputNo, uint256 const & txHash, in
     vector<vector<unsigned char> > addresses;
 
     if(!Solver(prevout.scriptPubKey, type, addresses)) {
-        LogPrint("CDbApollonHelper", "Encountered an unsoluble script in block:%i, txHash: %s, inputNo: %i\n", height, txHash.ToString().c_str(), inputNo);
+        LogPrint("CDbIndexHelper", "Encountered an unsoluble script in block:%i, txHash: %s, inputNo: %i\n", height, txHash.ToString().c_str(), inputNo);
         return;
     }
 
@@ -474,62 +474,62 @@ void handleInput(CTxIn const & input, size_t inputNo, uint256 const & txHash, in
         return;
     }
 
-    if (addressApollon) {
-        addressApollon->push_back(make_pair(CAddressApollonKey(addrType.first, addrType.second, height, txNumber, txHash, inputNo, true), prevout.nValue * -1));
-        addressUnspentApollon->push_back(make_pair(CAddressUnspentKey(addrType.first, addrType.second, input.prevout.hash, input.prevout.n), CAddressUnspentValue()));
+    if (addressIndex) {
+        addressIndex->push_back(make_pair(CAddressIndexKey(addrType.first, addrType.second, height, txNumber, txHash, inputNo, true), prevout.nValue * -1));
+        addressUnspentIndex->push_back(make_pair(CAddressUnspentKey(addrType.first, addrType.second, input.prevout.hash, input.prevout.n), CAddressUnspentValue()));
     }
 
-    if (spentApollon)
-        spentApollon->push_back(make_pair(CSpentApollonKey(input.prevout.hash, input.prevout.n), CSpentApollonValue(txHash, inputNo, height, prevout.nValue, addrType.first, addrType.second)));
+    if (spentIndex)
+        spentIndex->push_back(make_pair(CSpentIndexKey(input.prevout.hash, input.prevout.n), CSpentIndexValue(txHash, inputNo, height, prevout.nValue, addrType.first, addrType.second)));
 }
 
 void handleRemint(CTxIn const & input, uint256 const & txHash, int height, int txNumber, CAmount nValue,
-        AddressApollonPtr & addressApollon, AddressUnspentApollonPtr & addressUnspentApollon, SpentApollonPtr & spentApollon)
+        AddressIndexPtr & addressIndex, AddressUnspentIndexPtr & addressUnspentIndex, SpentIndexPtr & spentIndex)
 {
     if(!input.IsZerocoinRemint())
         return;
 
-    if (addressApollon) {
-        addressApollon->push_back(make_pair(CAddressApollonKey(AddressType::zerocoinRemint, uint160(), height, txNumber, txHash, 0, true), nValue * -1));
-        addressUnspentApollon->push_back(make_pair(CAddressUnspentKey(AddressType::zerocoinRemint, uint160(), input.prevout.hash, input.prevout.n), CAddressUnspentValue()));
+    if (addressIndex) {
+        addressIndex->push_back(make_pair(CAddressIndexKey(AddressType::zerocoinRemint, uint160(), height, txNumber, txHash, 0, true), nValue * -1));
+        addressUnspentIndex->push_back(make_pair(CAddressUnspentKey(AddressType::zerocoinRemint, uint160(), input.prevout.hash, input.prevout.n), CAddressUnspentValue()));
     }
 
-    if (spentApollon)
-        spentApollon->push_back(make_pair(CSpentApollonKey(input.prevout.hash, input.prevout.n), CSpentApollonValue(txHash, 0, height, nValue, AddressType::zerocoinRemint, uint160())));
+    if (spentIndex)
+        spentIndex->push_back(make_pair(CSpentIndexKey(input.prevout.hash, input.prevout.n), CSpentIndexValue(txHash, 0, height, nValue, AddressType::zerocoinRemint, uint160())));
 }
 
 
 template <class Iterator>
 void handleZerocoinSpend(Iterator const begin, Iterator const end, uint256 const & txHash, int height, int txNumber, CCoinsViewCache const & view,
-        AddressApollonPtr & addressApollon, bool isV3)
+        AddressIndexPtr & addressIndex, bool isV3)
 {
-    if(!addressApollon)
+    if(!addressIndex)
         return;
 
     CAmount spendAmount = 0;
     for(Iterator iter = begin; iter != end; ++iter)
         spendAmount += iter->nValue;
 
-    addressApollon->push_back(make_pair(CAddressApollonKey(isV3 ? AddressType::sigmaSpend : AddressType::zerocoinSpend, uint160(), height, txNumber, txHash, 0, true), -spendAmount));
+    addressIndex->push_back(make_pair(CAddressIndexKey(isV3 ? AddressType::sigmaSpend : AddressType::zerocoinSpend, uint160(), height, txNumber, txHash, 0, true), -spendAmount));
 }
 
 void handleOutput(const CTxOut &out, size_t outNo, uint256 const & txHash, int height, int txNumber, CCoinsViewCache const & view, bool coinbase,
-        AddressApollonPtr & addressApollon, AddressUnspentApollonPtr & addressUnspentApollon, SpentApollonPtr & spentApollon)
+        AddressIndexPtr & addressIndex, AddressUnspentIndexPtr & addressUnspentIndex, SpentIndexPtr & spentIndex)
 {
-    if(!addressApollon)
+    if(!addressIndex)
         return;
 
     if(out.scriptPubKey.IsZerocoinMint())
-        addressApollon->push_back(make_pair(CAddressApollonKey(AddressType::zerocoinMint, uint160(), height, txNumber, txHash, outNo, false), out.nValue));
+        addressIndex->push_back(make_pair(CAddressIndexKey(AddressType::zerocoinMint, uint160(), height, txNumber, txHash, outNo, false), out.nValue));
 
     if(out.scriptPubKey.IsSigmaMint())
-        addressApollon->push_back(make_pair(CAddressApollonKey(AddressType::sigmaMint, uint160(), height, txNumber, txHash, outNo, false), out.nValue));
+        addressIndex->push_back(make_pair(CAddressIndexKey(AddressType::sigmaMint, uint160(), height, txNumber, txHash, outNo, false), out.nValue));
 
     txnouttype type;
     vector<vector<unsigned char> > addresses;
 
     if(!Solver(out.scriptPubKey, type, addresses)) {
-        LogPrint("CDbApollonHelper", "Encountered an unsoluble script in block:%i, txHash: %s, outNo: %i\n", height, txHash.ToString().c_str(), outNo);
+        LogPrint("CDbIndexHelper", "Encountered an unsoluble script in block:%i, txHash: %s, outNo: %i\n", height, txHash.ToString().c_str(), outNo);
         return;
     }
 
@@ -539,18 +539,18 @@ void handleOutput(const CTxOut &out, size_t outNo, uint256 const & txHash, int h
         return;
     }
 
-    addressApollon->push_back(make_pair(CAddressApollonKey(addrType.first, addrType.second, height, txNumber, txHash, outNo, false), out.nValue));
-    addressUnspentApollon->push_back(make_pair(CAddressUnspentKey(addrType.first, addrType.second, txHash, outNo), CAddressUnspentValue(out.nValue, out.scriptPubKey, height)));
+    addressIndex->push_back(make_pair(CAddressIndexKey(addrType.first, addrType.second, height, txNumber, txHash, outNo, false), out.nValue));
+    addressUnspentIndex->push_back(make_pair(CAddressUnspentKey(addrType.first, addrType.second, txHash, outNo), CAddressUnspentValue(out.nValue, out.scriptPubKey, height)));
 }
 }
 
 
-void CDbApollonHelper::ConnectTransaction(CTransaction const & tx, int height, int txNumber, CCoinsViewCache const & view)
+void CDbIndexHelper::ConnectTransaction(CTransaction const & tx, int height, int txNumber, CCoinsViewCache const & view)
 {
     size_t no = 0;
     if(!tx.IsCoinBase() && !tx.IsZerocoinSpend() && !tx.IsSigmaSpend() && !tx.IsZerocoinRemint()) {
         for (CTxIn const & input : tx.vin) {
-            handleInput(input, no++, tx.GetHash(), height, txNumber, view, addressApollon, addressUnspentApollon, spentApollon);
+            handleInput(input, no++, tx.GetHash(), height, txNumber, view, addressIndex, addressUnspentIndex, spentIndex);
         }
     }
 
@@ -563,31 +563,31 @@ void CDbApollonHelper::ConnectTransaction(CTransaction const & tx, int height, i
            error("A Zerocoin to Sigma remint tx shoud have just 1 input");
            return;
         }
-        handleRemint(tx.vin[0], tx.GetHash(), height, txNumber, remintValue, addressApollon, addressUnspentApollon, spentApollon);
+        handleRemint(tx.vin[0], tx.GetHash(), height, txNumber, remintValue, addressIndex, addressUnspentIndex, spentIndex);
     }
 
     if(tx.IsZerocoinSpend() || tx.IsSigmaSpend())
-        handleZerocoinSpend(tx.vout.begin(), tx.vout.end(), tx.GetHash(), height, txNumber, view, addressApollon, tx.IsSigmaSpend());
+        handleZerocoinSpend(tx.vout.begin(), tx.vout.end(), tx.GetHash(), height, txNumber, view, addressIndex, tx.IsSigmaSpend());
 
     no = 0;
     bool const txIsCoinBase = tx.IsCoinBase();
     for (CTxOut const & out : tx.vout) {
-        handleOutput(out, no++, tx.GetHash(), height, txNumber, view, txIsCoinBase, addressApollon, addressUnspentApollon, spentApollon);
+        handleOutput(out, no++, tx.GetHash(), height, txNumber, view, txIsCoinBase, addressIndex, addressUnspentIndex, spentIndex);
     }
 }
 
 
-void CDbApollonHelper::DisconnectTransactionInputs(CTransaction const & tx, int height, int txNumber, CCoinsViewCache const & view)
+void CDbIndexHelper::DisconnectTransactionInputs(CTransaction const & tx, int height, int txNumber, CCoinsViewCache const & view)
 {
     size_t pAddressBegin{0}, pUnspentBegin{0}, pSpentBegin{0};
 
-    if(addressApollon){
-        pAddressBegin = addressApollon->size();
-        pUnspentBegin = addressUnspentApollon->size();
+    if(addressIndex){
+        pAddressBegin = addressIndex->size();
+        pUnspentBegin = addressUnspentIndex->size();
     }
 
-    if(spentApollon)
-        pSpentBegin = spentApollon->size();
+    if(spentIndex)
+        pSpentBegin = spentIndex->size();
 
     if(tx.IsZerocoinRemint()) {
         CAmount remintValue = 0;
@@ -598,62 +598,62 @@ void CDbApollonHelper::DisconnectTransactionInputs(CTransaction const & tx, int 
            error("A Zerocoin to Sigma remint tx shoud have just 1 input");
            return;
         }
-        handleRemint(tx.vin[0], tx.GetHash(), height, txNumber, remintValue, addressApollon, addressUnspentApollon, spentApollon);
+        handleRemint(tx.vin[0], tx.GetHash(), height, txNumber, remintValue, addressIndex, addressUnspentIndex, spentIndex);
     }
 
     size_t no = 0;
 
     if(!tx.IsCoinBase() && !tx.IsZerocoinSpend() && !tx.IsSigmaSpend() && !tx.IsZerocoinRemint())
         for (CTxIn const & input : tx.vin) {
-            handleInput(input, no++, tx.GetHash(), height, txNumber, view, addressApollon, addressUnspentApollon, spentApollon);
+            handleInput(input, no++, tx.GetHash(), height, txNumber, view, addressIndex, addressUnspentIndex, spentIndex);
         }
 
-    if(addressApollon){
-        std::reverse(addressApollon->begin() + pAddressBegin, addressApollon->end());
-        std::reverse(addressUnspentApollon->begin() + pUnspentBegin, addressUnspentApollon->end());
+    if(addressIndex){
+        std::reverse(addressIndex->begin() + pAddressBegin, addressIndex->end());
+        std::reverse(addressUnspentIndex->begin() + pUnspentBegin, addressUnspentIndex->end());
 
-        for(AddressUnspentApollon::iterator iter = addressUnspentApollon->begin(); iter != addressUnspentApollon->end(); ++iter)
+        for(AddressUnspentIndex::iterator iter = addressUnspentIndex->begin(); iter != addressUnspentIndex->end(); ++iter)
             iter->second = CAddressUnspentValue();
     }
 
-    if(spentApollon)
-        std::reverse(spentApollon->begin() + pSpentBegin, spentApollon->end());
+    if(spentIndex)
+        std::reverse(spentIndex->begin() + pSpentBegin, spentIndex->end());
 }
 
-void CDbApollonHelper::DisconnectTransactionOutputs(CTransaction const & tx, int height, int txNumber, CCoinsViewCache const & view)
+void CDbIndexHelper::DisconnectTransactionOutputs(CTransaction const & tx, int height, int txNumber, CCoinsViewCache const & view)
 {
     if(tx.IsZerocoinSpend() || tx.IsSigmaSpend())
-        handleZerocoinSpend(tx.vout.begin(), tx.vout.end(), tx.GetHash(), height, txNumber, view, addressApollon, tx.IsSigmaSpend());
+        handleZerocoinSpend(tx.vout.begin(), tx.vout.end(), tx.GetHash(), height, txNumber, view, addressIndex, tx.IsSigmaSpend());
 
     size_t no = 0;
     bool const txIsCoinBase = tx.IsCoinBase();
     for (CTxOut const & out : tx.vout) {
-        handleOutput(out, no++, tx.GetHash(), height, txNumber, view, txIsCoinBase, addressApollon, addressUnspentApollon, spentApollon);
+        handleOutput(out, no++, tx.GetHash(), height, txNumber, view, txIsCoinBase, addressIndex, addressUnspentIndex, spentIndex);
     }
 
-    if(addressApollon)
+    if(addressIndex)
     {
-        std::reverse(addressApollon->begin(), addressApollon->end());
-        std::reverse(addressUnspentApollon->begin(), addressUnspentApollon->end());
+        std::reverse(addressIndex->begin(), addressIndex->end());
+        std::reverse(addressUnspentIndex->begin(), addressUnspentIndex->end());
     }
 
-    if(spentApollon)
-        std::reverse(spentApollon->begin(), spentApollon->end());
+    if(spentIndex)
+        std::reverse(spentIndex->begin(), spentIndex->end());
 }
 
-CDbApollonHelper::AddressApollon const & CDbApollonHelper::getAddressApollon() const
+CDbIndexHelper::AddressIndex const & CDbIndexHelper::getAddressIndex() const
 {
-    return *addressApollon;
-}
-
-
-CDbApollonHelper::AddressUnspentApollon const & CDbApollonHelper::getAddressUnspentApollon() const
-{
-    return *addressUnspentApollon;
+    return *addressIndex;
 }
 
 
-CDbApollonHelper::SpentApollon const & CDbApollonHelper::getSpentApollon() const
+CDbIndexHelper::AddressUnspentIndex const & CDbIndexHelper::getAddressUnspentIndex() const
 {
-    return *spentApollon;
+    return *addressUnspentIndex;
+}
+
+
+CDbIndexHelper::SpentIndex const & CDbIndexHelper::getSpentIndex() const
+{
+    return *spentIndex;
 }

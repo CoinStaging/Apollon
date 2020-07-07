@@ -116,11 +116,11 @@ if __name__ == '__main__':
     iters = {'valid':gen_valid_vectors, 'invalid':gen_invalid_vectors}
     try:
         uiter = iters[sys.argv[1]]
-    except ApollonError:
+    except IndexError:
         uiter = gen_valid_vectors
     try:
         count = int(sys.argv[2])
-    except ApollonError:
+    except IndexError:
         count = 0
    
     data = list(islice(uiter(), count))

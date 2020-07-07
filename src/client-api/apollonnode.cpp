@@ -2,12 +2,12 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "activeapollonnode.h"
+#include "activeindexnode.h"
 #include "validationinterface.h"
-#include "apollonnodeman.h"
+#include "indexnodeman.h"
 #include "univalue.h"
-#include "apollonnode-sync.h"
-#include "apollonnodeconfig.h"
+#include "indexnode-sync.h"
+#include "indexnodeconfig.h"
 #include "client-api/server.h"
 #include "client-api/protocol.h"
 #include <client-api/wallet.h>
@@ -15,7 +15,7 @@
 
 using namespace std;
 
-bool GetApollonnodePayeeAddress(const std::string& txHash, const std::string& n, CBitcoinAddress& address){
+bool GetIndexnodePayeeAddress(const std::string& txHash, const std::string& n, CBitcoinAddress& address){
 
     const CWalletTx* wtx = pwalletMain->GetWalletTx(uint256S(txHash));
     if(wtx==NULL)
@@ -31,7 +31,7 @@ bool GetApollonnodePayeeAddress(const std::string& txHash, const std::string& n,
     return true;
 }
 
-UniValue apollonnodekey(Type type, const UniValue& data, const UniValue& auth, bool fHelp){
+UniValue indexnodekey(Type type, const UniValue& data, const UniValue& auth, bool fHelp){
 
     switch(type){
         case Update: {
@@ -51,7 +51,7 @@ UniValue apollonnodekey(Type type, const UniValue& data, const UniValue& auth, b
     return true;
 }
 
-UniValue apollonnodecontrol(Type type, const UniValue& data, const UniValue& auth, bool fHelp){
+UniValue indexnodecontrol(Type type, const UniValue& data, const UniValue& auth, bool fHelp){
 
     switch(type){
         case Update: {
@@ -83,24 +83,24 @@ UniValue apollonnodecontrol(Type type, const UniValue& data, const UniValue& aut
                 UniValue status(UniValue::VOBJ);
                 status.push_back(Pair("alias", alias));
 
-                BOOST_FOREACH(CApollonnodeConfig::CApollonnodeEntry mne, apollonnodeConfig.getEntries()) {
+                BOOST_FOREACH(CIndexnodeConfig::CIndexnodeEntry mne, indexnodeConfig.getEntries()) {
                     if (mne.getAlias() == alias) {
                         fFound = true;
                         std::string strError;
-                        CApollonnodeBroadcast mnb;
+                        CIndexnodeBroadcast mnb;
 
-                        bool fResult = CApollonnodeBroadcast::Create(mne.getIp(), mne.getPrivKey(), mne.getTxHash(),
-                                                                    mne.getOutputApollon(), strError, mnb);
+                        bool fResult = CIndexnodeBroadcast::Create(mne.getIp(), mne.getPrivKey(), mne.getTxHash(),
+                                                                    mne.getOutputIndex(), strError, mnb);
                         status.push_back(Pair("success", fResult));
                         if (fResult) {
                             nSuccessful++;
-                            mnodeman.UpdateApollonnodeList(mnb);
-                            mnb.RelayApollonNode();
+                            mnodeman.UpdateIndexnodeList(mnb);
+                            mnb.RelayIndexNode();
                         } else {
                             nFailed++;
                             status.push_back(Pair("info", strError));
                         }
-                        mnodeman.NotifyApollonnodeUpdates();
+                        mnodeman.NotifyIndexnodeUpdates();
                         break;
                     }
                 }
@@ -120,22 +120,22 @@ UniValue apollonnodecontrol(Type type, const UniValue& data, const UniValue& aut
                     EnsureWalletIsUnlocked();
                 }
 
-                if ((method == "start-missing") && !apollonnodeSync.IsApollonnodeListSynced()) {
+                if ((method == "start-missing") && !indexnodeSync.IsIndexnodeListSynced()) {
                     throw JSONAPIError(API_CLIENT_IN_INITIAL_DOWNLOAD,
-                                       "You can't use this command until apollonnode list is synced");
+                                       "You can't use this command until indexnode list is synced");
                 }
 
-                BOOST_FOREACH(CApollonnodeConfig::CApollonnodeEntry mne, apollonnodeConfig.getEntries()) {
+                BOOST_FOREACH(CIndexnodeConfig::CIndexnodeEntry mne, indexnodeConfig.getEntries()) {
                     std::string strError;
 
-                    CTxIn vin = CTxIn(uint256S(mne.getTxHash()), uint32_t(atoi(mne.getOutputApollon().c_str())));
-                    CApollonnode *pmn = mnodeman.Find(vin);
-                    CApollonnodeBroadcast mnb;
+                    CTxIn vin = CTxIn(uint256S(mne.getTxHash()), uint32_t(atoi(mne.getOutputIndex().c_str())));
+                    CIndexnode *pmn = mnodeman.Find(vin);
+                    CIndexnodeBroadcast mnb;
 
                     if (method == "start-missing" && pmn) continue;
 
-                    bool fResult = CApollonnodeBroadcast::Create(mne.getIp(), mne.getPrivKey(), mne.getTxHash(),
-                                                                mne.getOutputApollon(), strError, mnb);
+                    bool fResult = CIndexnodeBroadcast::Create(mne.getIp(), mne.getPrivKey(), mne.getTxHash(),
+                                                                mne.getOutputIndex(), strError, mnb);
 
                     UniValue status(UniValue::VOBJ);
                     status.push_back(Pair("alias", mne.getAlias()));
@@ -143,8 +143,8 @@ UniValue apollonnodecontrol(Type type, const UniValue& data, const UniValue& aut
 
                     if (fResult) {
                         nSuccessful++;
-                        mnodeman.UpdateApollonnodeList(mnb);
-                        mnb.RelayApollonNode();
+                        mnodeman.UpdateIndexnodeList(mnb);
+                        mnb.RelayIndexNode();
                     } else {
                         nFailed++;
                         status.push_back(Pair("info", strError));
@@ -152,7 +152,7 @@ UniValue apollonnodecontrol(Type type, const UniValue& data, const UniValue& aut
 
                     detail.push_back(Pair("status", status));
                 }
-                mnodeman.NotifyApollonnodeUpdates();
+                mnodeman.NotifyIndexnodeUpdates();
 
             }
 
@@ -180,26 +180,26 @@ UniValue apollonnodecontrol(Type type, const UniValue& data, const UniValue& aut
     return true;
 }
 
-UniValue apollonnodelist(Type type, const UniValue& data, const UniValue& auth, bool fHelp){
+UniValue indexnodelist(Type type, const UniValue& data, const UniValue& auth, bool fHelp){
 
     switch(type){
         case Initial: {
             UniValue data(UniValue::VOBJ);
             UniValue nodes(UniValue::VOBJ);
 
-            int fApollon = 0;
-            BOOST_FOREACH(CApollonnodeConfig::CApollonnodeEntry mne, apollonnodeConfig.getEntries()) {
+            int fIndex = 0;
+            BOOST_FOREACH(CIndexnodeConfig::CIndexnodeEntry mne, indexnodeConfig.getEntries()) {
                 const std::string& txHash = mne.getTxHash();
-                const std::string& outputApollon = mne.getOutputApollon();
+                const std::string& outputIndex = mne.getOutputIndex();
                 CBitcoinAddress address;
-                std::string key = txHash + outputApollon;
-                CApollonnode* mn = mnodeman.Find(txHash, outputApollon);
+                std::string key = txHash + outputIndex;
+                CIndexnode* mn = mnodeman.Find(txHash, outputIndex);
 
                 UniValue node(UniValue::VOBJ);
                 if(mn==NULL){
                     node = mne.ToJSON();
-                    node.push_back(Pair("position", fApollon++));
-                    if(GetApollonnodePayeeAddress(txHash, outputApollon, address))
+                    node.push_back(Pair("position", fIndex++));
+                    if(GetIndexnodePayeeAddress(txHash, outputIndex, address))
                         node.push_back(Pair("payeeAddress", address.ToString()));
                 }else{
                     node = mn->ToJSON();
@@ -208,29 +208,29 @@ UniValue apollonnodelist(Type type, const UniValue& data, const UniValue& auth, 
             }
 
             /*
-             * If the Apollonnode list is not yet synced, return the wallet Apollonnodes, as described in apollonnode.conf
-             * if it is, process all Apollonnodes, and return along with wallet Apollonnodes.
-             * (if the wallet Apollonnode has started, it will be replaced in the synced list).
+             * If the Indexnode list is not yet synced, return the wallet Indexnodes, as described in indexnode.conf
+             * if it is, process all Indexnodes, and return along with wallet Indexnodes.
+             * (if the wallet Indexnode has started, it will be replaced in the synced list).
              */
-            if(!apollonnodeSync.IsSynced()){
+            if(!indexnodeSync.IsSynced()){
                 data.push_back(Pair("nodes", nodes));
-                data.push_back(Pair("total", mnodeman.CountApollonnodes()));
+                data.push_back(Pair("total", mnodeman.CountIndexnodes()));
                 return data;
             }
 
-            std::vector <CApollonnode> vApollonnodes = mnodeman.GetFullApollonnodeVector();
-            BOOST_FOREACH(CApollonnode & mn, vApollonnodes) {
+            std::vector <CIndexnode> vIndexnodes = mnodeman.GetFullIndexnodeVector();
+            BOOST_FOREACH(CIndexnode & mn, vIndexnodes) {
                 std::string txHash = mn.vin.prevout.hash.ToString().substr(0,64);
-                std::string outputApollon = to_string(mn.vin.prevout.n);
-                std::string key = txHash + outputApollon;
+                std::string outputIndex = to_string(mn.vin.prevout.n);
+                std::string key = txHash + outputIndex;
 
-                // only process wallet Apollonnodes - they are already in "nodes", so if we find it, replace with update
+                // only process wallet Indexnodes - they are already in "nodes", so if we find it, replace with update
                 if(!find_value(nodes, key).isNull())
                     nodes.replace(key, mn.ToJSON());
             }
 
             data.push_back(Pair("nodes", nodes));
-            data.push_back(Pair("total", mnodeman.CountApollonnodes()));
+            data.push_back(Pair("total", mnodeman.CountIndexnodes()));
             return data;
             break;
         }
@@ -242,7 +242,7 @@ UniValue apollonnodelist(Type type, const UniValue& data, const UniValue& auth, 
     return true;
 }
 
-UniValue apollonnodeupdate(Type type, const UniValue& data, const UniValue& auth, bool fHelp){
+UniValue indexnodeupdate(Type type, const UniValue& data, const UniValue& auth, bool fHelp){
     UniValue ret(UniValue::VOBJ);
     UniValue outpoint(UniValue::VOBJ);
     string key;
@@ -260,13 +260,13 @@ UniValue apollonnodeupdate(Type type, const UniValue& data, const UniValue& auth
 static const CAPICommand commands[] =
 { //  category              collection         actor (function)          authPort   authPassphrase   warmupOk
   //  --------------------- ------------       ----------------          -------- --------------   --------
-    { "apollonnode",              "apollonnodeControl",    &apollonnodecontrol,            true,      true,            false  },
-    { "apollonnode",              "apollonnodeKey",        &apollonnodekey,                true,      false,           false  },
-    { "apollonnode",              "apollonnodeList",       &apollonnodelist,               true,      false,           false  },
-    { "apollonnode",              "apollonnodeUpdate",     &apollonnodeupdate,             true,      false,           false  }
+    { "indexnode",              "indexnodeControl",    &indexnodecontrol,            true,      true,            false  },
+    { "indexnode",              "indexnodeKey",        &indexnodekey,                true,      false,           false  },
+    { "indexnode",              "indexnodeList",       &indexnodelist,               true,      false,           false  },
+    { "indexnode",              "indexnodeUpdate",     &indexnodeupdate,             true,      false,           false  }
 };
-void RegisterApollonnodeAPICommands(CAPITable &tableAPI)
+void RegisterIndexnodeAPICommands(CAPITable &tableAPI)
 {
-    for (unsigned int vcxap = 0; vcxap < ARRAYLEN(commands); vcxap++)
-        tableAPI.appendCommand(commands[vcxap].collection, &commands[vcxap]);
+    for (unsigned int vcidx = 0; vcidx < ARRAYLEN(commands); vcidx++)
+        tableAPI.appendCommand(commands[vcidx].collection, &commands[vcidx]);
 }

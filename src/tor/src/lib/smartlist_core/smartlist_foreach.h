@@ -14,7 +14,7 @@
 /** Iterate over the items in a smartlist <b>sl</b>, in order.  For each item,
  * assign it to a new local variable of type <b>type</b> named <b>var</b>, and
  * execute the statements inside the loop body.  Inside the loop, the loop
- * apollon can be accessed as <b>var</b>_sl_xap and the length of the list can
+ * apollon can be accessed as <b>var</b>_sl_idx and the length of the list can
  * be accessed as <b>var</b>_sl_len.
  *
  * NOTE: Do not change the length of the list while the loop is in progress,
@@ -25,7 +25,7 @@
  * <pre>
  *   smartlist_t *list = smartlist_split("A:B:C", ":", 0, 0);
  *   SMARTLIST_FOREACH_BEGIN(list, char *, cp) {
- *     printf("%d: %s\n", cp_sl_xap, cp);
+ *     printf("%d: %s\n", cp_sl_idx, cp);
  *     tor_free(cp);
  *   } SMARTLIST_FOREACH_END(cp);
  *   smartlist_free(list);
@@ -48,11 +48,11 @@
  * <pre>
  * smartlist_t *list = smartlist_split("A:B:C", ":", 0, 0);
  * {
- *   int cp_sl_xap, cp_sl_len = smartlist_len(list);
+ *   int cp_sl_idx, cp_sl_len = smartlist_len(list);
  *   char *cp;
- *   for (cp_sl_xap = 0; cp_sl_xap < cp_sl_len; ++cp_sl_xap) {
- *     cp = smartlist_get(list, cp_sl_xap);
- *     printf("%d: %s\n", cp_sl_xap, cp);
+ *   for (cp_sl_idx = 0; cp_sl_idx < cp_sl_len; ++cp_sl_idx) {
+ *     cp = smartlist_get(list, cp_sl_idx);
+ *     printf("%d: %s\n", cp_sl_idx, cp);
  *     tor_free(cp);
  *   }
  * }
@@ -61,14 +61,14 @@
  *
  * <pre>
  * {
- *   int cp_sl_xap, cp_sl_len = smartlist_len(list);
+ *   int cp_sl_idx, cp_sl_len = smartlist_len(list);
  *   char *cp;
- *   for (cp_sl_xap = 0; cp_sl_xap < cp_sl_len; ++cp_sl_xap) {
- *     cp = smartlist_get(list, cp_sl_xap);
+ *   for (cp_sl_idx = 0; cp_sl_idx < cp_sl_len; ++cp_sl_idx) {
+ *     cp = smartlist_get(list, cp_sl_idx);
  *     if (!strcmp(cp, "junk")) {
  *       tor_free(cp);
- *       smartlist_del(list, cp_sl_xap);
- *       --cp_sl_xap;
+ *       smartlist_del(list, cp_sl_idx);
+ *       --cp_sl_idx;
  *       --cp_sl_len;
  *     }
  *   }
@@ -77,11 +77,11 @@
  */
 #define SMARTLIST_FOREACH_BEGIN(sl, type, var)  \
   STMT_BEGIN                                                    \
-    int var ## _sl_xap, var ## _sl_len=(sl)->num_used;          \
+    int var ## _sl_idx, var ## _sl_len=(sl)->num_used;          \
     type var;                                                   \
-    for (var ## _sl_xap = 0; var ## _sl_xap < var ## _sl_len;   \
-         ++var ## _sl_xap) {                                    \
-      var = (sl)->list[var ## _sl_xap];
+    for (var ## _sl_idx = 0; var ## _sl_idx < var ## _sl_len;   \
+         ++var ## _sl_idx) {                                    \
+      var = (sl)->list[var ## _sl_idx];
 
 /** Iterates over the items in smartlist <b>sl</b> in reverse order, similar to
  *  SMARTLIST_FOREACH_BEGIN
@@ -90,15 +90,15 @@
  */
 #define SMARTLIST_FOREACH_REVERSE_BEGIN(sl, type, var)  \
   STMT_BEGIN                                                       \
-    int var ## _sl_xap, var ## _sl_len=(sl)->num_used;             \
+    int var ## _sl_idx, var ## _sl_len=(sl)->num_used;             \
     type var;                                                      \
-    for (var ## _sl_xap = var ## _sl_len-1; var ## _sl_xap >= 0;   \
-         --var ## _sl_xap) {                                       \
-      var = (sl)->list[var ## _sl_xap];
+    for (var ## _sl_idx = var ## _sl_len-1; var ## _sl_idx >= 0;   \
+         --var ## _sl_idx) {                                       \
+      var = (sl)->list[var ## _sl_idx];
 
 #define SMARTLIST_FOREACH_END(var)              \
     var = NULL;                                 \
-    (void) var ## _sl_xap;                      \
+    (void) var ## _sl_idx;                      \
   } STMT_END
 
 /**
@@ -114,33 +114,33 @@
     cmd;                                                        \
   } SMARTLIST_FOREACH_END(var)
 
-/** Helper: While in a SMARTLIST_FOREACH loop over the list <b>sl</b> apolloned
+/** Helper: While in a SMARTLIST_FOREACH loop over the list <b>sl</b> indexed
  * with the variable <b>var</b>, remove the current element in a way that
  * won't confuse the loop. */
 #define SMARTLIST_DEL_CURRENT(sl, var)          \
   STMT_BEGIN                                    \
-    smartlist_del(sl, var ## _sl_xap);          \
-    --var ## _sl_xap;                           \
+    smartlist_del(sl, var ## _sl_idx);          \
+    --var ## _sl_idx;                           \
     --var ## _sl_len;                           \
   STMT_END
 
-/** Helper: While in a SMARTLIST_FOREACH loop over the list <b>sl</b> apolloned
+/** Helper: While in a SMARTLIST_FOREACH loop over the list <b>sl</b> indexed
  * with the variable <b>var</b>, remove the current element in a way that
  * won't confuse the loop. */
 #define SMARTLIST_DEL_CURRENT_KEEPORDER(sl, var)          \
   STMT_BEGIN                                              \
-     smartlist_del_keeporder(sl, var ## _sl_xap);         \
-     --var ## _sl_xap;                                    \
+     smartlist_del_keeporder(sl, var ## _sl_idx);         \
+     --var ## _sl_idx;                                    \
      --var ## _sl_len;                                    \
   STMT_END
 
-/** Helper: While in a SMARTLIST_FOREACH loop over the list <b>sl</b> apolloned
+/** Helper: While in a SMARTLIST_FOREACH loop over the list <b>sl</b> indexed
  * with the variable <b>var</b>, replace the current element with <b>val</b>.
  * Does not deallocate the current value of <b>var</b>.
  */
 #define SMARTLIST_REPLACE_CURRENT(sl, var, val) \
   STMT_BEGIN                                    \
-    smartlist_set(sl, var ## _sl_xap, val);     \
+    smartlist_set(sl, var ## _sl_idx, val);     \
   STMT_END
 
 #endif /* !defined(TOR_SMARTLIST_FOREACH_H) */

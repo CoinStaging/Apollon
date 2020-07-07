@@ -63,7 +63,7 @@
     </message>
     <message>
         <source>These are your Apollon addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
-        <translation>Dit zijn uw Zcoinadressen om betalingen mee te verzenden. Controleer altijd het bedrag en het ontvangstadres voordat u uw apollons verzendt.</translation>
+        <translation>Dit zijn uw Zcoinadressen om betalingen mee te verzenden. Controleer altijd het bedrag en het ontvangstadres voordat u uw indexs verzendt.</translation>
     </message>
     <message>
         <source>These are your Apollon addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
@@ -180,8 +180,8 @@
         <translation>Portemonnee versleuteld</translation>
     </message>
     <message>
-        <source>%1 will close now to finish the encryption process. Remember that encrypting your wallet cannot fully protect your apollons from being stolen by malware infecting your computer.</source>
-        <translation>%1 zal nu afsluiten om het versleutelingsproces te voltooien. Onthoud dat het versleutelen van uw portemonnee u niet volledig kan beschermen: Malware kan uw computer infecteren en uw apollons stelen.</translation>
+        <source>%1 will close now to finish the encryption process. Remember that encrypting your wallet cannot fully protect your indexs from being stolen by malware infecting your computer.</source>
+        <translation>%1 zal nu afsluiten om het versleutelingsproces te voltooien. Onthoud dat het versleutelen van uw portemonnee u niet volledig kan beschermen: Malware kan uw computer infecteren en uw indexs stelen.</translation>
     </message>
     <message>
         <source>IMPORTANT: Any previous backups you have made of your wallet file should be replaced with the newly generated, encrypted wallet file. For security reasons, previous backups of the unencrypted wallet file will become useless as soon as you start using the new, encrypted wallet.</source>
@@ -318,8 +318,8 @@
         <translation>Open &amp;URI...</translation>
     </message>
     <message>
-        <source>Reapolloning blocks on disk...</source>
-        <translation>Bezig met herapolloneren van blokken op harde schijf...</translation>
+        <source>Reindexing blocks on disk...</source>
+        <translation>Bezig met herindexeren van blokken op harde schijf...</translation>
     </message>
     <message>
         <source>Send coins to a Apollon address</source>
@@ -422,8 +422,8 @@
         <translation><numerusform>%n actieve verbinding met Zcoinnetwerk</numerusform><numerusform>%n actieve verbindingen met Zcoinnetwerk</numerusform></translation>
     </message>
     <message>
-        <source>Apolloning blocks on disk...</source>
-        <translation>Bezig met apolloneren van blokken op harde schijf...</translation>
+        <source>Indexing blocks on disk...</source>
+        <translation>Bezig met indexeren van blokken op harde schijf...</translation>
     </message>
     <message>
         <source>Processing blocks on disk...</source>
@@ -2198,8 +2198,8 @@
         <translation>Verwijder deze toevoeging</translation>
     </message>
     <message>
-        <source>The fee will be deducted from the amount being sent. The recipient will receive less apollons than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
-        <translation>De transactiekosten zal worden afgetrokken van het bedrag dat verstuurd wordt. De ontvangers zullen minder apollons ontvangen dan ingevoerd is in het hoeveelheidsveld. Als er meerdere ontvangers geselecteerd zijn, dan worden de transactiekosten gelijk verdeeld.</translation>
+        <source>The fee will be deducted from the amount being sent. The recipient will receive less indexs than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
+        <translation>De transactiekosten zal worden afgetrokken van het bedrag dat verstuurd wordt. De ontvangers zullen minder indexs ontvangen dan ingevoerd is in het hoeveelheidsveld. Als er meerdere ontvangers geselecteerd zijn, dan worden de transactiekosten gelijk verdeeld.</translation>
     </message>
     <message>
         <source>S&amp;ubtract fee from amount</source>
@@ -2267,8 +2267,8 @@
         <translation>&amp;Onderteken Bericht</translation>
     </message>
     <message>
-        <source>You can sign messages/agreements with your addresses to prove you can receive apollons sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
-        <translation>U kunt berichten/overeenkomsten ondertekenen met uw adres om te bewijzen dat u apollons kunt versturen. Wees voorzichtig met het ondertekenen van iets vaags of willekeurigs, omdat phishingaanvallen u kunnen proberen te misleiden tot het ondertekenen van overeenkomsten om uw identiteit aan hen toe te vertrouwen. Onderteken alleen volledig gedetailleerde verklaringen voordat u akkoord gaat.</translation>
+        <source>You can sign messages/agreements with your addresses to prove you can receive indexs sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
+        <translation>U kunt berichten/overeenkomsten ondertekenen met uw adres om te bewijzen dat u indexs kunt versturen. Wees voorzichtig met het ondertekenen van iets vaags of willekeurigs, omdat phishingaanvallen u kunnen proberen te misleiden tot het ondertekenen van overeenkomsten om uw identiteit aan hen toe te vertrouwen. Onderteken alleen volledig gedetailleerde verklaringen voordat u akkoord gaat.</translation>
     </message>
     <message>
         <source>The Apollon address to sign the message with</source>
@@ -2948,16 +2948,16 @@
         <translation>Snoeien is geconfigureerd on het minimum van %d MiB. Gebruik a.u.b. een hoger aantal.</translation>
     </message>
     <message>
-        <source>Prune: last wallet synchronisation goes beyond pruned data. You need to -reapollon (download the whole blockchain again in case of pruned node)</source>
-        <translation>Snoei: laatste portemoneesynchronisatie gaat verder dan de gesnoeide data. U moet -reapollon gebruiken (download opnieuw de gehele blokketen voor een weggesnoeide node)</translation>
+        <source>Prune: last wallet synchronisation goes beyond pruned data. You need to -reindex (download the whole blockchain again in case of pruned node)</source>
+        <translation>Snoei: laatste portemoneesynchronisatie gaat verder dan de gesnoeide data. U moet -reindex gebruiken (download opnieuw de gehele blokketen voor een weggesnoeide node)</translation>
     </message>
     <message>
-        <source>Reduce storage requirements by pruning (deleting) old blocks. This mode is incompatible with -txapollon and -rescan. Warning: Reverting this setting requires re-downloading the entire blockchain. (default: 0 = disable pruning blocks, &gt;%u = target size in MiB to use for block files)</source>
-        <translation>Beperk benodigde opslag door snoeien (verwijderen) van oude blokken. Deze modus is niet-compatibele met -txapollon en -rescan. Waarschuwing: Terugzetten van deze instellingen vereist opnieuw downloaden van gehele de blokketen. (standaard:0 = uitzetten snoeimodus, &gt;%u = doelgrootte in MiB voor blokbestanden)</translation>
+        <source>Reduce storage requirements by pruning (deleting) old blocks. This mode is incompatible with -txindex and -rescan. Warning: Reverting this setting requires re-downloading the entire blockchain. (default: 0 = disable pruning blocks, &gt;%u = target size in MiB to use for block files)</source>
+        <translation>Beperk benodigde opslag door snoeien (verwijderen) van oude blokken. Deze modus is niet-compatibele met -txindex en -rescan. Waarschuwing: Terugzetten van deze instellingen vereist opnieuw downloaden van gehele de blokketen. (standaard:0 = uitzetten snoeimodus, &gt;%u = doelgrootte in MiB voor blokbestanden)</translation>
     </message>
     <message>
-        <source>Rescans are not possible in pruned mode. You will need to use -reapollon which will download the whole blockchain again.</source>
-        <translation>Herscannen is niet mogelijk in de snoeimodus. U moet -reapollon gebruiken dat de hele blokketen opnieuw zal downloaden.</translation>
+        <source>Rescans are not possible in pruned mode. You will need to use -reindex which will download the whole blockchain again.</source>
+        <translation>Herscannen is niet mogelijk in de snoeimodus. U moet -reindex gebruiken dat de hele blokketen opnieuw zal downloaden.</translation>
     </message>
     <message>
         <source>Error: A fatal internal error occurred, see debug.log for details</source>
@@ -3080,8 +3080,8 @@
         <translation>Goedgekeurde peers die verbinden van het ingegeven netmask of IP adres. Kan meerdere keren gespecificeerd worden.</translation>
     </message>
     <message>
-        <source>You need to rebuild the database using -reapollon-chainstate to change -txapollon</source>
-        <translation>Om -txapollon te kunnen veranderen dient u de database opnieuw te bouwen met gebruik van -reapollon-chainstate.</translation>
+        <source>You need to rebuild the database using -reindex-chainstate to change -txindex</source>
+        <translation>Om -txindex te kunnen veranderen dient u de database opnieuw te bouwen met gebruik van -reindex-chainstate.</translation>
     </message>
     <message>
         <source>-maxmempool must be at least %d MB</source>
@@ -3109,7 +3109,7 @@
     </message>
     <message>
         <source>Change apollon out of range</source>
-        <translation>Wijzigingsapollon buiten bereik</translation>
+        <translation>Wijzigingsindex buiten bereik</translation>
     </message>
     <message>
         <source>Connect only to the specified node(s)</source>
@@ -3256,16 +3256,16 @@
         <translation>Snoeien kan niet worden geconfigureerd met een negatieve waarde.</translation>
     </message>
     <message>
-        <source>Prune mode is incompatible with -txapollon.</source>
-        <translation>Snoeimodus is niet-compatibel met -txapollon</translation>
+        <source>Prune mode is incompatible with -txindex.</source>
+        <translation>Snoeimodus is niet-compatibel met -txindex</translation>
     </message>
     <message>
         <source>Rebuild chain state and block apollon from the blk*.dat files on disk</source>
         <translation>Herbouw ketenstaat en block apollon met behulp van de blk*.dat bestanden op de hardeschijf</translation>
     </message>
     <message>
-        <source>Rebuild chain state from the currently apolloned blocks</source>
-        <translation>Herbouw ketenstaat vanuit de huidige geapolloneerde blokken</translation>
+        <source>Rebuild chain state from the currently indexed blocks</source>
+        <translation>Herbouw ketenstaat vanuit de huidige geindexeerde blokken</translation>
     </message>
     <message>
         <source>Rewinding blocks...</source>
@@ -3420,8 +3420,8 @@
         <translation>Goedgekeurde peers kunnen niet ge-DoS-banned worden en hun transacties worden altijd doorgegeven, zelfs als ze reeds in de mempool aanwezig zijn, nuttig voor bijv. een gateway</translation>
     </message>
     <message>
-        <source>You need to rebuild the database using -reapollon to go back to unpruned mode.  This will redownload the entire blockchain</source>
-        <translation>U moet de database herbouwen met -reapollon om terug te gaan naar de ongesnoeide modus. Dit zal de gehele blokketen opnieuw downloaden.</translation>
+        <source>You need to rebuild the database using -reindex to go back to unpruned mode.  This will redownload the entire blockchain</source>
+        <translation>U moet de database herbouwen met -reindex om terug te gaan naar de ongesnoeide modus. Dit zal de gehele blokketen opnieuw downloaden.</translation>
     </message>
     <message>
         <source>(default: %u)</source>
@@ -3609,7 +3609,7 @@
     </message>
     <message>
         <source>Maintain a full transaction apollon, used by the getrawtransaction rpc call (default: %u)</source>
-        <translation>Onderhoud een volledige transactieapollon, gebruikt door de getrawtransaction rpc call (standaard: %u)</translation>
+        <translation>Onderhoud een volledige transactieindex, gebruikt door de getrawtransaction rpc call (standaard: %u)</translation>
     </message>
     <message>
         <source>Number of seconds to keep misbehaving peers from reconnecting (default: %u)</source>
@@ -3749,7 +3749,7 @@
     </message>
     <message>
         <source>Loading block apollon...</source>
-        <translation>Blokapollon aan het laden...</translation>
+        <translation>Blokindex aan het laden...</translation>
     </message>
     <message>
         <source>Add a node to connect to and attempt to keep the connection open</source>

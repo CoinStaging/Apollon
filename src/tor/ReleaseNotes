@@ -450,7 +450,7 @@ Changes in version 0.4.0.5 - 2019-05-02
 
   o Minor bugfixes (scheduler):
     - When re-adding channels to the pending list, check the correct
-      channel's sched_heap_xap. This issue has had no effect in mainline
+      channel's sched_heap_idx. This issue has had no effect in mainline
       Tor, but could have led to bugs down the road in improved versions
       of our circuit scheduling code. Fixes bug 29508; bugfix
       on 0.3.2.10.
@@ -2668,8 +2668,8 @@ Changes in version 0.3.4.8 - 2018-09-10
     - Introduce a function to call getsockname() and return tor_addr_t,
       to save a little complexity throughout the codebase. Closes
       ticket 18105.
-    - Make hsdir_apollon in node_t a hsdir_apollon_t rather than a pointer
-      as hsdir_apollon is always present. Also, we move hsdir_apollon_t into
+    - Make hsdir_index in node_t a hsdir_index_t rather than a pointer
+      as hsdir_index is always present. Also, we move hsdir_index_t into
       or.h. Closes ticket 23094. Patch by Neel Chauhan.
     - Merge functions used for describing nodes and suppress the
       functions that do not allocate memory for the output buffer
@@ -17976,7 +17976,7 @@ Changes in version 0.2.0.33 - 2009-01-21
       key is probably wrong by now. Bugfix on 0.2.0.x. Fixes bug 887.
 
   o Minor bugfixes:
-    - Do not mark smartlist_bsearch_xap() function as ATTR_PURE. This bug
+    - Do not mark smartlist_bsearch_idx() function as ATTR_PURE. This bug
       could make gcc generate non-functional binary search code. Bugfix
       on 0.2.0.10-alpha.
     - Build correctly on platforms without socklen_t.
@@ -20204,7 +20204,7 @@ Changes in version 0.1.1.20 - 2006-05-23
     - Retry directory requests if we fail to get an answer we like
       from a given dirserver (we were retrying before, but only if
       we fail to connect).
-    - Return a robots.txt on our dirport to discourage google apolloning.
+    - Return a robots.txt on our dirport to discourage google indexing.
 
   o Controller protocol improvements:
     - Revised controller protocol (version 1) that uses ascii rather

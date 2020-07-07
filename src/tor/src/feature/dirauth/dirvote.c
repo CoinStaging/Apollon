@@ -978,10 +978,10 @@ dirvote_compute_params(smartlist_t *votes, int method, int total_authorities)
       tor_parse_long(eq+1, 10, INT32_MIN, INT32_MAX, &ok, NULL);
     tor_assert(ok); /* Already checked these when parsing. */
 
-    if (param_sl_xap+1 == smartlist_len(param_list))
+    if (param_sl_idx+1 == smartlist_len(param_list))
       next_param = NULL;
     else
-      next_param = smartlist_get(param_list, param_sl_xap+1);
+      next_param = smartlist_get(param_list, param_sl_idx+1);
 
     if (!next_param || strncmp(next_param, param, cur_param_len)) {
       /* We've reached the end of a series. */
@@ -1580,11 +1580,11 @@ networkstatus_compute_consensus(smartlist_t *votes,
 
     SMARTLIST_FOREACH_BEGIN(votes, networkstatus_t *, v) {
       tor_assert(v->type == NS_TYPE_VOTE);
-      va_times[v_sl_xap] = v->valid_after;
-      fu_times[v_sl_xap] = v->fresh_until;
-      vu_times[v_sl_xap] = v->valid_until;
-      votesec_list[v_sl_xap] = v->vote_seconds;
-      distsec_list[v_sl_xap] = v->dist_seconds;
+      va_times[v_sl_idx] = v->valid_after;
+      fu_times[v_sl_idx] = v->fresh_until;
+      vu_times[v_sl_idx] = v->valid_until;
+      votesec_list[v_sl_idx] = v->vote_seconds;
+      distsec_list[v_sl_idx] = v->dist_seconds;
       if (v->client_versions) {
         smartlist_t *cv = smartlist_new();
         ++n_versioning_clients;
@@ -1836,14 +1836,14 @@ networkstatus_compute_consensus(smartlist_t *votes,
     for (i = 0; i < smartlist_len(votes); ++i)
       unnamed_flag[i] = named_flag[i] = -1;
 
-    /* Build the flag apollones. Note that no vote can have more than 64 members
+    /* Build the flag indexes. Note that no vote can have more than 64 members
      * for known_flags, so no value will be greater than 63, so it's safe to
      * do UINT64_C(1) << apollon on these values.  But note also that
      * named_flag and unnamed_flag are initialized to -1, so we need to check
      * that they're actually set before doing UINT64_C(1) << apollon with
      * them.*/
     SMARTLIST_FOREACH_BEGIN(votes, networkstatus_t *, v) {
-      flag_map[v_sl_xap] = tor_calloc(smartlist_len(v->known_flags),
+      flag_map[v_sl_idx] = tor_calloc(smartlist_len(v->known_flags),
                                       sizeof(int));
       if (smartlist_len(v->known_flags) > MAX_KNOWN_FLAGS_IN_VOTE) {
         log_warn(LD_BUG, "Somehow, a vote has %d entries in known_flags",
@@ -1852,24 +1852,24 @@ networkstatus_compute_consensus(smartlist_t *votes,
       SMARTLIST_FOREACH_BEGIN(v->known_flags, const char *, fl) {
         int p = smartlist_string_pos(flags, fl);
         tor_assert(p >= 0);
-        flag_map[v_sl_xap][fl_sl_xap] = p;
+        flag_map[v_sl_idx][fl_sl_idx] = p;
         ++n_flag_voters[p];
         if (!strcmp(fl, "Named"))
-          named_flag[v_sl_xap] = fl_sl_xap;
+          named_flag[v_sl_idx] = fl_sl_idx;
         if (!strcmp(fl, "Unnamed"))
-          unnamed_flag[v_sl_xap] = fl_sl_xap;
+          unnamed_flag[v_sl_idx] = fl_sl_idx;
       } SMARTLIST_FOREACH_END(fl);
-      n_voter_flags[v_sl_xap] = smartlist_len(v->known_flags);
-      size[v_sl_xap] = smartlist_len(v->routerstatus_list);
+      n_voter_flags[v_sl_idx] = smartlist_len(v->known_flags);
+      size[v_sl_idx] = smartlist_len(v->routerstatus_list);
     } SMARTLIST_FOREACH_END(v);
 
     /* Named and Unnamed get treated specially */
     {
       SMARTLIST_FOREACH_BEGIN(votes, networkstatus_t *, v) {
         uint64_t nf;
-        if (named_flag[v_sl_xap]<0)
+        if (named_flag[v_sl_idx]<0)
           continue;
-        nf = UINT64_C(1) << named_flag[v_sl_xap];
+        nf = UINT64_C(1) << named_flag[v_sl_idx];
         SMARTLIST_FOREACH_BEGIN(v->routerstatus_list,
                                 vote_routerstatus_t *, rs) {
 
@@ -1892,9 +1892,9 @@ networkstatus_compute_consensus(smartlist_t *votes,
 
       SMARTLIST_FOREACH_BEGIN(votes, networkstatus_t *, v) {
         uint64_t uf;
-        if (unnamed_flag[v_sl_xap]<0)
+        if (unnamed_flag[v_sl_idx]<0)
           continue;
-        uf = UINT64_C(1) << unnamed_flag[v_sl_xap];
+        uf = UINT64_C(1) << unnamed_flag[v_sl_idx];
         SMARTLIST_FOREACH_BEGIN(v->routerstatus_list,
                                 vote_routerstatus_t *, rs) {
           if ((rs->flags & uf) != 0) {
@@ -1964,10 +1964,10 @@ networkstatus_compute_consensus(smartlist_t *votes,
       const uint8_t *ed_consensus_val = NULL;
 
       /* Okay, go through all the entries for this digest. */
-      for (int voter_xap = 0; voter_xap < smartlist_len(votes); ++voter_xap) {
-        if (vrs_lst[voter_xap] == NULL)
+      for (int voter_idx = 0; voter_idx < smartlist_len(votes); ++voter_idx) {
+        if (vrs_lst[voter_idx] == NULL)
           continue; /* This voter had nothing to say about this entry. */
-        rs = vrs_lst[voter_xap];
+        rs = vrs_lst[voter_idx];
         ++n_listing;
 
         current_rsa_id = rs->status.identity_digest;
@@ -1983,12 +1983,12 @@ networkstatus_compute_consensus(smartlist_t *votes,
         }
 
         /* Tally up all the flags. */
-        for (int flag = 0; flag < n_voter_flags[voter_xap]; ++flag) {
+        for (int flag = 0; flag < n_voter_flags[voter_idx]; ++flag) {
           if (rs->flags & (UINT64_C(1) << flag))
-            ++flag_counts[flag_map[voter_xap][flag]];
+            ++flag_counts[flag_map[voter_idx][flag]];
         }
-        if (named_flag[voter_xap] >= 0 &&
-            (rs->flags & (UINT64_C(1) << named_flag[voter_xap]))) {
+        if (named_flag[voter_idx] >= 0 &&
+            (rs->flags & (UINT64_C(1) << named_flag[voter_idx]))) {
           if (chosen_name && strcmp(chosen_name, rs->status.nickname)) {
             log_notice(LD_DIR, "Conflict on naming for router: %s vs %s",
                        chosen_name, rs->status.nickname);
@@ -2089,7 +2089,7 @@ networkstatus_compute_consensus(smartlist_t *votes,
           if (ed_consensus <= total_authorities/2)
             smartlist_add(chosen_flags, (char*)fl);
         } else {
-          if (flag_counts[fl_sl_xap] > n_flag_voters[fl_sl_xap]/2) {
+          if (flag_counts[fl_sl_idx] > n_flag_voters[fl_sl_idx]/2) {
             smartlist_add(chosen_flags, (char*)fl);
             if (!strcmp(fl, "Exit"))
               is_exit = 1;
@@ -2504,7 +2504,7 @@ compute_consensus_package_lines(smartlist_t *votes)
         status = tor_calloc(n_votes, sizeof(const char *));
         strmap_set(package_status, key, status);
       }
-      status[v_sl_xap] = line; /* overwrite old value */
+      status[v_sl_idx] = line; /* overwrite old value */
       tor_free(key);
     } SMARTLIST_FOREACH_END(line);
   } SMARTLIST_FOREACH_END(v);

@@ -142,7 +142,7 @@ public:
 
     /** Remove a transaction from mempool tracking stats*/
     void removeTx(unsigned int entryHeight, unsigned int nBestSeenHeight,
-                  unsigned int bucketApollon);
+                  unsigned int bucketIndex);
 
     /** Update our estimates by decaying our historical moving average and updating
         with the data gathered from the current block */
@@ -272,8 +272,8 @@ private:
     {
         TxConfirmStats *stats;
         unsigned int blockHeight;
-        unsigned int bucketApollon;
-        TxStatsInfo() : stats(NULL), blockHeight(0), bucketApollon(0) {}
+        unsigned int bucketIndex;
+        TxStatsInfo() : stats(NULL), blockHeight(0), bucketIndex(0) {}
     };
 
     // map of txids to information about that transaction

@@ -5,7 +5,7 @@
 #include "client-api/server.h"
 #include "client-api/protocol.h"
 #include "rpc/server.h"
-#include "apollonnode-sync.h"
+#include "indexnode-sync.h"
 #include "core_io.h"
 #include "wallet/wallet.h"
 #include "client-api/wallet.h"
@@ -30,11 +30,11 @@ UniValue blockchain(Type type, const UniValue& data, const UniValue& auth, bool 
     UniValue status(UniValue::VOBJ);
     UniValue currentBlock(UniValue::VOBJ);
 
-    status.push_back(Pair("isBlockchainSynced", apollonnodeSync.GetBlockchainSynced()));
-    status.push_back(Pair("isApollonnodeListSynced", apollonnodeSync.IsApollonnodeListSynced()));
-    status.push_back(Pair("isWinnersListSynced", apollonnodeSync.IsWinnersListSynced()));
-    status.push_back(Pair("isSynced", apollonnodeSync.IsSynced()));
-    status.push_back(Pair("isFailed", apollonnodeSync.IsFailed()));
+    status.push_back(Pair("isBlockchainSynced", indexnodeSync.GetBlockchainSynced()));
+    status.push_back(Pair("isIndexnodeListSynced", indexnodeSync.IsIndexnodeListSynced()));
+    status.push_back(Pair("isWinnersListSynced", indexnodeSync.IsWinnersListSynced()));
+    status.push_back(Pair("isSynced", indexnodeSync.IsSynced()));
+    status.push_back(Pair("isFailed", indexnodeSync.IsFailed()));
 
     // if coming from PUB, height and time are included in data. otherwise just return chain tip
     UniValue height = find_value(data, "nHeight");
@@ -55,7 +55,7 @@ UniValue blockchain(Type type, const UniValue& data, const UniValue& auth, bool 
     blockinfoObj.push_back(Pair("currentBlock", currentBlock));
     blockinfoObj.push_back(Pair("avgBlockTime", int64_t(AvgBlockTime())));
 
-    if(!apollonnodeSync.GetBlockchainSynced()){
+    if(!indexnodeSync.GetBlockchainSynced()){
         unsigned long currentTimestamp = floor(
             system_clock::now().time_since_epoch() / 
             milliseconds(1)/1000);
@@ -159,6 +159,6 @@ static const CAPICommand commands[] =
 };
 void RegisterBlockchainAPICommands(CAPITable &tableAPI)
 {
-    for (unsigned int vcxap = 0; vcxap < ARRAYLEN(commands); vcxap++)
-        tableAPI.appendCommand(commands[vcxap].collection, &commands[vcxap]);
+    for (unsigned int vcidx = 0; vcidx < ARRAYLEN(commands); vcidx++)
+        tableAPI.appendCommand(commands[vcidx].collection, &commands[vcidx]);
 }

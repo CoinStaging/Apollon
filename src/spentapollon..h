@@ -3,45 +3,45 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef BITCOIN_SPENTAPOLLON_H
-#define BITCOIN_SPENTAPOLLON_H
+#ifndef BITCOIN_SPENTINDEX_H
+#define BITCOIN_SPENTINDEX_H
 
 #include "uint256.h"
 #include "amount.h"
 #include "script/script.h"
 #include "addresstype.h"
 
-struct CSpentApollonKey {
+struct CSpentIndexKey {
     uint256 txid;
-    unsigned int outputApollon;
+    unsigned int outputIndex;
 
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
     inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
         READWRITE(txid);
-        READWRITE(outputApollon);
+        READWRITE(outputIndex);
     }
 
-    CSpentApollonKey(uint256 t, unsigned int i) {
+    CSpentIndexKey(uint256 t, unsigned int i) {
         txid = t;
-        outputApollon = i;
+        outputIndex = i;
     }
 
-    CSpentApollonKey() {
+    CSpentIndexKey() {
         SetNull();
     }
 
     void SetNull() {
         txid.SetNull();
-        outputApollon = 0;
+        outputIndex = 0;
     }
 
 };
 
-struct CSpentApollonValue {
+struct CSpentIndexValue {
     uint256 txid;
-    unsigned int inputApollon;
+    unsigned int inputIndex;
     int blockHeight;
     CAmount satoshis;
     AddressType addressType;
@@ -53,7 +53,7 @@ struct CSpentApollonValue {
     inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
         unsigned int addrType = static_cast<unsigned int>(addressType);
         READWRITE(txid);
-        READWRITE(inputApollon);
+        READWRITE(inputIndex);
         READWRITE(blockHeight);
         READWRITE(satoshis);
         READWRITE(addrType);
@@ -61,22 +61,22 @@ struct CSpentApollonValue {
         addressType = static_cast<AddressType>(addrType);
     }
 
-    CSpentApollonValue(uint256 t, unsigned int i, int h, CAmount s, AddressType type, uint160 a) {
+    CSpentIndexValue(uint256 t, unsigned int i, int h, CAmount s, AddressType type, uint160 a) {
         txid = t;
-        inputApollon = i;
+        inputIndex = i;
         blockHeight = h;
         satoshis = s;
         addressType = type;
         addressHash = a;
     }
 
-    CSpentApollonValue() {
+    CSpentIndexValue() {
         SetNull();
     }
 
     void SetNull() {
         txid.SetNull();
-        inputApollon = 0;
+        inputIndex = 0;
         blockHeight = 0;
         satoshis = 0;
         addressType = AddressType::unknown;
@@ -88,18 +88,18 @@ struct CSpentApollonValue {
     }
 };
 
-struct CSpentApollonKeyCompare
+struct CSpentIndexKeyCompare
 {
-    bool operator()(const CSpentApollonKey& a, const CSpentApollonKey& b) const {
+    bool operator()(const CSpentIndexKey& a, const CSpentIndexKey& b) const {
         if (a.txid == b.txid) {
-            return a.outputApollon < b.outputApollon;
+            return a.outputIndex < b.outputIndex;
         } else {
             return a.txid < b.txid;
         }
     }
 };
 
-struct CTimestampApollonIteratorKey {
+struct CTimestampIndexIteratorKey {
     unsigned int timestamp;
 
     size_t GetSerializeSize(int nType, int nVersion) const {
@@ -114,11 +114,11 @@ struct CTimestampApollonIteratorKey {
         timestamp = ser_readdata32be(s);
     }
 
-    CTimestampApollonIteratorKey(unsigned int time) {
+    CTimestampIndexIteratorKey(unsigned int time) {
         timestamp = time;
     }
 
-    CTimestampApollonIteratorKey() {
+    CTimestampIndexIteratorKey() {
         SetNull();
     }
 
@@ -127,7 +127,7 @@ struct CTimestampApollonIteratorKey {
     }
 };
 
-struct CTimestampApollonKey {
+struct CTimestampIndexKey {
     unsigned int timestamp;
     uint256 blockHash;
 
@@ -145,12 +145,12 @@ struct CTimestampApollonKey {
         blockHash.Unserialize(s, nType, nVersion);
     }
 
-    CTimestampApollonKey(unsigned int time, uint256 hash) {
+    CTimestampIndexKey(unsigned int time, uint256 hash) {
         timestamp = time;
         blockHash = hash;
     }
 
-    CTimestampApollonKey() {
+    CTimestampIndexKey() {
         SetNull();
     }
 
@@ -184,11 +184,11 @@ struct CAddressUnspentKey {
         apollon = ser_readdata32(s);
     }
 
-    CAddressUnspentKey(AddressType addressType, uint160 addressHash, uint256 txid, size_t apollonValue) {
+    CAddressUnspentKey(AddressType addressType, uint160 addressHash, uint256 txid, size_t indexValue) {
         type = addressType;
         hashBytes = addressHash;
         txhash = txid;
-        apollon = apollonValue;
+        apollon = indexValue;
     }
 
     CAddressUnspentKey() {
@@ -238,11 +238,11 @@ struct CAddressUnspentValue {
     }
 };
 
-struct CAddressApollonKey {
+struct CAddressIndexKey {
     AddressType type;
     uint160 hashBytes;
     int blockHeight;
-    unsigned int txapollon;
+    unsigned int txindex;
     uint256 txhash;
     size_t apollon;
     bool spending;
@@ -256,7 +256,7 @@ struct CAddressApollonKey {
         hashBytes.Serialize(s, nType, nVersion);
         // Heights are stored big-endian for key sorting in LevelDB
         ser_writedata32be(s, blockHeight);
-        ser_writedata32be(s, txapollon);
+        ser_writedata32be(s, txindex);
         txhash.Serialize(s, nType, nVersion);
         ser_writedata32(s, apollon);
         char f = spending;
@@ -267,25 +267,25 @@ struct CAddressApollonKey {
         type = static_cast<AddressType>(ser_readdata8(s));
         hashBytes.Unserialize(s, nType, nVersion);
         blockHeight = ser_readdata32be(s);
-        txapollon = ser_readdata32be(s);
+        txindex = ser_readdata32be(s);
         txhash.Unserialize(s, nType, nVersion);
         apollon = ser_readdata32(s);
         char f = ser_readdata8(s);
         spending = f;
     }
 
-    CAddressApollonKey(AddressType addressType, uint160 addressHash, int height, int blockapollon,
-                     uint256 txid, size_t apollonValue, bool isSpending) {
+    CAddressIndexKey(AddressType addressType, uint160 addressHash, int height, int blockindex,
+                     uint256 txid, size_t indexValue, bool isSpending) {
         type = addressType;
         hashBytes = addressHash;
         blockHeight = height;
-        txapollon = blockapollon;
+        txindex = blockindex;
         txhash = txid;
-        apollon = apollonValue;
+        apollon = indexValue;
         spending = isSpending;
     }
 
-    CAddressApollonKey() {
+    CAddressIndexKey() {
         SetNull();
     }
 
@@ -293,7 +293,7 @@ struct CAddressApollonKey {
         type = AddressType::unknown;
         hashBytes.SetNull();
         blockHeight = 0;
-        txapollon = 0;
+        txindex = 0;
         txhash.SetNull();
         apollon = 0;
         spending = false;
@@ -301,7 +301,7 @@ struct CAddressApollonKey {
 
 };
 
-struct CAddressApollonIteratorKey {
+struct CAddressIndexIteratorKey {
     AddressType type;
     uint160 hashBytes;
 
@@ -319,12 +319,12 @@ struct CAddressApollonIteratorKey {
         hashBytes.Unserialize(s, nType, nVersion);
     }
 
-    CAddressApollonIteratorKey(AddressType addressType, uint160 addressHash) {
+    CAddressIndexIteratorKey(AddressType addressType, uint160 addressHash) {
         type = addressType;
         hashBytes = addressHash;
     }
 
-    CAddressApollonIteratorKey() {
+    CAddressIndexIteratorKey() {
         SetNull();
     }
 
@@ -334,7 +334,7 @@ struct CAddressApollonIteratorKey {
     }
 };
 
-struct CAddressApollonIteratorHeightKey {
+struct CAddressIndexIteratorHeightKey {
     AddressType type;
     uint160 hashBytes;
     int blockHeight;
@@ -355,13 +355,13 @@ struct CAddressApollonIteratorHeightKey {
         blockHeight = ser_readdata32be(s);
     }
 
-    CAddressApollonIteratorHeightKey(AddressType addressType, uint160 addressHash, int height) {
+    CAddressIndexIteratorHeightKey(AddressType addressType, uint160 addressHash, int height) {
         type = addressType;
         hashBytes = addressHash;
         blockHeight = height;
     }
 
-    CAddressApollonIteratorHeightKey() {
+    CAddressIndexIteratorHeightKey() {
         SetNull();
     }
 
@@ -373,4 +373,4 @@ struct CAddressApollonIteratorHeightKey {
 };
 
 
-#endif // BITCOIN_SPENTAPOLLON_H
+#endif // BITCOIN_SPENTINDEX_H

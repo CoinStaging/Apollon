@@ -126,8 +126,8 @@
         <translation>Direccións para recibir</translation>
     </message>
     <message>
-        <source>Reapolloning blocks on disk...</source>
-        <translation>Reapollonando bloques no disco...</translation>
+        <source>Reindexing blocks on disk...</source>
+        <translation>Reindexando bloques no disco...</translation>
     </message>
     <message>
         <source>Send coins to a Apollon address</source>

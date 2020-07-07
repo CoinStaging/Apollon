@@ -59,12 +59,12 @@ bool CheckZerocoinTransaction(const CTransaction &tx,
     bool fZerocoinStateCheck,
     CZerocoinTxInfo *zerocoinTxInfo);
 
-void DisconnectTipZC(CBlock &block, CBlockApollon *papollonDelete);
-bool ConnectBlockZC(CValidationState &state, const CChainParams &chainparams, CBlockApollon *papollonNew, const CBlock *pblock, bool fJustCheck=false);
+void DisconnectTipZC(CBlock &block, CBlockIndex *pindexDelete);
+bool ConnectBlockZC(CValidationState &state, const CChainParams &chainparams, CBlockIndex *pindexNew, const CBlock *pblock, bool fJustCheck=false);
 
 int ZerocoinGetNHeight(const CBlockHeader &block);
 
-bool ZerocoinBuildStateFromApollon(CChain *chain, set<CBlockApollon *> &changes);
+bool ZerocoinBuildStateFromIndex(CChain *chain, set<CBlockIndex *> &changes);
 
 CBigNum ZerocoinGetSpendSerialNumber(const CTransaction &tx, const CTxIn &txin);
 
@@ -72,15 +72,15 @@ CBigNum ZerocoinGetSpendSerialNumber(const CTransaction &tx, const CTxIn &txin);
  * State of minted/spent coins as extracted from the apollon
  */
 class CZerocoinState {
-friend bool ZerocoinBuildStateFromApollon(CChain *, set<CBlockApollon *> &);
+friend bool ZerocoinBuildStateFromIndex(CChain *, set<CBlockIndex *> &);
 public:
     // First and last block where mint (and hence accumulator update) with given denomination and id was seen
     struct CoinGroupInfo {
         CoinGroupInfo() : firstBlock(NULL), lastBlock(NULL), nCoins(0) {}
 
         // first and last blocks having coins with given denomination and id minted
-        CBlockApollon *firstBlock;
-        CBlockApollon *lastBlock;
+        CBlockIndex *firstBlock;
+        CBlockIndex *lastBlock;
         // total number of minted coins with such parameters
         int nCoins;
     };
@@ -117,14 +117,14 @@ public:
     unordered_map<CBigNum,uint256,CBigNumHash> mempoolCoinSerials;
 
     // Add mint, automatically assigning id to it. Returns id and previous accumulator value (if any)
-    int AddMint(CBlockApollon *apollon, int denomination, const CBigNum &pubCoin, CBigNum &previousAccValue);
+    int AddMint(CBlockIndex *apollon, int denomination, const CBigNum &pubCoin, CBigNum &previousAccValue);
     // Add serial to the list of used ones
     void AddSpend(const CBigNum &serial);
 
     // Add everything from the block to the state
-    void AddBlock(CBlockApollon *apollon, const Consensus::Params &params);
+    void AddBlock(CBlockIndex *apollon, const Consensus::Params &params);
     // Disconnect block from the chain rolling back mints and spends
-    void RemoveBlock(CBlockApollon *apollon);
+    void RemoveBlock(CBlockIndex *apollon);
 
     // Query coin group with given denomination and id
     bool GetCoinGroupInfo(int denomination, int id, CoinGroupInfo &result);
@@ -156,7 +156,7 @@ public:
 
     // Recalculate accumulators. Needed if upgrade from pre-modulusv2 version is detected
     // Returns set of indices that changed
-    set<CBlockApollon *> RecalculateAccumulators(CChain *chain);
+    set<CBlockIndex *> RecalculateAccumulators(CChain *chain);
 
     // Check if there is a conflicting tx in the blockchain or mempool
     bool CanAddSpendToMempool(const CBigNum &coinSerial);

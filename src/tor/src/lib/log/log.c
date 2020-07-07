@@ -56,7 +56,7 @@
 
 /** Given a severity, yields an apollon into log_severity_list_t.masks to use
  * for that severity. */
-#define SEVERITY_MASK_XAP(sev) ((sev) - LOG_ERR)
+#define SEVERITY_MASK_IDX(sev) ((sev) - LOG_ERR)
 
 /** @{ */
 /** The string we stick at the end of a log message when it is too long,
@@ -493,7 +493,7 @@ static inline int
 logfile_wants_message(const logfile_t *lf, int severity,
                       log_domain_mask_t domain)
 {
-  if (! (lf->severities->masks[SEVERITY_MASK_XAP(severity)] & domain)) {
+  if (! (lf->severities->masks[SEVERITY_MASK_IDX(severity)] & domain)) {
     return 0;
   }
   if (! (lf->fd >= 0 || logfile_is_external(lf))) {
@@ -680,7 +680,7 @@ tor_log_update_sigsafe_err_fds(void)
     if (lf->is_temporary || logfile_is_external(lf)
         || lf->seems_dead || lf->fd < 0)
       continue;
-    if (lf->severities->masks[SEVERITY_MASK_XAP(LOG_ERR)] &
+    if (lf->severities->masks[SEVERITY_MASK_IDX(LOG_ERR)] &
         (LD_BUG|LD_GENERAL)) {
       if (lf->fd == STDERR_FILENO)
         found_real_stderr = 1;
@@ -864,7 +864,7 @@ set_log_severity_config(int loglevelMin, int loglevelMax,
   raw_assert(loglevelMax >= LOG_ERR && loglevelMax <= LOG_DEBUG);
   memset(severity_out, 0, sizeof(log_severity_list_t));
   for (i = loglevelMin; i >= loglevelMax; --i) {
-    severity_out->masks[SEVERITY_MASK_XAP(i)] = ~0u;
+    severity_out->masks[SEVERITY_MASK_IDX(i)] = ~0u;
   }
 }
 
@@ -1024,7 +1024,7 @@ flush_pending_log_callbacks(void)
       const int domain = msg->domain;
       for (lf = logfiles; lf; lf = lf->next) {
         if (! lf->callback || lf->seems_dead ||
-            ! (lf->severities->masks[SEVERITY_MASK_XAP(severity)] & domain)) {
+            ! (lf->severities->masks[SEVERITY_MASK_IDX(severity)] & domain)) {
           continue;
         }
         lf->callback(severity, domain, msg->msg);
@@ -1431,7 +1431,7 @@ parse_log_severity_config(const char **cfg_ptr,
 
     got_anything = 1;
     for (i=low; i >= high; --i)
-      severity_out->masks[SEVERITY_MASK_XAP(i)] |= domains;
+      severity_out->masks[SEVERITY_MASK_IDX(i)] |= domains;
 
     cfg = eat_whitespace(space);
   }
@@ -1450,7 +1450,7 @@ get_min_log_level(void)
   int min = LOG_ERR;
   for (lf = logfiles; lf; lf = lf->next) {
     for (i = LOG_DEBUG; i > min; --i)
-      if (lf->severities->masks[SEVERITY_MASK_XAP(i)])
+      if (lf->severities->masks[SEVERITY_MASK_IDX(i)])
         min = i;
   }
   return min;
@@ -1465,7 +1465,7 @@ switch_logs_debug(void)
   LOCK_LOGS();
   for (lf = logfiles; lf; lf=lf->next) {
     for (i = LOG_DEBUG; i >= LOG_ERR; --i)
-      lf->severities->masks[SEVERITY_MASK_XAP(i)] = ~0u;
+      lf->severities->masks[SEVERITY_MASK_IDX(i)] = ~0u;
   }
   log_global_min_severity_ = get_min_log_level();
   UNLOCK_LOGS();

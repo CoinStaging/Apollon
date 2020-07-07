@@ -37,7 +37,7 @@ ZerocoinPage::ZerocoinPage(const PlatformStyle *platformStyle, Mode mode, QWidge
     switch (mode) {
         case ForSelection:
             setWindowTitle(tr("Zerocoin"));
-            connect(ui->tableView, SIGNAL(doubleClicked(QModelApollon)), this, SLOT(accept()));
+            connect(ui->tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(accept()));
             ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
             ui->tableView->setFocus();
             ui->exportButton->hide();
@@ -103,7 +103,7 @@ void ZerocoinPage::setModel(AddressTableModel *model) {
 //            this, SLOT(selectionChanged()));
 
     // Select row for newly created address
-    connect(model, SIGNAL(rowsInserted(QModelApollon, int, int)), this, SLOT(selectNewAddress(QModelApollon, int, int)));
+    connect(model, SIGNAL(rowsInserted(QModelIndex, int, int)), this, SLOT(selectNewAddress(QModelIndex, int, int)));
 
 //    selectionChanged();
 }
@@ -174,9 +174,9 @@ void ZerocoinPage::zerocoinSpendToMeCheckBoxChecked(int state) {
 //{
 //#ifdef USE_QRCODE
 //    QTableView *table = ui->tableView;
-//    QModelApollonList apollones = table->selectionModel()->selectedRows(AddressTableModel::Address);
+//    QModelIndexList indexes = table->selectionModel()->selectedRows(AddressTableModel::Address);
 //
-//    Q_FOREACH(const QModelApollon &apollon, apollones) {
+//    Q_FOREACH(const QModelIndex &apollon, indexes) {
 //    {
 //        QString address = apollon.data().toString();
 //        QString label = apollon.sibling(apollon.row(), 0).data(Qt::EditRole).toString();
@@ -195,9 +195,9 @@ void ZerocoinPage::zerocoinSpendToMeCheckBoxChecked(int state) {
 //        return;
 //
 //    // Figure out which address was selected, and return it
-//    QModelApollonList apollones = table->selectionModel()->selectedRows(AddressTableModel::Address);
+//    QModelIndexList indexes = table->selectionModel()->selectedRows(AddressTableModel::Address);
 //
-//    Q_FOREACH(const QModelApollon &apollon, apollones) {
+//    Q_FOREACH(const QModelIndex &apollon, indexes) {
 //        QVariant address = table->model()->data(apollon);
 //        returnValue = address.toString();
 //    }
@@ -231,14 +231,14 @@ void ZerocoinPage::on_exportButton_clicked() {
 }
 
 void ZerocoinPage::contextualMenu(const QPoint &point) {
-    QModelApollon apollon = ui->tableView->apollonAt(point);
+    QModelIndex apollon = ui->tableView->indexAt(point);
     if (apollon.isValid()) {
         contextMenu->exec(QCursor::pos());
     }
 }
 
-void ZerocoinPage::selectNewAddress(const QModelApollon &parent, int begin, int /*end*/) {
-    QModelApollon xap = proxyModel->mapFromSource(model->apollon(begin, AddressTableModel::Address, parent));
+void ZerocoinPage::selectNewAddress(const QModelIndex &parent, int begin, int /*end*/) {
+    QModelIndex xap = proxyModel->mapFromSource(model->apollon(begin, AddressTableModel::Address, parent));
     if (xap.isValid() && (xap.data(Qt::EditRole).toString() == newAddressToSelect)) {
         // Select row of newly created address, once
         ui->tableView->setFocus();

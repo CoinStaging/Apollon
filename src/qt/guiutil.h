@@ -156,20 +156,20 @@ namespace GUIUtil
             QTableView* tableView;
             int lastColumnMinimumWidth;
             int allColumnsMinimumWidth;
-            int lastColumnApollon;
+            int lastColumnIndex;
             int columnCount;
-            int secondToLastColumnApollon;
+            int secondToLastColumnIndex;
 
             void adjustTableColumnsWidth();
             int getAvailableWidthForColumn(int column);
             int getColumnsWidth();
             void connectViewHeadersSignals();
             void disconnectViewHeadersSignals();
-            void setViewHeaderResizeMode(int logicalApollon, QHeaderView::ResizeMode resizeMode);
-            void resizeColumn(int nColumnApollon, int width);
+            void setViewHeaderResizeMode(int logicalIndex, QHeaderView::ResizeMode resizeMode);
+            void resizeColumn(int nColumnIndex, int width);
 
         private Q_SLOTS:
-            void on_sectionResized(int logicalApollon, int oldSize, int newSize);
+            void on_sectionResized(int logicalIndex, int oldSize, int newSize);
             void on_geometriesChanged();
     };
 

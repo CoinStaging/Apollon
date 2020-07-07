@@ -86,16 +86,16 @@ static const bool DEFAULT_USE_MNEMONIC = true;
 extern const char * DEFAULT_WALLET_DAT;
 
 const uint32_t BIP32_HARDENED_KEY_LIMIT = 0x80000000;
-const uint32_t BIP44_APOLLON = 0x2C;
-const uint32_t BIP44_TEST_APOLLON = 0x1;   // https://github.com/satoshilabs/slips/blob/master/slip-0044.md#registered-coin-types
-const uint32_t BIP44_ZCOIN_APOLLON = 0x1DB; // https://github.com/satoshilabs/slips/blob/master/slip-0044.md#registered-coin-types
-const uint32_t BIP44_MINT_APOLLON = 0x2;
+const uint32_t BIP44_INDEX = 0x2C;
+const uint32_t BIP44_TEST_INDEX = 0x1;   // https://github.com/satoshilabs/slips/blob/master/slip-0044.md#registered-coin-types
+const uint32_t BIP44_ZCOIN_INDEX = 0x1DB; // https://github.com/satoshilabs/slips/blob/master/slip-0044.md#registered-coin-types
+const uint32_t BIP44_MINT_INDEX = 0x2;
 #ifdef ENABLE_ELYSIUM
-const uint32_t BIP44_ELYSIUM_MINT_APOLLON_V0 = 0x3;
-const uint32_t BIP44_ELYSIUM_MINT_APOLLON_V1 = 0x4;
+const uint32_t BIP44_ELYSIUM_MINT_INDEX_V0 = 0x3;
+const uint32_t BIP44_ELYSIUM_MINT_INDEX_V1 = 0x4;
 #endif
 
-class CBlockApollon;
+class CBlockIndex;
 class CCoinControl;
 class COutput;
 class CReserveKey;
@@ -121,7 +121,7 @@ enum AvailableCoinsType
     ONLY_DENOMINATED = 2,
     ONLY_NOT1000IFMN = 3,
     ONLY_NONDENOMINATED_NOT1000IFMN = 4,
-    ONLY_1000 = 5, // find apollonnode outputs including locked ones (use with caution)
+    ONLY_1000 = 5, // find indexnode outputs including locked ones (use with caution)
     ONLY_PRIVATESEND_COLLATERAL = 6,
     ONLY_MINTS = 7,
     WITH_MINTS = 8
@@ -221,12 +221,12 @@ private:
 public:
     uint256 hashBlock;
 
-    /* An nApollon == -1 means that hashBlock (in nonzero) refers to the earliest
+    /* An nIndex == -1 means that hashBlock (in nonzero) refers to the earliest
      * block in the chain we know this or any in-wallet dependency conflicts
-     * with. Older clients interpret nApollon == -1 as unconfirmed for backward
+     * with. Older clients interpret nIndex == -1 as unconfirmed for backward
      * compatibility.
      */
-    int nApollon;
+    int nIndex;
 
     CMerkleTx()
     {
@@ -241,7 +241,7 @@ public:
     void Init()
     {
         hashBlock = uint256();
-        nApollon = -1;
+        nIndex = -1;
     }
 
     ADD_SERIALIZE_METHODS;
@@ -253,7 +253,7 @@ public:
         nVersion = this->nVersion;
         READWRITE(hashBlock);
         READWRITE(vMerkleBranch);
-        READWRITE(nApollon);
+        READWRITE(nIndex);
     }
 
     int SetMerkleBranch(const CBlock& block);
@@ -264,13 +264,13 @@ public:
      *  0  : in memory pool, waiting to be included in a block
      * >=1 : this many blocks deep in the main chain
      */
-    int GetDepthInMainChain(const CBlockApollon* &papollonRet) const;
-    int GetDepthInMainChain() const { const CBlockApollon *papollonRet; return GetDepthInMainChain(papollonRet); }
+    int GetDepthInMainChain(const CBlockIndex* &pindexRet) const;
+    int GetDepthInMainChain() const { const CBlockIndex *pindexRet; return GetDepthInMainChain(pindexRet); }
 
-    int GetDepthInMainChain(const CBlockApollon* &papollonRet, bool enableIX) const;
-    int GetDepthInMainChain(bool enableIX) const { const CBlockApollon *papollonRet; return GetDepthInMainChain(papollonRet, enableIX); }
+    int GetDepthInMainChain(const CBlockIndex* &pindexRet, bool enableIX) const;
+    int GetDepthInMainChain(bool enableIX) const { const CBlockIndex *pindexRet; return GetDepthInMainChain(pindexRet, enableIX); }
 
-    bool IsInMainChain() const { const CBlockApollon *papollonRet; return GetDepthInMainChain(papollonRet) > 0; }
+    bool IsInMainChain() const { const CBlockIndex *pindexRet; return GetDepthInMainChain(pindexRet) > 0; }
     int GetBlocksToMaturity() const;
 
     /** Pass this transaction to the mempool. Fails if absolute fee exceeds absurd fee. */
@@ -706,7 +706,7 @@ public:
 
     std::set<int64_t> setKeyPool;
     std::map<CKeyID, CKeyMetadata> mapKeyMetadata;
-    //apollonnode
+    //indexnode
     int64_t nKeysLeftSinceAutoBackup;
 
     typedef std::map<unsigned int, CMasterKey> MasterKeyMap;
@@ -800,9 +800,9 @@ public:
     void UnlockAllCoins();
     void ListLockedCoins(std::vector<COutPoint>& vOutpts);
 
-    // apollonnode
-    /// Get 1000 XAP output and keys which can be used for the Apollonnode
-    bool GetApollonnodeVinAndKeys(CTxIn& txinRet, CPubKey& pubKeyRet, CKey& keyRet, std::string strTxHash = "", std::string strOutputApollon = "");
+    // indexnode
+    /// Get 1000 XAP output and keys which can be used for the Indexnode
+    bool GetIndexnodeVinAndKeys(CTxIn& txinRet, CPubKey& pubKeyRet, CKey& keyRet, std::string strTxHash = "", std::string strOutputIndex = "");
     /// Extract txin information and keys from output
     bool GetVinAndKeysFromOutput(COutput out, CTxIn& txinRet, CPubKey& pubKeyRet, CKey& keyRet);
     bool HasCollateralInputs(bool fOnlyConfirmed = true) const;
@@ -861,13 +861,13 @@ public:
 
     void MarkDirty();
     bool AddToWallet(const CWalletTx& wtxIn, bool fFromLoadWallet, CWalletDB* pwalletdb);
-    void SyncTransaction(const CTransaction& tx, const CBlockApollon *papollon, const CBlock* pblock);
+    void SyncTransaction(const CTransaction& tx, const CBlockIndex *pindex, const CBlock* pblock);
     bool AddToWalletIfInvolvingMe(const CTransaction& tx, const CBlock* pblock, bool fUpdate);
-    int ScanForWalletTransactions(CBlockApollon* papollonStart, bool fUpdate = false);
+    int ScanForWalletTransactions(CBlockIndex* pindexStart, bool fUpdate = false);
     void ReacceptWalletTransactions();
     void ResendWalletTransactions(int64_t nBestBlockTime);
     std::vector<uint256> ResendWalletTransactionsBefore(int64_t nTime);
-    //apollonnode
+    //indexnode
     CAmount GetBalance(bool fExcludeLocked = false) const;
     CAmount GetUnconfirmedBalance() const;
     CAmount GetImmatureBalance() const;
@@ -948,7 +948,7 @@ public:
     bool IsMintFromTxOutAvailable(CTxOut txout, bool& fIsAvailable);
     void ListAvailableCoinsMintCoins(std::vector<COutput>& vCoins, bool fOnlyConfirmed=true) const;
 
-    bool GetTxInfoForPubcoin(const CZerocoinEntry &pubCoinItem, std::string& fTxid, unsigned int& fApollon) const;
+    bool GetTxInfoForPubcoin(const CZerocoinEntry &pubCoinItem, std::string& fTxid, unsigned int& fIndex) const;
     
     void ListAvailableSigmaMintCoins(vector <COutput> &vCoins, bool fOnlyConfirmed) const;
 
@@ -1101,9 +1101,9 @@ public:
 
     bool NewKeyPool();
     bool TopUpKeyPool(unsigned int kpSize = 0);
-    void ReserveKeyFromKeyPool(int64_t& nApollon, CKeyPool& keypool);
-    void KeepKey(int64_t nApollon);
-    void ReturnKey(int64_t nApollon);
+    void ReserveKeyFromKeyPool(int64_t& nIndex, CKeyPool& keypool);
+    void KeepKey(int64_t nIndex);
+    void ReturnKey(int64_t nIndex);
     bool GetKeyFromPool(CPubKey &key);
     int64_t GetOldestKeyPoolTime();
     void GetAllReserveKeys(std::set<CKeyID>& setAddress) const;
@@ -1261,12 +1261,12 @@ class CReserveKey : public CReserveScript
 {
 protected:
     CWallet* pwallet;
-    int64_t nApollon;
+    int64_t nIndex;
     CPubKey vchPubKey;
 public:
     CReserveKey(CWallet* pwalletIn)
     {
-        nApollon = -1;
+        nIndex = -1;
         pwallet = pwalletIn;
     }
 

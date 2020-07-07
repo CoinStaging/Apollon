@@ -256,7 +256,7 @@ BOOST_AUTO_TEST_CASE(sigma_mint_chainstate_owned)
 {
     auto id = wallet->CreateSigmaMint(1, 0);
     SigmaMintGroup group;
-    SigmaMintApollon apollon;
+    SigmaMintIndex apollon;
     SigmaMint mint;
 
     // Add.
@@ -279,7 +279,7 @@ BOOST_AUTO_TEST_CASE(sigma_mint_chainstate_not_owned)
     // Add our mint first so we can test if the other mint does not alter our mint state.
     auto id = wallet->CreateSigmaMint(1, 0);
     SigmaMintGroup group;
-    SigmaMintApollon apollon;
+    SigmaMintIndex apollon;
 
     std::tie(group, apollon) = sigmaDb->RecordMint(1, 0, id.pubKey, 100);
 

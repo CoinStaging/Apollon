@@ -515,23 +515,23 @@ BOOST_AUTO_TEST_CASE(zerocoin_mintspend_numinputs){
     string stringError;
 
     std::vector<std::string> denominations = {"1", "10", "25", "50", "100"};
-    int denominationApollonA = rand() % 5;
-    int denominationApollonB = (denominationApollonA + 5) %4; //guarantees a different number in the range
+    int denominationIndexA = rand() % 5;
+    int denominationIndexB = (denominationIndexA + 5) %4; //guarantees a different number in the range
 
     CZerocoinState *zerocoinState = CZerocoinState::GetZerocoinState();
 
     pwalletMain->SetBroadcastTransactions(true);
 
     // attempt to create a zerocoin spend with more than ZC_SPEND_LIMIT inputs.
-    printf("Testing number of inputs for denomination %s\n", denominations[denominationApollonA].c_str());
+    printf("Testing number of inputs for denomination %s\n", denominations[denominationIndexA].c_str());
     denominationsForTx.clear();
 
     for (int i = 0; i < (ZC_SPEND_LIMIT+1)*2; i++){
-        denominationsForTx.push_back(denominations[denominationApollonA]);
-        BOOST_CHECK_MESSAGE(pwalletMain->CreateZerocoinMintModel(stringError, denominations[denominationApollonA].c_str()), stringError + " - Create Mint failed");
-        BOOST_CHECK_MESSAGE(pwalletMain->CreateZerocoinMintModel(stringError, denominations[denominationApollonB].c_str()), stringError + " - Create Mint failed");
+        denominationsForTx.push_back(denominations[denominationIndexA]);
+        BOOST_CHECK_MESSAGE(pwalletMain->CreateZerocoinMintModel(stringError, denominations[denominationIndexA].c_str()), stringError + " - Create Mint failed");
+        BOOST_CHECK_MESSAGE(pwalletMain->CreateZerocoinMintModel(stringError, denominations[denominationIndexB].c_str()), stringError + " - Create Mint failed");
         if(i<=ZC_SPEND_LIMIT){
-            denominationsForTx.push_back(denominations[denominationApollonA]);
+            denominationsForTx.push_back(denominations[denominationIndexA]);
         }
     }
     
@@ -557,8 +557,8 @@ BOOST_AUTO_TEST_CASE(zerocoin_mintspend_numinputs){
     // Next add 3 transactions with 2 inputs each, verify mempool==3. mine a block. Verify mempool still has 1 tx.
     for(int i=0;i<3;i++){
         denominationsForTx.clear();
-        denominationsForTx.push_back(denominations[denominationApollonA]);
-        denominationsForTx.push_back(denominations[denominationApollonB]);
+        denominationsForTx.push_back(denominations[denominationIndexA]);
+        denominationsForTx.push_back(denominations[denominationIndexB]);
         BOOST_CHECK_MESSAGE(pwalletMain->CreateZerocoinSpendModelV2(wtx, stringError, thirdPartyAddress, denominationsForTx), "Spend Failed");
     }
 

@@ -306,7 +306,7 @@ def parse_data_section(s):
 def parse_mm_file(s):
     """Parse a MaxMind-DB file."""
     try:
-        metadata_ptr = s.rapollon(METADATA_MARKER)
+        metadata_ptr = s.rindex(METADATA_MARKER)
     except ValueError:
         raise ValueError("No metadata!")
 

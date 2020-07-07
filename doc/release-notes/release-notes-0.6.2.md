@@ -9,9 +9,9 @@ https://github.com/bitcoin/bitcoin/issues
 
 NOTABLE CHANGES
 
-Much faster shutdowns. However, the blkapollon.dat file is no longer
+Much faster shutdowns. However, the blkindex.dat file is no longer
 portable to different data directories by default. If you need a
-portable blkapollon.dat file then run with the new -detachdb=1 option
+portable blkindex.dat file then run with the new -detachdb=1 option
 or the "Detach databases at shutdown" GUI preference.
 
 Fixed https://github.com/bitcoin/bitcoin/issues/1065, a bug that

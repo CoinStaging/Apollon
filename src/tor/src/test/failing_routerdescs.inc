@@ -802,7 +802,7 @@ static const char EX_RI_ED_MISSING_CROSSCERT_SIGN[] =
   "-----END ED25519 CERT-----\n"
   "signing-key\n"
   "-----BEGIN RSA PUBLIC KEY-----\n"
-  "MIGJAoGBALEqlijoFXAP1y1i5zfei8DuDIsFtSw56PGgnMRGcybwD1PRQCheCUZM\n"
+  "MIGJAoGBALEqlijoFIDX1y1i5zfei8DuDIsFtSw56PGgnMRGcybwD1PRQCheCUZM\n"
   "erQgFCWjgLgvGJERBK/oILW1dFXp4MAR5RgnrPGTfWTinCj32obMLN1gIczpq6a9\n"
   "P9uv6Cz0ApSxpA/AuvjyAZwQKbUXuMvIY4aTprAKSqqVohk6E+E1AgMBAAE=\n"
   "-----END RSA PUBLIC KEY-----\n"

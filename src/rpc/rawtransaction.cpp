@@ -160,12 +160,12 @@ void TxToJSON(const CTransaction& tx, const uint256 hashBlock, UniValue& entry)
         UniValue o(UniValue::VOBJ);
         ScriptPubKeyToJSON(txout.scriptPubKey, o, true);
         out.push_back(Pair("scriptPubKey", o));
-        // Add spent information if spentapollon is enabled
-        CSpentApollonValue spentInfo;
-        CSpentApollonKey spentKey(txid, i);
-        if (GetSpentApollon(spentKey, spentInfo)) {
+        // Add spent information if spentindex is enabled
+        CSpentIndexValue spentInfo;
+        CSpentIndexKey spentKey(txid, i);
+        if (GetSpentIndex(spentKey, spentInfo)) {
             out.push_back(Pair("spentTxId", spentInfo.txid.GetHex()));
-            out.push_back(Pair("spentApollon", (int)spentInfo.inputApollon));
+            out.push_back(Pair("spentIndex", (int)spentInfo.inputIndex));
             out.push_back(Pair("spentHeight", spentInfo.blockHeight));
         }
         vout.push_back(out);
@@ -174,14 +174,14 @@ void TxToJSON(const CTransaction& tx, const uint256 hashBlock, UniValue& entry)
 
     if (!hashBlock.IsNull()) {
         entry.push_back(Pair("blockhash", hashBlock.GetHex()));
-        BlockMap::iterator mi = mapBlockApollon.find(hashBlock);
-        if (mi != mapBlockApollon.end() && (*mi).second) {
-            CBlockApollon* papollon = (*mi).second;
-            if (chainActive.Contains(papollon)) {
-                entry.push_back(Pair("height", papollon->nHeight));
-                entry.push_back(Pair("confirmations", 1 + chainActive.Height() - papollon->nHeight));
-                entry.push_back(Pair("time", papollon->GetBlockTime()));
-                entry.push_back(Pair("blocktime", papollon->GetBlockTime()));
+        BlockMap::iterator mi = mapBlockIndex.find(hashBlock);
+        if (mi != mapBlockIndex.end() && (*mi).second) {
+            CBlockIndex* pindex = (*mi).second;
+            if (chainActive.Contains(pindex)) {
+                entry.push_back(Pair("height", pindex->nHeight));
+                entry.push_back(Pair("confirmations", 1 + chainActive.Height() - pindex->nHeight));
+                entry.push_back(Pair("time", pindex->GetBlockTime()));
+                entry.push_back(Pair("blocktime", pindex->GetBlockTime()));
             }
             else {
                 entry.push_back(Pair("height", -1));
@@ -199,7 +199,7 @@ UniValue getrawtransaction(const UniValue& params, bool fHelp)
             "getrawtransaction \"txid\" ( verbose )\n"
             "\nNOTE: By default this function only works sometimes. This is when the tx is in the mempool\n"
             "or there is an unspent output in the utxo for this transaction. To make it always work,\n"
-            "you need to maintain a transaction apollon, using the -txapollon command line option.\n"
+            "you need to maintain a transaction apollon, using the -txindex command line option.\n"
             "\nReturn the raw transaction data.\n"
             "\nIf verbose=0, returns a string that is serialized, hex-encoded data for 'txid'.\n"
             "If verbose is non-zero, returns an Object with information about 'txid'.\n"
@@ -243,7 +243,7 @@ UniValue getrawtransaction(const UniValue& params, bool fHelp)
             "         \"reqSigs\" : n,            (numeric) The required sigs\n"
             "         \"type\" : \"pubkeyhash\",  (string) The type, eg 'pubkeyhash'\n"
             "         \"addresses\" : [           (json array of string)\n"
-            "           \"apollonaddress\"        (string) Apollon address\n"
+            "           \"indexaddress\"        (string) Apollon address\n"
             "           ,...\n"
             "         ]\n"
             "       }\n"
@@ -294,7 +294,7 @@ UniValue gettxoutproof(const UniValue& params, bool fHelp)
             "\nReturns a hex-encoded proof that \"txid\" was included in a block.\n"
             "\nNOTE: By default this function only works sometimes. This is when there is an\n"
             "unspent output in the utxo for this transaction. To make it always work,\n"
-            "you need to maintain a transaction apollon, using the -txapollon command line option or\n"
+            "you need to maintain a transaction apollon, using the -txindex command line option or\n"
             "specify the block in which the transaction is included manually (by blockhash).\n"
             "\nReturn the raw transaction data.\n"
             "\nArguments:\n"
@@ -324,33 +324,33 @@ UniValue gettxoutproof(const UniValue& params, bool fHelp)
 
     LOCK(cs_main);
 
-    CBlockApollon* pblockapollon = NULL;
+    CBlockIndex* pblockindex = NULL;
 
     uint256 hashBlock;
     if (params.size() > 1)
     {
         hashBlock = uint256S(params[1].get_str());
-        if (!mapBlockApollon.count(hashBlock))
+        if (!mapBlockIndex.count(hashBlock))
             throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Block not found");
-        pblockapollon = mapBlockApollon[hashBlock];
+        pblockindex = mapBlockIndex[hashBlock];
     } else {
         CCoins coins;
         if (pcoinsTip->GetCoins(oneTxid, coins) && coins.nHeight > 0 && coins.nHeight <= chainActive.Height())
-            pblockapollon = chainActive[coins.nHeight];
+            pblockindex = chainActive[coins.nHeight];
     }
 
-    if (pblockapollon == NULL)
+    if (pblockindex == NULL)
     {
         CTransaction tx;
         if (!GetTransaction(oneTxid, tx, Params().GetConsensus(), hashBlock, false) || hashBlock.IsNull())
             throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Transaction not yet in block");
-        if (!mapBlockApollon.count(hashBlock))
+        if (!mapBlockIndex.count(hashBlock))
             throw JSONRPCError(RPC_INTERNAL_ERROR, "Transaction apollon corrupt");
-        pblockapollon = mapBlockApollon[hashBlock];
+        pblockindex = mapBlockIndex[hashBlock];
     }
 
     CBlock block;
-    if(!ReadBlockFromDisk(block, pblockapollon, Params().GetConsensus()))
+    if(!ReadBlockFromDisk(block, pblockindex, Params().GetConsensus()))
         throw JSONRPCError(RPC_INTERNAL_ERROR, "Can't read block from disk");
 
     unsigned int ntxFound = 0;
@@ -387,13 +387,13 @@ UniValue verifytxoutproof(const UniValue& params, bool fHelp)
     UniValue res(UniValue::VARR);
 
     vector<uint256> vMatch;
-    vector<unsigned int> vApollon;
-    if (merkleBlock.txn.ExtractMatches(vMatch, vApollon) != merkleBlock.header.hashMerkleRoot)
+    vector<unsigned int> vIndex;
+    if (merkleBlock.txn.ExtractMatches(vMatch, vIndex) != merkleBlock.header.hashMerkleRoot)
         return res;
 
     LOCK(cs_main);
 
-    if (!mapBlockApollon.count(merkleBlock.header.GetHash()) || !chainActive.Contains(mapBlockApollon[merkleBlock.header.GetHash()]))
+    if (!mapBlockIndex.count(merkleBlock.header.GetHash()) || !chainActive.Contains(mapBlockIndex[merkleBlock.header.GetHash()]))
         throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Block not found in chain");
 
     BOOST_FOREACH(const uint256& hash, vMatch)
@@ -986,6 +986,6 @@ static const CRPCCommand commands[] =
 
 void RegisterRawTransactionRPCCommands(CRPCTable &tableRPC)
 {
-    for (unsigned int vcxap = 0; vcxap < ARRAYLEN(commands); vcxap++)
-        tableRPC.appendCommand(commands[vcxap].name, &commands[vcxap]);
+    for (unsigned int vcidx = 0; vcidx < ARRAYLEN(commands); vcidx++)
+        tableRPC.appendCommand(commands[vcidx].name, &commands[vcidx]);
 }

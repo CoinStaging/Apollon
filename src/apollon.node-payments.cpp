@@ -2,11 +2,11 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "activeapollonnode.h"
+#include "activeindexnode.h"
 #include "darksend.h"
-#include "apollonnode-payments.h"
-#include "apollonnode-sync.h"
-#include "apollonnodeman.h"
+#include "indexnode-payments.h"
+#include "indexnode-sync.h"
+#include "indexnodeman.h"
 #include "netfulfilledman.h"
 #include "spork.h"
 #include "util.h"
@@ -14,11 +14,11 @@
 #include <boost/lexical_cast.hpp>
 
 /** Object for who's going to get paid on which blocks */
-CApollonnodePayments mnpayments;
+CIndexnodePayments mnpayments;
 
 CCriticalSection cs_vecPayees;
-CCriticalSection cs_mapApollonnodeBlocks;
-CCriticalSection cs_mapApollonnodePaymentVotes;
+CCriticalSection cs_mapIndexnodeBlocks;
+CCriticalSection cs_mapIndexnodePaymentVotes;
 
 /**
 * IsBlockValueValid
@@ -47,7 +47,7 @@ bool IsBlockValueValid(const CBlock &block, int nBlockHeight, CAmount blockRewar
 //        if (nBlockHeight >= consensusParams.nBudgetPaymentsStartBlock &&
 //            nOffset < consensusParams.nBudgetPaymentsWindowBlocks) {
 //            // NOTE: make sure SPORK_13_OLD_SUPERBLOCK_FLAG is disabled when 12.1 starts to go live
-//            if (apollonnodeSync.IsSynced() && !sporkManager.IsSporkActive(SPORK_13_OLD_SUPERBLOCK_FLAG)) {
+//            if (indexnodeSync.IsSynced() && !sporkManager.IsSporkActive(SPORK_13_OLD_SUPERBLOCK_FLAG)) {
 //                // no budget blocks should be accepted here, if SPORK_13_OLD_SUPERBLOCK_FLAG is disabled
 //                LogPrint("gobject", "IsBlockValueValid -- Client synced but budget spork is disabled, checking block value against block reward\n");
 //                if (!isBlockRewardValueMet) {
@@ -76,7 +76,7 @@ bool IsBlockValueValid(const CBlock &block, int nBlockHeight, CAmount blockRewar
 
 //    LogPrint("gobject", "block.vtx[0].GetValueOut() %lld <= nSuperblockMaxValue %lld\n", block.vtx[0].GetValueOut(), nSuperblockMaxValue);
 
-    if (!apollonnodeSync.IsSynced()) {
+    if (!indexnodeSync.IsSynced()) {
         // not enough data but at least it must NOT exceed superblock max value
 //        if(CSuperblock::IsValidBlockHeight(nBlockHeight)) {
 //            if(fDebug) LogPrintf("IsBlockPayeeValid -- WARNING: Client not synced, checking superblock max bounds only\n");
@@ -129,35 +129,35 @@ bool IsBlockValueValid(const CBlock &block, int nBlockHeight, CAmount blockRewar
 }
 
 bool IsBlockPayeeValid(const CTransaction &txNew, int nBlockHeight, CAmount blockReward) {
-    // we can only check apollonnode payment /
+    // we can only check indexnode payment /
     const Consensus::Params &consensusParams = Params().GetConsensus();
 
-    if (nBlockHeight < consensusParams.nApollonnodePaymentsStartBlock) {
+    if (nBlockHeight < consensusParams.nIndexnodePaymentsStartBlock) {
         //there is no budget data to use to check anything, let's just accept the longest chain
-        if (fDebug) LogPrintf("IsBlockPayeeValid -- apollonnode isn't start\n");
+        if (fDebug) LogPrintf("IsBlockPayeeValid -- indexnode isn't start\n");
         return true;
     }
-    if (!apollonnodeSync.IsSynced() && Params().NetworkIDString() != CBaseChainParams::REGTEST) {
+    if (!indexnodeSync.IsSynced() && Params().NetworkIDString() != CBaseChainParams::REGTEST) {
         //there is no budget data to use to check anything, let's just accept the longest chain
         if (fDebug) LogPrintf("IsBlockPayeeValid -- WARNING: Client not synced, skipping block payee checks\n");
         return true;
     }
 
-    //check for apollonnode payee
+    //check for indexnode payee
     if (mnpayments.IsTransactionValid(txNew, nBlockHeight, false)) {
-        LogPrint("mnpayments", "IsBlockPayeeValid -- Valid apollonnode payment at height %d: %s", nBlockHeight, txNew.ToString());
+        LogPrint("mnpayments", "IsBlockPayeeValid -- Valid indexnode payment at height %d: %s", nBlockHeight, txNew.ToString());
         return true;
     } else {
-        if(sporkManager.IsSporkActive(SPORK_8_APOLLONNODE_PAYMENT_ENFORCEMENT)){
+        if(sporkManager.IsSporkActive(SPORK_8_INDEXNODE_PAYMENT_ENFORCEMENT)){
             return false;
         } else {
-            LogPrintf("ApollonNode payment enforcement is disabled, accepting block\n");
+            LogPrintf("IndexNode payment enforcement is disabled, accepting block\n");
             return true;
         }
     }
 }
 
-void FillBlockPayments(CMutableTransaction &txNew, int nBlockHeight, CAmount apollonnodePayment, CTxOut &txoutApollonnodeRet, std::vector <CTxOut> &voutSuperblockRet) {
+void FillBlockPayments(CMutableTransaction &txNew, int nBlockHeight, CAmount indexnodePayment, CTxOut &txoutIndexnodeRet, std::vector <CTxOut> &voutSuperblockRet) {
     // only create superblocks if spork is enabled AND if superblock is actually triggered
     // (height should be validated inside)
 //    if(sporkManager.IsSporkActive(SPORK_9_SUPERBLOCKS_ENABLED) &&
@@ -167,10 +167,10 @@ void FillBlockPayments(CMutableTransaction &txNew, int nBlockHeight, CAmount apo
 //            return;
 //    }
 
-    // FILL BLOCK PAYEE WITH APOLLONNODE PAYMENT OTHERWISE
-    mnpayments.FillBlockPayee(txNew, nBlockHeight, apollonnodePayment, txoutApollonnodeRet);
-    LogPrint("mnpayments", "FillBlockPayments -- nBlockHeight %d apollonnodePayment %lld txoutApollonnodeRet %s txNew %s",
-             nBlockHeight, apollonnodePayment, txoutApollonnodeRet.ToString(), txNew.ToString());
+    // FILL BLOCK PAYEE WITH INDEXNODE PAYMENT OTHERWISE
+    mnpayments.FillBlockPayee(txNew, nBlockHeight, indexnodePayment, txoutIndexnodeRet);
+    LogPrint("mnpayments", "FillBlockPayments -- nBlockHeight %d indexnodePayment %lld txoutIndexnodeRet %s txNew %s",
+             nBlockHeight, indexnodePayment, txoutIndexnodeRet.ToString(), txNew.ToString());
 }
 
 std::string GetRequiredPaymentsString(int nBlockHeight) {
@@ -179,29 +179,29 @@ std::string GetRequiredPaymentsString(int nBlockHeight) {
 //        return CSuperblockManager::GetRequiredPaymentsString(nBlockHeight);
 //    }
 
-    // OTHERWISE, PAY APOLLONNODE
+    // OTHERWISE, PAY INDEXNODE
     return mnpayments.GetRequiredPaymentsString(nBlockHeight);
 }
 
-void CApollonnodePayments::Clear() {
-    LOCK2(cs_mapApollonnodeBlocks, cs_mapApollonnodePaymentVotes);
-    mapApollonnodeBlocks.clear();
-    mapApollonnodePaymentVotes.clear();
+void CIndexnodePayments::Clear() {
+    LOCK2(cs_mapIndexnodeBlocks, cs_mapIndexnodePaymentVotes);
+    mapIndexnodeBlocks.clear();
+    mapIndexnodePaymentVotes.clear();
 }
 
-bool CApollonnodePayments::CanVote(COutPoint outApollonnode, int nBlockHeight) {
-    LOCK(cs_mapApollonnodePaymentVotes);
+bool CIndexnodePayments::CanVote(COutPoint outIndexnode, int nBlockHeight) {
+    LOCK(cs_mapIndexnodePaymentVotes);
 
-    if (mapApollonnodesLastVote.count(outApollonnode) && mapApollonnodesLastVote[outApollonnode] == nBlockHeight) {
+    if (mapIndexnodesLastVote.count(outIndexnode) && mapIndexnodesLastVote[outIndexnode] == nBlockHeight) {
         return false;
     }
 
-    //record this apollonnode voted
-    mapApollonnodesLastVote[outApollonnode] = nBlockHeight;
+    //record this indexnode voted
+    mapIndexnodesLastVote[outIndexnode] = nBlockHeight;
     return true;
 }
 
-std::string CApollonnodePayee::ToString() const {
+std::string CIndexnodePayee::ToString() const {
     CTxDestination address1;
     ExtractDestination(scriptPubKey, address1);
     CBitcoinAddress address2(address1);
@@ -215,26 +215,26 @@ std::string CApollonnodePayee::ToString() const {
 /**
 *   FillBlockPayee
 *
-*   Fill Apollonnode ONLY payment block
+*   Fill Indexnode ONLY payment block
 */
 
-void CApollonnodePayments::FillBlockPayee(CMutableTransaction &txNew, int nBlockHeight, CAmount apollonnodePayment, CTxOut &txoutApollonnodeRet) {
+void CIndexnodePayments::FillBlockPayee(CMutableTransaction &txNew, int nBlockHeight, CAmount indexnodePayment, CTxOut &txoutIndexnodeRet) {
     // make sure it's not filled yet
-    txoutApollonnodeRet = CTxOut();
+    txoutIndexnodeRet = CTxOut();
 
     CScript payee;
     bool foundMaxVotedPayee = true;
 
     if (!mnpayments.GetBlockPayee(nBlockHeight, payee)) {
-        // no apollonnode detected...
-        // LogPrintf("no apollonnode detected...\n");
+        // no indexnode detected...
+        // LogPrintf("no indexnode detected...\n");
         foundMaxVotedPayee = false;
         int nCount = 0;
-        CApollonnode *winningNode = mnodeman.GetNextApollonnodeInQueueForPayment(nBlockHeight, true, nCount);
+        CIndexnode *winningNode = mnodeman.GetNextIndexnodeInQueueForPayment(nBlockHeight, true, nCount);
         if (!winningNode) {
             if(Params().NetworkIDString() != CBaseChainParams::REGTEST) {
                 // ...and we can't calculate it on our own
-                LogPrintf("CApollonnodePayments::FillBlockPayee -- Failed to detect apollonnode to pay\n");
+                LogPrintf("CIndexnodePayments::FillBlockPayee -- Failed to detect indexnode to pay\n");
                 return;
             }
         }
@@ -246,121 +246,121 @@ void CApollonnodePayments::FillBlockPayee(CMutableTransaction &txNew, int nBlock
         else
             payee = txNew.vout[0].scriptPubKey;//This is only for unit tests scenario on REGTEST
     }
-    txoutApollonnodeRet = CTxOut(apollonnodePayment, payee);
-    txNew.vout.push_back(txoutApollonnodeRet);
+    txoutIndexnodeRet = CTxOut(indexnodePayment, payee);
+    txNew.vout.push_back(txoutIndexnodeRet);
 
     CTxDestination address1;
     ExtractDestination(payee, address1);
     CBitcoinAddress address2(address1);
     if (foundMaxVotedPayee) {
-        LogPrintf("CApollonnodePayments::FillBlockPayee::foundMaxVotedPayee -- Apollonnode payment %lld to %s\n", apollonnodePayment, address2.ToString());
+        LogPrintf("CIndexnodePayments::FillBlockPayee::foundMaxVotedPayee -- Indexnode payment %lld to %s\n", indexnodePayment, address2.ToString());
     } else {
-        LogPrintf("CApollonnodePayments::FillBlockPayee -- Apollonnode payment %lld to %s\n", apollonnodePayment, address2.ToString());
+        LogPrintf("CIndexnodePayments::FillBlockPayee -- Indexnode payment %lld to %s\n", indexnodePayment, address2.ToString());
     }
 
 }
 
-int CApollonnodePayments::GetMinApollonnodePaymentsProto() {
-    return sporkManager.IsSporkActive(SPORK_10_APOLLONNODE_PAY_UPDATED_NODES)
-           ? MIN_APOLLONNODE_PAYMENT_PROTO_VERSION_2
-           : MIN_APOLLONNODE_PAYMENT_PROTO_VERSION_1;
+int CIndexnodePayments::GetMinIndexnodePaymentsProto() {
+    return sporkManager.IsSporkActive(SPORK_10_INDEXNODE_PAY_UPDATED_NODES)
+           ? MIN_INDEXNODE_PAYMENT_PROTO_VERSION_2
+           : MIN_INDEXNODE_PAYMENT_PROTO_VERSION_1;
 }
 
-void CApollonnodePayments::ProcessMessage(CNode *pfrom, std::string &strCommand, CDataStream &vRecv) {
+void CIndexnodePayments::ProcessMessage(CNode *pfrom, std::string &strCommand, CDataStream &vRecv) {
 
-//    LogPrintf("CApollonnodePayments::ProcessMessage strCommand=%s\n", strCommand);
-    // Ignore any payments messages until apollonnode list is synced
-    if (!apollonnodeSync.IsApollonnodeListSynced()) return;
+//    LogPrintf("CIndexnodePayments::ProcessMessage strCommand=%s\n", strCommand);
+    // Ignore any payments messages until indexnode list is synced
+    if (!indexnodeSync.IsIndexnodeListSynced()) return;
 
     if (fLiteMode) return; // disable all Apollon specific functionality
 
     bool fTestNet = (Params().NetworkIDString() == CBaseChainParams::TESTNET);
 
-    if (strCommand == NetMsgType::APOLLONNODEPAYMENTSYNC) { //Apollonnode Payments Request Sync
+    if (strCommand == NetMsgType::INDEXNODEPAYMENTSYNC) { //Indexnode Payments Request Sync
 
         // Ignore such requests until we are fully synced.
-        // We could start processing this after apollonnode list is synced
+        // We could start processing this after indexnode list is synced
         // but this is a heavy one so it's better to finish sync first.
-        if (!apollonnodeSync.IsSynced()) return;
+        if (!indexnodeSync.IsSynced()) return;
 
         int nCountNeeded;
         vRecv >> nCountNeeded;
 
-        if (netfulfilledman.HasFulfilledRequest(pfrom->addr, NetMsgType::APOLLONNODEPAYMENTSYNC)) {
+        if (netfulfilledman.HasFulfilledRequest(pfrom->addr, NetMsgType::INDEXNODEPAYMENTSYNC)) {
             // Asking for the payments list multiple times in a short period of time is no good
-            LogPrintf("APOLLONNODEPAYMENTSYNC -- peer already asked me for the list, peer=%d\n", pfrom->id);
+            LogPrintf("INDEXNODEPAYMENTSYNC -- peer already asked me for the list, peer=%d\n", pfrom->id);
             if (!fTestNet) Misbehaving(pfrom->GetId(), 20);
             return;
         }
-        netfulfilledman.AddFulfilledRequest(pfrom->addr, NetMsgType::APOLLONNODEPAYMENTSYNC);
+        netfulfilledman.AddFulfilledRequest(pfrom->addr, NetMsgType::INDEXNODEPAYMENTSYNC);
 
         Sync(pfrom);
-        LogPrint("mnpayments", "APOLLONNODEPAYMENTSYNC -- Sent Apollonnode payment votes to peer %d\n", pfrom->id);
+        LogPrint("mnpayments", "INDEXNODEPAYMENTSYNC -- Sent Indexnode payment votes to peer %d\n", pfrom->id);
 
-    } else if (strCommand == NetMsgType::APOLLONNODEPAYMENTVOTE) { // Apollonnode Payments Vote for the Winner
+    } else if (strCommand == NetMsgType::INDEXNODEPAYMENTVOTE) { // Indexnode Payments Vote for the Winner
 
-        CApollonnodePaymentVote vote;
+        CIndexnodePaymentVote vote;
         vRecv >> vote;
 
-        if (pfrom->nVersion < GetMinApollonnodePaymentsProto()) return;
+        if (pfrom->nVersion < GetMinIndexnodePaymentsProto()) return;
 
-        if (!pCurrentBlockApollon) return;
+        if (!pCurrentBlockIndex) return;
 
         uint256 nHash = vote.GetHash();
 
         pfrom->setAskFor.erase(nHash);
 
         {
-            LOCK(cs_mapApollonnodePaymentVotes);
-            if (mapApollonnodePaymentVotes.count(nHash)) {
-                LogPrint("mnpayments", "APOLLONNODEPAYMENTVOTE -- hash=%s, nHeight=%d seen\n", nHash.ToString(), pCurrentBlockApollon->nHeight);
+            LOCK(cs_mapIndexnodePaymentVotes);
+            if (mapIndexnodePaymentVotes.count(nHash)) {
+                LogPrint("mnpayments", "INDEXNODEPAYMENTVOTE -- hash=%s, nHeight=%d seen\n", nHash.ToString(), pCurrentBlockIndex->nHeight);
                 return;
             }
 
             // Avoid processing same vote multiple times
-            mapApollonnodePaymentVotes[nHash] = vote;
+            mapIndexnodePaymentVotes[nHash] = vote;
             // but first mark vote as non-verified,
             // AddPaymentVote() below should take care of it if vote is actually ok
-            mapApollonnodePaymentVotes[nHash].MarkAsNotVerified();
+            mapIndexnodePaymentVotes[nHash].MarkAsNotVerified();
         }
 
-        int nFirstBlock = pCurrentBlockApollon->nHeight - GetStorageLimit();
-        if (vote.nBlockHeight < nFirstBlock || vote.nBlockHeight > pCurrentBlockApollon->nHeight + 20) {
-            LogPrint("mnpayments", "APOLLONNODEPAYMENTVOTE -- vote out of range: nFirstBlock=%d, nBlockHeight=%d, nHeight=%d\n", nFirstBlock, vote.nBlockHeight, pCurrentBlockApollon->nHeight);
+        int nFirstBlock = pCurrentBlockIndex->nHeight - GetStorageLimit();
+        if (vote.nBlockHeight < nFirstBlock || vote.nBlockHeight > pCurrentBlockIndex->nHeight + 20) {
+            LogPrint("mnpayments", "INDEXNODEPAYMENTVOTE -- vote out of range: nFirstBlock=%d, nBlockHeight=%d, nHeight=%d\n", nFirstBlock, vote.nBlockHeight, pCurrentBlockIndex->nHeight);
             return;
         }
 
         std::string strError = "";
-        if (!vote.IsValid(pfrom, pCurrentBlockApollon->nHeight, strError)) {
-            LogPrint("mnpayments", "APOLLONNODEPAYMENTVOTE -- invalid message, error: %s\n", strError);
+        if (!vote.IsValid(pfrom, pCurrentBlockIndex->nHeight, strError)) {
+            LogPrint("mnpayments", "INDEXNODEPAYMENTVOTE -- invalid message, error: %s\n", strError);
             return;
         }
 
-        if (!CanVote(vote.vinApollonnode.prevout, vote.nBlockHeight)) {
-            LogPrintf("APOLLONNODEPAYMENTVOTE -- apollonnode already voted, apollonnode=%s\n", vote.vinApollonnode.prevout.ToStringShort());
+        if (!CanVote(vote.vinIndexnode.prevout, vote.nBlockHeight)) {
+            LogPrintf("INDEXNODEPAYMENTVOTE -- indexnode already voted, indexnode=%s\n", vote.vinIndexnode.prevout.ToStringShort());
             return;
         }
 
-        apollonnode_info_t mnInfo = mnodeman.GetApollonnodeInfo(vote.vinApollonnode);
+        indexnode_info_t mnInfo = mnodeman.GetIndexnodeInfo(vote.vinIndexnode);
         if (!mnInfo.fInfoValid) {
             // mn was not found, so we can't check vote, some info is probably missing
-            LogPrintf("APOLLONNODEPAYMENTVOTE -- apollonnode is missing %s\n", vote.vinApollonnode.prevout.ToStringShort());
-            mnodeman.AskForMN(pfrom, vote.vinApollonnode);
+            LogPrintf("INDEXNODEPAYMENTVOTE -- indexnode is missing %s\n", vote.vinIndexnode.prevout.ToStringShort());
+            mnodeman.AskForMN(pfrom, vote.vinIndexnode);
             return;
         }
 
         int nDos = 0;
-        if (!vote.CheckSignature(mnInfo.pubKeyApollonnode, pCurrentBlockApollon->nHeight, nDos)) {
+        if (!vote.CheckSignature(mnInfo.pubKeyIndexnode, pCurrentBlockIndex->nHeight, nDos)) {
             if (nDos) {
-                LogPrintf("APOLLONNODEPAYMENTVOTE -- ERROR: invalid signature\n");
+                LogPrintf("INDEXNODEPAYMENTVOTE -- ERROR: invalid signature\n");
                 if (!fTestNet) Misbehaving(pfrom->GetId(), nDos);
             } else {
                 // only warn about anything non-critical (i.e. nDos == 0) in debug mode
-                LogPrint("mnpayments", "APOLLONNODEPAYMENTVOTE -- WARNING: invalid signature\n");
+                LogPrint("mnpayments", "INDEXNODEPAYMENTVOTE -- WARNING: invalid signature\n");
             }
             // Either our info or vote info could be outdated.
             // In case our info is outdated, ask for an update,
-            mnodeman.AskForMN(pfrom, vote.vinApollonnode);
+            mnodeman.AskForMN(pfrom, vote.vinIndexnode);
             // but there is nothing we can do if vote info itself is outdated
             // (i.e. it was signed by a mn which changed its key),
             // so just quit here.
@@ -371,56 +371,56 @@ void CApollonnodePayments::ProcessMessage(CNode *pfrom, std::string &strCommand,
         ExtractDestination(vote.payee, address1);
         CBitcoinAddress address2(address1);
 
-        LogPrint("mnpayments", "APOLLONNODEPAYMENTVOTE -- vote: address=%s, nBlockHeight=%d, nHeight=%d, prevout=%s\n", address2.ToString(), vote.nBlockHeight, pCurrentBlockApollon->nHeight, vote.vinApollonnode.prevout.ToStringShort());
+        LogPrint("mnpayments", "INDEXNODEPAYMENTVOTE -- vote: address=%s, nBlockHeight=%d, nHeight=%d, prevout=%s\n", address2.ToString(), vote.nBlockHeight, pCurrentBlockIndex->nHeight, vote.vinIndexnode.prevout.ToStringShort());
 
         if (AddPaymentVote(vote)) {
             vote.Relay();
-            apollonnodeSync.AddedPaymentVote();
+            indexnodeSync.AddedPaymentVote();
         }
     }
 }
 
-bool CApollonnodePaymentVote::Sign() {
+bool CIndexnodePaymentVote::Sign() {
     std::string strError;
-    std::string strMessage = vinApollonnode.prevout.ToStringShort() +
+    std::string strMessage = vinIndexnode.prevout.ToStringShort() +
                              boost::lexical_cast<std::string>(nBlockHeight) +
                              ScriptToAsmStr(payee);
 
-    if (!darkSendSigner.SignMessage(strMessage, vchSig, activeApollonnode.keyApollonnode)) {
-        LogPrintf("CApollonnodePaymentVote::Sign -- SignMessage() failed\n");
+    if (!darkSendSigner.SignMessage(strMessage, vchSig, activeIndexnode.keyIndexnode)) {
+        LogPrintf("CIndexnodePaymentVote::Sign -- SignMessage() failed\n");
         return false;
     }
 
-    if (!darkSendSigner.VerifyMessage(activeApollonnode.pubKeyApollonnode, vchSig, strMessage, strError)) {
-        LogPrintf("CApollonnodePaymentVote::Sign -- VerifyMessage() failed, error: %s\n", strError);
+    if (!darkSendSigner.VerifyMessage(activeIndexnode.pubKeyIndexnode, vchSig, strMessage, strError)) {
+        LogPrintf("CIndexnodePaymentVote::Sign -- VerifyMessage() failed, error: %s\n", strError);
         return false;
     }
 
     return true;
 }
 
-bool CApollonnodePayments::GetBlockPayee(int nBlockHeight, CScript &payee) {
-    if (mapApollonnodeBlocks.count(nBlockHeight)) {
-        return mapApollonnodeBlocks[nBlockHeight].GetBestPayee(payee);
+bool CIndexnodePayments::GetBlockPayee(int nBlockHeight, CScript &payee) {
+    if (mapIndexnodeBlocks.count(nBlockHeight)) {
+        return mapIndexnodeBlocks[nBlockHeight].GetBestPayee(payee);
     }
 
     return false;
 }
 
-// Is this apollonnode scheduled to get paid soon?
+// Is this indexnode scheduled to get paid soon?
 // -- Only look ahead up to 8 blocks to allow for propagation of the latest 2 blocks of votes
-bool CApollonnodePayments::IsScheduled(CApollonnode &mn, int nNotBlockHeight) {
-    LOCK(cs_mapApollonnodeBlocks);
+bool CIndexnodePayments::IsScheduled(CIndexnode &mn, int nNotBlockHeight) {
+    LOCK(cs_mapIndexnodeBlocks);
 
-    if (!pCurrentBlockApollon) return false;
+    if (!pCurrentBlockIndex) return false;
 
     CScript mnpayee;
     mnpayee = GetScriptForDestination(mn.pubKeyCollateralAddress.GetID());
 
     CScript payee;
-    for (int64_t h = pCurrentBlockApollon->nHeight; h <= pCurrentBlockApollon->nHeight + 8; h++) {
+    for (int64_t h = pCurrentBlockIndex->nHeight; h <= pCurrentBlockIndex->nHeight + 8; h++) {
         if (h == nNotBlockHeight) continue;
-        if (mapApollonnodeBlocks.count(h) && mapApollonnodeBlocks[h].GetBestPayee(payee) && mnpayee == payee) {
+        if (mapIndexnodeBlocks.count(h) && mapIndexnodeBlocks[h].GetBestPayee(payee) && mnpayee == payee) {
             return true;
         }
     }
@@ -428,57 +428,57 @@ bool CApollonnodePayments::IsScheduled(CApollonnode &mn, int nNotBlockHeight) {
     return false;
 }
 
-bool CApollonnodePayments::AddPaymentVote(const CApollonnodePaymentVote &vote) {
-    LogPrint("apollonnode-payments", "CApollonnodePayments::AddPaymentVote\n");
+bool CIndexnodePayments::AddPaymentVote(const CIndexnodePaymentVote &vote) {
+    LogPrint("indexnode-payments", "CIndexnodePayments::AddPaymentVote\n");
     uint256 blockHash = uint256();
     if (!GetBlockHash(blockHash, vote.nBlockHeight - 101)) return false;
 
     if (HasVerifiedPaymentVote(vote.GetHash())) return false;
 
-    LOCK2(cs_mapApollonnodeBlocks, cs_mapApollonnodePaymentVotes);
+    LOCK2(cs_mapIndexnodeBlocks, cs_mapIndexnodePaymentVotes);
 
-    mapApollonnodePaymentVotes[vote.GetHash()] = vote;
+    mapIndexnodePaymentVotes[vote.GetHash()] = vote;
 
-    if (!mapApollonnodeBlocks.count(vote.nBlockHeight)) {
-        CApollonnodeBlockPayees blockPayees(vote.nBlockHeight);
-        mapApollonnodeBlocks[vote.nBlockHeight] = blockPayees;
+    if (!mapIndexnodeBlocks.count(vote.nBlockHeight)) {
+        CIndexnodeBlockPayees blockPayees(vote.nBlockHeight);
+        mapIndexnodeBlocks[vote.nBlockHeight] = blockPayees;
     }
 
-    mapApollonnodeBlocks[vote.nBlockHeight].AddPayee(vote);
+    mapIndexnodeBlocks[vote.nBlockHeight].AddPayee(vote);
 
     return true;
 }
 
-bool CApollonnodePayments::HasVerifiedPaymentVote(uint256 hashIn) {
-    LOCK(cs_mapApollonnodePaymentVotes);
-    std::map<uint256, CApollonnodePaymentVote>::iterator it = mapApollonnodePaymentVotes.find(hashIn);
-    return it != mapApollonnodePaymentVotes.end() && it->second.IsVerified();
+bool CIndexnodePayments::HasVerifiedPaymentVote(uint256 hashIn) {
+    LOCK(cs_mapIndexnodePaymentVotes);
+    std::map<uint256, CIndexnodePaymentVote>::iterator it = mapIndexnodePaymentVotes.find(hashIn);
+    return it != mapIndexnodePaymentVotes.end() && it->second.IsVerified();
 }
 
-void CApollonnodeBlockPayees::AddPayee(const CApollonnodePaymentVote &vote) {
+void CIndexnodeBlockPayees::AddPayee(const CIndexnodePaymentVote &vote) {
     LOCK(cs_vecPayees);
 
-    BOOST_FOREACH(CApollonnodePayee & payee, vecPayees)
+    BOOST_FOREACH(CIndexnodePayee & payee, vecPayees)
     {
         if (payee.GetPayee() == vote.payee) {
             payee.AddVoteHash(vote.GetHash());
             return;
         }
     }
-    CApollonnodePayee payeeNew(vote.payee, vote.GetHash());
+    CIndexnodePayee payeeNew(vote.payee, vote.GetHash());
     vecPayees.push_back(payeeNew);
 }
 
-bool CApollonnodeBlockPayees::GetBestPayee(CScript &payeeRet) {
+bool CIndexnodeBlockPayees::GetBestPayee(CScript &payeeRet) {
     LOCK(cs_vecPayees);
-    LogPrint("mnpayments", "CApollonnodeBlockPayees::GetBestPayee, vecPayees.size()=%s\n", vecPayees.size());
+    LogPrint("mnpayments", "CIndexnodeBlockPayees::GetBestPayee, vecPayees.size()=%s\n", vecPayees.size());
     if (!vecPayees.size()) {
-        LogPrint("mnpayments", "CApollonnodeBlockPayees::GetBestPayee -- ERROR: couldn't find any payee\n");
+        LogPrint("mnpayments", "CIndexnodeBlockPayees::GetBestPayee -- ERROR: couldn't find any payee\n");
         return false;
     }
 
     int nVotes = -1;
-    BOOST_FOREACH(CApollonnodePayee & payee, vecPayees)
+    BOOST_FOREACH(CIndexnodePayee & payee, vecPayees)
     {
         if (payee.GetVoteCount() > nVotes) {
             payeeRet = payee.GetPayee();
@@ -489,32 +489,32 @@ bool CApollonnodeBlockPayees::GetBestPayee(CScript &payeeRet) {
     return (nVotes > -1);
 }
 
-bool CApollonnodeBlockPayees::HasPayeeWithVotes(CScript payeeIn, int nVotesReq) {
+bool CIndexnodeBlockPayees::HasPayeeWithVotes(CScript payeeIn, int nVotesReq) {
     LOCK(cs_vecPayees);
 
-    BOOST_FOREACH(CApollonnodePayee & payee, vecPayees)
+    BOOST_FOREACH(CIndexnodePayee & payee, vecPayees)
     {
         if (payee.GetVoteCount() >= nVotesReq && payee.GetPayee() == payeeIn) {
             return true;
         }
     }
 
-//    LogPrint("mnpayments", "CApollonnodeBlockPayees::HasPayeeWithVotes -- ERROR: couldn't find any payee with %d+ votes\n", nVotesReq);
+//    LogPrint("mnpayments", "CIndexnodeBlockPayees::HasPayeeWithVotes -- ERROR: couldn't find any payee with %d+ votes\n", nVotesReq);
     return false;
 }
 
-bool CApollonnodeBlockPayees::IsTransactionValid(const CTransaction &txNew, bool fMTP,int nHeight) {
+bool CIndexnodeBlockPayees::IsTransactionValid(const CTransaction &txNew, bool fMTP,int nHeight) {
     LOCK(cs_vecPayees);
 
     int nMaxSignatures = 0;
     std::string strPayeesPossible = "";
 
 
-    CAmount nApollonnodePayment = GetApollonnodePayment(Params().GetConsensus(), fMTP,nHeight);
+    CAmount nIndexnodePayment = GetIndexnodePayment(Params().GetConsensus(), fMTP,nHeight);
 
     //require at least MNPAYMENTS_SIGNATURES_REQUIRED signatures
 
-    BOOST_FOREACH(CApollonnodePayee & payee, vecPayees)
+    BOOST_FOREACH(CIndexnodePayee & payee, vecPayees)
     {
         if (payee.GetVoteCount() >= nMaxSignatures) {
             nMaxSignatures = payee.GetVoteCount();
@@ -526,14 +526,14 @@ bool CApollonnodeBlockPayees::IsTransactionValid(const CTransaction &txNew, bool
 
     bool hasValidPayee = false;
 
-    BOOST_FOREACH(CApollonnodePayee & payee, vecPayees)
+    BOOST_FOREACH(CIndexnodePayee & payee, vecPayees)
     {
         if (payee.GetVoteCount() >= MNPAYMENTS_SIGNATURES_REQUIRED) {
             hasValidPayee = true;
 
             BOOST_FOREACH(CTxOut txout, txNew.vout) {
-                if (payee.GetPayee() == txout.scriptPubKey && nApollonnodePayment == txout.nValue) {
-                    LogPrint("mnpayments", "CApollonnodeBlockPayees::IsTransactionValid -- Found required payment\n");
+                if (payee.GetPayee() == txout.scriptPubKey && nIndexnodePayment == txout.nValue) {
+                    LogPrint("mnpayments", "CIndexnodeBlockPayees::IsTransactionValid -- Found required payment\n");
                     return true;
                 }
             }
@@ -550,16 +550,16 @@ bool CApollonnodeBlockPayees::IsTransactionValid(const CTransaction &txNew, bool
         }
     }
 
-    LogPrintf("CApollonnodeBlockPayees::IsTransactionValid -- ERROR: Missing required payment, possible payees: '%s', amount: %f XAP\n", strPayeesPossible, (float) nApollonnodePayment / COIN);
+    LogPrintf("CIndexnodeBlockPayees::IsTransactionValid -- ERROR: Missing required payment, possible payees: '%s', amount: %f XAP\n", strPayeesPossible, (float) nIndexnodePayment / COIN);
     return false;
 }
 
-std::string CApollonnodeBlockPayees::GetRequiredPaymentsString() {
+std::string CIndexnodeBlockPayees::GetRequiredPaymentsString() {
     LOCK(cs_vecPayees);
 
     std::string strRequiredPayments = "Unknown";
 
-    BOOST_FOREACH(CApollonnodePayee & payee, vecPayees)
+    BOOST_FOREACH(CIndexnodePayee & payee, vecPayees)
     {
         CTxDestination address1;
         ExtractDestination(payee.GetPayee(), address1);
@@ -575,56 +575,56 @@ std::string CApollonnodeBlockPayees::GetRequiredPaymentsString() {
     return strRequiredPayments;
 }
 
-std::string CApollonnodePayments::GetRequiredPaymentsString(int nBlockHeight) {
-    LOCK(cs_mapApollonnodeBlocks);
+std::string CIndexnodePayments::GetRequiredPaymentsString(int nBlockHeight) {
+    LOCK(cs_mapIndexnodeBlocks);
 
-    if (mapApollonnodeBlocks.count(nBlockHeight)) {
-        return mapApollonnodeBlocks[nBlockHeight].GetRequiredPaymentsString();
+    if (mapIndexnodeBlocks.count(nBlockHeight)) {
+        return mapIndexnodeBlocks[nBlockHeight].GetRequiredPaymentsString();
     }
 
     return "Unknown";
 }
 
-bool CApollonnodePayments::IsTransactionValid(const CTransaction &txNew, int nBlockHeight, bool fMTP) {
-    LOCK(cs_mapApollonnodeBlocks);
+bool CIndexnodePayments::IsTransactionValid(const CTransaction &txNew, int nBlockHeight, bool fMTP) {
+    LOCK(cs_mapIndexnodeBlocks);
 
-    if (mapApollonnodeBlocks.count(nBlockHeight)) {
-        return mapApollonnodeBlocks[nBlockHeight].IsTransactionValid(txNew, fMTP,nBlockHeight);
+    if (mapIndexnodeBlocks.count(nBlockHeight)) {
+        return mapIndexnodeBlocks[nBlockHeight].IsTransactionValid(txNew, fMTP,nBlockHeight);
     }
 
     return true;
 }
 
-void CApollonnodePayments::CheckAndRemove() {
-    if (!pCurrentBlockApollon) return;
+void CIndexnodePayments::CheckAndRemove() {
+    if (!pCurrentBlockIndex) return;
 
-    LOCK2(cs_mapApollonnodeBlocks, cs_mapApollonnodePaymentVotes);
+    LOCK2(cs_mapIndexnodeBlocks, cs_mapIndexnodePaymentVotes);
 
     int nLimit = GetStorageLimit();
 
-    std::map<uint256, CApollonnodePaymentVote>::iterator it = mapApollonnodePaymentVotes.begin();
-    while (it != mapApollonnodePaymentVotes.end()) {
-        CApollonnodePaymentVote vote = (*it).second;
+    std::map<uint256, CIndexnodePaymentVote>::iterator it = mapIndexnodePaymentVotes.begin();
+    while (it != mapIndexnodePaymentVotes.end()) {
+        CIndexnodePaymentVote vote = (*it).second;
 
-        if (pCurrentBlockApollon->nHeight - vote.nBlockHeight > nLimit) {
-            LogPrint("mnpayments", "CApollonnodePayments::CheckAndRemove -- Removing old Apollonnode payment: nBlockHeight=%d\n", vote.nBlockHeight);
-            mapApollonnodePaymentVotes.erase(it++);
-            mapApollonnodeBlocks.erase(vote.nBlockHeight);
+        if (pCurrentBlockIndex->nHeight - vote.nBlockHeight > nLimit) {
+            LogPrint("mnpayments", "CIndexnodePayments::CheckAndRemove -- Removing old Indexnode payment: nBlockHeight=%d\n", vote.nBlockHeight);
+            mapIndexnodePaymentVotes.erase(it++);
+            mapIndexnodeBlocks.erase(vote.nBlockHeight);
         } else {
             ++it;
         }
     }
-    LogPrintf("CApollonnodePayments::CheckAndRemove -- %s\n", ToString());
+    LogPrintf("CIndexnodePayments::CheckAndRemove -- %s\n", ToString());
 }
 
-bool CApollonnodePaymentVote::IsValid(CNode *pnode, int nValidationHeight, std::string &strError) {
-    CApollonnode *pmn = mnodeman.Find(vinApollonnode);
+bool CIndexnodePaymentVote::IsValid(CNode *pnode, int nValidationHeight, std::string &strError) {
+    CIndexnode *pmn = mnodeman.Find(vinIndexnode);
 
     if (!pmn) {
-        strError = strprintf("Unknown Apollonnode: prevout=%s", vinApollonnode.prevout.ToStringShort());
-        // Only ask if we are already synced and still have no idea about that Apollonnode
-        if (apollonnodeSync.IsApollonnodeListSynced()) {
-            mnodeman.AskForMN(pnode, vinApollonnode);
+        strError = strprintf("Unknown Indexnode: prevout=%s", vinIndexnode.prevout.ToStringShort());
+        // Only ask if we are already synced and still have no idea about that Indexnode
+        if (indexnodeSync.IsIndexnodeListSynced()) {
+            mnodeman.AskForMN(pnode, vinIndexnode);
         }
 
         return false;
@@ -632,38 +632,38 @@ bool CApollonnodePaymentVote::IsValid(CNode *pnode, int nValidationHeight, std::
 
     int nMinRequiredProtocol;
     if (nBlockHeight >= nValidationHeight) {
-        // new votes must comply SPORK_10_APOLLONNODE_PAY_UPDATED_NODES rules
-        nMinRequiredProtocol = mnpayments.GetMinApollonnodePaymentsProto();
+        // new votes must comply SPORK_10_INDEXNODE_PAY_UPDATED_NODES rules
+        nMinRequiredProtocol = mnpayments.GetMinIndexnodePaymentsProto();
     } else {
-        // allow non-updated apollonnodes for old blocks
-        nMinRequiredProtocol = MIN_APOLLONNODE_PAYMENT_PROTO_VERSION_1;
+        // allow non-updated indexnodes for old blocks
+        nMinRequiredProtocol = MIN_INDEXNODE_PAYMENT_PROTO_VERSION_1;
     }
 
     if (pmn->nProtocolVersion < nMinRequiredProtocol) {
-        strError = strprintf("Apollonnode protocol is too old: nProtocolVersion=%d, nMinRequiredProtocol=%d", pmn->nProtocolVersion, nMinRequiredProtocol);
+        strError = strprintf("Indexnode protocol is too old: nProtocolVersion=%d, nMinRequiredProtocol=%d", pmn->nProtocolVersion, nMinRequiredProtocol);
         return false;
     }
 
-    // Only apollonnodes should try to check apollonnode rank for old votes - they need to pick the right winner for future blocks.
-    // Regular clients (miners included) need to verify apollonnode rank for future block votes only.
-    if (!fApollonNode && nBlockHeight < nValidationHeight) return true;
+    // Only indexnodes should try to check indexnode rank for old votes - they need to pick the right winner for future blocks.
+    // Regular clients (miners included) need to verify indexnode rank for future block votes only.
+    if (!fIndexNode && nBlockHeight < nValidationHeight) return true;
 
-    int nRank = mnodeman.GetApollonnodeRank(vinApollonnode, nBlockHeight - 101, nMinRequiredProtocol, false);
+    int nRank = mnodeman.GetIndexnodeRank(vinIndexnode, nBlockHeight - 101, nMinRequiredProtocol, false);
 
     if (nRank == -1) {
-        LogPrint("mnpayments", "CApollonnodePaymentVote::IsValid -- Can't calculate rank for apollonnode %s\n",
-                 vinApollonnode.prevout.ToStringShort());
+        LogPrint("mnpayments", "CIndexnodePaymentVote::IsValid -- Can't calculate rank for indexnode %s\n",
+                 vinIndexnode.prevout.ToStringShort());
         return false;
     }
 
     if (nRank > MNPAYMENTS_SIGNATURES_TOTAL) {
-        // It's common to have apollonnodes mistakenly think they are in the top 10
+        // It's common to have indexnodes mistakenly think they are in the top 10
         // We don't want to print all of these messages in normal mode, debug mode should print though
-        strError = strprintf("Apollonnode is not in the top %d (%d)", MNPAYMENTS_SIGNATURES_TOTAL, nRank);
+        strError = strprintf("Indexnode is not in the top %d (%d)", MNPAYMENTS_SIGNATURES_TOTAL, nRank);
         // Only ban for new mnw which is out of bounds, for old mnw MN list itself might be way too much off
         if (nRank > MNPAYMENTS_SIGNATURES_TOTAL * 2 && nBlockHeight > nValidationHeight) {
-            strError = strprintf("Apollonnode is not in the top %d (%d)", MNPAYMENTS_SIGNATURES_TOTAL * 2, nRank);
-            LogPrintf("CApollonnodePaymentVote::IsValid -- Error: %s\n", strError);
+            strError = strprintf("Indexnode is not in the top %d (%d)", MNPAYMENTS_SIGNATURES_TOTAL * 2, nRank);
+            LogPrintf("CIndexnodePaymentVote::IsValid -- Error: %s\n", strError);
             Misbehaving(pnode->GetId(), 20);
         }
         // Still invalid however
@@ -673,58 +673,58 @@ bool CApollonnodePaymentVote::IsValid(CNode *pnode, int nValidationHeight, std::
     return true;
 }
 
-bool CApollonnodePayments::ProcessBlock(int nBlockHeight) {
+bool CIndexnodePayments::ProcessBlock(int nBlockHeight) {
 
     // DETERMINE IF WE SHOULD BE VOTING FOR THE NEXT PAYEE
 
-    if (fLiteMode || !fApollonNode) {
+    if (fLiteMode || !fIndexNode) {
         return false;
     }
 
     // We have little chances to pick the right winner if winners list is out of sync
     // but we have no choice, so we'll try. However it doesn't make sense to even try to do so
-    // if we have not enough data about apollonnodes.
-    if (!apollonnodeSync.IsApollonnodeListSynced()) {
+    // if we have not enough data about indexnodes.
+    if (!indexnodeSync.IsIndexnodeListSynced()) {
         return false;
     }
 
-    int nRank = mnodeman.GetApollonnodeRank(activeApollonnode.vin, nBlockHeight - 101, GetMinApollonnodePaymentsProto(), false);
+    int nRank = mnodeman.GetIndexnodeRank(activeIndexnode.vin, nBlockHeight - 101, GetMinIndexnodePaymentsProto(), false);
 
     if (nRank == -1) {
-        LogPrint("mnpayments", "CApollonnodePayments::ProcessBlock -- Unknown Apollonnode\n");
+        LogPrint("mnpayments", "CIndexnodePayments::ProcessBlock -- Unknown Indexnode\n");
         return false;
     }
 
     if (nRank > MNPAYMENTS_SIGNATURES_TOTAL) {
-        LogPrint("mnpayments", "CApollonnodePayments::ProcessBlock -- Apollonnode not in the top %d (%d)\n", MNPAYMENTS_SIGNATURES_TOTAL, nRank);
+        LogPrint("mnpayments", "CIndexnodePayments::ProcessBlock -- Indexnode not in the top %d (%d)\n", MNPAYMENTS_SIGNATURES_TOTAL, nRank);
         return false;
     }
 
-    // LOCATE THE NEXT APOLLONNODE WHICH SHOULD BE PAID
+    // LOCATE THE NEXT INDEXNODE WHICH SHOULD BE PAID
 
-    LogPrintf("CApollonnodePayments::ProcessBlock -- Start: nBlockHeight=%d, apollonnode=%s\n", nBlockHeight, activeApollonnode.vin.prevout.ToStringShort());
+    LogPrintf("CIndexnodePayments::ProcessBlock -- Start: nBlockHeight=%d, indexnode=%s\n", nBlockHeight, activeIndexnode.vin.prevout.ToStringShort());
 
     // pay to the oldest MN that still had no payment but its input is old enough and it was active long enough
     int nCount = 0;
-    CApollonnode *pmn = mnodeman.GetNextApollonnodeInQueueForPayment(nBlockHeight, true, nCount);
+    CIndexnode *pmn = mnodeman.GetNextIndexnodeInQueueForPayment(nBlockHeight, true, nCount);
 
     if (pmn == NULL) {
-        LogPrintf("CApollonnodePayments::ProcessBlock -- ERROR: Failed to find apollonnode to pay\n");
+        LogPrintf("CIndexnodePayments::ProcessBlock -- ERROR: Failed to find indexnode to pay\n");
         return false;
     }
 
-    LogPrintf("CApollonnodePayments::ProcessBlock -- Apollonnode found by GetNextApollonnodeInQueueForPayment(): %s\n", pmn->vin.prevout.ToStringShort());
+    LogPrintf("CIndexnodePayments::ProcessBlock -- Indexnode found by GetNextIndexnodeInQueueForPayment(): %s\n", pmn->vin.prevout.ToStringShort());
 
 
     CScript payee = GetScriptForDestination(pmn->pubKeyCollateralAddress.GetID());
 
-    CApollonnodePaymentVote voteNew(activeApollonnode.vin, nBlockHeight, payee);
+    CIndexnodePaymentVote voteNew(activeIndexnode.vin, nBlockHeight, payee);
 
     CTxDestination address1;
     ExtractDestination(payee, address1);
     CBitcoinAddress address2(address1);
 
-    // SIGN MESSAGE TO NETWORK WITH OUR APOLLONNODE KEYS
+    // SIGN MESSAGE TO NETWORK WITH OUR INDEXNODE KEYS
 
     if (voteNew.Sign()) {
         if (AddPaymentVote(voteNew)) {
@@ -736,42 +736,42 @@ bool CApollonnodePayments::ProcessBlock(int nBlockHeight) {
     return false;
 }
 
-void CApollonnodePaymentVote::Relay() {
+void CIndexnodePaymentVote::Relay() {
     // do not relay until synced
-    if (!apollonnodeSync.IsWinnersListSynced()) {
-        LogPrint("apollonnode", "CApollonnodePaymentVote::Relay - apollonnodeSync.IsWinnersListSynced() not sync\n");
+    if (!indexnodeSync.IsWinnersListSynced()) {
+        LogPrint("indexnode", "CIndexnodePaymentVote::Relay - indexnodeSync.IsWinnersListSynced() not sync\n");
         return;
     }
-    CInv inv(MSG_APOLLONNODE_PAYMENT_VOTE, GetHash());
+    CInv inv(MSG_INDEXNODE_PAYMENT_VOTE, GetHash());
     RelayInv(inv);
 }
 
-bool CApollonnodePaymentVote::CheckSignature(const CPubKey &pubKeyApollonnode, int nValidationHeight, int &nDos) {
+bool CIndexnodePaymentVote::CheckSignature(const CPubKey &pubKeyIndexnode, int nValidationHeight, int &nDos) {
     // do not ban by default
     nDos = 0;
 
-    std::string strMessage = vinApollonnode.prevout.ToStringShort() +
+    std::string strMessage = vinIndexnode.prevout.ToStringShort() +
                              boost::lexical_cast<std::string>(nBlockHeight) +
                              ScriptToAsmStr(payee);
 
     std::string strError = "";
-    if (!darkSendSigner.VerifyMessage(pubKeyApollonnode, vchSig, strMessage, strError)) {
+    if (!darkSendSigner.VerifyMessage(pubKeyIndexnode, vchSig, strMessage, strError)) {
         // Only ban for future block vote when we are already synced.
         // Otherwise it could be the case when MN which signed this vote is using another key now
         // and we have no idea about the old one.
-        if (apollonnodeSync.IsApollonnodeListSynced() && nBlockHeight > nValidationHeight) {
+        if (indexnodeSync.IsIndexnodeListSynced() && nBlockHeight > nValidationHeight) {
             nDos = 20;
         }
-        return error("CApollonnodePaymentVote::CheckSignature -- Got bad Apollonnode payment signature, apollonnode=%s, error: %s", vinApollonnode.prevout.ToStringShort().c_str(), strError);
+        return error("CIndexnodePaymentVote::CheckSignature -- Got bad Indexnode payment signature, indexnode=%s, error: %s", vinIndexnode.prevout.ToStringShort().c_str(), strError);
     }
 
     return true;
 }
 
-std::string CApollonnodePaymentVote::ToString() const {
+std::string CIndexnodePaymentVote::ToString() const {
     std::ostringstream info;
 
-    info << vinApollonnode.prevout.ToStringShort() <<
+    info << vinIndexnode.prevout.ToStringShort() <<
          ", " << nBlockHeight <<
          ", " << ScriptToAsmStr(payee) <<
          ", " << (int) vchSig.size();
@@ -780,65 +780,65 @@ std::string CApollonnodePaymentVote::ToString() const {
 }
 
 // Send only votes for future blocks, node should request every other missing payment block individually
-void CApollonnodePayments::Sync(CNode *pnode) {
-    LOCK(cs_mapApollonnodeBlocks);
+void CIndexnodePayments::Sync(CNode *pnode) {
+    LOCK(cs_mapIndexnodeBlocks);
 
-    if (!pCurrentBlockApollon) return;
+    if (!pCurrentBlockIndex) return;
 
     int nInvCount = 0;
 
-    for (int h = pCurrentBlockApollon->nHeight; h < pCurrentBlockApollon->nHeight + 20; h++) {
-        if (mapApollonnodeBlocks.count(h)) {
-            BOOST_FOREACH(CApollonnodePayee & payee, mapApollonnodeBlocks[h].vecPayees)
+    for (int h = pCurrentBlockIndex->nHeight; h < pCurrentBlockIndex->nHeight + 20; h++) {
+        if (mapIndexnodeBlocks.count(h)) {
+            BOOST_FOREACH(CIndexnodePayee & payee, mapIndexnodeBlocks[h].vecPayees)
             {
                 std::vector <uint256> vecVoteHashes = payee.GetVoteHashes();
                 BOOST_FOREACH(uint256 & hash, vecVoteHashes)
                 {
                     if (!HasVerifiedPaymentVote(hash)) continue;
-                    pnode->PushInventory(CInv(MSG_APOLLONNODE_PAYMENT_VOTE, hash));
+                    pnode->PushInventory(CInv(MSG_INDEXNODE_PAYMENT_VOTE, hash));
                     nInvCount++;
                 }
             }
         }
     }
 
-    LogPrintf("CApollonnodePayments::Sync -- Sent %d votes to peer %d\n", nInvCount, pnode->id);
-    pnode->PushMessage(NetMsgType::SYNCSTATUSCOUNT, APOLLONNODE_SYNC_MNW, nInvCount);
+    LogPrintf("CIndexnodePayments::Sync -- Sent %d votes to peer %d\n", nInvCount, pnode->id);
+    pnode->PushMessage(NetMsgType::SYNCSTATUSCOUNT, INDEXNODE_SYNC_MNW, nInvCount);
 }
 
 // Request low data/unknown payment blocks in batches directly from some node instead of/after preliminary Sync.
-void CApollonnodePayments::RequestLowDataPaymentBlocks(CNode *pnode) {
-    if (!pCurrentBlockApollon) return;
+void CIndexnodePayments::RequestLowDataPaymentBlocks(CNode *pnode) {
+    if (!pCurrentBlockIndex) return;
 
-    LOCK2(cs_main, cs_mapApollonnodeBlocks);
+    LOCK2(cs_main, cs_mapIndexnodeBlocks);
 
     std::vector <CInv> vToFetch;
     int nLimit = GetStorageLimit();
 
-    const CBlockApollon *papollon = pCurrentBlockApollon;
+    const CBlockIndex *pindex = pCurrentBlockIndex;
 
-    while (pCurrentBlockApollon->nHeight - papollon->nHeight < nLimit) {
-        if (!mapApollonnodeBlocks.count(papollon->nHeight)) {
+    while (pCurrentBlockIndex->nHeight - pindex->nHeight < nLimit) {
+        if (!mapIndexnodeBlocks.count(pindex->nHeight)) {
             // We have no idea about this block height, let's ask
-            vToFetch.push_back(CInv(MSG_APOLLONNODE_PAYMENT_BLOCK, papollon->GetBlockHash()));
+            vToFetch.push_back(CInv(MSG_INDEXNODE_PAYMENT_BLOCK, pindex->GetBlockHash()));
             // We should not violate GETDATA rules
             if (vToFetch.size() == MAX_INV_SZ) {
-                LogPrintf("CApollonnodePayments::SyncLowDataPaymentBlocks -- asking peer %d for %d blocks\n", pnode->id, MAX_INV_SZ);
+                LogPrintf("CIndexnodePayments::SyncLowDataPaymentBlocks -- asking peer %d for %d blocks\n", pnode->id, MAX_INV_SZ);
                 pnode->PushMessage(NetMsgType::GETDATA, vToFetch);
                 // Start filling new batch
                 vToFetch.clear();
             }
         }
-        if (!papollon->pprev) break;
-        papollon = papollon->pprev;
+        if (!pindex->pprev) break;
+        pindex = pindex->pprev;
     }
 
-    std::map<int, CApollonnodeBlockPayees>::iterator it = mapApollonnodeBlocks.begin();
+    std::map<int, CIndexnodeBlockPayees>::iterator it = mapIndexnodeBlocks.begin();
 
-    while (it != mapApollonnodeBlocks.end()) {
+    while (it != mapIndexnodeBlocks.end()) {
         int nTotalVotes = 0;
         bool fFound = false;
-        BOOST_FOREACH(CApollonnodePayee & payee, it->second.vecPayees)
+        BOOST_FOREACH(CIndexnodePayee & payee, it->second.vecPayees)
         {
             if (payee.GetVoteCount() >= MNPAYMENTS_SIGNATURES_REQUIRED) {
                 fFound = true;
@@ -856,7 +856,7 @@ void CApollonnodePayments::RequestLowDataPaymentBlocks(CNode *pnode) {
         // DEBUG
 //        DBG (
 //            // Let's see why this failed
-//            BOOST_FOREACH(CApollonnodePayee& payee, it->second.vecPayees) {
+//            BOOST_FOREACH(CIndexnodePayee& payee, it->second.vecPayees) {
 //                CTxDestination address1;
 //                ExtractDestination(payee.GetPayee(), address1);
 //                CBitcoinAddress address2(address1);
@@ -868,11 +868,11 @@ void CApollonnodePayments::RequestLowDataPaymentBlocks(CNode *pnode) {
         // Low data block found, let's try to sync it
         uint256 hash;
         if (GetBlockHash(hash, it->first)) {
-            vToFetch.push_back(CInv(MSG_APOLLONNODE_PAYMENT_BLOCK, hash));
+            vToFetch.push_back(CInv(MSG_INDEXNODE_PAYMENT_BLOCK, hash));
         }
         // We should not violate GETDATA rules
         if (vToFetch.size() == MAX_INV_SZ) {
-            LogPrintf("CApollonnodePayments::SyncLowDataPaymentBlocks -- asking peer %d for %d payment blocks\n", pnode->id, MAX_INV_SZ);
+            LogPrintf("CIndexnodePayments::SyncLowDataPaymentBlocks -- asking peer %d for %d payment blocks\n", pnode->id, MAX_INV_SZ);
             pnode->PushMessage(NetMsgType::GETDATA, vToFetch);
             // Start filling new batch
             vToFetch.clear();
@@ -881,33 +881,33 @@ void CApollonnodePayments::RequestLowDataPaymentBlocks(CNode *pnode) {
     }
     // Ask for the rest of it
     if (!vToFetch.empty()) {
-        LogPrintf("CApollonnodePayments::SyncLowDataPaymentBlocks -- asking peer %d for %d payment blocks\n", pnode->id, vToFetch.size());
+        LogPrintf("CIndexnodePayments::SyncLowDataPaymentBlocks -- asking peer %d for %d payment blocks\n", pnode->id, vToFetch.size());
         pnode->PushMessage(NetMsgType::GETDATA, vToFetch);
     }
 }
 
-std::string CApollonnodePayments::ToString() const {
+std::string CIndexnodePayments::ToString() const {
     std::ostringstream info;
 
-    info << "Votes: " << (int) mapApollonnodePaymentVotes.size() <<
-         ", Blocks: " << (int) mapApollonnodeBlocks.size();
+    info << "Votes: " << (int) mapIndexnodePaymentVotes.size() <<
+         ", Blocks: " << (int) mapIndexnodeBlocks.size();
 
     return info.str();
 }
 
-bool CApollonnodePayments::IsEnoughData() {
+bool CIndexnodePayments::IsEnoughData() {
     float nAverageVotes = (MNPAYMENTS_SIGNATURES_TOTAL + MNPAYMENTS_SIGNATURES_REQUIRED) / 2;
     int nStorageLimit = GetStorageLimit();
     return GetBlockCount() > nStorageLimit && GetVoteCount() > nStorageLimit * nAverageVotes;
 }
 
-int CApollonnodePayments::GetStorageLimit() {
+int CIndexnodePayments::GetStorageLimit() {
     return std::max(int(mnodeman.size() * nStorageCoeff), nMinBlocksToStore);
 }
 
-void CApollonnodePayments::UpdatedBlockTip(const CBlockApollon *papollon) {
-    pCurrentBlockApollon = papollon;
-    LogPrint("mnpayments", "CApollonnodePayments::UpdatedBlockTip -- pCurrentBlockApollon->nHeight=%d\n", pCurrentBlockApollon->nHeight);
+void CIndexnodePayments::UpdatedBlockTip(const CBlockIndex *pindex) {
+    pCurrentBlockIndex = pindex;
+    LogPrint("mnpayments", "CIndexnodePayments::UpdatedBlockTip -- pCurrentBlockIndex->nHeight=%d\n", pCurrentBlockIndex->nHeight);
     
-    ProcessBlock(papollon->nHeight + 5);
+    ProcessBlock(pindex->nHeight + 5);
 }

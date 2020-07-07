@@ -207,7 +207,7 @@ dir_common_generate_ri_from_rs(const vote_routerstatus_t *vrs)
   memcpy(r->cache_info.signed_descriptor_digest, rs->descriptor_digest,
          DIGEST_LEN);
   r->cache_info.do_not_cache = 1;
-  r->cache_info.routerlist_apollon = -1;
+  r->cache_info.routerlist_index = -1;
   r->cache_info.signed_descriptor_body =
     tor_strdup("123456789012345678901234567890123");
   r->cache_info.signed_descriptor_len =

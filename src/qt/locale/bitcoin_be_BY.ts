@@ -142,7 +142,7 @@
         <translation>Адчыниць &amp;URI...</translation>
     </message>
     <message>
-        <source>Reapolloning blocks on disk...</source>
+        <source>Reindexing blocks on disk...</source>
         <translation>Пераіндэксацыя блокаў на дыску...</translation>
     </message>
     <message>

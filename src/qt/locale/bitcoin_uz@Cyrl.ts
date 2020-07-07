@@ -142,7 +142,7 @@
         <translation>Интернет манзилни очиш</translation>
     </message>
     <message>
-        <source>Reapolloning blocks on disk...</source>
+        <source>Reindexing blocks on disk...</source>
         <translation>Дискдаги блоклар қайта индексланмоқда...</translation>
     </message>
     <message>

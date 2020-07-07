@@ -150,7 +150,7 @@
         <translation>開啓網址... &amp;U</translation>
     </message>
     <message>
-        <source>Reapolloning blocks on disk...</source>
+        <source>Reindexing blocks on disk...</source>
         <translation>正在為磁碟區塊重建索引...</translation>
     </message>
     <message>

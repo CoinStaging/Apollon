@@ -204,7 +204,7 @@ UniValue elysium_createrawtx_input(const UniValue& params, bool fHelp)
 
     CMutableTransaction tx = ParseMutableTransaction(params[0]);
     uint256 txid = ParseHashV(params[1], "txid");
-    uint32_t nOut = ParseOutputApollon(params[2]);
+    uint32_t nOut = ParseOutputIndex(params[2]);
 
     // extend the transaction
     tx = ElysiumTxBuilder(tx)
@@ -328,6 +328,6 @@ static const CRPCCommand commands[] =
 
 void RegisterElysiumRawTransactionRPCCommands(CRPCTable &tableRPC)
 {
-    for (unsigned int vcxap = 0; vcxap < ARRAYLEN(commands); vcxap++)
-        tableRPC.appendCommand(commands[vcxap].name, &commands[vcxap]);
+    for (unsigned int vcidx = 0; vcidx < ARRAYLEN(commands); vcidx++)
+        tableRPC.appendCommand(commands[vcidx].name, &commands[vcidx]);
 }

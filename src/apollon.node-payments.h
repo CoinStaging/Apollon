@@ -2,55 +2,55 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef APOLLONNODE_PAYMENTS_H
-#define APOLLONNODE_PAYMENTS_H
+#ifndef INDEXNODE_PAYMENTS_H
+#define INDEXNODE_PAYMENTS_H
 
 #include "util.h"
 #include "core_io.h"
 #include "key.h"
 #include "main.h"
-#include "apollonnode.h"
+#include "indexnode.h"
 #include "utilstrencodings.h"
 
-class CApollonnodePayments;
-class CApollonnodePaymentVote;
-class CApollonnodeBlockPayees;
+class CIndexnodePayments;
+class CIndexnodePaymentVote;
+class CIndexnodeBlockPayees;
 
 static const int MNPAYMENTS_SIGNATURES_REQUIRED         = 6;
 static const int MNPAYMENTS_SIGNATURES_TOTAL            = 10;
 
-//! minimum peer version that can receive and send apollonnode payment messages,
-//  vote for apollonnode and be elected as a payment winner
+//! minimum peer version that can receive and send indexnode payment messages,
+//  vote for indexnode and be elected as a payment winner
 // V1 - Last protocol version before update
 // V2 - Newest protocol version
-static const int MIN_APOLLONNODE_PAYMENT_PROTO_VERSION_1 = MIN_PEER_PROTO_VERSION;
-static const int MIN_APOLLONNODE_PAYMENT_PROTO_VERSION_2 = PROTOCOL_VERSION;
+static const int MIN_INDEXNODE_PAYMENT_PROTO_VERSION_1 = MIN_PEER_PROTO_VERSION;
+static const int MIN_INDEXNODE_PAYMENT_PROTO_VERSION_2 = PROTOCOL_VERSION;
 
 extern CCriticalSection cs_vecPayees;
-extern CCriticalSection cs_mapApollonnodeBlocks;
-extern CCriticalSection cs_mapApollonnodePayeeVotes;
+extern CCriticalSection cs_mapIndexnodeBlocks;
+extern CCriticalSection cs_mapIndexnodePayeeVotes;
 
-extern CApollonnodePayments mnpayments;
+extern CIndexnodePayments mnpayments;
 
 /// TODO: all 4 functions do not belong here really, they should be refactored/moved somewhere (main.cpp ?)
 bool IsBlockValueValid(const CBlock& block, int nBlockHeight, CAmount blockReward, std::string &strErrorRet);
 bool IsBlockPayeeValid(const CTransaction& txNew, int nBlockHeight, CAmount blockReward);
-void FillBlockPayments(CMutableTransaction& txNew, int nBlockHeight, CAmount blockReward, CTxOut& txoutApollonnodeRet, std::vector<CTxOut>& voutSuperblockRet);
+void FillBlockPayments(CMutableTransaction& txNew, int nBlockHeight, CAmount blockReward, CTxOut& txoutIndexnodeRet, std::vector<CTxOut>& voutSuperblockRet);
 std::string GetRequiredPaymentsString(int nBlockHeight);
 
-class CApollonnodePayee
+class CIndexnodePayee
 {
 private:
     CScript scriptPubKey;
     std::vector<uint256> vecVoteHashes;
 
 public:
-    CApollonnodePayee() :
+    CIndexnodePayee() :
         scriptPubKey(),
         vecVoteHashes()
         {}
 
-    CApollonnodePayee(CScript payee, uint256 hashIn) :
+    CIndexnodePayee(CScript payee, uint256 hashIn) :
         scriptPubKey(payee),
         vecVoteHashes()
     {
@@ -73,18 +73,18 @@ public:
     std::string ToString() const;
 };
 
-// Keep track of votes for payees from apollonnodes
-class CApollonnodeBlockPayees
+// Keep track of votes for payees from indexnodes
+class CIndexnodeBlockPayees
 {
 public:
     int nBlockHeight;
-    std::vector<CApollonnodePayee> vecPayees;
+    std::vector<CIndexnodePayee> vecPayees;
 
-    CApollonnodeBlockPayees() :
+    CIndexnodeBlockPayees() :
         nBlockHeight(0),
         vecPayees()
         {}
-    CApollonnodeBlockPayees(int nBlockHeightIn) :
+    CIndexnodeBlockPayees(int nBlockHeightIn) :
         nBlockHeight(nBlockHeightIn),
         vecPayees()
         {}
@@ -97,7 +97,7 @@ public:
         READWRITE(vecPayees);
     }
 
-    void AddPayee(const CApollonnodePaymentVote& vote);
+    void AddPayee(const CIndexnodePaymentVote& vote);
     bool GetBestPayee(CScript& payeeRet);
     bool HasPayeeWithVotes(CScript payeeIn, int nVotesReq);
 
@@ -107,24 +107,24 @@ public:
 };
 
 // vote for the winning payment
-class CApollonnodePaymentVote
+class CIndexnodePaymentVote
 {
 public:
-    CTxIn vinApollonnode;
+    CTxIn vinIndexnode;
 
     int nBlockHeight;
     CScript payee;
     std::vector<unsigned char> vchSig;
 
-    CApollonnodePaymentVote() :
-        vinApollonnode(),
+    CIndexnodePaymentVote() :
+        vinIndexnode(),
         nBlockHeight(0),
         payee(),
         vchSig()
         {}
 
-    CApollonnodePaymentVote(CTxIn vinApollonnode, int nBlockHeight, CScript payee) :
-        vinApollonnode(vinApollonnode),
+    CIndexnodePaymentVote(CTxIn vinIndexnode, int nBlockHeight, CScript payee) :
+        vinIndexnode(vinIndexnode),
         nBlockHeight(nBlockHeight),
         payee(payee),
         vchSig()
@@ -134,7 +134,7 @@ public:
 
     template <typename Stream, typename Operation>
     inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
-        READWRITE(vinApollonnode);
+        READWRITE(vinIndexnode);
         READWRITE(nBlockHeight);
         READWRITE(*(CScriptBase*)(&payee));
         READWRITE(vchSig);
@@ -144,12 +144,12 @@ public:
         CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
         ss << *(CScriptBase*)(&payee);
         ss << nBlockHeight;
-        ss << vinApollonnode.prevout;
+        ss << vinIndexnode.prevout;
         return ss.GetHash();
     }
 
     bool Sign();
-    bool CheckSignature(const CPubKey& pubKeyApollonnode, int nValidationHeight, int &nDos);
+    bool CheckSignature(const CPubKey& pubKeyIndexnode, int nValidationHeight, int &nDos);
 
     bool IsValid(CNode* pnode, int nValidationHeight, std::string& strError);
     void Relay();
@@ -161,39 +161,39 @@ public:
 };
 
 //
-// Apollonnode Payments Class
+// Indexnode Payments Class
 // Keeps track of who should get paid for which blocks
 //
 
-class CApollonnodePayments
+class CIndexnodePayments
 {
 private:
-    // apollonnode count times nStorageCoeff payments blocks should be stored ...
+    // indexnode count times nStorageCoeff payments blocks should be stored ...
     const float nStorageCoeff;
     // ... but at least nMinBlocksToStore (payments blocks)
     const int nMinBlocksToStore;
 
     // Keep track of current block apollon
-    const CBlockApollon *pCurrentBlockApollon;
+    const CBlockIndex *pCurrentBlockIndex;
 
 public:
-    std::map<uint256, CApollonnodePaymentVote> mapApollonnodePaymentVotes;
-    std::map<int, CApollonnodeBlockPayees> mapApollonnodeBlocks;
-    std::map<COutPoint, int> mapApollonnodesLastVote;
+    std::map<uint256, CIndexnodePaymentVote> mapIndexnodePaymentVotes;
+    std::map<int, CIndexnodeBlockPayees> mapIndexnodeBlocks;
+    std::map<COutPoint, int> mapIndexnodesLastVote;
 
-    CApollonnodePayments() : nStorageCoeff(1.25), nMinBlocksToStore(5000) {}
+    CIndexnodePayments() : nStorageCoeff(1.25), nMinBlocksToStore(5000) {}
 
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
     inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
-        READWRITE(mapApollonnodePaymentVotes);
-        READWRITE(mapApollonnodeBlocks);
+        READWRITE(mapIndexnodePaymentVotes);
+        READWRITE(mapIndexnodeBlocks);
     }
 
     void Clear();
 
-    bool AddPaymentVote(const CApollonnodePaymentVote& vote);
+    bool AddPaymentVote(const CIndexnodePaymentVote& vote);
     bool HasVerifiedPaymentVote(uint256 hashIn);
     bool ProcessBlock(int nBlockHeight);
 
@@ -203,23 +203,23 @@ public:
 
     bool GetBlockPayee(int nBlockHeight, CScript& payee);
     bool IsTransactionValid(const CTransaction& txNew, int nBlockHeight, bool fMTP);
-    bool IsScheduled(CApollonnode& mn, int nNotBlockHeight);
+    bool IsScheduled(CIndexnode& mn, int nNotBlockHeight);
 
-    bool CanVote(COutPoint outApollonnode, int nBlockHeight);
+    bool CanVote(COutPoint outIndexnode, int nBlockHeight);
 
-    int GetMinApollonnodePaymentsProto();
+    int GetMinIndexnodePaymentsProto();
     void ProcessMessage(CNode* pfrom, std::string& strCommand, CDataStream& vRecv);
     std::string GetRequiredPaymentsString(int nBlockHeight);
-    void FillBlockPayee(CMutableTransaction& txNew, int nBlockHeight, CAmount blockReward, CTxOut& txoutApollonnodeRet);
+    void FillBlockPayee(CMutableTransaction& txNew, int nBlockHeight, CAmount blockReward, CTxOut& txoutIndexnodeRet);
     std::string ToString() const;
 
-    int GetBlockCount() { return mapApollonnodeBlocks.size(); }
-    int GetVoteCount() { return mapApollonnodePaymentVotes.size(); }
+    int GetBlockCount() { return mapIndexnodeBlocks.size(); }
+    int GetVoteCount() { return mapIndexnodePaymentVotes.size(); }
 
     bool IsEnoughData();
     int GetStorageLimit();
 
-    void UpdatedBlockTip(const CBlockApollon *papollon);
+    void UpdatedBlockTip(const CBlockIndex *pindex);
 };
 
 #endif

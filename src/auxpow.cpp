@@ -20,7 +20,7 @@ void RemoveMergedMiningHeader(vector<unsigned char>& vchAux)
 bool CAuxPow::Check(uint256 hashAuxBlock, int nChainID, bool fTestNet)
 {
 //    bool fTestNet = (Params().NetworkIDString() == CBaseChainParams::TESTNET);
-    if (nApollon != 0)
+    if (nIndex != 0)
         return error("AuxPow is not a generate");
 
     if (!fTestNet && parentBlockHeader.GetChainID() == nChainID)
@@ -30,12 +30,12 @@ bool CAuxPow::Check(uint256 hashAuxBlock, int nChainID, bool fTestNet)
         return error("Aux POW chain merkle branch too long");
 
     // Check that the chain merkle root is in the coinbase
-    uint256 nRootHash = ComputeMerkleRootFromBranch(hashAuxBlock, vChainMerkleBranch, nChainApollon);
+    uint256 nRootHash = ComputeMerkleRootFromBranch(hashAuxBlock, vChainMerkleBranch, nChainIndex);
     vector<unsigned char> vchRootHash(nRootHash.begin(), nRootHash.end());
     std::reverse(vchRootHash.begin(), vchRootHash.end()); // correct endian
 
     // Check that we are in the parent block merkle tree
-//    if (ComputeMerkleRootFromBranch(GetHash(), vMerkleBranch, nApollon) != parentBlockHeader.hashMerkleRoot)
+//    if (ComputeMerkleRootFromBranch(GetHash(), vMerkleBranch, nIndex) != parentBlockHeader.hashMerkleRoot)
 //        return error("Aux POW merkle root incorrect");
 
     const CScript script = vin[0].scriptSig;
@@ -96,7 +96,7 @@ bool CAuxPow::Check(uint256 hashAuxBlock, int nChainID, bool fTestNet)
     rand += nChainID;
     rand = rand * 1103515245 + 12345;
 
-    if (nChainApollon != (rand % nSize))
+    if (nChainIndex != (rand % nSize))
         return error("Aux POW wrong apollon");
 
     return true;
@@ -112,7 +112,7 @@ CScript MakeCoinbaseWithAux(unsigned int nBits, unsigned int nExtraNonce, vector
 }
 
 
-void IncrementExtraNonceWithAux(CBlock* pblock, CBlockApollon* papollonPrev, unsigned int& nExtraNonce, vector<unsigned char>& vchAux)
+void IncrementExtraNonceWithAux(CBlock* pblock, CBlockIndex* pindexPrev, unsigned int& nExtraNonce, vector<unsigned char>& vchAux)
 {
     // Update nExtraNonce
     static uint256 hashPrevBlock;

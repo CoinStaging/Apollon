@@ -135,8 +135,8 @@ static void secp256k1_ecmult_gen(const secp256k1_ecmult_gen_context *ctx, secp25
     for (j = 0; j < 64; j++) {
         bits = secp256k1_scalar_get_bits(&gnb, j * 4, 4);
         for (i = 0; i < 16; i++) {
-            /** This uses a conditional move to avoid any secret data in array apollones.
-             *   _Any_ use of secret apollones has been demonstrated to result in timing
+            /** This uses a conditional move to avoid any secret data in array indexes.
+             *   _Any_ use of secret indexes has been demonstrated to result in timing
              *   sidechannels, even when the cache-line access patterns are uniform.
              *  See also:
              *   "A word of warning", CHES 2013 Rump Session, by Daniel J. Bernstein and Peter Schwabe

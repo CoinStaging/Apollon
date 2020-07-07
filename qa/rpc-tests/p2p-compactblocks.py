@@ -120,7 +120,7 @@ class CompactBlocksTest(BitcoinTestFramework):
         # Start up node0 to be a version 1, pre-segwit node.
         self.nodes = start_nodes(self.num_nodes, self.options.tmpdir, 
                 [["-debug", "-logtimemicros=1", "-bip9params=segwit:0:0"], 
-                 ["-debug", "-logtimemicros", "-txapollon"]])
+                 ["-debug", "-logtimemicros", "-txindex"]])
         connect_nodes(self.nodes[0], 1)
 
     def build_block_on_tip(self, node, segwit=False):
@@ -333,7 +333,7 @@ class CompactBlocksTest(BitcoinTestFramework):
         header_and_shortids = None
         with mininode_lock:
             assert(test_node.last_cmpctblock is not None)
-            # Convert the on-the-wire representation to absolute apollones
+            # Convert the on-the-wire representation to absolute indexes
             header_and_shortids = HeaderAndShortIDs(test_node.last_cmpctblock.header_and_shortids)
 
         # Check that we got the right block!
@@ -419,8 +419,8 @@ class CompactBlocksTest(BitcoinTestFramework):
             # Expect a getblocktxn message.
             with mininode_lock:
                 assert(test_node.last_getblocktxn is not None)
-                absolute_apollones = test_node.last_getblocktxn.block_txn_request.to_absolute()
-            assert_equal(absolute_apollones, [0])  # should be a coinbase request
+                absolute_indexes = test_node.last_getblocktxn.block_txn_request.to_absolute()
+            assert_equal(absolute_indexes, [0])  # should be a coinbase request
 
             # Send the coinbase, and verify that the tip advances.
             if version == 2:
@@ -459,8 +459,8 @@ class CompactBlocksTest(BitcoinTestFramework):
             peer.send_and_ping(msg)
             with mininode_lock:
                 assert(peer.last_getblocktxn is not None)
-                absolute_apollones = peer.last_getblocktxn.block_txn_request.to_absolute()
-            assert_equal(absolute_apollones, expected_result)
+                absolute_indexes = peer.last_getblocktxn.block_txn_request.to_absolute()
+            assert_equal(absolute_indexes, expected_result)
 
         def test_tip_after_message(node, peer, msg, tip):
             peer.send_and_ping(msg)
@@ -554,11 +554,11 @@ class CompactBlocksTest(BitcoinTestFramework):
         comp_block = HeaderAndShortIDs()
         comp_block.initialize_from_block(block, prefill_list=[0], use_witness=(version == 2))
         test_node.send_and_ping(msg_cmpctblock(comp_block.to_p2p()))
-        absolute_apollones = []
+        absolute_indexes = []
         with mininode_lock:
             assert(test_node.last_getblocktxn is not None)
-            absolute_apollones = test_node.last_getblocktxn.block_txn_request.to_absolute()
-        assert_equal(absolute_apollones, [6, 7, 8, 9, 10])
+            absolute_indexes = test_node.last_getblocktxn.block_txn_request.to_absolute()
+        assert_equal(absolute_indexes, [6, 7, 8, 9, 10])
 
         # Now give an incorrect response.
         # Note that it's possible for bitcoind to be smart enough to know we're

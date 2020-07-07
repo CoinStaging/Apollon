@@ -726,12 +726,12 @@ networkstatus_vote_find_entry,(networkstatus_t *ns, const char *digest))
 /*XXXX MOVE make this static once functions are moved into this file. */
 /** Search the routerstatuses in <b>ns</b> for one whose identity digest is
  * <b>digest</b>.  Return value and set *<b>found_out</b> as for
- * smartlist_bsearch_xap(). */
+ * smartlist_bsearch_idx(). */
 int
-networkstatus_vote_find_entry_xap(networkstatus_t *ns,
+networkstatus_vote_find_entry_idx(networkstatus_t *ns,
                                   const char *digest, int *found_out)
 {
-  return smartlist_bsearch_xap(ns->routerstatus_list, digest,
+  return smartlist_bsearch_idx(ns->routerstatus_list, digest,
                                compare_digest_to_routerstatus_entry,
                                found_out);
 }
@@ -2237,7 +2237,7 @@ routers_update_all_from_networkstatus(time_t now, int dir_version)
   routers_update_status_from_consensus_networkstatus(rl->routers, 0);
 
   SMARTLIST_FOREACH(rl->routers, routerinfo_t *, ri,
-                    ri->cache_info.routerlist_apollon = ri_sl_xap);
+                    ri->cache_info.routerlist_index = ri_sl_idx);
   if (rl->old_routers)
     signed_descs_update_status_from_consensus_networkstatus(rl->old_routers);
 

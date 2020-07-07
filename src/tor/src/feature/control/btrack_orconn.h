@@ -20,8 +20,8 @@
  * another with channel IDs.
  **/
 typedef struct bt_orconn_t {
-  HT_ENTRY(bt_orconn_t) node;   /**< Hash map entry apolloned by gid */
-  HT_ENTRY(bt_orconn_t) chan_node; /**< Hash map entry apolloned by channel ID */
+  HT_ENTRY(bt_orconn_t) node;   /**< Hash map entry indexed by gid */
+  HT_ENTRY(bt_orconn_t) chan_node; /**< Hash map entry indexed by channel ID */
   uint64_t gid;                    /**< Global ID of this ORCONN */
   uint64_t chan;                   /**< Channel ID, if known */
   int proxy_type;                  /**< Proxy type */

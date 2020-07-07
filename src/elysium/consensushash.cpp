@@ -218,8 +218,8 @@ uint256 GetConsensusHash()
     for (md_PropertiesMap::const_iterator my_it = metadex.begin(); my_it != metadex.end(); ++my_it) {
         const md_PricesMap& prices = my_it->second;
         for (md_PricesMap::const_iterator it = prices.begin(); it != prices.end(); ++it) {
-            const md_Set& apollones = it->second;
-            for (md_Set::const_iterator it = apollones.begin(); it != apollones.end(); ++it) {
+            const md_Set& indexes = it->second;
+            for (md_Set::const_iterator it = indexes.begin(); it != indexes.end(); ++it) {
                 const CMPMetaDEx& obj = *it;
                 std::string dataStr = GenerateConsensusString(obj);
                 vecMetaDExTrades.push_back(std::make_pair(arith_uint256(obj.getHash().ToString()), dataStr));
@@ -289,8 +289,8 @@ uint256 GetMetaDExHash(const uint32_t propertyId)
         if (propertyId == 0 || propertyId == my_it->first) {
             const md_PricesMap& prices = my_it->second;
             for (md_PricesMap::const_iterator it = prices.begin(); it != prices.end(); ++it) {
-                const md_Set& apollones = it->second;
-                for (md_Set::const_iterator it = apollones.begin(); it != apollones.end(); ++it) {
+                const md_Set& indexes = it->second;
+                for (md_Set::const_iterator it = indexes.begin(); it != indexes.end(); ++it) {
                     const CMPMetaDEx& obj = *it;
                     std::string dataStr = GenerateConsensusString(obj);
                     vecMetaDExTrades.push_back(std::make_pair(arith_uint256(obj.getHash().ToString()), dataStr));

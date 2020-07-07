@@ -36,8 +36,8 @@ BOOST_AUTO_TEST_CASE(sigma_mintspend_numinputs)
     std::vector<std::string> denominations = {"0.05", "0.1", "0.5", "1", "10", "25", "100"};
 
     // Test with small denominations to limit required coins.
-    int denominationApollonA = 0; // 0.1
-    int denominationApollonB = 1; // 0.5
+    int denominationIndexA = 0; // 0.1
+    int denominationIndexB = 1; // 0.5
 
     sigma::CSigmaState *sigmaState = sigma::CSigmaState::GetState();
     auto& consensus = ::Params().GetConsensus();
@@ -48,15 +48,15 @@ BOOST_AUTO_TEST_CASE(sigma_mintspend_numinputs)
     pwalletMain->SetBroadcastTransactions(true);
 
     // attempt to create a zerocoin spend with more than inputs limit.
-    printf("Testing number of inputs for denomination %s\n", denominations[denominationApollonA].c_str());
+    printf("Testing number of inputs for denomination %s\n", denominations[denominationIndexA].c_str());
     denominationsForTx.clear();
 
     for (unsigned i = 0; i < (consensus.nMaxSigmaInputPerBlock + 1) * 2; i++){
-        denominationsForTx.push_back(denominations[denominationApollonA]);
-        BOOST_CHECK_MESSAGE(pwalletMain->CreateZerocoinMintModel(stringError, denominations[denominationApollonA].c_str(), SIGMA), stringError + " - Create Mint failed");
-        BOOST_CHECK_MESSAGE(pwalletMain->CreateZerocoinMintModel(stringError, denominations[denominationApollonB].c_str(), SIGMA), stringError + " - Create Mint failed");
+        denominationsForTx.push_back(denominations[denominationIndexA]);
+        BOOST_CHECK_MESSAGE(pwalletMain->CreateZerocoinMintModel(stringError, denominations[denominationIndexA].c_str(), SIGMA), stringError + " - Create Mint failed");
+        BOOST_CHECK_MESSAGE(pwalletMain->CreateZerocoinMintModel(stringError, denominations[denominationIndexB].c_str(), SIGMA), stringError + " - Create Mint failed");
         if (i <= consensus.nMaxSigmaInputPerBlock) {
-            denominationsForTx.push_back(denominations[denominationApollonA]);
+            denominationsForTx.push_back(denominations[denominationIndexA]);
         }
     }
 
@@ -84,8 +84,8 @@ BOOST_AUTO_TEST_CASE(sigma_mintspend_numinputs)
     // Next add spendsTransactionLimit + 1 transactions with 2 inputs each, verify mempool==spendsTransactionLimit + 1. mine a block. Verify mempool still has 1 tx.
     for(unsigned i = 0; i < spendsTransactionLimit + 1; i++){
         denominationsForTx.clear();
-        denominationsForTx.push_back(denominations[denominationApollonA]);
-        denominationsForTx.push_back(denominations[denominationApollonB]);
+        denominationsForTx.push_back(denominations[denominationIndexA]);
+        denominationsForTx.push_back(denominations[denominationIndexB]);
         BOOST_CHECK_MESSAGE(pwalletMain->CreateZerocoinSpendModel(wtx, stringError, thirdPartyAddress, denominationsForTx), "Spend Failed");
     }
 

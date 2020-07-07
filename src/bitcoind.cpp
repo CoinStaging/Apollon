@@ -18,7 +18,7 @@
 #include "httpserver.h"
 #include "httprpc.h"
 #include "utilstrencodings.h"
-#include "apollonnodeconfig.h"
+#include "indexnodeconfig.h"
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/thread.hpp>
@@ -92,7 +92,7 @@ bool AppInit(int argc, char* argv[])
         else
         {
             strUsage += "\n" + _("Usage:") + "\n" +
-                  "  apollond [options]                     " + strprintf(_("Start %s Daemon"), _(PACKAGE_NAME)) + "\n";
+                  "  indexd [options]                     " + strprintf(_("Start %s Daemon"), _(PACKAGE_NAME)) + "\n";
 
             strUsage += "\n" + HelpMessage(HMM_BITCOIND);
         }
@@ -132,10 +132,10 @@ bool AppInit(int argc, char* argv[])
         }
 #endif
 
-        // parse apollonnode.conf
+        // parse indexnode.conf
         std::string strErr;
-        if(!apollonnodeConfig.read(strErr)) {
-            fprintf(stderr,"Error reading apollonnode configuration file: %s\n", strErr.c_str());
+        if(!indexnodeConfig.read(strErr)) {
+            fprintf(stderr,"Error reading indexnode configuration file: %s\n", strErr.c_str());
             return false;
         }
 
@@ -147,7 +147,7 @@ bool AppInit(int argc, char* argv[])
 
         if (fCommandLine)
         {
-            fprintf(stderr, "Error: There is no RPC client functionality in apollond anymore. Use the apollon-cli utility instead.\n");
+            fprintf(stderr, "Error: There is no RPC client functionality in indexd anymore. Use the apollon-cli utility instead.\n");
             exit(EXIT_FAILURE);
         }
 #ifndef WIN32

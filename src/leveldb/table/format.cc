@@ -33,8 +33,8 @@ void Footer::EncodeTo(std::string* dst) const {
 #ifndef NDEBUG
   const size_t original_size = dst->size();
 #endif
-  metaapollon_handle_.EncodeTo(dst);
-  apollon_handle_.EncodeTo(dst);
+  metaindex_handle_.EncodeTo(dst);
+  index_handle_.EncodeTo(dst);
   dst->resize(2 * BlockHandle::kMaxEncodedLength);  // Padding
   PutFixed32(dst, static_cast<uint32_t>(kTableMagicNumber & 0xffffffffu));
   PutFixed32(dst, static_cast<uint32_t>(kTableMagicNumber >> 32));
@@ -51,9 +51,9 @@ Status Footer::DecodeFrom(Slice* input) {
     return Status::Corruption("not an sstable (bad magic number)");
   }
 
-  Status result = metaapollon_handle_.DecodeFrom(input);
+  Status result = metaindex_handle_.DecodeFrom(input);
   if (result.ok()) {
-    result = apollon_handle_.DecodeFrom(input);
+    result = index_handle_.DecodeFrom(input);
   }
   if (result.ok()) {
     // We skip over any leftover data (just padding for now) in "input"

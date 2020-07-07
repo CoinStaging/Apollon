@@ -1066,8 +1066,8 @@ int ParseTransaction(const CTransaction& tx, int nBlock, unsigned int xap, CMPTr
 class ProgressReporter
 {
 private:
-    const CBlockApollon* m_pblockFirst;
-    const CBlockApollon* m_pblockLast;
+    const CBlockIndex* m_pblockFirst;
+    const CBlockIndex* m_pblockLast;
     const int64_t m_timeStart;
 
     /** Returns the estimated remaining time in milliseconds. */
@@ -1101,13 +1101,13 @@ private:
     }
 
 public:
-    ProgressReporter(const CBlockApollon* pblockFirst, const CBlockApollon* pblockLast)
+    ProgressReporter(const CBlockIndex* pblockFirst, const CBlockIndex* pblockLast)
     : m_pblockFirst(pblockFirst), m_pblockLast(pblockLast), m_timeStart(GetTimeMillis())
     {
     }
 
     /** Prints the current progress to the console and notifies the UI. */
-    void update(const CBlockApollon* pblockNow) const
+    void update(const CBlockIndex* pblockNow) const
     {
         int nLastBlock = m_pblockLast->nHeight;
         int nCurrentBlock = pblockNow->nHeight;
@@ -1171,37 +1171,37 @@ static int elysium_initial_scan(int nFirstBlock)
             break;
         }
 
-        CBlockApollon* pblockapollon = chainActive[nBlock];
-        if (NULL == pblockapollon) break;
-        std::string strBlockHash = pblockapollon->GetBlockHash().GetHex();
+        CBlockIndex* pblockindex = chainActive[nBlock];
+        if (NULL == pblockindex) break;
+        std::string strBlockHash = pblockindex->GetBlockHash().GetHex();
 
         if (elysium_debug_ely) PrintToLog("%s(%d; max=%d):%s, line %d, file: %s\n",
             __FUNCTION__, nBlock, nLastBlock, strBlockHash, __LINE__, __FILE__);
 
         if (GetTime() >= nNow + nTimeBetweenProgressReports) {
-            progressReporter.update(pblockapollon);
+            progressReporter.update(pblockindex);
             nNow = GetTime();
         }
 
         // Get block to parse.
         CBlock block;
 
-        if (!ReadBlockFromDisk(block, pblockapollon, Params().GetConsensus())) {
+        if (!ReadBlockFromDisk(block, pblockindex, Params().GetConsensus())) {
             break;
         }
 
         // Parse block.
         unsigned parsed = 0;
 
-        elysium_handler_block_begin(nBlock, pblockapollon);
+        elysium_handler_block_begin(nBlock, pblockindex);
 
         for (unsigned i = 0; i < block.vtx.size(); i++) {
-            if (elysium_handler_tx(block.vtx[i], nBlock, i, pblockapollon)) {
+            if (elysium_handler_tx(block.vtx[i], nBlock, i, pblockindex)) {
                 parsed++;
             }
         }
 
-        elysium_handler_block_end(nBlock, pblockapollon, parsed);
+        elysium_handler_block_end(nBlock, pblockindex, parsed);
 
         // Sum total parsed.
         nTxsFoundTotal += parsed;
@@ -1561,23 +1561,23 @@ static int load_most_relevant_state()
     return -1;
   }
 
-  CBlockApollon const *spBlockApollon = GetBlockApollon(spWatermark);
-  if (NULL == spBlockApollon) {
+  CBlockIndex const *spBlockIndex = GetBlockIndex(spWatermark);
+  if (NULL == spBlockIndex) {
     //trigger a full reparse, if the watermark isn't a real block
     return -1;
   }
 
-  while (NULL != spBlockApollon && false == chainActive.Contains(spBlockApollon)) {
-    int remainingSPs = _my_sps->popBlock(spBlockApollon->GetBlockHash());
+  while (NULL != spBlockIndex && false == chainActive.Contains(spBlockIndex)) {
+    int remainingSPs = _my_sps->popBlock(spBlockIndex->GetBlockHash());
     if (remainingSPs < 0) {
       // trigger a full reparse, if the levelDB cannot roll back
       return -1;
     } /*else if (remainingSPs == 0) {
       // potential optimization here?
     }*/
-    spBlockApollon = spBlockApollon->pprev;
-    if (spBlockApollon != NULL) {
-        _my_sps->setWatermark(spBlockApollon->GetBlockHash());
+    spBlockIndex = spBlockIndex->pprev;
+    if (spBlockIndex != NULL) {
+        _my_sps->setWatermark(spBlockIndex->GetBlockHash());
     }
   }
 
@@ -1599,8 +1599,8 @@ static int load_most_relevant_state()
           boost::equals(vstr[2], "dat")) {
       uint256 blockHash;
       blockHash.SetHex(vstr[1]);
-      CBlockApollon *pBlockApollon = GetBlockApollon(blockHash);
-      if (pBlockApollon == NULL || false == chainActive.Contains(pBlockApollon)) {
+      CBlockIndex *pBlockIndex = GetBlockIndex(blockHash);
+      if (pBlockIndex == NULL || false == chainActive.Contains(pBlockIndex)) {
         continue;
       }
 
@@ -1613,11 +1613,11 @@ static int load_most_relevant_state()
   // walk backwards until we find a valid and full set of persisted state files
   // for each block we discard, roll back the SP database
   // Note: to avoid rolling back all the way to the genesis block (which appears as if client is hung) abort after MAX_STATE_HISTORY attempts
-  CBlockApollon const *curTip = spBlockApollon;
+  CBlockIndex const *curTip = spBlockIndex;
   int abortRollBackBlock;
   if (curTip != NULL) abortRollBackBlock = curTip->nHeight - (MAX_STATE_HISTORY+1);
   while (NULL != curTip && persistedBlocks.size() > 0 && curTip->nHeight > abortRollBackBlock) {
-    if (persistedBlocks.find(spBlockApollon->GetBlockHash()) != persistedBlocks.end()) {
+    if (persistedBlocks.find(spBlockIndex->GetBlockHash()) != persistedBlocks.end()) {
       int success = -1;
       for (int i = 0; i < NUM_FILETYPES; ++i) {
         boost::filesystem::path path = MPPersistencePath / strprintf("%s-%s.dat", statePrefix[i], curTip->GetBlockHash().ToString());
@@ -1634,7 +1634,7 @@ static int load_most_relevant_state()
       }
 
       // remove this from the persistedBlock Set
-      persistedBlocks.erase(spBlockApollon->GetBlockHash());
+      persistedBlocks.erase(spBlockIndex->GetBlockHash());
     }
 
     // go to the previous block
@@ -1724,8 +1724,8 @@ static int write_mp_metadex(ofstream &file, SHA256_CTX *shaCtx)
     md_PricesMap & prices = my_it->second;
     for (md_PricesMap::iterator it = prices.begin(); it != prices.end(); ++it)
     {
-      md_Set & apollones = (it->second);
-      for (md_Set::iterator it = apollones.begin(); it != apollones.end(); ++it)
+      md_Set & indexes = (it->second);
+      for (md_Set::iterator it = indexes.begin(); it != indexes.end(); ++it)
       {
         CMPMetaDEx meta = *it;
         meta.saveOffer(file, shaCtx);
@@ -1779,9 +1779,9 @@ static int write_mp_crowdsales(std::ofstream& file, SHA256_CTX* shaCtx)
     return 0;
 }
 
-static int write_state_file( CBlockApollon const *pBlockApollon, int what )
+static int write_state_file( CBlockIndex const *pBlockIndex, int what )
 {
-  boost::filesystem::path path = MPPersistencePath / strprintf("%s-%s.dat", statePrefix[what], pBlockApollon->GetBlockHash().ToString());
+  boost::filesystem::path path = MPPersistencePath / strprintf("%s-%s.dat", statePrefix[what], pBlockIndex->GetBlockHash().ToString());
   const std::string strFile = path.string();
 
   std::ofstream file;
@@ -1841,7 +1841,7 @@ static bool is_state_prefix( std::string const &str )
   return false;
 }
 
-static void prune_state_files( CBlockApollon const *topApollon )
+static void prune_state_files( CBlockIndex const *topIndex )
 {
   // build a set of blockHashes for which we have any state files
   std::set<uint256> statefulBlockHashes;
@@ -1872,15 +1872,15 @@ static void prune_state_files( CBlockApollon const *topApollon )
   // for each blockHash in the set, determine the distance from the given block
   std::set<uint256>::const_iterator iter;
   for (iter = statefulBlockHashes.begin(); iter != statefulBlockHashes.end(); ++iter) {
-    // look up the CBlockApollon for height info
-    CBlockApollon const *curApollon = GetBlockApollon(*iter);
+    // look up the CBlockIndex for height info
+    CBlockIndex const *curIndex = GetBlockIndex(*iter);
 
     // if we have nothing int the apollon, or this block is too old..
-    if (NULL == curApollon || (topApollon->nHeight - curApollon->nHeight) > MAX_STATE_HISTORY ) {
+    if (NULL == curIndex || (topIndex->nHeight - curIndex->nHeight) > MAX_STATE_HISTORY ) {
      if (elysium_debug_persistence)
      {
-      if (curApollon) {
-        PrintToLog("State from Block:%s is no longer need, removing files (age-from-tip: %d)\n", (*iter).ToString(), topApollon->nHeight - curApollon->nHeight);
+      if (curIndex) {
+        PrintToLog("State from Block:%s is no longer need, removing files (age-from-tip: %d)\n", (*iter).ToString(), topIndex->nHeight - curIndex->nHeight);
       } else {
         PrintToLog("State from Block:%s is no longer need, removing files (not in apollon)\n", (*iter).ToString());
       }
@@ -1896,20 +1896,20 @@ static void prune_state_files( CBlockApollon const *topApollon )
   }
 }
 
-int elysium_save_state( CBlockApollon const *pBlockApollon )
+int elysium_save_state( CBlockIndex const *pBlockIndex )
 {
     // write the new state as of the given block
-    write_state_file(pBlockApollon, FILETYPE_BALANCES);
-    write_state_file(pBlockApollon, FILETYPE_OFFERS);
-    write_state_file(pBlockApollon, FILETYPE_ACCEPTS);
-    write_state_file(pBlockApollon, FILETYPE_GLOBALS);
-    write_state_file(pBlockApollon, FILETYPE_CROWDSALES);
-    write_state_file(pBlockApollon, FILETYPE_MDEXORDERS);
+    write_state_file(pBlockIndex, FILETYPE_BALANCES);
+    write_state_file(pBlockIndex, FILETYPE_OFFERS);
+    write_state_file(pBlockIndex, FILETYPE_ACCEPTS);
+    write_state_file(pBlockIndex, FILETYPE_GLOBALS);
+    write_state_file(pBlockIndex, FILETYPE_CROWDSALES);
+    write_state_file(pBlockIndex, FILETYPE_MDEXORDERS);
 
     // clean-up the directory
-    prune_state_files(pBlockApollon);
+    prune_state_files(pBlockIndex);
 
-    _my_sps->setWatermark(pBlockApollon->GetBlockHash());
+    _my_sps->setWatermark(pBlockIndex->GetBlockHash());
 
     return 0;
 }
@@ -2008,14 +2008,14 @@ int elysium_init()
         }
     }
 
-    t_tradelistdb = new CMPTradeList(GetDataDir() / "MP_tradelist", fReapollon);
-    s_stolistdb = new CMPSTOList(GetDataDir() / "MP_stolist", fReapollon);
-    p_txlistdb = new CMPTxList(GetDataDir() / "MP_txlist", fReapollon);
-    sigmaDb = new SigmaDatabase(GetDataDir() / "MP_sigma", fReapollon);
-    _my_sps = new CMPSPInfo(GetDataDir() / "MP_spinfo", fReapollon);
-    p_ElysiumTXDB = new CElysiumTransactionDB(GetDataDir() / "Exodus_TXDB", fReapollon);
-    p_feecache = new CElysiumFeeCache(GetDataDir() / "EXODUS_feecache", fReapollon);
-    p_feehistory = new CElysiumFeeHistory(GetDataDir() / "EXODUS_feehistory", fReapollon);
+    t_tradelistdb = new CMPTradeList(GetDataDir() / "MP_tradelist", fReindex);
+    s_stolistdb = new CMPSTOList(GetDataDir() / "MP_stolist", fReindex);
+    p_txlistdb = new CMPTxList(GetDataDir() / "MP_txlist", fReindex);
+    sigmaDb = new SigmaDatabase(GetDataDir() / "MP_sigma", fReindex);
+    _my_sps = new CMPSPInfo(GetDataDir() / "MP_spinfo", fReindex);
+    p_ElysiumTXDB = new CElysiumTransactionDB(GetDataDir() / "Exodus_TXDB", fReindex);
+    p_feecache = new CElysiumFeeCache(GetDataDir() / "EXODUS_feecache", fReindex);
+    p_feehistory = new CElysiumFeeHistory(GetDataDir() / "EXODUS_feehistory", fReindex);
 
     MPPersistencePath = GetDataDir() / "MP_persist";
     TryCreateDirectory(MPPersistencePath);
@@ -2145,7 +2145,7 @@ int elysium_shutdown()
  *
  * @return True, if the transaction was an Elysium purchase, DEx payment or a valid Elysium transaction
  */
-bool elysium_handler_tx(const CTransaction& tx, int nBlock, unsigned int xap, const CBlockApollon* pBlockApollon)
+bool elysium_handler_tx(const CTransaction& tx, int nBlock, unsigned int xap, const CBlockIndex* pBlockIndex)
 {
     LOCK(cs_main);
 
@@ -2161,7 +2161,7 @@ bool elysium_handler_tx(const CTransaction& tx, int nBlock, unsigned int xap, co
 
     // we do not care about parsing blocks prior to our waterline (empty blockchain defense)
     if (nBlock < nWaterlineBlock) return false;
-    int64_t nBlockTime = pBlockApollon->GetBlockTime();
+    int64_t nBlockTime = pBlockIndex->GetBlockTime();
 
     CMPTransaction mp_obj;
     mp_obj.unlockLogic();
@@ -2489,16 +2489,16 @@ bool CMPTxList::LoadFreezeState(int blockHeight)
             PrintToLog("ERROR: While loading freeze transaction %s: tx in levelDB but does not exist.\n", hash.GetHex());
             return false;
         }
-        if (blockHash.IsNull() || (NULL == GetBlockApollon(blockHash))) {
+        if (blockHash.IsNull() || (NULL == GetBlockIndex(blockHash))) {
             PrintToLog("ERROR: While loading freeze transaction %s: failed to retrieve block hash.\n", hash.GetHex());
             return false;
         }
-        CBlockApollon* pBlockApollon = GetBlockApollon(blockHash);
-        if (NULL == pBlockApollon) {
+        CBlockIndex* pBlockIndex = GetBlockIndex(blockHash);
+        if (NULL == pBlockIndex) {
             PrintToLog("ERROR: While loading freeze transaction %s: failed to retrieve block apollon.\n", hash.GetHex());
             return false;
         }
-        int txBlockHeight = pBlockApollon->nHeight;
+        int txBlockHeight = pBlockIndex->nHeight;
         if (txBlockHeight > blockHeight) {
             PrintToLog("ERROR: While loading freeze transaction %s: transaction is in the future.\n", hash.GetHex());
             return false;
@@ -2565,16 +2565,16 @@ void CMPTxList::LoadActivations(int blockHeight)
             PrintToLog("ERROR: While loading activation transaction %s: tx in levelDB but does not exist.\n", hash.GetHex());
             continue;
         }
-        if (blockHash.IsNull() || (NULL == GetBlockApollon(blockHash))) {
+        if (blockHash.IsNull() || (NULL == GetBlockIndex(blockHash))) {
             PrintToLog("ERROR: While loading activation transaction %s: failed to retrieve block hash.\n", hash.GetHex());
             continue;
         }
-        CBlockApollon* pBlockApollon = GetBlockApollon(blockHash);
-        if (NULL == pBlockApollon) {
+        CBlockIndex* pBlockIndex = GetBlockIndex(blockHash);
+        if (NULL == pBlockIndex) {
             PrintToLog("ERROR: While loading activation transaction %s: failed to retrieve block apollon.\n", hash.GetHex());
             continue;
         }
-        int blockHeight = pBlockApollon->nHeight;
+        int blockHeight = pBlockIndex->nHeight;
         if (0 != ParseTransaction(wtx, blockHeight, 0, mp_obj)) {
             PrintToLog("ERROR: While loading activation transaction %s: failed ParseTransaction.\n", hash.GetHex());
             continue;
@@ -2658,9 +2658,9 @@ void CMPTxList::LoadAlerts(int blockHeight)
 
     delete it;
     int64_t blockTime = 0;
-    CBlockApollon* pBlockApollon = chainActive[blockHeight-1];
-    if (pBlockApollon != NULL) {
-        blockTime = pBlockApollon->GetBlockTime();
+    CBlockIndex* pBlockIndex = chainActive[blockHeight-1];
+    if (pBlockIndex != NULL) {
+        blockTime = pBlockIndex->GetBlockTime();
     }
     if (blockTime > 0) {
         CheckExpiredAlerts(blockHeight, blockTime);
@@ -3534,9 +3534,9 @@ void CMPTradeList::getTradesForAddress(std::string address, std::vector<uint256>
       uint32_t propertyIdForSale = boost::lexical_cast<uint32_t>(vecValues[1]);
       uint32_t propertyIdDesired = boost::lexical_cast<uint32_t>(vecValues[2]);
       int64_t blockNum = boost::lexical_cast<uint32_t>(vecValues[3]);
-      int64_t txApollon = boost::lexical_cast<uint32_t>(vecValues[4]);
+      int64_t txIndex = boost::lexical_cast<uint32_t>(vecValues[4]);
       if (propertyIdFilter != 0 && propertyIdFilter != propertyIdForSale && propertyIdFilter != propertyIdDesired) continue;
-      std::string sortKey = strprintf("%06d%010d", blockNum, txApollon);
+      std::string sortKey = strprintf("%06d%010d", blockNum, txIndex);
       mapTrades.insert(std::make_pair(sortKey, txid));
   }
   delete it;
@@ -3545,10 +3545,10 @@ void CMPTradeList::getTradesForAddress(std::string address, std::vector<uint256>
   }
 }
 
-void CMPTradeList::recordNewTrade(const uint256& txid, const std::string& address, uint32_t propertyIdForSale, uint32_t propertyIdDesired, int blockNum, int blockApollon)
+void CMPTradeList::recordNewTrade(const uint256& txid, const std::string& address, uint32_t propertyIdForSale, uint32_t propertyIdDesired, int blockNum, int blockIndex)
 {
   if (!pdb) return;
-  std::string strValue = strprintf("%s:%d:%d:%d:%d", address, propertyIdForSale, propertyIdDesired, blockNum, blockApollon);
+  std::string strValue = strprintf("%s:%d:%d:%d:%d", address, propertyIdForSale, propertyIdDesired, blockNum, blockIndex);
   Status status = pdb->Put(writeoptions, txid.ToString(), strValue);
   ++nWritten;
   if (elysium_debug_tradedb) PrintToLog("%s(): %s\n", __FUNCTION__, status.ToString());
@@ -3700,7 +3700,7 @@ int validity = 0;
   return true;
 }
 
-int elysium_handler_block_begin(int nBlockPrev, CBlockApollon const * pBlockApollon)
+int elysium_handler_block_begin(int nBlockPrev, CBlockIndex const * pBlockIndex)
 {
     LOCK(cs_main);
 
@@ -3708,15 +3708,15 @@ int elysium_handler_block_begin(int nBlockPrev, CBlockApollon const * pBlockApol
         reorgRecoveryMode = 0; // clear reorgRecovery here as this is likely re-entrant
 
         // Check if any freeze related transactions would be rolled back - if so wipe the state and startclean
-        bool reorgContainsFreeze = p_txlistdb->CheckForFreezeTxs(pBlockApollon->nHeight);
+        bool reorgContainsFreeze = p_txlistdb->CheckForFreezeTxs(pBlockIndex->nHeight);
 
         // NOTE: The blockNum parameter is inclusive, so deleteAboveBlock(1000) will delete records in block 1000 and above.
-        p_txlistdb->isMPinBlockRange(pBlockApollon->nHeight, reorgRecoveryMaxHeight, true);
-        t_tradelistdb->deleteAboveBlock(pBlockApollon->nHeight);
-        s_stolistdb->deleteAboveBlock(pBlockApollon->nHeight);
-        p_feecache->RollBackCache(pBlockApollon->nHeight);
-        p_feehistory->RollBackHistory(pBlockApollon->nHeight);
-        sigmaDb->DeleteAll(pBlockApollon->nHeight);
+        p_txlistdb->isMPinBlockRange(pBlockIndex->nHeight, reorgRecoveryMaxHeight, true);
+        t_tradelistdb->deleteAboveBlock(pBlockIndex->nHeight);
+        s_stolistdb->deleteAboveBlock(pBlockIndex->nHeight);
+        p_feecache->RollBackCache(pBlockIndex->nHeight);
+        p_feehistory->RollBackHistory(pBlockIndex->nHeight);
+        sigmaDb->DeleteAll(pBlockIndex->nHeight);
         reorgRecoveryMaxHeight = 0;
 
         nWaterlineBlock = ConsensusParams().GENESIS_BLOCK - 1;
@@ -3746,9 +3746,9 @@ int elysium_handler_block_begin(int nBlockPrev, CBlockApollon const * pBlockApol
     }
 
     // handle any features that go live with this block
-    CheckLiveActivations(pBlockApollon->nHeight);
+    CheckLiveActivations(pBlockIndex->nHeight);
 
-    eraseExpiredCrowdsale(pBlockApollon);
+    eraseExpiredCrowdsale(pBlockIndex);
 
     return 0;
 }
@@ -3756,7 +3756,7 @@ int elysium_handler_block_begin(int nBlockPrev, CBlockApollon const * pBlockApol
 // called once per block, after the block has been processed
 // TODO: consolidate into *handler_block_begin() << need to adjust Accept expiry check.............
 // it performs cleanup and other functions
-int elysium_handler_block_end(int nBlockNow, CBlockApollon const * pBlockApollon,
+int elysium_handler_block_end(int nBlockNow, CBlockIndex const * pBlockIndex,
         unsigned int countMP)
 {
     LOCK(cs_main);
@@ -3779,7 +3779,7 @@ int elysium_handler_block_end(int nBlockNow, CBlockApollon const * pBlockApollon
     }
 
     // calculate develysium as of this block and update the Elysium' balance
-    develysium = calculate_and_update_develysium(pBlockApollon->GetBlockTime(), nBlockNow);
+    develysium = calculate_and_update_develysium(pBlockIndex->GetBlockTime(), nBlockNow);
 
     if (elysium_debug_ely) {
         int64_t balance = getMPbalance(GetSystemAddress().ToString(), ELYSIUM_PROPERTY_ELYSIUM, BALANCE);
@@ -3787,7 +3787,7 @@ int elysium_handler_block_end(int nBlockNow, CBlockApollon const * pBlockApollon
     }
 
     // check the alert status, do we need to do anything else here?
-    CheckExpiredAlerts(nBlockNow, pBlockApollon->GetBlockTime());
+    CheckExpiredAlerts(nBlockNow, pBlockIndex->GetBlockTime());
 
     // check that pending transactions are still in the mempool
     PendingCheck();
@@ -3802,10 +3802,10 @@ int elysium_handler_block_end(int nBlockNow, CBlockApollon const * pBlockApollon
     }
 
     // request checkpoint verification
-    bool checkpointValid = VerifyCheckpoint(nBlockNow, pBlockApollon->GetBlockHash());
+    bool checkpointValid = VerifyCheckpoint(nBlockNow, pBlockIndex->GetBlockHash());
     if (!checkpointValid) {
         // failed checkpoint, can't be trusted to provide valid data - shutdown client
-        const std::string& msg = strprintf("Shutting down due to failed checkpoint for block %d (hash %s)\n", nBlockNow, pBlockApollon->GetBlockHash().GetHex());
+        const std::string& msg = strprintf("Shutting down due to failed checkpoint for block %d (hash %s)\n", nBlockNow, pBlockIndex->GetBlockHash().GetHex());
         PrintToLog(msg);
         if (!GetBoolArg("-overrideforcedshutdown", false)) {
             boost::filesystem::path persistPath = GetDataDir() / "MP_persist";
@@ -3815,23 +3815,23 @@ int elysium_handler_block_end(int nBlockNow, CBlockApollon const * pBlockApollon
     } else {
         // save out the state after this block
         if (writePersistence(nBlockNow)) {
-            elysium_save_state(pBlockApollon);
+            elysium_save_state(pBlockIndex);
         }
     }
 
     return 0;
 }
 
-int elysium_handler_disc_begin(int nBlockNow, CBlockApollon const * pBlockApollon)
+int elysium_handler_disc_begin(int nBlockNow, CBlockIndex const * pBlockIndex)
 {
     LOCK(cs_main);
 
     reorgRecoveryMode = 1;
-    reorgRecoveryMaxHeight = (pBlockApollon->nHeight > reorgRecoveryMaxHeight) ? pBlockApollon->nHeight: reorgRecoveryMaxHeight;
+    reorgRecoveryMaxHeight = (pBlockIndex->nHeight > reorgRecoveryMaxHeight) ? pBlockIndex->nHeight: reorgRecoveryMaxHeight;
     return 0;
 }
 
-int elysium_handler_disc_end(int nBlockNow, CBlockApollon const * pBlockApollon)
+int elysium_handler_disc_end(int nBlockNow, CBlockIndex const * pBlockIndex)
 {
     return 0;
 }

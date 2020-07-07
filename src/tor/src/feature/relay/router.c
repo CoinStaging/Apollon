@@ -1968,7 +1968,7 @@ router_build_fresh_descriptor(routerinfo_t **r, extrainfo_t **e)
   router_check_descriptor_address_consistency(addr);
 
   ri = tor_malloc_zero(sizeof(routerinfo_t));
-  ri->cache_info.routerlist_apollon = -1;
+  ri->cache_info.routerlist_index = -1;
   ri->nickname = tor_strdup(options->Nickname);
   ri->addr = addr;
   ri->or_port = router_get_advertised_or_port(options);

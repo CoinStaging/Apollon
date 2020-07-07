@@ -433,7 +433,7 @@ routerset_equal(const routerset_t *old, const routerset_t *new)
     return 0;
 
   SMARTLIST_FOREACH(old->list, const char *, cp1, {
-    const char *cp2 = smartlist_get(new->list, cp1_sl_xap);
+    const char *cp2 = smartlist_get(new->list, cp1_sl_idx);
     if (strcmp(cp1, cp2))
       return 0;
   });

@@ -604,10 +604,10 @@ UniValue elysium_getpayload(const UniValue& params, bool fHelp)
     int blockTime = 0;
     int blockHeight = GetHeight();
     if (!blockHash.IsNull()) {
-        CBlockApollon* pBlockApollon = GetBlockApollon(blockHash);
-        if (NULL != pBlockApollon) {
-            blockTime = pBlockApollon->nTime;
-            blockHeight = pBlockApollon->nHeight;
+        CBlockIndex* pBlockIndex = GetBlockIndex(blockHash);
+        if (NULL != pBlockIndex) {
+            blockTime = pBlockIndex->nTime;
+            blockHeight = pBlockIndex->nHeight;
         }
     }
 
@@ -1173,8 +1173,8 @@ UniValue elysium_getcrowdsale(const UniValue& params, bool fHelp)
     const std::string& txidClosed = sp.txid_close.GetHex();
 
     int64_t startTime = -1;
-    if (!hashBlock.IsNull() && GetBlockApollon(hashBlock)) {
-        startTime = GetBlockApollon(hashBlock)->nTime;
+    if (!hashBlock.IsNull() && GetBlockIndex(hashBlock)) {
+        startTime = GetBlockIndex(hashBlock)->nTime;
     }
 
     // note the database is already deserialized here and there is minimal performance penalty to iterate recipients to calculate amountRaised
@@ -1273,8 +1273,8 @@ UniValue elysium_getactivecrowdsales(const UniValue& params, bool fHelp)
         }
 
         int64_t startTime = -1;
-        if (!hashBlock.IsNull() && GetBlockApollon(hashBlock)) {
-            startTime = GetBlockApollon(hashBlock)->nTime;
+        if (!hashBlock.IsNull() && GetBlockIndex(hashBlock)) {
+            startTime = GetBlockIndex(hashBlock)->nTime;
         }
 
         UniValue responseObj(UniValue::VOBJ);
@@ -1429,8 +1429,8 @@ UniValue elysium_getorderbook(const UniValue& params, bool fHelp)
         for (md_PropertiesMap::const_iterator my_it = metadex.begin(); my_it != metadex.end(); ++my_it) {
             const md_PricesMap& prices = my_it->second;
             for (md_PricesMap::const_iterator it = prices.begin(); it != prices.end(); ++it) {
-                const md_Set& apollones = it->second;
-                for (md_Set::const_iterator it = apollones.begin(); it != apollones.end(); ++it) {
+                const md_Set& indexes = it->second;
+                for (md_Set::const_iterator it = indexes.begin(); it != indexes.end(); ++it) {
                     const CMPMetaDEx& obj = *it;
                     if (obj.getProperty() != propertyIdForSale) continue;
                     if (!filterDesired || obj.getDesProperty() == propertyIdDesired) vecMetaDexObjects.push_back(obj);
@@ -1725,9 +1725,9 @@ UniValue elysium_listblocktransactions(const UniValue& params, bool fHelp)
     CBlock block;
     {
         LOCK(cs_main);
-        CBlockApollon* pBlockApollon = chainActive[blockHeight];
+        CBlockIndex* pBlockIndex = chainActive[blockHeight];
 
-        if (!ReadBlockFromDisk(block, pBlockApollon, Params().GetConsensus())) {
+        if (!ReadBlockFromDisk(block, pBlockIndex, Params().GetConsensus())) {
             throw JSONRPCError(RPC_INTERNAL_ERROR, "Failed to read block from disk");
         }
     }
@@ -2298,8 +2298,8 @@ UniValue elysium_getcurrentconsensushash(const UniValue& params, bool fHelp)
 
     int block = GetHeight();
 
-    CBlockApollon* pblockapollon = chainActive[block];
-    uint256 blockHash = pblockapollon->GetBlockHash();
+    CBlockIndex* pblockindex = chainActive[block];
+    uint256 blockHash = pblockindex->GetBlockHash();
 
     uint256 consensusHash = GetConsensusHash();
 
@@ -2341,8 +2341,8 @@ UniValue elysium_getmetadexhash(const UniValue& params, bool fHelp)
     }
 
     int block = GetHeight();
-    CBlockApollon* pblockapollon = chainActive[block];
-    uint256 blockHash = pblockapollon->GetBlockHash();
+    CBlockIndex* pblockindex = chainActive[block];
+    uint256 blockHash = pblockindex->GetBlockHash();
 
     uint256 metadexHash = GetMetaDExHash(propertyId);
 
@@ -2382,8 +2382,8 @@ UniValue elysium_getbalanceshash(const UniValue& params, bool fHelp)
     RequireExistingProperty(propertyId);
 
     int block = GetHeight();
-    CBlockApollon* pblockapollon = chainActive[block];
-    uint256 blockHash = pblockapollon->GetBlockHash();
+    CBlockIndex* pblockindex = chainActive[block];
+    uint256 blockHash = pblockindex->GetBlockHash();
 
     uint256 balancesHash = GetBalancesHash(propertyId);
 
@@ -2459,6 +2459,6 @@ static const CRPCCommand commands[] =
 
 void RegisterElysiumDataRetrievalRPCCommands(CRPCTable &tableRPC)
 {
-    for (unsigned int vcxap = 0; vcxap < ARRAYLEN(commands); vcxap++)
-        tableRPC.appendCommand(commands[vcxap].name, &commands[vcxap]);
+    for (unsigned int vcidx = 0; vcidx < ARRAYLEN(commands); vcidx++)
+        tableRPC.appendCommand(commands[vcidx].name, &commands[vcidx]);
 }

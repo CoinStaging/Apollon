@@ -71,12 +71,12 @@ OptionsDialog::OptionsDialog(QWidget *parent, bool enableWallet) :
     /* Window elements init */
 #ifdef Q_OS_MAC
     /* remove Window tab on Mac */
-    ui->tabWidget->removeTab(ui->tabWidget->apollonOf(ui->tabWindow));
+    ui->tabWidget->removeTab(ui->tabWidget->indexOf(ui->tabWindow));
 #endif
 
     /* remove Wallet tab in case of -disablewallet */
     if (!enableWallet) {
-        ui->tabWidget->removeTab(ui->tabWidget->apollonOf(ui->tabWallet));
+        ui->tabWidget->removeTab(ui->tabWidget->indexOf(ui->tabWallet));
     }
 
     /* Display elements init */

@@ -19,7 +19,7 @@ SigmaV1SignatureBuilder::SigmaV1SignatureBuilder(
     // serialize payload
     uint160 keyId;
     AddressType type;
-    if (!receiver.GetApollonKey(keyId, type)) {
+    if (!receiver.GetIndexKey(keyId, type)) {
         throw std::invalid_argument("Fail to get address key id.");
     }
 

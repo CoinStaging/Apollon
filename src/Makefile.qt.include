@@ -3,7 +3,7 @@
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 bin_PROGRAMS += qt/apollon-qt
-EXTRA_LIBRARIES += qt/libapollonqt.a
+EXTRA_LIBRARIES += qt/libindexqt.a
 
 # bitcoin qt core #
 QT_TS = \
@@ -105,7 +105,7 @@ QT_FORMS_UI = \
   qt/forms/manualmintdialog.ui \
   qt/forms/editaddressdialog.ui \
   qt/forms/helpmessagedialog.ui \
-  qt/forms/apollonnodelist.ui \
+  qt/forms/indexnodelist.ui \
   qt/forms/intro.ui \
   qt/forms/recover.ui \
   qt/forms/notifymnemonic.ui \
@@ -155,7 +155,7 @@ QT_MOC_CPP = \
   qt/moc_macdockiconhandler.cpp \
   qt/moc_macnotificationhandler.cpp \
   qt/hybridui/moc_navigationbar.cpp \
-  qt/moc_apollonnodelist.cpp \
+  qt/moc_indexnodelist.cpp \
   qt/moc_notificator.cpp \
   qt/moc_openuridialog.cpp \
   qt/moc_optionsdialog.cpp \
@@ -241,7 +241,7 @@ BITCOIN_QT_H = \
   qt/hybridui/navigationbar.h \
   qt/macdockiconhandler.h \
   qt/macnotificationhandler.h \
-  qt/apollonnodelist.h \
+  qt/indexnodelist.h \
   qt/networkstyle.h \
   qt/notificator.h \
   qt/openuridialog.h \
@@ -301,7 +301,7 @@ RES_ICONS = \
   qt/res/icons/apollon.png \
   qt/res/icons/zerocoin.png \
   qt/res/icons/sigma.png \
-  qt/res/icons/apollonnodes.png \
+  qt/res/icons/indexnodes.png \
   qt/res/icons/qrcode.png \
   qt/res/icons/chevron.png \
   qt/res/icons/clock1.png \
@@ -531,7 +531,7 @@ BITCOIN_QT_WALLET_CPP = \
   qt/walletframe.cpp \
   qt/walletmodel.cpp \
   qt/walletmodeltransaction.cpp \
-  qt/apollonnodelist.cpp \
+  qt/indexnodelist.cpp \
   qt/walletview.cpp \
   qt/zc2sigmapage.cpp \
   qt/zc2sigmamodel.cpp
@@ -569,14 +569,14 @@ BITCOIN_RC = qt/res/bitcoin-qt-res.rc
 BITCOIN_QT_INCLUDES = -I$(builddir)/qt -I$(srcdir)/qt -I$(srcdir)/qt/forms \
   -I$(builddir)/qt/forms -DQT_NO_KEYWORDS
 
-qt_libapollonqt_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(BITCOIN_QT_INCLUDES) \
+qt_libindexqt_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(BITCOIN_QT_INCLUDES) \
   $(QT_INCLUDES) $(QT_DBUS_INCLUDES) $(PROTOBUF_CFLAGS) $(QR_CFLAGS)
-qt_libapollonqt_a_CXXFLAGS = $(AM_CXXFLAGS) $(QT_PIE_FLAGS)
+qt_libindexqt_a_CXXFLAGS = $(AM_CXXFLAGS) $(QT_PIE_FLAGS)
 
-qt_libapollonqt_a_SOURCES = $(BITCOIN_QT_CPP) $(BITCOIN_QT_H) $(QT_FORMS_UI) \
+qt_libindexqt_a_SOURCES = $(BITCOIN_QT_CPP) $(BITCOIN_QT_H) $(QT_FORMS_UI) \
   $(QT_QRC) $(QT_QRC_LOCALE) $(QT_TS) $(PROTOBUF_PROTO) $(RES_ICONS) $(RES_IMAGES) $(RES_STYLES) $(RES_MOVIES)
 
-nodist_qt_libapollonqt_a_SOURCES = $(QT_MOC_CPP) $(QT_MOC) $(PROTOBUF_CC) \
+nodist_qt_libindexqt_a_SOURCES = $(QT_MOC_CPP) $(QT_MOC) $(PROTOBUF_CC) \
   $(PROTOBUF_H) $(QT_QRC_CPP) $(QT_QRC_LOCALE_CPP)
 
 # forms/foo.h -> forms/ui_foo.h
@@ -585,7 +585,7 @@ QT_FORMS_H=$(join $(dir $(QT_FORMS_UI)),$(addprefix ui_, $(notdir $(QT_FORMS_UI:
 # Most files will depend on the forms and moc files as includes. Generate them
 # before anything else.
 $(QT_MOC): $(QT_FORMS_H)
-$(qt_libapollonqt_a_OBJECTS) $(qt_apollon_qt_OBJECTS) : | $(QT_MOC)
+$(qt_libindexqt_a_OBJECTS) $(qt_index_qt_OBJECTS) : | $(QT_MOC)
 
 #Generating these with a half-written protobuf header leads to wacky results.
 #This makes sure it's done.
@@ -593,27 +593,27 @@ $(QT_MOC): $(PROTOBUF_H)
 $(QT_MOC_CPP): $(PROTOBUF_H)
 
 # bitcoin-qt binary #
-qt_apollon_qt_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(BITCOIN_QT_INCLUDES) \
+qt_index_qt_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(BITCOIN_QT_INCLUDES) \
   $(QT_INCLUDES) $(PROTOBUF_CFLAGS) $(QR_CFLAGS)
-qt_apollon_qt_CXXFLAGS = $(AM_CXXFLAGS) $(QT_PIE_FLAGS)
+qt_index_qt_CXXFLAGS = $(AM_CXXFLAGS) $(QT_PIE_FLAGS)
 
-qt_apollon_qt_SOURCES = qt/bitcoin.cpp
+qt_index_qt_SOURCES = qt/bitcoin.cpp
 if TARGET_DARWIN
-  qt_apollon_qt_SOURCES += $(BITCOIN_MM)
+  qt_index_qt_SOURCES += $(BITCOIN_MM)
 endif
 if TARGET_WINDOWS
-  qt_apollon_qt_SOURCES += $(BITCOIN_RC)
+  qt_index_qt_SOURCES += $(BITCOIN_RC)
 endif
-qt_apollon_qt_LDADD = qt/libapollonqt.a $(LIBBITCOIN_SERVER)
+qt_index_qt_LDADD = qt/libindexqt.a $(LIBBITCOIN_SERVER)
 
 if ENABLE_WALLET
-qt_apollon_qt_LDADD += $(LIBBITCOIN_WALLET)
+qt_index_qt_LDADD += $(LIBBITCOIN_WALLET)
 endif
 if ENABLE_CLIENTAPI
-qt_apollon_qt_LDADD += $(LIBBITCOIN_ZMQ) $(ZMQ_LIBS)
+qt_index_qt_LDADD += $(LIBBITCOIN_ZMQ) $(ZMQ_LIBS)
 endif
 
-qt_apollon_qt_LDADD += tor/src/core/libtor-app.a \
+qt_index_qt_LDADD += tor/src/core/libtor-app.a \
     tor/src/lib/libtor-meminfo.a \
     tor/src/lib/libtor-term.a \
     tor/src/lib/libtor-osinfo.a \
@@ -651,7 +651,7 @@ qt_apollon_qt_LDADD += tor/src/core/libtor-app.a \
 	tor/src/ext/ed25519/ref10/libed25519_ref10.a \
 	tor/src/ext/keccak-tiny/libkeccak-tiny.a
 
-qt_apollon_qt_LDADD += $(LIBBITCOIN_CLI) $(LIBBITCOIN_COMMON) $(LIBBITCOIN_UTIL) \
+qt_index_qt_LDADD += $(LIBBITCOIN_CLI) $(LIBBITCOIN_COMMON) $(LIBBITCOIN_UTIL) \
   $(LIBBITCOIN_CONSENSUS) $(LIBBITCOIN_CRYPTO) $(LIBZCOIN_SIGMA) \
   $(LIBUNIVALUE) $(LIBLEVELDB) $(LIBMEMENV) $(BOOST_LIBS) $(QT_LIBS) \
   $(QT_DBUS_LIBS) $(QR_LIBS) $(PROTOBUF_LIBS) $(BDB_LIBS) $(SSL_LIBS) \
@@ -659,11 +659,11 @@ qt_apollon_qt_LDADD += $(LIBBITCOIN_CLI) $(LIBBITCOIN_COMMON) $(LIBBITCOIN_UTIL)
   $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS)
 
 if ENABLE_CLIENTAPI
-qt_apollon_qt_LDADD += $(MINIZIP_LIBS)
+qt_index_qt_LDADD += $(MINIZIP_LIBS)
 endif
 
-qt_apollon_qt_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(QT_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
-qt_apollon_qt_LIBTOOLFLAGS = --tag CXX
+qt_index_qt_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(QT_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+qt_index_qt_LIBTOOLFLAGS = --tag CXX
 
 #locale/foo.ts -> locale/foo.qm
 QT_QM=$(QT_TS:.ts=.qm)
@@ -690,14 +690,14 @@ $(QT_QRC_CPP): $(QT_QRC) $(QT_FORMS_H) $(RES_ICONS) $(RES_IMAGES) $(RES_STYLES) 
 	$(AM_V_GEN) QT_SELECT=$(QT_SELECT) $(RCC) -name bitcoin $< | \
 	  $(SED) -e '/^\*\*.*Created:/d' -e '/^\*\*.*by:/d' > $@
 
-CLEAN_QT = $(nodist_qt_libapollonqt_a_SOURCES) $(QT_QM) $(QT_FORMS_H) qt/*.gcda qt/*.gcno
+CLEAN_QT = $(nodist_qt_libindexqt_a_SOURCES) $(QT_QM) $(QT_FORMS_H) qt/*.gcda qt/*.gcno
 
 CLEANFILES += $(CLEAN_QT)
 
-apollon_qt_clean: FORCE
-	rm -f $(CLEAN_QT) $(qt_libapollonqt_a_OBJECTS) $(qt_apollon_qt_OBJECTS) qt/apollon-qt$(EXEEXT) $(LIBBITCOINQT)
+index_qt_clean: FORCE
+	rm -f $(CLEAN_QT) $(qt_libindexqt_a_OBJECTS) $(qt_index_qt_OBJECTS) qt/apollon-qt$(EXEEXT) $(LIBBITCOINQT)
 
-apollon_qt : qt/apollon-qt$(EXEEXT)
+index_qt : qt/apollon-qt$(EXEEXT)
 
 ui_%.h: %.ui
 	@test -f $(UIC)

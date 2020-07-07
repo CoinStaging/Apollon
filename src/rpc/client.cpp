@@ -19,7 +19,7 @@ class CRPCConvertParam
 {
 public:
     std::string methodName; //!< method whose params want conversion
-    int paramXap;           //!< 0-based xap of param to convert
+    int paramIdx;           //!< 0-based xap of param to convert
 };
 
 static const CRPCConvertParam vRPCConvertParams[] =
@@ -314,7 +314,7 @@ CRPCConvertTable::CRPCConvertTable()
 
     for (unsigned int i = 0; i < n_elem; i++) {
         members.insert(std::make_pair(vRPCConvertParams[i].methodName,
-                                      vRPCConvertParams[i].paramXap));
+                                      vRPCConvertParams[i].paramIdx));
     }
 }
 

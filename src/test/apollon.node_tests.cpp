@@ -25,9 +25,9 @@
 #include "rpc/server.h"
 #include "rpc/register.h"
 #include "zerocoin.h"
-#include "apollonnodeman.h"
-#include "apollonnode-sync.h"
-#include "apollonnode-payments.h"
+#include "indexnodeman.h"
+#include "indexnode-sync.h"
+#include "indexnode-payments.h"
 
 #include "test/testutil.h"
 #include "consensus/merkle.h"
@@ -42,11 +42,11 @@
 extern CCriticalSection cs_main;
 using namespace std;
 
-CScript scriptPubKeyApollonnode;
+CScript scriptPubKeyIndexnode;
 
 
-struct ApollonnodeTestingSetup : public TestingSetup {
-    ApollonnodeTestingSetup() : TestingSetup(CBaseChainParams::REGTEST)
+struct IndexnodeTestingSetup : public TestingSetup {
+    IndexnodeTestingSetup() : TestingSetup(CBaseChainParams::REGTEST)
     {
         CPubKey newKey;
         BOOST_CHECK(pwalletMain->GetKeyFromPool(newKey));
@@ -56,13 +56,13 @@ struct ApollonnodeTestingSetup : public TestingSetup {
                                ( "receive"));
 
         printf("Balance before %ld\n", pwalletMain->GetBalance());
-        scriptPubKeyApollonnode = CScript() <<  ToByteVector(newKey/*coinbaseKey.GetPubKey()*/) << OP_CHECKSIG;
+        scriptPubKeyIndexnode = CScript() <<  ToByteVector(newKey/*coinbaseKey.GetPubKey()*/) << OP_CHECKSIG;
         bool mtp = false;
         CBlock b;
         for (int i = 0; i < 150; i++)
         {
             std::vector<CMutableTransaction> noTxns;
-            b = CreateAndProcessBlock(noTxns, scriptPubKeyApollonnode, mtp);
+            b = CreateAndProcessBlock(noTxns, scriptPubKeyIndexnode, mtp);
             coinbaseTxns.push_back(b.vtx[0]);
             LOCK(cs_main);
             {
@@ -74,10 +74,10 @@ struct ApollonnodeTestingSetup : public TestingSetup {
     }
 
     CBlock CreateBlock(const std::vector<CMutableTransaction>& txns,
-                       const CScript& scriptPubKeyApollonnode, bool mtp = false) {
+                       const CScript& scriptPubKeyIndexnode, bool mtp = false) {
         const CChainParams& chainparams = Params();
         CBlockTemplate *pblocktemplate = BlockAssembler(chainparams).CreateNewBlock(
-            scriptPubKeyApollonnode, {});
+            scriptPubKeyIndexnode, {});
         CBlock& block = pblocktemplate->block;
 
         // Replace mempool-selected txns with just coinbase plus passed-in txns:
@@ -104,11 +104,11 @@ struct ApollonnodeTestingSetup : public TestingSetup {
     }
 
     // Create a new block with just given transactions, coinbase paying to
-    // scriptPubKeyApollonnode, and try to add it to the current chain.
+    // scriptPubKeyIndexnode, and try to add it to the current chain.
     CBlock CreateAndProcessBlock(const std::vector<CMutableTransaction>& txns,
-                                 const CScript& scriptPubKeyApollonnode, bool mtp = false){
+                                 const CScript& scriptPubKeyIndexnode, bool mtp = false){
 
-        CBlock block = CreateBlock(txns, scriptPubKeyApollonnode, mtp);
+        CBlock block = CreateBlock(txns, scriptPubKeyIndexnode, mtp);
         BOOST_CHECK_MESSAGE(ProcessBlock(block), "Processing block failed");
         return block;
     }
@@ -117,13 +117,13 @@ struct ApollonnodeTestingSetup : public TestingSetup {
     CKey coinbaseKey; // private/public key needed to spend coinbase transactions
 };
 
-BOOST_FIXTURE_TEST_SUITE(apollonnode_tests, ApollonnodeTestingSetup)
+BOOST_FIXTURE_TEST_SUITE(indexnode_tests, IndexnodeTestingSetup)
 
-BOOST_AUTO_TEST_CASE(Test_EnforceApollonnodePayment)
+BOOST_AUTO_TEST_CASE(Test_EnforceIndexnodePayment)
 {
 
     std::vector<CMutableTransaction> noTxns;
-    CBlock b = CreateAndProcessBlock(noTxns, scriptPubKeyApollonnode, false);
+    CBlock b = CreateAndProcessBlock(noTxns, scriptPubKeyIndexnode, false);
     const CChainParams& chainparams = Params();
 
     CTransaction& tx = b.vtx[0];
@@ -140,24 +140,24 @@ BOOST_AUTO_TEST_CASE(Test_EnforceApollonnodePayment)
     BOOST_CHECK(true == CheckBlock(b, state, chainparams.GetConsensus()));
     //BOOST_CHECK(true == CheckTransaction(tx, state, tx.GetHash(), false, INT_MAX));
 
-    auto const before_block = ZC_APOLLONNODE_PAYMENT_BUG_FIXED_AT_BLOCK
-             , after_block = ZC_APOLLONNODE_PAYMENT_BUG_FIXED_AT_BLOCK + 1;
-    // Emulates synced state of apollonnodes.
+    auto const before_block = ZC_INDEXNODE_PAYMENT_BUG_FIXED_AT_BLOCK
+             , after_block = ZC_INDEXNODE_PAYMENT_BUG_FIXED_AT_BLOCK + 1;
+    // Emulates synced state of indexnodes.
     for(size_t i =0; i < 4; ++i)
-        apollonnodeSync.SwitchToNextAsset();
+        indexnodeSync.SwitchToNextAsset();
 
 
     ///////////////////////////////////////////////////////////////////////////
     // Paying to the best payee
-    CApollonnodePayee payee1(tx.vout[1].scriptPubKey, uint256());
+    CIndexnodePayee payee1(tx.vout[1].scriptPubKey, uint256());
     // Emulates 6 votes for the payee
     for(size_t i =0; i < 5; ++i)
         payee1.AddVoteHash(uint256());
 
-    CApollonnodeBlockPayees payees;
+    CIndexnodeBlockPayees payees;
     payees.vecPayees.push_back(payee1);
 
-    mnpayments.mapApollonnodeBlocks[after_block] = payees;
+    mnpayments.mapIndexnodeBlocks[after_block] = payees;
 
     b.fChecked = false;
     b.hashMerkleRoot = BlockMerkleRoot(b, &mutated);
@@ -181,8 +181,8 @@ BOOST_AUTO_TEST_CASE(Test_EnforceApollonnodePayment)
 
 
     ///////////////////////////////////////////////////////////////////////////
-    // Making apollonnodes not synchronized and checking the functionality is disabled
-    apollonnodeSync.Reset();
+    // Making indexnodes not synchronized and checking the functionality is disabled
+    indexnodeSync.Reset();
     b.fChecked = false;
     b.hashMerkleRoot = BlockMerkleRoot(b, &mutated);
     while (!CheckProofOfWork(b.GetPoWHash(), b.nBits, chainparams.GetConsensus())){
@@ -194,14 +194,14 @@ BOOST_AUTO_TEST_CASE(Test_EnforceApollonnodePayment)
     ///////////////////////////////////////////////////////////////////////////
     // Paying to an acceptable payee
     for(size_t i =0; i < 4; ++i)
-        apollonnodeSync.SwitchToNextAsset();
+        indexnodeSync.SwitchToNextAsset();
 
-    CApollonnodePayee payee2(tx.vout[0].scriptPubKey, uint256());
+    CIndexnodePayee payee2(tx.vout[0].scriptPubKey, uint256());
     // Emulates 9 votes for the payee
     for(size_t i =0; i < 8; ++i)
         payee2.AddVoteHash(uint256());
 
-    mnpayments.mapApollonnodeBlocks[after_block].vecPayees.insert(mnpayments.mapApollonnodeBlocks[after_block].vecPayees.begin(), payee2);
+    mnpayments.mapIndexnodeBlocks[after_block].vecPayees.insert(mnpayments.mapIndexnodeBlocks[after_block].vecPayees.begin(), payee2);
 
     tx.vout[1].scriptPubKey = payee1.GetPayee();
     b.fChecked = false;
@@ -224,7 +224,7 @@ BOOST_AUTO_TEST_CASE(Test_EnforceApollonnodePayment)
     BOOST_CHECK(false == CheckBlock(b, state, chainparams.GetConsensus()));
     BOOST_CHECK(true == CheckTransaction(tx, state, tx.GetHash(), false, after_block));
 
-    mnpayments.mapApollonnodeBlocks[before_block] = payees;
+    mnpayments.mapIndexnodeBlocks[before_block] = payees;
 
     b.fChecked = false;
     b.hashMerkleRoot = BlockMerkleRoot(b, &mutated);

@@ -275,7 +275,7 @@ void calculateFundraiser(bool inflateAmount, int64_t amtTransfer, uint8_t bonusP
 
 void eraseMaxedCrowdsale(const std::string& address, int64_t blockTime, int block);
 
-unsigned int eraseExpiredCrowdsale(const CBlockApollon* pBlockApollon);
+unsigned int eraseExpiredCrowdsale(const CBlockIndex* pBlockIndex);
 
 template<class Denomination>
 int64_t SumDenominationsValue(PropertyId property, Denomination begin, Denomination end)

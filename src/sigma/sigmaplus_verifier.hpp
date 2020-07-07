@@ -95,7 +95,7 @@ bool SigmaPlusVerifier<Exponent, GroupElement>::verify(
 
         Exponent pow(uint64_t(1));
         std::vector<uint64_t> I = SigmaPrimitives<Exponent, GroupElement>::convert_to_nal(N - 1, n, m);
-        vector<Exponent> f_part_product;    // partial product of f array elements for lastApollon
+        vector<Exponent> f_part_product;    // partial product of f array elements for lastIndex
         for (int j = m - 1; j >= 0; j--) {
             f_part_product.push_back(pow);
             pow *= f[j * n + I[j]];

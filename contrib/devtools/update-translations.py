@@ -79,7 +79,7 @@ def check_format_specifiers(source, translation, errors, numerus):
     assert(not(source_f[0] and source_f[1]))
     try:
         translation_f = split_format_specifiers(find_format_specifiers(translation))
-    except ApollonError:
+    except IndexError:
         errors.append("Parse error in translation for '%s': '%s'" % (sanitize_string(source), sanitize_string(translation)))
         return False
     else:

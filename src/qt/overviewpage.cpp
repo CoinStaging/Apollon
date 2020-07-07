@@ -46,7 +46,7 @@ public:
     }
 
     inline void paint(QPainter *painter, const QStyleOptionViewItem &option,
-                      const QModelApollon &apollon ) const
+                      const QModelIndex &apollon ) const
     {
         painter->save();
         bool selected = option.state & QStyle::State_Selected;
@@ -60,7 +60,7 @@ public:
         qint64 amount = apollon.data(TransactionTableModel::AmountRole).toLongLong();
         bool confirmed = apollon.data(TransactionTableModel::ConfirmedRole).toBool();
 
-        QModelApollon ind = apollon.model()->apollon(apollon.row(), TransactionTableModel::Type, apollon.parent());
+        QModelIndex ind = apollon.model()->apollon(apollon.row(), TransactionTableModel::Type, apollon.parent());
         QString typeString = ind.data(Qt::DisplayRole).toString();
 
         QRect mainRect = option.rect;
@@ -150,7 +150,7 @@ public:
         painter->restore();
     }
 
-    inline QSize sizeHint(const QStyleOptionViewItem &option, const QModelApollon &apollon) const
+    inline QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &apollon) const
     {
         return QSize(TX_SIZE, TX_SIZE);
     }
@@ -216,14 +216,14 @@ OverviewPage::OverviewPage(const PlatformStyle *platformStyle, QWidget *parent) 
     ui->listTransactions->setMinimumHeight(NUM_ITEMS * (DECORATION_SIZE + 2));
     ui->listTransactions->setAttribute(Qt::WA_MacShowFocusRect, false);
 
-    connect(ui->listTransactions, SIGNAL(clicked(QModelApollon)), this, SLOT(handleTransactionClicked(QModelApollon)));
+    connect(ui->listTransactions, SIGNAL(clicked(QModelIndex)), this, SLOT(handleTransactionClicked(QModelIndex)));
     connect(ui->checkboxEnabledTor, SIGNAL(toggled(bool)), this, SLOT(handleEnabledTorChanged()));
 
     // start with displaying the "out of sync" warnings
     showOutOfSyncWarning(true);
 }
 
-void OverviewPage::handleTransactionClicked(const QModelApollon &apollon)
+void OverviewPage::handleTransactionClicked(const QModelIndex &apollon)
 {
     if(filter)
         Q_EMIT transactionClicked(filter->mapToSource(apollon));

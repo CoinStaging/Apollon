@@ -480,7 +480,7 @@ router_parse_entry_from_string(const char *s, const char *end,
 
   router = tor_malloc_zero(sizeof(routerinfo_t));
   router->cert_expiration_time = TIME_MAX;
-  router->cache_info.routerlist_apollon = -1;
+  router->cache_info.routerlist_index = -1;
   router->cache_info.annotations_len = s-start_of_annotations + prepend_len;
   router->cache_info.signed_descriptor_len = end-s;
   if (cache_copy) {

@@ -151,7 +151,7 @@ circpad_state_to_string(circpad_statenum_t state)
  * Free the machineinfo at an apollon
  */
 static void
-circpad_circuit_machineinfo_free_xap(circuit_t *circ, int xap)
+circpad_circuit_machineinfo_free_idx(circuit_t *circ, int xap)
 {
   if (circ->padding_info[xap]) {
     tor_free(circ->padding_info[xap]->histogram);
@@ -167,7 +167,7 @@ free_circ_machineinfos_with_machine_num(circuit_t *circ, int machine_num)
   FOR_EACH_CIRCUIT_MACHINE_BEGIN(i) {
     if (circ->padding_machine[i] &&
         circ->padding_machine[i]->machine_num == machine_num) {
-      circpad_circuit_machineinfo_free_xap(circ, i);
+      circpad_circuit_machineinfo_free_idx(circ, i);
       circ->padding_machine[i] = NULL;
     }
   } FOR_EACH_CIRCUIT_MACHINE_END;
@@ -180,7 +180,7 @@ void
 circpad_circuit_free_all_machineinfos(circuit_t *circ)
 {
   FOR_EACH_CIRCUIT_MACHINE_BEGIN(i) {
-    circpad_circuit_machineinfo_free_xap(circ, i);
+    circpad_circuit_machineinfo_free_idx(circ, i);
   } FOR_EACH_CIRCUIT_MACHINE_END;
 }
 
@@ -188,11 +188,11 @@ circpad_circuit_free_all_machineinfos(circuit_t *circ)
  * Allocate a new mutable machineinfo structure.
  */
 STATIC circpad_machine_state_t *
-circpad_circuit_machineinfo_new(circuit_t *on_circ, int machine_apollon)
+circpad_circuit_machineinfo_new(circuit_t *on_circ, int machine_index)
 {
   circpad_machine_state_t *mi =
     tor_malloc_zero(sizeof(circpad_machine_state_t));
-  mi->machine_apollon = machine_apollon;
+  mi->machine_index = machine_index;
   mi->on_circ = on_circ;
 
   return mi;
@@ -239,7 +239,7 @@ circpad_machine_current_state(const circpad_machine_state_t *mi)
  */
 STATIC circpad_delay_t
 circpad_histogram_bin_to_usec(const circpad_machine_state_t *mi,
-                              circpad_hist_apollon_t bin)
+                              circpad_hist_index_t bin)
 {
   const circpad_state_t *state = circpad_machine_current_state(mi);
   circpad_delay_t start_usec;
@@ -273,14 +273,14 @@ circpad_histogram_bin_to_usec(const circpad_machine_state_t *mi,
                               CIRCPAD_DELAY_INFINITE);
 }
 
-/** Return the midpoint of the histogram bin <b>bin_apollon</b>. */
+/** Return the midpoint of the histogram bin <b>bin_index</b>. */
 static circpad_delay_t
 circpad_get_histogram_bin_midpoint(const circpad_machine_state_t *mi,
-                           int bin_apollon)
+                           int bin_index)
 {
-  circpad_delay_t left_bound = circpad_histogram_bin_to_usec(mi, bin_apollon);
+  circpad_delay_t left_bound = circpad_histogram_bin_to_usec(mi, bin_index);
   circpad_delay_t right_bound =
-    circpad_histogram_bin_to_usec(mi, bin_apollon+1)-1;
+    circpad_histogram_bin_to_usec(mi, bin_index+1)-1;
 
   return left_bound + (right_bound - left_bound)/2;
 }
@@ -295,7 +295,7 @@ circpad_get_histogram_bin_midpoint(const circpad_machine_state_t *mi,
  * This means that technically the last bin (histogram_len-2)
  * has range [start_usec+range_usec, CIRCPAD_DELAY_INFINITE].
  */
-STATIC circpad_hist_apollon_t
+STATIC circpad_hist_index_t
 circpad_histogram_usec_to_bin(const circpad_machine_state_t *mi,
                               circpad_delay_t usec)
 {
@@ -429,7 +429,7 @@ circpad_machine_sample_delay(circpad_machine_state_t *mi)
 {
   const circpad_state_t *state = circpad_machine_current_state(mi);
   const circpad_hist_token_t *histogram = NULL;
-  circpad_hist_apollon_t curr_bin = 0;
+  circpad_hist_index_t curr_bin = 0;
   circpad_delay_t bin_start, bin_end;
   circpad_delay_t start_usec;
   /* These three must all be larger than circpad_hist_token_t, because
@@ -456,7 +456,7 @@ circpad_machine_sample_delay(circpad_machine_state_t *mi)
     }
 
     histogram = mi->histogram;
-    for (circpad_hist_apollon_t b = 0; b < state->histogram_len; b++)
+    for (circpad_hist_index_t b = 0; b < state->histogram_len; b++)
       histogram_total_tokens += histogram[b];
   } else {
     /* We have a histogram, but it's immutable */
@@ -617,11 +617,11 @@ circpad_distribution_sample(circpad_distribution_t dist)
  * Find the apollon of the first bin whose upper bound is
  * greater than the target, and that has tokens remaining.
  */
-static circpad_hist_apollon_t
-circpad_machine_first_higher_apollon(const circpad_machine_state_t *mi,
+static circpad_hist_index_t
+circpad_machine_first_higher_index(const circpad_machine_state_t *mi,
                                    circpad_delay_t target_bin_usec)
 {
-  circpad_hist_apollon_t bin = circpad_histogram_usec_to_bin(mi,
+  circpad_hist_index_t bin = circpad_histogram_usec_to_bin(mi,
                                                            target_bin_usec);
 
   /* Don't remove from the infinity bin */
@@ -639,11 +639,11 @@ circpad_machine_first_higher_apollon(const circpad_machine_state_t *mi,
  * Find the apollon of the first bin whose lower bound is lower or equal to
  * <b>target_bin_usec</b>, and that still has tokens remaining.
  */
-static circpad_hist_apollon_t
-circpad_machine_first_lower_apollon(const circpad_machine_state_t *mi,
+static circpad_hist_index_t
+circpad_machine_first_lower_index(const circpad_machine_state_t *mi,
                                   circpad_delay_t target_bin_usec)
 {
-  circpad_hist_apollon_t bin = circpad_histogram_usec_to_bin(mi,
+  circpad_hist_index_t bin = circpad_histogram_usec_to_bin(mi,
                                                            target_bin_usec);
 
   for (; bin >= 0; bin--) {
@@ -667,7 +667,7 @@ circpad_machine_remove_higher_token(circpad_machine_state_t *mi,
   /* We need to remove the token from the first bin
    * whose upper bound is greater than the target, and that
    * has tokens remaining. */
-  circpad_hist_apollon_t bin = circpad_machine_first_higher_apollon(mi,
+  circpad_hist_index_t bin = circpad_machine_first_higher_index(mi,
                                                      target_bin_usec);
 
   if (bin >= 0 && bin < CIRCPAD_INFINITY_BIN(mi)) {
@@ -685,7 +685,7 @@ STATIC void
 circpad_machine_remove_lower_token(circpad_machine_state_t *mi,
                                    circpad_delay_t target_bin_usec)
 {
-  circpad_hist_apollon_t bin = circpad_machine_first_lower_apollon(mi,
+  circpad_hist_index_t bin = circpad_machine_first_lower_index(mi,
           target_bin_usec);
 
   if (bin >= 0 && bin < CIRCPAD_INFINITY_BIN(mi)) {
@@ -697,8 +697,8 @@ circpad_machine_remove_lower_token(circpad_machine_state_t *mi,
 
 /* Helper macro: Ensure that the bin has tokens available, and BUG out of the
  * function if it's not the case. */
-#define ENSURE_BIN_CAPACITY(bin_apollon) \
-  if (BUG(mi->histogram[bin_apollon] == 0)) {                   \
+#define ENSURE_BIN_CAPACITY(bin_index) \
+  if (BUG(mi->histogram[bin_index] == 0)) {                   \
     return;                                                   \
   }
 
@@ -715,11 +715,11 @@ circpad_machine_remove_closest_token(circpad_machine_state_t *mi,
                                      circpad_delay_t target_bin_usec,
                                      bool use_usec)
 {
-  circpad_hist_apollon_t lower, higher, current;
-  circpad_hist_apollon_t bin_to_remove = -1;
+  circpad_hist_index_t lower, higher, current;
+  circpad_hist_index_t bin_to_remove = -1;
 
-  lower = circpad_machine_first_lower_apollon(mi, target_bin_usec);
-  higher = circpad_machine_first_higher_apollon(mi, target_bin_usec);
+  lower = circpad_machine_first_lower_index(mi, target_bin_usec);
+  higher = circpad_machine_first_higher_index(mi, target_bin_usec);
   current = circpad_histogram_usec_to_bin(mi, target_bin_usec);
 
   /* Sanity check the results */
@@ -796,7 +796,7 @@ static void
 circpad_machine_remove_exact(circpad_machine_state_t *mi,
                              circpad_delay_t target_bin_usec)
 {
-  circpad_hist_apollon_t bin = circpad_histogram_usec_to_bin(mi,
+  circpad_hist_index_t bin = circpad_histogram_usec_to_bin(mi,
           target_bin_usec);
 
   if (mi->histogram[bin] > 0)
@@ -822,7 +822,7 @@ check_machine_token_supply(circpad_machine_state_t *mi)
    * We also do not count infinity bin in histogram totals.
    */
   if (mi->histogram_len && mi->histogram) {
-    for (circpad_hist_apollon_t b = 0; b < CIRCPAD_INFINITY_BIN(mi); b++)
+    for (circpad_hist_index_t b = 0; b < CIRCPAD_INFINITY_BIN(mi); b++)
       histogram_total_tokens += mi->histogram[b];
 
     /* If we change state, we're done */
@@ -980,7 +980,7 @@ circpad_decision_t
 circpad_send_padding_cell_for_callback(circpad_machine_state_t *mi)
 {
   circuit_t *circ = mi->on_circ;
-  int machine_xap = mi->machine_apollon;
+  int machine_idx = mi->machine_index;
   mi->padding_scheduled_at_usec = 0;
   circpad_statenum_t state = mi->current_state;
 
@@ -1050,11 +1050,11 @@ circpad_send_padding_cell_for_callback(circpad_machine_state_t *mi)
   /* The circpad_cell_event_padding_sent() could cause us to transition.
    * Check that we still have a padding machineinfo, and then check our token
    * supply. */
-  if (circ->padding_info[machine_xap] != NULL) {
-    if (state != circ->padding_info[machine_xap]->current_state)
+  if (circ->padding_info[machine_idx] != NULL) {
+    if (state != circ->padding_info[machine_idx]->current_state)
       return CIRCPAD_STATE_CHANGED;
     else
-      return check_machine_token_supply(circ->padding_info[machine_xap]);
+      return check_machine_token_supply(circ->padding_info[machine_idx]);
   } else {
     return CIRCPAD_STATE_CHANGED;
   }
@@ -1283,20 +1283,20 @@ circpad_machine_spec_transitioned_to_end(circpad_machine_state_t *mi)
       /* We free the machine info here so that we can be replaced
        * by a different machine. But we must leave the padding_machine
        * in place to wait for the negotiated response */
-      circpad_circuit_machineinfo_free_xap(on_circ,
-                                           machine->machine_apollon);
+      circpad_circuit_machineinfo_free_idx(on_circ,
+                                           machine->machine_index);
       circpad_negotiate_padding(TO_ORIGIN_CIRCUIT(on_circ),
                                 machine->machine_num,
                                 machine->target_hopnum,
                                 CIRCPAD_COMMAND_STOP);
     } else {
-      circpad_circuit_machineinfo_free_xap(on_circ,
-                                           machine->machine_apollon);
+      circpad_circuit_machineinfo_free_idx(on_circ,
+                                           machine->machine_index);
       circpad_padding_negotiated(on_circ,
                                 machine->machine_num,
                                 CIRCPAD_COMMAND_STOP,
                                 CIRCPAD_RESPONSE_OK);
-      on_circ->padding_machine[machine->machine_apollon] = NULL;
+      on_circ->padding_machine[machine->machine_index] = NULL;
     }
   }
 }
@@ -1345,7 +1345,7 @@ circpad_machine_spec_transition,(circpad_machine_state_t *mi,
      */
     log_fn(LOG_INFO, LD_CIRC,
            "Circpad machine %d transitioning from %s to %s",
-            mi->machine_apollon, circpad_state_to_string(mi->current_state),
+            mi->machine_index, circpad_state_to_string(mi->current_state),
             circpad_state_to_string(s));
 
     /* If this is not the same state, switch and init tokens,
@@ -1724,7 +1724,7 @@ circpad_shutdown_old_machines(origin_circuit_t *on_circ)
     if (!circpad_machine_conditions_met(on_circ,
                                         circ->padding_machine[i])) {
       // Clear machineinfo (frees timers)
-      circpad_circuit_machineinfo_free_xap(circ, i);
+      circpad_circuit_machineinfo_free_idx(circ, i);
       // Send padding negotiate stop
       circpad_negotiate_padding(on_circ,
                                 circ->padding_machine[i]->machine_num,
@@ -1737,7 +1737,7 @@ circpad_shutdown_old_machines(origin_circuit_t *on_circ)
 /**
  * Negotiate new machines that would apply to this circuit.
  *
- * This function checks to see if we have any free machine apollones,
+ * This function checks to see if we have any free machine indexes,
  * and for each free machine apollon, it initializes the most recently
  * added origin-side padding machine that matches the target machine
  * apollon and circuit conditions, and negotiates it with the appropriate
@@ -1775,7 +1775,7 @@ circpad_add_matching_machines(origin_circuit_t *on_circ)
        * to which machine gets events first when there are two
        * machines installed on a circuit. Make sure we only
        * add this machine if its target machine apollon is free. */
-      if (machine->machine_apollon == i &&
+      if (machine->machine_index == i &&
           circpad_machine_conditions_met(on_circ, machine)) {
 
         // We can only replace this machine if the target hopnum
@@ -1795,7 +1795,7 @@ circpad_add_matching_machines(origin_circuit_t *on_circ)
         if (circpad_negotiate_padding(on_circ, machine->machine_num,
                                   machine->target_hopnum,
                                   CIRCPAD_COMMAND_START) < 0) {
-          circpad_circuit_machineinfo_free_xap(circ, i);
+          circpad_circuit_machineinfo_free_idx(circ, i);
           circ->padding_machine[i] = NULL;
           on_circ->padding_negotiation_failed = 1;
         } else {
@@ -2075,13 +2075,13 @@ circpad_setup_machine_on_circ(circuit_t *on_circ,
     return;
   }
 
-  tor_assert_nonfatal(on_circ->padding_machine[machine->machine_apollon]
+  tor_assert_nonfatal(on_circ->padding_machine[machine->machine_index]
                       == NULL);
-  tor_assert_nonfatal(on_circ->padding_info[machine->machine_apollon] == NULL);
+  tor_assert_nonfatal(on_circ->padding_info[machine->machine_index] == NULL);
 
-  on_circ->padding_info[machine->machine_apollon] =
-      circpad_circuit_machineinfo_new(on_circ, machine->machine_apollon);
-  on_circ->padding_machine[machine->machine_apollon] = machine;
+  on_circ->padding_info[machine->machine_index] =
+      circpad_circuit_machineinfo_new(on_circ, machine->machine_index);
+  on_circ->padding_machine[machine->machine_index] = machine;
 }
 
 /* These padding machines are only used for tests pending #28634. */

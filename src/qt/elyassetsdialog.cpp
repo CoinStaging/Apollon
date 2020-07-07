@@ -29,7 +29,7 @@
 #include <QDialog>
 #include <QHeaderView>
 #include <QMenu>
-#include <QModelApollon>
+#include <QModelIndex>
 #include <QPoint>
 #include <QResizeEvent>
 #include <QString>
@@ -149,7 +149,7 @@ void ElyAssetsDialog::UpdatePropSelector()
     if ((uint32_t)ui->propSelectorWidget->count() > global_wallet_property_list.size()) return;
 
     // a new property has been added to the wallet, update the property selector
-    QString spId = ui->propSelectorWidget->itemData(ui->propSelectorWidget->currentApollon()).toString();
+    QString spId = ui->propSelectorWidget->itemData(ui->propSelectorWidget->currentIndex()).toString();
     ui->propSelectorWidget->clear();
     ui->propSelectorWidget->addItem("Wallet Totals (Summary)","2147483646"); //use last possible ID for summary for now
     // populate property selector
@@ -161,8 +161,8 @@ void ElyAssetsDialog::UpdatePropSelector()
         spName += " (#" + spId + ")";
         ui->propSelectorWidget->addItem(spName.c_str(), spId.c_str());
     }
-    int propXap = ui->propSelectorWidget->findData(spId);
-    if (propXap != -1) { ui->propSelectorWidget->setCurrentApollon(propXap); }
+    int propIdx = ui->propSelectorWidget->findData(spId);
+    if (propIdx != -1) { ui->propSelectorWidget->setCurrentIndex(propIdx); }
 }
 
 void ElyAssetsDialog::AddRow(const std::string& label, const std::string& address, const std::string& reserved, const std::string& available)
@@ -257,17 +257,17 @@ void ElyAssetsDialog::PopulateBalances(unsigned int propertyId)
 
 void ElyAssetsDialog::propSelectorChanged()
 {
-    QString spId = ui->propSelectorWidget->itemData(ui->propSelectorWidget->currentApollon()).toString();
+    QString spId = ui->propSelectorWidget->itemData(ui->propSelectorWidget->currentIndex()).toString();
     unsigned int propertyId = spId.toUInt();
     PopulateBalances(propertyId);
 }
 
 void ElyAssetsDialog::contextualMenu(const QPoint &point)
 {
-    QModelApollon apollon = ui->balancesTable->apollonAt(point);
+    QModelIndex apollon = ui->balancesTable->indexAt(point);
     if(apollon.isValid())
     {
-        QString spId = ui->propSelectorWidget->itemData(ui->propSelectorWidget->currentApollon()).toString();
+        QString spId = ui->propSelectorWidget->itemData(ui->propSelectorWidget->currentIndex()).toString();
         unsigned int propertyId = spId.toUInt();
         if (propertyId == 2147483646) {
             contextMenuSummary->exec(QCursor::pos());

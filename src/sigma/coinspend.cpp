@@ -31,22 +31,22 @@ CoinSpend::CoinSpend(
     GroupElement gs = (params->get_g() * coinSerialNumber).inverse();
     std::vector<GroupElement> C_;
     C_.reserve(anonymity_set.size());
-    std::size_t coinApollon;
-    bool apollonFound = false;
+    std::size_t coinIndex;
+    bool indexFound = false;
 
     for (std::size_t j = 0; j < anonymity_set.size(); ++j) {
         if(anonymity_set[j] == coin.getPublicCoin()){
-            coinApollon = j;
-            apollonFound = true;
+            coinIndex = j;
+            indexFound = true;
         }
 
         C_.emplace_back(anonymity_set[j].getValue() + gs);
     }
 
-    if(!apollonFound)
+    if(!indexFound)
         throw ZerocoinException("No such coin in this anonymity set");
 
-    sigmaProver.proof(C_, coinApollon, coin.getRandomness(), fPadding, sigmaProof);
+    sigmaProver.proof(C_, coinIndex, coin.getRandomness(), fPadding, sigmaProof);
 
     updateMetaData(coin, m);
 }

@@ -75,10 +75,10 @@ for arg in sys.argv[1:]:
         opts.add(arg)
 
 #Set env vars
-if "APOLLOND" not in os.environ:
-    os.environ["APOLLOND"] = BUILDDIR + '/src/apollond' + EXEEXT
-if "APOLLONCLI" not in os.environ:
-    os.environ["APOLLONCLI"] = BUILDDIR + '/src/apollon-cli' + EXEEXT
+if "INDEXD" not in os.environ:
+    os.environ["INDEXD"] = BUILDDIR + '/src/indexd' + EXEEXT
+if "INDEXCLI" not in os.environ:
+    os.environ["INDEXCLI"] = BUILDDIR + '/src/apollon-cli' + EXEEXT
 
 if EXEEXT == ".exe" and "-win" not in opts:
     # https://github.com/bitcoin/bitcoin/commit/d52802551752140cf41f0d9a225a43e84404d3e9
@@ -107,7 +107,7 @@ testScripts = [
     'elysium_sendmint_wallet_encryption.py',
     'elysium_sendspend.py',
     'elysium_sendspend_wallet_encryption.py',
-    'elysium_sigma_reapollon.py',
+    'elysium_sigma_reindex.py',
     'elysium_sigma_reorg.py',
     'elysium_walletrecovery.py',
     'mempool_doublesend_oneblock.py',
@@ -131,7 +131,7 @@ testScripts = [
      'rest.py',
      #'mempool_limit.py',
      'httpbasics.py',
-     'reapollon.py',
+     'reindex.py',
      'multi_rpc.py',
      'zapwallettxes.py',
      'proxy_test.py',
@@ -301,7 +301,7 @@ class RPCTestHandler:
                               log_stdout,
                               log_stderr))
         if not self.jobs:
-            raise ApollonError('pop from empty list')
+            raise IndexError('pop from empty list')
         while True:
             # Return first proc that finishes
             time.sleep(.5)

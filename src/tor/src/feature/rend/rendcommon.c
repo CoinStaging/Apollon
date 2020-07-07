@@ -849,7 +849,7 @@ hid_serv_get_responsible_directories(smartlist_t *responsible_dirs,
     return -1;
   }
   tor_assert(id);
-  start = networkstatus_vote_find_entry_xap(c, id, &found);
+  start = networkstatus_vote_find_entry_idx(c, id, &found);
   if (start == smartlist_len(c->routerstatus_list)) start = 0;
   i = start;
   do {

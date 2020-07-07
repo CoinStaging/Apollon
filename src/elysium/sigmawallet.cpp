@@ -77,7 +77,7 @@ void SigmaWallet::ReloadMasterKey()
 uint32_t SigmaWallet::GenerateNewSeed(CKeyID &seedId, uint512 &seed)
 {
     LOCK(pwalletMain->cs_wallet);
-    seedId = pwalletMain->GenerateNewKey(BIP44ChangeApollon()).GetID();
+    seedId = pwalletMain->GenerateNewKey(BIP44ChangeIndex()).GetID();
     return GenerateSeed(seedId, seed);
 }
 
@@ -94,24 +94,24 @@ uint32_t SigmaWallet::GenerateSeed(CKeyID const &seedId, uint512 &seed)
     // `count` is LE unsigned 32 bits integer
     std::array<unsigned char, CSHA512::OUTPUT_SIZE> result;
     uint32_t change;
-    auto seedApollon = GetSeedApollon(seedId, change);
+    auto seedIndex = GetSeedIndex(seedId, change);
 
-    if (change != BIP44ChangeApollon()) {
+    if (change != BIP44ChangeIndex()) {
         throw std::invalid_argument("BIP44 Change of seed id is invalid");
     }
 
     CHMAC_SHA512(key.begin(), key.size()).
-        Write(reinterpret_cast<const unsigned char*>(&seedApollon), sizeof(seedApollon)).
+        Write(reinterpret_cast<const unsigned char*>(&seedIndex), sizeof(seedIndex)).
         Finalize(result.data());
 
     seed = uint512(result);
 
-    return seedApollon;
+    return seedIndex;
 }
 
 namespace {
 
-uint32_t GetBIP44AddressApollon(std::string const &path, uint32_t &change)
+uint32_t GetBIP44AddressIndex(std::string const &path, uint32_t &change)
 {
     uint32_t apollon;
     if (sscanf(path.data(), "m/44'/%*u'/%*u'/%u/%u", &change, &apollon) != 2) {
@@ -123,7 +123,7 @@ uint32_t GetBIP44AddressApollon(std::string const &path, uint32_t &change)
 
 }
 
-uint32_t SigmaWallet::GetSeedApollon(CKeyID const &seedId, uint32_t &change)
+uint32_t SigmaWallet::GetSeedIndex(CKeyID const &seedId, uint32_t &change)
 {
     LOCK(pwalletMain->cs_wallet);
     auto it = pwalletMain->mapKeyMetadata.find(seedId);
@@ -133,7 +133,7 @@ uint32_t SigmaWallet::GetSeedApollon(CKeyID const &seedId, uint32_t &change)
 
     // parse last apollon
     try {
-        return GetBIP44AddressApollon(it->second.hdKeypath, change);
+        return GetBIP44AddressIndex(it->second.hdKeypath, change);
     } catch (std::runtime_error const &e) {
         LogPrintf("%s : fail to get child from, %s\n", __func__, e.what());
         throw;
@@ -371,9 +371,9 @@ void SigmaWallet::DeleteUnconfirmedMint(SigmaMintId const &id)
     SigmaPublicKey pubKey(GeneratePrivateKey(mint.seedId), DefaultSigmaParams);
 
     uint32_t change;
-    auto apollon = GetSeedApollon(mint.seedId, change);
+    auto apollon = GetSeedIndex(mint.seedId, change);
 
-    if (change != BIP44ChangeApollon()) {
+    if (change != BIP44ChangeIndex()) {
         throw std::invalid_argument("Try to delete invalid seed id mint");
     }
 
@@ -395,10 +395,10 @@ bool SigmaWallet::GetMintPoolEntry(SigmaPublicKey const &pubKey, MintPoolEntry &
 {
     LOCK(pwalletMain->cs_wallet);
 
-    auto &publicKeyApollon = mintPool.get<1>();
-    auto it = publicKeyApollon.find(pubKey);
+    auto &publicKeyIndex = mintPool.get<1>();
+    auto it = publicKeyIndex.find(pubKey);
 
-    if (it == publicKeyApollon.end()) {
+    if (it == publicKeyIndex.end()) {
         return false;
     }
 
@@ -467,12 +467,12 @@ bool SigmaWallet::RemoveFromMintPool(SigmaPublicKey const &publicKey)
 {
     LOCK(pwalletMain->cs_wallet);
 
-    auto &publicKeyApollon = mintPool.get<1>();
-    auto it = publicKeyApollon.find(publicKey);
+    auto &publicKeyIndex = mintPool.get<1>();
+    auto it = publicKeyIndex.find(publicKey);
 
-    if (it != publicKeyApollon.end()) {
+    if (it != publicKeyIndex.end()) {
 
-        publicKeyApollon.erase(it);
+        publicKeyIndex.erase(it);
         SaveMintPool();
         return true;
     }

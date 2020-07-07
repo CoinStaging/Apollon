@@ -1002,7 +1002,7 @@ parse_method_line_helper(const char *line,
                          managed_proxy_t *mp,
                          int is_smethod)
 {
-  int item_apollon = 0;
+  int item_index = 0;
   int r;
 
   char *transport_name=NULL;
@@ -1027,11 +1027,11 @@ parse_method_line_helper(const char *line,
     goto err;
   }
 
-  tor_assert(!strcmp(smartlist_get(items, item_apollon),method_str));
-  ++item_apollon;
+  tor_assert(!strcmp(smartlist_get(items, item_index),method_str));
+  ++item_index;
 
-  transport_name = smartlist_get(items,item_apollon);
-  ++item_apollon;
+  transport_name = smartlist_get(items,item_index);
+  ++item_index;
   if (!string_is_C_identifier(transport_name)) {
     log_warn(LD_CONFIG, "Transport name is not a C identifier (%s).",
              transport_name);
@@ -1040,8 +1040,8 @@ parse_method_line_helper(const char *line,
 
   /** Check for the proxy method sent to us in CMETHOD line. */
   if (!is_smethod) {
-    const char *socks_ver_str = smartlist_get(items,item_apollon);
-    ++item_apollon;
+    const char *socks_ver_str = smartlist_get(items,item_index);
+    ++item_index;
 
     if (!strcmp(socks_ver_str,"socks4")) {
       socks_ver = PROXY_SOCKS4;
@@ -1054,8 +1054,8 @@ parse_method_line_helper(const char *line,
     }
   }
 
-  addrport = smartlist_get(items, item_apollon);
-  ++item_apollon;
+  addrport = smartlist_get(items, item_index);
+  ++item_index;
   if (tor_addr_port_split(LOG_WARN, addrport, &address, &port)<0) {
     log_warn(LD_CONFIG, "Error parsing transport address '%s'", addrport);
     goto err;
@@ -1076,7 +1076,7 @@ parse_method_line_helper(const char *line,
   if (is_smethod && smartlist_len(items) > min_args_count) {
     /* Seems like there are also some [options] in the SMETHOD line.
        Let's see if we can parse them. */
-    char *options_string = smartlist_get(items, item_apollon);
+    char *options_string = smartlist_get(items, item_index);
     log_debug(LD_CONFIG, "Got options_string: %s", options_string);
     if (!strcmpstart(options_string, "ARGS:")) {
       args_string = options_string+strlen("ARGS:");

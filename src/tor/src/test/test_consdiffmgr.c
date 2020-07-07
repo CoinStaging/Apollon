@@ -534,7 +534,7 @@ test_consdiffmgr_diff_rules(void *arg)
   tt_int_op(0, OP_EQ,
             lookup_apply_and_verify_diff(FLAV_NS, ns_body[2], ns_body[5]));
 
-  /* Finally: reload, and make sure that the information is still apolloned */
+  /* Finally: reload, and make sure that the information is still indexed */
   cdm_reload();
 
   tt_int_op(0, OP_EQ,

@@ -13,7 +13,7 @@ from crontab import CronTab
 SERVER_IP = urlopen('http://ip.42.pl/raw').read()
 # BOOTSTRAP_URL = "http://apollon.org/dprice.zip"
 #Change this to match your coin releases
-GITHUB_REPO = 'ApollonChain/Apollon'
+GITHUB_REPO = 'IndexChain/Apollon'
 BINARY_PREFIX = 'apollon-'
 BINARY_SUFFIX='-x86_64-linux-gnu.tar.gz'
 
@@ -60,7 +60,7 @@ def print_welcome():
     print("")
     print("")
     print("")
-    print_info("ApollonChain masternode installer v1.0")
+    print_info("IndexChain masternode installer v1.0")
     print("")
     print("")
     print("")
@@ -89,11 +89,11 @@ def secure_server():
     run_command("ufw --force enable")
 
 def checkdaemon():
-    return os.path.isfile('/usr/local/bin/apollond')
+    return os.path.isfile('/usr/local/bin/indexd')
 
 # Helper functions for automating updating and installing daemon
 def getlatestrelease():
-    r = requests.get(url='https://api.github.com/repos/ApollonChain/Apollon/releases/latest')
+    r = requests.get(url='https://api.github.com/repos/IndexChain/Apollon/releases/latest')
     data = json.loads(r.text)['assets']
     for x in range(len(data)):
         if 'x86_64-linux-gnu.tar.gz' in data[x]['browser_download_url']:
@@ -126,7 +126,7 @@ def installdaemon(fupdate):
     run_command("cd " + foldername +" && cp bin/* /usr/local/bin/ && cd ~")
     if fupdate:
         print_info("Finished updating,now starting mn back up")
-        os.system('su - mn1 -c "{}" '.format('apollond -daemon &> /dev/null'))
+        os.system('su - mn1 -c "{}" '.format('indexd -daemon &> /dev/null'))
     else:
         print_info("Finished downloading and installing daemon")
 
@@ -134,7 +134,7 @@ def get_total_memory():
     return (os.sysconf('SC_PAGE_SIZE') * os.sysconf('SC_PHYS_PAGES'))/(1024*1024)
 
 def autostart_masternode(user):
-    job = "/usr/local/bin/apollond"
+    job = "/usr/local/bin/indexd"
     p = subprocess.Popen("crontab -l -u {} 2> /dev/null".format(user), stderr=STDOUT, stdout=PIPE, shell=True)
     p.wait()
     lines = p.stdout.readlines()
@@ -149,14 +149,14 @@ def autostart_masternode(user):
 def setup_first_masternode():
     print_info("Setting up first masternode")
     run_command("useradd --create-home -G sudo mn1")
-    print_info("Open your desktop wallet config file (%appdata%/ApollonChain/apollon.conf) and copy your rpc username and password! If it is not there create one! E.g.:\n\trpcuser=[SomeUserName]\n\trpcpassword=[DifficultAndLongPassword]")
+    print_info("Open your desktop wallet config file (%appdata%/IndexChain/apollon.conf) and copy your rpc username and password! If it is not there create one! E.g.:\n\trpcuser=[SomeUserName]\n\trpcpassword=[DifficultAndLongPassword]")
     global rpc_username
     global rpc_password
     rpc_username = input("rpcuser: ")
     rpc_password = input("rpcpassword: ")
 
-    print_info("Open your wallet console (Help => Debug window => Console) and create a new masternode private key: apollonnode genkey")
-    masternode_priv_key = input("apollonnodeprivkey: ")
+    print_info("Open your wallet console (Help => Debug window => Console) and create a new masternode private key: indexnode genkey")
+    masternode_priv_key = input("indexnodeprivkey: ")
     PRIVATE_KEYS.append(masternode_priv_key)
     
     config = """rpcuser={}
@@ -166,37 +166,37 @@ server=1
 listen=1
 daemon=1
 logtimestamps=1
-apollonnode=1
-apollonnodeprivkey={}
+indexnode=1
+indexnodeprivkey={}
 """.format(rpc_username, rpc_password, masternode_priv_key)
 
     print_info("Saving config file...")
     #make inital dirs and logs required
-    run_command('su - mn1 -c "mkdir /home/mn1/.ApollonChain"')
-    run_command('su - mn1 -c "touch /home/mn1/.ApollonChain/apollon.conf"')
-    run_command('su - mn1 -c "touch /home/mn1/.ApollonChain/exodus.log"')
-    run_command('su - mn1 -c "touch /home/mn1/.ApollonChain/debug.log"')
-    f = open('/home/mn1/.ApollonChain/apollon.conf', 'w')
+    run_command('su - mn1 -c "mkdir /home/mn1/.IndexChain"')
+    run_command('su - mn1 -c "touch /home/mn1/.IndexChain/apollon.conf"')
+    run_command('su - mn1 -c "touch /home/mn1/.IndexChain/exodus.log"')
+    run_command('su - mn1 -c "touch /home/mn1/.IndexChain/debug.log"')
+    f = open('/home/mn1/.IndexChain/apollon.conf', 'w')
     f.write(config)
     f.close()
 
     autostart_masternode('mn1')
-    os.system('su - mn1 -c "{}" '.format('apollond -daemon &> /dev/null'))
+    os.system('su - mn1 -c "{}" '.format('indexd -daemon &> /dev/null'))
     print_warning("Masternode started syncing in the background...")
 
 def setup_xth_masternode(xth):
     print_info("Setting up {}th masternode".format(xth))
     run_command("useradd --create-home -G sudo mn{}".format(xth))
-    run_command("rm -rf /home/mn{}/.ApollonChain/".format(xth))
+    run_command("rm -rf /home/mn{}/.IndexChain/".format(xth))
 
     print_info('Copying wallet data from the first masternode...')
-    run_command("cp -rf /home/mn1/.ApollonChain /home/mn{}/".format(xth))
-    run_command("sudo chown -R mn{}:mn{} /home/mn{}/.ApollonChain".format(xth, xth, xth))
-    run_command("rm /home/mn{}/.ApollonChain/peers.dat &> /dev/null".format(xth))
-    run_command("rm /home/mn{}/.ApollonChain/wallet.dat &> /dev/null".format(xth))
+    run_command("cp -rf /home/mn1/.IndexChain /home/mn{}/".format(xth))
+    run_command("sudo chown -R mn{}:mn{} /home/mn{}/.IndexChain".format(xth, xth, xth))
+    run_command("rm /home/mn{}/.IndexChain/peers.dat &> /dev/null".format(xth))
+    run_command("rm /home/mn{}/.IndexChain/wallet.dat &> /dev/null".format(xth))
 
-    print_info("Open your wallet console (Help => Debug window => Console) and create a new masternode private key: apollonnode genkey")
-    masternode_priv_key = input("apollonnodeprivkey: ")
+    print_info("Open your wallet console (Help => Debug window => Console) and create a new masternode private key: indexnode genkey")
+    masternode_priv_key = input("indexnodeprivkey: ")
     PRIVATE_KEYS.append(masternode_priv_key)
 
     BASE_RPC_PORT = 8888
@@ -211,17 +211,17 @@ server=1
 listen=1
 daemon=1
 logtimestamps=1
-apollonnode=1
-apollonnodeprivkey={}
+indexnode=1
+indexnodeprivkey={}
 """.format(rpc_username, rpc_password, BASE_RPC_PORT + xth - 1, BASE_PORT + xth - 1, masternode_priv_key)
     
     print_info("Saving config file...")
-    f = open('/home/mn{}/.ApollonChain/apollon.conf'.format(xth), 'w')
+    f = open('/home/mn{}/.IndexChain/apollon.conf'.format(xth), 'w')
     f.write(config)
     f.close()
     
     autostart_masternode('mn'+str(xth))
-    os.system('su - mn{} -c "{}" '.format(xth, 'apollond  -daemon &> /dev/null'))
+    os.system('su - mn{} -c "{}" '.format(xth, 'indexd  -daemon &> /dev/null'))
     print_warning("Masternode started syncing in the background...")
     
 
@@ -235,10 +235,10 @@ def porologe():
 Alias: zn{}
 IP: {}
 Private key: {}
-Transaction ID: [5k XAP deposit transaction id. 'apollonnode outputs']
-Transaction apollon: [5k XAP deposit transaction apollon. 'apollonnode outputs']
+Transaction ID: [5k XAP deposit transaction id. 'indexnode outputs']
+Transaction apollon: [5k XAP deposit transaction apollon. 'indexnode outputs']
 mnconf line :
-{} {} {} txhash txapollon
+{} {} {} txhash txindex
 --------------------------------------------------
 """
 

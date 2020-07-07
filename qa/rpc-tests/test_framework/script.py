@@ -648,7 +648,7 @@ class CScript(bytes):
     """Serialized script
 
     A bytes subclass, so you can use this directly whenever bytes are accepted.
-    Note that this means that apolloning does *not* work - you'll get an apollon by
+    Note that this means that indexing does *not* work - you'll get an apollon by
     byte rather than opcode. This format was chosen for efficiency so that the
     general case would not require creating a lot of little CScriptOP objects.
 
@@ -704,18 +704,18 @@ class CScript(bytes):
     def raw_iter(self):
         """Raw iteration
 
-        Yields tuples of (opcode, data, sop_xap) so that the different possible
+        Yields tuples of (opcode, data, sop_idx) so that the different possible
         PUSHDATA encodings can be accurately distinguished, as well as
-        determining the exact opcode byte apollones. (sop_xap)
+        determining the exact opcode byte indexes. (sop_idx)
         """
         i = 0
         while i < len(self):
-            sop_xap = i
+            sop_idx = i
             opcode = bord(self[i])
             i += 1
 
             if opcode > OP_PUSHDATA4:
-                yield (opcode, None, sop_xap)
+                yield (opcode, None, sop_idx)
             else:
                 datasize = None
                 pushdata_type = None
@@ -756,7 +756,7 @@ class CScript(bytes):
 
                 i += datasize
 
-                yield (opcode, data, sop_xap)
+                yield (opcode, data, sop_idx)
 
     def __iter__(self):
         """'Cooked' iteration
@@ -767,7 +767,7 @@ class CScript(bytes):
         See raw_iter() if you need to distinguish the different possible
         PUSHDATA encodings.
         """
-        for (opcode, data, sop_xap) in self.raw_iter():
+        for (opcode, data, sop_idx) in self.raw_iter():
             if data is not None:
                 yield data
             else:
@@ -816,7 +816,7 @@ class CScript(bytes):
         """
         n = 0
         lastOpcode = OP_INVALIDOPCODE
-        for (opcode, data, sop_xap) in self.raw_iter():
+        for (opcode, data, sop_idx) in self.raw_iter():
             if opcode in (OP_CHECKSIG, OP_CHECKSIGVERIFY):
                 n += 1
             elif opcode in (OP_CHECKMULTISIG, OP_CHECKMULTISIGVERIFY):
@@ -836,61 +836,61 @@ SIGHASH_ANYONECANPAY = 0x80
 def FindAndDelete(script, sig):
     """Consensus critical, see FindAndDelete() in Satoshi codebase"""
     r = b''
-    last_sop_xap = sop_xap = 0
+    last_sop_idx = sop_idx = 0
     skip = True
-    for (opcode, data, sop_xap) in script.raw_iter():
+    for (opcode, data, sop_idx) in script.raw_iter():
         if not skip:
-            r += script[last_sop_xap:sop_xap]
-        last_sop_xap = sop_xap
-        if script[sop_xap:sop_xap + len(sig)] == sig:
+            r += script[last_sop_idx:sop_idx]
+        last_sop_idx = sop_idx
+        if script[sop_idx:sop_idx + len(sig)] == sig:
             skip = True
         else:
             skip = False
     if not skip:
-        r += script[last_sop_xap:]
+        r += script[last_sop_idx:]
     return CScript(r)
 
 
-def SignatureHash(script, txTo, inXap, hashtype):
+def SignatureHash(script, txTo, inIdx, hashtype):
     """Consensus-correct SignatureHash
 
     Returns (hash, err) to precisely match the consensus-critical behavior of
-    the SIGHASH_SINGLE bug. (inXap is *not* checked for validity)
+    the SIGHASH_SINGLE bug. (inIdx is *not* checked for validity)
     """
     HASH_ONE = b'\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
 
-    if inXap >= len(txTo.vin):
-        return (HASH_ONE, "inXap %d out of range (%d)" % (inXap, len(txTo.vin)))
+    if inIdx >= len(txTo.vin):
+        return (HASH_ONE, "inIdx %d out of range (%d)" % (inIdx, len(txTo.vin)))
     txtmp = CTransaction(txTo)
 
     for txin in txtmp.vin:
         txin.scriptSig = b''
-    txtmp.vin[inXap].scriptSig = FindAndDelete(script, CScript([OP_CODESEPARATOR]))
+    txtmp.vin[inIdx].scriptSig = FindAndDelete(script, CScript([OP_CODESEPARATOR]))
 
     if (hashtype & 0x1f) == SIGHASH_NONE:
         txtmp.vout = []
 
         for i in range(len(txtmp.vin)):
-            if i != inXap:
+            if i != inIdx:
                 txtmp.vin[i].nSequence = 0
 
     elif (hashtype & 0x1f) == SIGHASH_SINGLE:
-        outXap = inXap
-        if outXap >= len(txtmp.vout):
-            return (HASH_ONE, "outXap %d out of range (%d)" % (outXap, len(txtmp.vout)))
+        outIdx = inIdx
+        if outIdx >= len(txtmp.vout):
+            return (HASH_ONE, "outIdx %d out of range (%d)" % (outIdx, len(txtmp.vout)))
 
-        tmp = txtmp.vout[outXap]
+        tmp = txtmp.vout[outIdx]
         txtmp.vout = []
-        for i in range(outXap):
+        for i in range(outIdx):
             txtmp.vout.append(CTxOut(-1))
         txtmp.vout.append(tmp)
 
         for i in range(len(txtmp.vin)):
-            if i != inXap:
+            if i != inIdx:
                 txtmp.vin[i].nSequence = 0
 
     if hashtype & SIGHASH_ANYONECANPAY:
-        tmp = txtmp.vin[inXap]
+        tmp = txtmp.vin[inIdx]
         txtmp.vin = []
         txtmp.vin.append(tmp)
 
@@ -905,7 +905,7 @@ def SignatureHash(script, txTo, inXap, hashtype):
 # Performance optimization probably not necessary for python tests, however.
 # Note that this corresponds to sigversion == 1 in EvalScript, which is used
 # for version 0 witnesses.
-def SegwitVersion1SignatureHash(script, txTo, inXap, hashtype, amount):
+def SegwitVersion1SignatureHash(script, txTo, inIdx, hashtype, amount):
 
     hashPrevouts = 0
     hashSequence = 0
@@ -928,18 +928,18 @@ def SegwitVersion1SignatureHash(script, txTo, inXap, hashtype, amount):
         for o in txTo.vout:
             serialize_outputs += o.serialize()
         hashOutputs = uint256_from_str(hash256(serialize_outputs))
-    elif ((hashtype & 0x1f) == SIGHASH_SINGLE and inXap < len(txTo.vout)):
-        serialize_outputs = txTo.vout[inXap].serialize()
+    elif ((hashtype & 0x1f) == SIGHASH_SINGLE and inIdx < len(txTo.vout)):
+        serialize_outputs = txTo.vout[inIdx].serialize()
         hashOutputs = uint256_from_str(hash256(serialize_outputs))
 
     ss = bytes()
     ss += struct.pack("<i", txTo.nVersion)
     ss += ser_uint256(hashPrevouts)
     ss += ser_uint256(hashSequence)
-    ss += txTo.vin[inXap].prevout.serialize()
+    ss += txTo.vin[inIdx].prevout.serialize()
     ss += ser_string(script)
     ss += struct.pack("<q", amount)
-    ss += struct.pack("<I", txTo.vin[inXap].nSequence)
+    ss += struct.pack("<I", txTo.vin[inIdx].nSequence)
     ss += ser_uint256(hashOutputs)
     ss += struct.pack("<i", txTo.nLockTime)
     ss += struct.pack("<I", hashtype)

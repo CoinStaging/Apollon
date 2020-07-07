@@ -54,9 +54,9 @@ public:
     void Init(bool resetSettings = false);
     void Reset();
 
-    int rowCount(const QModelApollon & parent = QModelApollon()) const;
-    QVariant data(const QModelApollon & apollon, int role = Qt::DisplayRole) const;
-    bool setData(const QModelApollon & apollon, const QVariant & value, int role = Qt::EditRole);
+    int rowCount(const QModelIndex & parent = QModelIndex()) const;
+    QVariant data(const QModelIndex & apollon, int role = Qt::DisplayRole) const;
+    bool setData(const QModelIndex & apollon, const QVariant & value, int role = Qt::EditRole);
     /** Updates current unit in memory, settings and emits displayUnitChanged(newUnit) signal */
     void setDisplayUnit(const QVariant &value);
 

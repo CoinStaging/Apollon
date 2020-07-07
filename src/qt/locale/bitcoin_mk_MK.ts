@@ -134,7 +134,7 @@
         <translation>Отвори &amp;URI...</translation>
     </message>
     <message>
-        <source>Reapolloning blocks on disk...</source>
+        <source>Reindexing blocks on disk...</source>
         <translation>Повторно индексирање на блокови од дискот...</translation>
     </message>
     <message>

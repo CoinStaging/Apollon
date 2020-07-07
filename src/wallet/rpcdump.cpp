@@ -82,10 +82,10 @@ UniValue importprivkey(const UniValue& params, bool fHelp)
 
     if (fHelp || params.size() < 1 || params.size() > 3)
         throw runtime_error(
-            "importprivkey \"apollonprivkey\" ( \"label\" rescan )\n"
+            "importprivkey \"indexprivkey\" ( \"label\" rescan )\n"
             "\nAdds a private key (as returned by dumpprivkey) to your wallet.\n"
             "\nArguments:\n"
-            "1. \"apollonprivkey\"   (string, required) The private key (see dumpprivkey)\n"
+            "1. \"indexprivkey\"   (string, required) The private key (see dumpprivkey)\n"
             "2. \"label\"            (string, optional, default=\"\") An optional label\n"
             "3. rescan               (boolean, optional, default=true) Rescan the wallet for transactions\n"
             "\nNote: This call can take minutes to complete if rescan is true.\n"
@@ -287,13 +287,13 @@ UniValue importprunedfunds(const UniValue& params, bool fHelp)
 
     //Search partial merkle tree in proof for our transaction and apollon in valid block
     vector<uint256> vMatch;
-    vector<unsigned int> vApollon;
-    unsigned int txnApollon = 0;
-    if (merkleBlock.txn.ExtractMatches(vMatch, vApollon) == merkleBlock.header.hashMerkleRoot) {
+    vector<unsigned int> vIndex;
+    unsigned int txnIndex = 0;
+    if (merkleBlock.txn.ExtractMatches(vMatch, vIndex) == merkleBlock.header.hashMerkleRoot) {
 
         LOCK(cs_main);
 
-        if (!mapBlockApollon.count(merkleBlock.header.GetHash()) || !chainActive.Contains(mapBlockApollon[merkleBlock.header.GetHash()]))
+        if (!mapBlockIndex.count(merkleBlock.header.GetHash()) || !chainActive.Contains(mapBlockIndex[merkleBlock.header.GetHash()]))
             throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Block not found in chain");
 
         vector<uint256>::const_iterator it;
@@ -301,13 +301,13 @@ UniValue importprunedfunds(const UniValue& params, bool fHelp)
             throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Transaction given doesn't exist in proof");
         }
 
-        txnApollon = vApollon[it - vMatch.begin()];
+        txnIndex = vIndex[it - vMatch.begin()];
     }
     else {
         throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Something wrong with merkleblock");
     }
 
-    wtx.nApollon = txnApollon;
+    wtx.nIndex = txnIndex;
     wtx.hashBlock = merkleBlock.header.GetHash();
 
     LOCK2(cs_main, pwalletMain->cs_wallet);
@@ -568,15 +568,15 @@ UniValue importwallet(const UniValue& params, bool fHelp)
     file.close();
     pwalletMain->ShowProgress("", 100); // hide progress dialog in GUI
 
-    CBlockApollon *papollon = chainActive.Tip();
-    while (papollon && papollon->pprev && papollon->GetBlockTime() > nTimeBegin - 7200)
-        papollon = papollon->pprev;
+    CBlockIndex *pindex = chainActive.Tip();
+    while (pindex && pindex->pprev && pindex->GetBlockTime() > nTimeBegin - 7200)
+        pindex = pindex->pprev;
 
     if (!pwalletMain->nTimeFirstKey || nTimeBegin < pwalletMain->nTimeFirstKey)
         pwalletMain->nTimeFirstKey = nTimeBegin;
 
-    LogPrintf("Rescanning last %i blocks\n", chainActive.Height() - papollon->nHeight + 1);
-    pwalletMain->ScanForWalletTransactions(papollon);
+    LogPrintf("Rescanning last %i blocks\n", chainActive.Height() - pindex->nHeight + 1);
+    pwalletMain->ScanForWalletTransactions(pindex);
     pwalletMain->MarkDirty();
 
     if(fMintUpdate){
@@ -598,11 +598,11 @@ UniValue dumpprivkey(const UniValue& params, bool fHelp)
 
     if (fHelp || params.size() != 1)
         throw runtime_error(
-            "dumpprivkey \"apollonaddress\"\n"
-            "\nReveals the private key corresponding to 'apollonaddress'.\n"
+            "dumpprivkey \"indexaddress\"\n"
+            "\nReveals the private key corresponding to 'indexaddress'.\n"
             "Then the importprivkey can be used with this output\n"
             "\nArguments:\n"
-            "1. \"apollonaddress\"   (string, required) The Apollon address for the private key\n"
+            "1. \"indexaddress\"   (string, required) The Apollon address for the private key\n"
             "\nResult:\n"
             "\"key\"                (string) The private key\n"
             "\nExamples:\n"
@@ -628,16 +628,16 @@ UniValue dumpprivkey(const UniValue& params, bool fHelp)
     return CBitcoinSecret(vchSecret).ToString();
 }
 
-UniValue dumpprivkey_apollon(const UniValue& params, bool fHelp)
+UniValue dumpprivkey_index(const UniValue& params, bool fHelp)
 {
 #ifndef UNSAFE_DUMPPRIVKEY
     if (fHelp || params.size() < 1 || params.size() > 2)
         throw runtime_error(
-            "dumpprivkey \"apollonaddress\"\n"
-            "\nReveals the private key corresponding to 'apollonaddress'.\n"
+            "dumpprivkey \"indexaddress\"\n"
+            "\nReveals the private key corresponding to 'indexaddress'.\n"
             "Then the importprivkey can be used with this output\n"
             "\nArguments:\n"
-            "1. \"apollonaddress\"   (string, required) The Apollon address for the private key\n"
+            "1. \"indexaddress\"   (string, required) The Apollon address for the private key\n"
             "2. \"one-time-auth-code\"   (string, optional) A one time authorization code received from a previous call of dumpprivkey"
             "\nResult:\n"
             "\"key\"                (string) The private key\n"
@@ -655,10 +655,10 @@ UniValue dumpprivkey_apollon(const UniValue& params, bool fHelp)
             "WARNING! Your one time authorization code is: " + AuthorizationHelper::inst().generateAuthorizationCode(__FUNCTION__ + params[0].get_str()) + "\n"
             "This command exports your wallet private key. Anyone with this key has complete control over your funds. \n"
             "If someone asked you to type in this command, chances are they want to steal your coins. \n"
-            "Apollon team members will never ask for this command's output and it is not needed for Apollonnode setup or diagnosis!\n"
+            "Apollon team members will never ask for this command's output and it is not needed for Indexnode setup or diagnosis!\n"
             "\n"
             " Please seek help on one of our public channels. \n"
-            " Telegram: https://t.me/apollonproject \n"
+            " Telegram: https://t.me/indexproject \n"
             " Discord: https://discordapp.com/invite/4FjnQ2q\n"
             " Reddit: https://www.reddit.com/r/apollon/\n"
             "\n"
@@ -833,7 +833,7 @@ UniValue dumpwallet(const UniValue& params, bool fHelp)
     return NullUniValue;
 }
 
-UniValue dumpwallet_apollon(const UniValue& params, bool fHelp)
+UniValue dumpwallet_index(const UniValue& params, bool fHelp)
 {
 #ifndef UNSAFE_DUMPPRIVKEY
     if (fHelp || params.size() < 1 || params.size() > 2)
@@ -856,10 +856,10 @@ UniValue dumpwallet_apollon(const UniValue& params, bool fHelp)
             "WARNING! Your one time authorization code is: " + AuthorizationHelper::inst().generateAuthorizationCode(__FUNCTION__ + params[0].get_str()) + "\n"
             "This command exports all your private keys. Anyone with these keys has complete control over your funds. \n"
             "If someone asked you to type in this command, chances are they want to steal your coins. \n"
-            "Apollon team members will never ask for this command's output and it is not needed for Apollonnode setup or diagnosis!\n"
+            "Apollon team members will never ask for this command's output and it is not needed for Indexnode setup or diagnosis!\n"
             "\n"
             " Please seek help on one of our public channels. \n"
-            " Telegram: https://t.me/apollonproject \n"
+            " Telegram: https://t.me/indexproject \n"
             " Discord: https://discordapp.com/invite/4FjnQ2q\n"
             " Reddit: https://www.reddit.com/r/apollon/\n"
             "\n"

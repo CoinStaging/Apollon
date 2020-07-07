@@ -51,7 +51,7 @@ md_PricesMap* elysium::get_Prices(uint32_t prop)
     return (md_PricesMap*) NULL;
 }
 
-md_Set* elysium::get_Apollones(md_PricesMap* p, rational_t price)
+md_Set* elysium::get_Indexes(md_PricesMap* p, rational_t price)
 {
     md_PricesMap::iterator it = p->find(price);
 
@@ -409,8 +409,8 @@ int64_t CMPMetaDEx::getAmountToFill() const
 
 int64_t CMPMetaDEx::getBlockTime() const
 {
-    CBlockApollon* pblockapollon = chainActive[block];
-    return pblockapollon->GetBlockTime();
+    CBlockIndex* pblockindex = chainActive[block];
+    return pblockindex->GetBlockTime();
 }
 
 void CMPMetaDEx::setAmountRemaining(int64_t amount, const std::string& label)
@@ -450,7 +450,7 @@ void CMPMetaDEx::saveOffer(std::ofstream& file, SHA256_CTX* shaCtx) const
 
 bool MetaDEx_compare::operator()(const CMPMetaDEx &lhs, const CMPMetaDEx &rhs) const
 {
-    if (lhs.getBlock() == rhs.getBlock()) return lhs.getXap() < rhs.getXap();
+    if (lhs.getBlock() == rhs.getBlock()) return lhs.getIdx() < rhs.getIdx();
     else return lhs.getBlock() < rhs.getBlock();
 }
 
@@ -462,26 +462,26 @@ bool elysium::MetaDEx_INSERT(const CMPMetaDEx& objMetaDEx)
     md_PricesMap *p_prices = get_Prices(objMetaDEx.getProperty());
 
     // Create an empty set of metadex objects (to use in case no set currently exists at this price)
-    md_Set temp_apollones;
-    md_Set *p_apollones = NULL;
+    md_Set temp_indexes;
+    md_Set *p_indexes = NULL;
 
     // Prepare for return code
     std::pair <md_Set::iterator, bool> ret;
 
     // Attempt to obtain a set of metadex objects for this price from the price map
-    if (p_prices) p_apollones = get_Apollones(p_prices, objMetaDEx.unitPrice());
+    if (p_prices) p_indexes = get_Indexes(p_prices, objMetaDEx.unitPrice());
     // See if the set was populated, if not no set exists at this price level, use the empty set that we created earlier
-    if (!p_apollones) p_apollones = &temp_apollones;
+    if (!p_indexes) p_indexes = &temp_indexes;
 
     // Attempt to insert the metadex object into the set
-    ret = p_apollones->insert(objMetaDEx);
+    ret = p_indexes->insert(objMetaDEx);
     if (false == ret.second) return false;
 
     // If a prices map did not exist for this property, set p_prices to the temp empty price map
     if (!p_prices) p_prices = &temp_prices;
 
     // Update the prices map with the new set at this price
-    (*p_prices)[objMetaDEx.unitPrice()] = *p_apollones;
+    (*p_prices)[objMetaDEx.unitPrice()] = *p_indexes;
 
     // Set the metadex map for the property to the updated (or new if it didn't exist) price map
     metadex[objMetaDEx.getProperty()] = *p_prices;
@@ -547,9 +547,9 @@ int elysium::MetaDEx_CANCEL_AT_PRICE(const uint256& txid, unsigned int block, co
 
         if (mdex.unitPrice() != sellers_price) continue;
 
-        md_Set* apollones = &(my_it->second);
+        md_Set* indexes = &(my_it->second);
 
-        for (md_Set::iterator iitt = apollones->begin(); iitt != apollones->end();) {
+        for (md_Set::iterator iitt = indexes->begin(); iitt != indexes->end();) {
             p_mdex = &(*iitt);
 
             if (elysium_debug_metadex3) PrintToLog("%s(): %s\n", __FUNCTION__, p_mdex->ToString());
@@ -570,7 +570,7 @@ int elysium::MetaDEx_CANCEL_AT_PRICE(const uint256& txid, unsigned int block, co
             bool bValid = true;
             p_txlistdb->recordMetaDExCancelTX(txid, p_mdex->getHash(), bValid, block, p_mdex->getProperty(), p_mdex->getAmountRemaining());
 
-            apollones->erase(iitt++);
+            indexes->erase(iitt++);
         }
     }
 
@@ -596,9 +596,9 @@ int elysium::MetaDEx_CANCEL_ALL_FOR_PAIR(const uint256& txid, unsigned int block
 
     // within the desired property map (given one property) iterate over the items
     for (md_PricesMap::iterator my_it = prices->begin(); my_it != prices->end(); ++my_it) {
-        md_Set* apollones = &(my_it->second);
+        md_Set* indexes = &(my_it->second);
 
-        for (md_Set::iterator iitt = apollones->begin(); iitt != apollones->end();) {
+        for (md_Set::iterator iitt = indexes->begin(); iitt != indexes->end();) {
             p_mdex = &(*iitt);
 
             if (elysium_debug_metadex3) PrintToLog("%s(): %s\n", __FUNCTION__, p_mdex->ToString());
@@ -619,7 +619,7 @@ int elysium::MetaDEx_CANCEL_ALL_FOR_PAIR(const uint256& txid, unsigned int block
             bool bValid = true;
             p_txlistdb->recordMetaDExCancelTX(txid, p_mdex->getHash(), bValid, block, p_mdex->getProperty(), p_mdex->getAmountRemaining());
 
-            apollones->erase(iitt++);
+            indexes->erase(iitt++);
         }
     }
 
@@ -653,11 +653,11 @@ int elysium::MetaDEx_CANCEL_EVERYTHING(const uint256& txid, unsigned int block, 
 
         for (md_PricesMap::iterator it = prices.begin(); it != prices.end(); ++it) {
             rational_t price = it->first;
-            md_Set& apollones = it->second;
+            md_Set& indexes = it->second;
 
             PrintToLog("  # Price Level: %s\n", xToString(price));
 
-            for (md_Set::iterator it = apollones.begin(); it != apollones.end();) {
+            for (md_Set::iterator it = indexes.begin(); it != indexes.end();) {
                 PrintToLog("%s= %s\n", xToString(price), it->ToString());
 
                 if (it->getAddr() != sender_addr) {
@@ -676,7 +676,7 @@ int elysium::MetaDEx_CANCEL_EVERYTHING(const uint256& txid, unsigned int block, 
                 bool bValid = true;
                 p_txlistdb->recordMetaDExCancelTX(txid, it->getHash(), bValid, block, it->getProperty(), it->getAmountRemaining());
 
-                apollones.erase(it++);
+                indexes.erase(it++);
             }
         }
     }
@@ -697,14 +697,14 @@ int elysium::MetaDEx_SHUTDOWN_ALLPAIR()
     for (md_PropertiesMap::iterator my_it = metadex.begin(); my_it != metadex.end(); ++my_it) {
         md_PricesMap& prices = my_it->second;
         for (md_PricesMap::iterator it = prices.begin(); it != prices.end(); ++it) {
-            md_Set& apollones = it->second;
-            for (md_Set::iterator it = apollones.begin(); it != apollones.end();) {
+            md_Set& indexes = it->second;
+            for (md_Set::iterator it = indexes.begin(); it != indexes.end();) {
                 if (it->getDesProperty() > ELYSIUM_PROPERTY_TELYSIUM && it->getProperty() > ELYSIUM_PROPERTY_TELYSIUM) { // no ELYSIUM/TELYSIUM side to the trade
                     PrintToLog("%s(): REMOVING %s\n", __FUNCTION__, it->ToString());
                     // move from reserve to balance
                     assert(update_tally_map(it->getAddr(), it->getProperty(), -it->getAmountRemaining(), METADEX_RESERVE));
                     assert(update_tally_map(it->getAddr(), it->getProperty(), it->getAmountRemaining(), BALANCE));
-                    apollones.erase(it++);
+                    indexes.erase(it++);
                 }
             }
         }
@@ -722,13 +722,13 @@ int elysium::MetaDEx_SHUTDOWN()
     for (md_PropertiesMap::iterator my_it = metadex.begin(); my_it != metadex.end(); ++my_it) {
         md_PricesMap& prices = my_it->second;
         for (md_PricesMap::iterator it = prices.begin(); it != prices.end(); ++it) {
-            md_Set& apollones = it->second;
-            for (md_Set::iterator it = apollones.begin(); it != apollones.end();) {
+            md_Set& indexes = it->second;
+            for (md_Set::iterator it = indexes.begin(); it != indexes.end();) {
                 PrintToLog("%s(): REMOVING %s\n", __FUNCTION__, it->ToString());
                 // move from reserve to balance
                 assert(update_tally_map(it->getAddr(), it->getProperty(), -it->getAmountRemaining(), METADEX_RESERVE));
                 assert(update_tally_map(it->getAddr(), it->getProperty(), it->getAmountRemaining(), BALANCE));
-                apollones.erase(it++);
+                indexes.erase(it++);
             }
         }
     }
@@ -743,8 +743,8 @@ bool elysium::MetaDEx_isOpen(const uint256& txid, uint32_t propertyIdForSale)
         if (propertyIdForSale != 0 && propertyIdForSale != my_it->first) continue;
         md_PricesMap & prices = my_it->second;
         for (md_PricesMap::iterator it = prices.begin(); it != prices.end(); ++it) {
-            md_Set & apollones = (it->second);
-            for (md_Set::iterator it = apollones.begin(); it != apollones.end(); ++it) {
+            md_Set & indexes = (it->second);
+            for (md_Set::iterator it = indexes.begin(); it != indexes.end(); ++it) {
                 CMPMetaDEx obj = *it;
                 if( obj.getHash().GetHex() == txid.GetHex() ) return true;
             }
@@ -816,11 +816,11 @@ void elysium::MetaDEx_debug_print(bool bShowPriceLevel, bool bDisplay)
 
         for (md_PricesMap::iterator it = prices.begin(); it != prices.end(); ++it) {
             rational_t price = it->first;
-            md_Set& apollones = it->second;
+            md_Set& indexes = it->second;
 
             if (bShowPriceLevel) PrintToLog("  # Price Level: %s\n", xToString(price));
 
-            for (md_Set::iterator it = apollones.begin(); it != apollones.end(); ++it) {
+            for (md_Set::iterator it = indexes.begin(); it != indexes.end(); ++it) {
                 const CMPMetaDEx& obj = *it;
 
                 if (bDisplay) PrintToLog("%s= %s\n", xToString(price), obj.ToString());
@@ -840,8 +840,8 @@ const CMPMetaDEx* elysium::MetaDEx_RetrieveTrade(const uint256& txid)
     for (md_PropertiesMap::iterator propIter = metadex.begin(); propIter != metadex.end(); ++propIter) {
         md_PricesMap & prices = propIter->second;
         for (md_PricesMap::iterator pricesIter = prices.begin(); pricesIter != prices.end(); ++pricesIter) {
-            md_Set & apollones = pricesIter->second;
-            for (md_Set::iterator tradesIter = apollones.begin(); tradesIter != apollones.end(); ++tradesIter) {
+            md_Set & indexes = pricesIter->second;
+            for (md_Set::iterator tradesIter = indexes.begin(); tradesIter != indexes.end(); ++tradesIter) {
                 if (txid == (*tradesIter).getHash()) return &(*tradesIter);
             }
         }

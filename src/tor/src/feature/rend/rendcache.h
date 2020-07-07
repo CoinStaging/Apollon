@@ -42,9 +42,9 @@ typedef struct rend_cache_failure_intro_t {
   rend_intro_point_failure_t failure_type;
 } rend_cache_failure_intro_t;
 
-/** Cache failure object apolloned by service ID. */
+/** Cache failure object indexed by service ID. */
 typedef struct rend_cache_failure_t {
-  /* Contains rend_cache_failure_intro_t apolloned by identity digest. */
+  /* Contains rend_cache_failure_intro_t indexed by identity digest. */
   digestmap_t *intro_failures;
 } rend_cache_failure_t;
 

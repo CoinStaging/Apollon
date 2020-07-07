@@ -89,7 +89,7 @@ LIBBITCOIN_CONSENSUS=libbitcoin_consensus.a
 LIBBITCOIN_CLI=libbitcoin_cli.a
 LIBBITCOIN_UTIL=libbitcoin_util.a
 LIBBITCOIN_CRYPTO=crypto/libbitcoin_crypto.a
-LIBBITCOINQT=qt/libapollonqt.a
+LIBBITCOINQT=qt/libindexqt.a
 LIBSECP256K1=secp256k1/libsecp256k1.la
 
 LIBZCOIN_SIGMA=libsigma.a
@@ -130,7 +130,7 @@ TESTS =
 BENCHMARKS =
 
 if BUILD_BITCOIND
-  bin_PROGRAMS += apollond
+  bin_PROGRAMS += indexd
 endif
 
 if BUILD_BITCOIN_UTILS
@@ -140,9 +140,9 @@ endif
 .PHONY: FORCE check-symbols check-security
 # bitcoin core #
 BITCOIN_CORE_H = \
-  activeapollonnode.h \
-  addressapollon.h \
-  spentapollon.h \
+  activeindexnode.h \
+  addressindex.h \
+  spentindex.h \
   addrman.h \
   base58.h \
   blacklist/blacklist.h \
@@ -178,11 +178,11 @@ BITCOIN_CORE_H = \
   limitedmap.h \
   threadinterrupt.h \
   main.h \
-  apollonnode.h \
-  apollonnode-payments.h \
-  apollonnode-sync.h \
-  apollonnodeman.h \
-  apollonnodeconfig.h \
+  indexnode.h \
+  indexnode-payments.h \
+  indexnode-sync.h \
+  indexnodeman.h \
+  indexnodeconfig.h \
   mbstring.h \
   memusage.h \
   merkleblock.h \
@@ -259,7 +259,7 @@ obj/build.h: FORCE
 	  $(abs_top_srcdir)
 libbitcoin_util_a-clientversion.$(OBJEXT): obj/build.h
 
-# server: shared between apollond and apollon-qt
+# server: shared between indexd and apollon-qt
 libbitcoin_server_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(MINIUPNPC_CPPFLAGS) $(EVENT_CFLAGS) $(EVENT_PTHREADS_CFLAGS)
 libbitcoin_server_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libbitcoin_server_a_SOURCES = \
@@ -292,7 +292,7 @@ libbitcoin_server_a_SOURCES = \
   rpc/misc.cpp \
   rpc/net.cpp \
   rpc/rawtransaction.cpp \
-  rpc/rpcapollonnode.cpp \
+  rpc/rpcindexnode.cpp \
   rpc/server.cpp \
   script/sigcache.cpp \
   script/ismine.cpp \
@@ -316,20 +316,20 @@ libbitcoin_zmq_a_SOURCES = \
   rpc/client.cpp
 endif
 
-# wallet: shared between apollond and apollon-qt, but only linked
+# wallet: shared between indexd and apollon-qt, but only linked
 # when wallet enabled
 libbitcoin_wallet_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 libbitcoin_wallet_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libbitcoin_wallet_a_SOURCES = \
-  activeapollonnode.cpp \
+  activeindexnode.cpp \
   darksend.cpp \
   hdmint/hdmint.cpp \
-  apollonnode.cpp \
+  indexnode.cpp \
   instantx.cpp \
-  apollonnode-payments.cpp \
-  apollonnode-sync.cpp \
-  apollonnodeconfig.cpp \
-  apollonnodeman.cpp \
+  indexnode-payments.cpp \
+  indexnode-sync.cpp \
+  indexnodeconfig.cpp \
+  indexnodeman.cpp \
   hdmint/mintpool.cpp \
   hdmint/wallet.cpp \
   sigma.cpp \
@@ -458,7 +458,7 @@ libbitcoin_consensus_a_SOURCES = \
   version.h \
   auxpow.h
 
-# common: shared between apollond, and apollon-qt and non-server tools
+# common: shared between indexd, and apollon-qt and non-server tools
 libbitcoin_common_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 libbitcoin_common_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libbitcoin_common_a_SOURCES = \
@@ -577,16 +577,16 @@ nodist_libbitcoin_util_a_SOURCES = $(srcdir)/obj/build.h
 #
 
 # bitcoind binary #
-apollond_SOURCES = bitcoind.cpp
-apollond_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
-apollond_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-apollond_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+indexd_SOURCES = bitcoind.cpp
+indexd_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+indexd_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+indexd_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 
 if TARGET_WINDOWS
-apollond_SOURCES += bitcoind-res.rc
+indexd_SOURCES += bitcoind-res.rc
 endif
 
-apollond_LDADD = \
+indexd_LDADD = \
   $(LIBBITCOIN_SERVER) \
   $(LIBBITCOIN_COMMON) \
   $(LIBUNIVALUE) \
@@ -601,47 +601,47 @@ apollond_LDADD = \
   $(LIBSECP256K1)
 
 
-apollond_LDADD += $(TOR_LIBS) $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(ZMQ_LIBS)
+indexd_LDADD += $(TOR_LIBS) $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(ZMQ_LIBS)
 
 if ENABLE_CLIENTAPI
-apollond_LDADD += $(MINIZIP_LIBS)
+indexd_LDADD += $(MINIZIP_LIBS)
 endif
 
-apollond_LDADD += -lz
+indexd_LDADD += -lz
 
 
 # bitcoin-cli binary #
-apollon_cli_SOURCES = bitcoin-cli.cpp
-apollon_cli_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(EVENT_CFLAGS)
-apollon_cli_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-apollon_cli_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+index_cli_SOURCES = bitcoin-cli.cpp
+index_cli_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(EVENT_CFLAGS)
+index_cli_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+index_cli_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 
 if TARGET_WINDOWS
-apollon_cli_SOURCES += bitcoin-cli-res.rc
+index_cli_SOURCES += bitcoin-cli-res.rc
 endif
 
-apollon_cli_LDADD = \
+index_cli_LDADD = \
   $(LIBBITCOIN_CLI) \
   $(LIBUNIVALUE) \
   $(LIBBITCOIN_UTIL) \
   $(LIBBITCOIN_CRYPTO)
 
-apollon_cli_LDADD += $(BOOST_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(EVENT_LIBS)
+index_cli_LDADD += $(BOOST_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(EVENT_LIBS)
 if ENABLE_CLIENTAPI
-apollon_cli_LDADD += $(MINIZIP_LIBS)
+index_cli_LDADD += $(MINIZIP_LIBS)
 endif
 
 # bitcoin-tx binary #
-apollon_tx_SOURCES = bitcoin-tx.cpp
-apollon_tx_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
-apollon_tx_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-apollon_tx_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+index_tx_SOURCES = bitcoin-tx.cpp
+index_tx_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+index_tx_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+index_tx_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 
 if TARGET_WINDOWS
-apollon_tx_SOURCES += bitcoin-tx-res.rc
+index_tx_SOURCES += bitcoin-tx-res.rc
 endif
 
-apollon_tx_LDADD = \
+index_tx_LDADD = \
   $(LIBUNIVALUE) \
   $(LIBBITCOIN_COMMON) \
   $(LIBBITCOIN_UTIL) \
@@ -649,9 +649,9 @@ apollon_tx_LDADD = \
   $(LIBBITCOIN_CRYPTO) \
   $(LIBSECP256K1)
 
-apollon_tx_LDADD += $(BOOST_LIBS) $(CRYPTO_LIBS)
+index_tx_LDADD += $(BOOST_LIBS) $(CRYPTO_LIBS)
 if ENABLE_CLIENTAPI
-apollon_tx_LDADD += $(MINIZIP_LIBS)
+index_tx_LDADD += $(MINIZIP_LIBS)
 endif
 
 # bitcoinconsensus library #

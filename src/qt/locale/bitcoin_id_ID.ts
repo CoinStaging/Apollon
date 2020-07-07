@@ -150,8 +150,8 @@
         <translation>Buka &amp;URI</translation>
     </message>
     <message>
-        <source>Reapolloning blocks on disk...</source>
-        <translation>Mengapollon ulang blok di dalam disk...</translation>
+        <source>Reindexing blocks on disk...</source>
+        <translation>Mengindex ulang blok di dalam disk...</translation>
     </message>
     <message>
         <source>Send coins to a Apollon address</source>

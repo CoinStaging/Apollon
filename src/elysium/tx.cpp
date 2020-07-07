@@ -93,7 +93,7 @@ void CMPTransaction::Set(
     receiver = r;
     txid = t;
     block = b;
-    tx_xap = xap;
+    tx_idx = xap;
     nValue = n;
     nNewValue = n;
     this->packetClass = packetClass;
@@ -1641,8 +1641,8 @@ int CMPTransaction::logicMath_MetaDExTrade()
 
     // ------------------------------------------
 
-    t_tradelistdb->recordNewTrade(txid, sender, property, desired_property, block, tx_xap);
-    int rc = MetaDEx_ADD(sender, property, nNewValue, block, desired_property, desired_value, txid, tx_xap);
+    t_tradelistdb->recordNewTrade(txid, sender, property, desired_property, block, tx_idx);
+    int rc = MetaDEx_ADD(sender, property, nNewValue, block, desired_property, desired_value, txid, tx_idx);
     return rc;
 }
 
@@ -1778,12 +1778,12 @@ int CMPTransaction::logicMath_CreatePropertyFixed()
     {
         LOCK(cs_main);
 
-        CBlockApollon* papollon = chainActive[block];
-        if (papollon == NULL) {
+        CBlockIndex* pindex = chainActive[block];
+        if (pindex == NULL) {
             PrintToLog("%s(): ERROR: block %d not in the active chain\n", __func__, block);
             return (PKT_ERROR_SP -20);
         }
-        blockHash = papollon->GetBlockHash();
+        blockHash = pindex->GetBlockHash();
     }
 
     if (ELYSIUM_PROPERTY_ELYSIUM != ecosystem && ELYSIUM_PROPERTY_TELYSIUM != ecosystem) {
@@ -1863,12 +1863,12 @@ int CMPTransaction::logicMath_CreatePropertyVariable()
     {
         LOCK(cs_main);
 
-        CBlockApollon* papollon = chainActive[block];
-        if (papollon == NULL) {
+        CBlockIndex* pindex = chainActive[block];
+        if (pindex == NULL) {
             PrintToLog("%s(): ERROR: block %d not in the active chain\n", __func__, block);
             return (PKT_ERROR_SP -20);
         }
-        blockHash = papollon->GetBlockHash();
+        blockHash = pindex->GetBlockHash();
     }
 
     if (ELYSIUM_PROPERTY_ELYSIUM != ecosystem && ELYSIUM_PROPERTY_TELYSIUM != ecosystem) {
@@ -1970,12 +1970,12 @@ int CMPTransaction::logicMath_CloseCrowdsale()
     {
         LOCK(cs_main);
 
-        CBlockApollon* papollon = chainActive[block];
-        if (papollon == NULL) {
+        CBlockIndex* pindex = chainActive[block];
+        if (pindex == NULL) {
             PrintToLog("%s(): ERROR: block %d not in the active chain\n", __func__, block);
             return (PKT_ERROR_SP -20);
         }
-        blockHash = papollon->GetBlockHash();
+        blockHash = pindex->GetBlockHash();
     }
 
     if (!IsTransactionTypeAllowed(block, property, type, version)) {
@@ -2037,12 +2037,12 @@ int CMPTransaction::logicMath_CreatePropertyManaged()
     {
         LOCK(cs_main);
 
-        CBlockApollon* papollon = chainActive[block];
-        if (papollon == NULL) {
+        CBlockIndex* pindex = chainActive[block];
+        if (pindex == NULL) {
             PrintToLog("%s(): ERROR: block %d not in the active chain\n", __func__, block);
             return (PKT_ERROR_SP -20);
         }
-        blockHash = papollon->GetBlockHash();
+        blockHash = pindex->GetBlockHash();
     }
 
     if (ELYSIUM_PROPERTY_ELYSIUM != ecosystem && ELYSIUM_PROPERTY_TELYSIUM != ecosystem) {
@@ -2116,12 +2116,12 @@ int CMPTransaction::logicMath_GrantTokens()
     {
         LOCK(cs_main);
 
-        CBlockApollon* papollon = chainActive[block];
-        if (papollon == NULL) {
+        CBlockIndex* pindex = chainActive[block];
+        if (pindex == NULL) {
             PrintToLog("%s(): ERROR: block %d not in the active chain\n", __func__, block);
             return (PKT_ERROR_SP -20);
         }
-        blockHash = papollon->GetBlockHash();
+        blockHash = pindex->GetBlockHash();
     }
 
     if (!IsTransactionTypeAllowed(block, property, type, version)) {
@@ -2208,12 +2208,12 @@ int CMPTransaction::logicMath_RevokeTokens()
     {
         LOCK(cs_main);
 
-        CBlockApollon* papollon = chainActive[block];
-        if (papollon == NULL) {
+        CBlockIndex* pindex = chainActive[block];
+        if (pindex == NULL) {
             PrintToLog("%s(): ERROR: block %d not in the active chain\n", __func__, block);
             return (PKT_ERROR_TOKENS -20);
         }
-        blockHash = papollon->GetBlockHash();
+        blockHash = pindex->GetBlockHash();
     }
 
     if (!IsTransactionTypeAllowed(block, property, type, version)) {
@@ -2278,12 +2278,12 @@ int CMPTransaction::logicMath_ChangeIssuer()
     {
         LOCK(cs_main);
 
-        CBlockApollon* papollon = chainActive[block];
-        if (papollon == NULL) {
+        CBlockIndex* pindex = chainActive[block];
+        if (pindex == NULL) {
             PrintToLog("%s(): ERROR: block %d not in the active chain\n", __func__, block);
             return (PKT_ERROR_TOKENS -20);
         }
-        blockHash = papollon->GetBlockHash();
+        blockHash = pindex->GetBlockHash();
     }
 
     if (!IsTransactionTypeAllowed(block, property, type, version)) {
@@ -2341,12 +2341,12 @@ int CMPTransaction::logicMath_EnableFreezing()
     {
         LOCK(cs_main);
 
-        CBlockApollon* papollon = chainActive[block];
-        if (papollon == NULL) {
+        CBlockIndex* pindex = chainActive[block];
+        if (pindex == NULL) {
             PrintToLog("%s(): ERROR: block %d not in the active chain\n", __func__, block);
             return (PKT_ERROR_TOKENS -20);
         }
-        blockHash = papollon->GetBlockHash();
+        blockHash = pindex->GetBlockHash();
     }
 
     if (!IsTransactionTypeAllowed(block, property, type, version)) {
@@ -2402,12 +2402,12 @@ int CMPTransaction::logicMath_DisableFreezing()
     {
         LOCK(cs_main);
 
-        CBlockApollon* papollon = chainActive[block];
-        if (papollon == NULL) {
+        CBlockIndex* pindex = chainActive[block];
+        if (pindex == NULL) {
             PrintToLog("%s(): ERROR: block %d not in the active chain\n", __func__, block);
             return (PKT_ERROR_TOKENS -20);
         }
-        blockHash = papollon->GetBlockHash();
+        blockHash = pindex->GetBlockHash();
     }
 
     if (!IsTransactionTypeAllowed(block, property, type, version)) {
@@ -2455,12 +2455,12 @@ int CMPTransaction::logicMath_FreezeTokens()
     {
         LOCK(cs_main);
 
-        CBlockApollon* papollon = chainActive[block];
-        if (papollon == NULL) {
+        CBlockIndex* pindex = chainActive[block];
+        if (pindex == NULL) {
             PrintToLog("%s(): ERROR: block %d not in the active chain\n", __func__, block);
             return (PKT_ERROR_TOKENS -20);
         }
-        blockHash = papollon->GetBlockHash();
+        blockHash = pindex->GetBlockHash();
     }
 
     if (!IsTransactionTypeAllowed(block, property, type, version)) {
@@ -2513,12 +2513,12 @@ int CMPTransaction::logicMath_UnfreezeTokens()
     {
         LOCK(cs_main);
 
-        CBlockApollon* papollon = chainActive[block];
-        if (papollon == NULL) {
+        CBlockIndex* pindex = chainActive[block];
+        if (pindex == NULL) {
             PrintToLog("%s(): ERROR: block %d not in the active chain\n", __func__, block);
             return (PKT_ERROR_TOKENS -20);
         }
-        blockHash = papollon->GetBlockHash();
+        blockHash = pindex->GetBlockHash();
     }
 
     if (!IsTransactionTypeAllowed(block, property, type, version)) {
@@ -2571,12 +2571,12 @@ int CMPTransaction::logicMath_CreateDenomination()
     {
         LOCK(cs_main);
 
-        CBlockApollon* papollon = chainActive[block];
-        if (papollon == NULL) {
+        CBlockIndex* pindex = chainActive[block];
+        if (pindex == NULL) {
             PrintToLog("%s(): ERROR: block %d not in the active chain\n", __func__, block);
             return (PKT_ERROR_TOKENS -20);
         }
-        blockHash = papollon->GetBlockHash();
+        blockHash = pindex->GetBlockHash();
     }
 
     if (!IsTransactionTypeAllowed(block, property, type, version)) {

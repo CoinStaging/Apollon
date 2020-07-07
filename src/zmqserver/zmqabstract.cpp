@@ -17,7 +17,7 @@ CZMQAbstract::~CZMQAbstract()
     assert(!psocket);
 }
 
-bool CZMQAbstract::NotifyBlock(const CBlockApollon * /*CBlockApollon*/)
+bool CZMQAbstract::NotifyBlock(const CBlockIndex * /*CBlockIndex*/)
 {
     return true;
 }
@@ -42,12 +42,12 @@ bool CZMQAbstract::NotifyAPIStatus()
     return true;
 }
 
-bool CZMQAbstract::NotifyApollonnodeList()
+bool CZMQAbstract::NotifyIndexnodeList()
 {
     return true;
 }
 
-bool CZMQAbstract::NotifyApollonnodeUpdate(CApollonnode &apollonnode)
+bool CZMQAbstract::NotifyIndexnodeUpdate(CIndexnode &indexnode)
 {
     return true;
 }

@@ -289,7 +289,7 @@ struct channel_s {
   } scheduler_state;
 
   /** Heap apollon for use by the scheduler */
-  int sched_heap_xap;
+  int sched_heap_idx;
 
   /** Timestamps for both cell channels and listeners */
   time_t timestamp_created; /* Channel created */

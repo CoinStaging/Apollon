@@ -29,9 +29,9 @@ TransactionFilterProxy::TransactionFilterProxy(QObject *parent) :
 {
 }
 
-bool TransactionFilterProxy::filterAcceptsRow(int sourceRow, const QModelApollon &sourceParent) const
+bool TransactionFilterProxy::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
 {
-    QModelApollon apollon = sourceModel()->apollon(sourceRow, 0, sourceParent);
+    QModelIndex apollon = sourceModel()->apollon(sourceRow, 0, sourceParent);
 
     int type = apollon.data(TransactionTableModel::TypeRole).toInt();
     QDateTime datetime = apollon.data(TransactionTableModel::DateRole).toDateTime();
@@ -101,7 +101,7 @@ void TransactionFilterProxy::setShowInactive(bool showInactive)
     invalidateFilter();
 }
 
-int TransactionFilterProxy::rowCount(const QModelApollon &parent) const
+int TransactionFilterProxy::rowCount(const QModelIndex &parent) const
 {
     if(limitRows != -1)
     {

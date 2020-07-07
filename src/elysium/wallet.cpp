@@ -300,7 +300,7 @@ void Wallet::OnMintAdded(
     PropertyId property,
     SigmaDenomination denomination,
     SigmaMintGroup group,
-    SigmaMintApollon xap,
+    SigmaMintIndex xap,
     const SigmaPublicKey& pubKey,
     int block)
 {

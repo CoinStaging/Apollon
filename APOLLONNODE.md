@@ -1,8 +1,8 @@
-Apollonnode Build Instructions and Notes
+Indexnode Build Instructions and Notes
 =============================
  - Version 0.1.6
  - Date: 14 December 2017
- - More detailed guide available here: https://apollonchain.org/apollon-apollonnode-setup-guide/
+ - More detailed guide available here: https://indexchain.org/apollon-indexnode-setup-guide/
 
 Prerequisites
 -------------
@@ -14,7 +14,7 @@ Step 1. Build
 ----------------------
 **1.1.**  Check out from source:
 
-    git clone https://github.com/ApollonChain/Apollon
+    git clone https://github.com/IndexChain/Apollon
 
 **1.2.**  See [README.md](README.md) for instructions on building.
 
@@ -34,11 +34,11 @@ Step 3. First run on your Local Wallet
 
 **3.1.**  Start daemon in testnet mode:
 
-    ./src/apollond -daemon -server -testnet
+    ./src/indexd -daemon -server -testnet
 
-**3.2.**  Generate apollonnodeprivkey:
+**3.2.**  Generate indexnodeprivkey:
 
-    ./src/apollon-cli apollonnode genkey
+    ./src/apollon-cli indexnode genkey
 
 (Store this key)
 
@@ -52,7 +52,7 @@ Step 3. First run on your Local Wallet
 
     ./src/apollon-cli stop
 
-Step 4. In your VPS where you are hosting your Apollonnode. Update config files
+Step 4. In your VPS where you are hosting your Indexnode. Update config files
 ----------------------
 **4.1.**  Create file **apollon.conf** (in folder **~/.apollon**)
 
@@ -60,46 +60,46 @@ Step 4. In your VPS where you are hosting your Apollonnode. Update config files
     rpcpassword=password
     rpcallowip=127.0.0.1
     debug=1
-    txapollon=1
+    txindex=1
     daemon=1
     server=1
     listen=1
     maxconnections=24
-    apollonnode=1
-    apollonnodeprivkey=XXXXXXXXXXXXXXXXX  ## Replace with your apollonnode private key
+    indexnode=1
+    indexnodeprivkey=XXXXXXXXXXXXXXXXX  ## Replace with your indexnode private key
     externalip=XXX.XXX.XXX.XXX:7082 ## Replace with your node external IP
 
-**4.2.**  Create file **apollonnode.conf** (in 2 folders **~/.apollon** and **~/.apollon/testnet3**) contains the following info:
+**4.2.**  Create file **indexnode.conf** (in 2 folders **~/.apollon** and **~/.apollon/testnet3**) contains the following info:
  - LABEL: A one word name you make up to call your node (ex. ZN1)
- - IP:PORT: Your apollonnode VPS's IP, and the port is always 18168.
- - APOLLONNODEPRIVKEY: This is the result of your "apollonnode genkey" from earlier.
+ - IP:PORT: Your indexnode VPS's IP, and the port is always 18168.
+ - INDEXNODEPRIVKEY: This is the result of your "indexnode genkey" from earlier.
  - TRANSACTION HASH: The collateral tx. hash from the 1000 XAP deposit.
  - APOLLON: The Apollon is always 0 or 1.
 
 To get TRANSACTION HASH, run:
 
-    ./src/apollon-cli apollonnode outputs
+    ./src/apollon-cli indexnode outputs
 
 The output will look like:
 
     { "d6fd38868bb8f9958e34d5155437d009b72dfd33fc28874c87fd42e51c0f74fdb" : "0", }
 
-Sample of apollonnode.conf:
+Sample of indexnode.conf:
 
     ZN1 51.52.53.54:18168 XrxSr3fXpX3dZcU7CoiFuFWqeHYw83r28btCFfIHqf6zkMp1PZ4 d6fd38868bb8f9958e34d5155437d009b72dfd33fc28874c87fd42e51c0f74fdb 0
 
-Step 5. Run a apollonnode
+Step 5. Run a indexnode
 ----------------------
-**5.1.**  Start apollonnode:
+**5.1.**  Start indexnode:
 
-    ./src/apollon-cli apollonnode start-alias <LABEL>
+    ./src/apollon-cli indexnode start-alias <LABEL>
 
 For example:
 
-    ./src/apollon-cli apollonnode start-alias ZN1
+    ./src/apollon-cli indexnode start-alias ZN1
 
 **5.2.**  To check node status:
 
-    ./src/apollon-cli apollonnode debug
+    ./src/apollon-cli indexnode debug
 
 If not successfully started, just repeat start command

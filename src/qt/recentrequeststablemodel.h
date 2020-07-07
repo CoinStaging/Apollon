@@ -64,7 +64,7 @@ public:
     explicit RecentRequestsTableModel(CWallet *wallet, WalletModel *parent);
     ~RecentRequestsTableModel();
 
-    enum ColumnApollon {
+    enum ColumnIndex {
         Date = 0,
         Label = 1,
         Message = 2,
@@ -74,14 +74,14 @@ public:
 
     /** @name Methods overridden from QAbstractTableModel
         @{*/
-    int rowCount(const QModelApollon &parent) const;
-    int columnCount(const QModelApollon &parent) const;
-    QVariant data(const QModelApollon &apollon, int role) const;
-    bool setData(const QModelApollon &apollon, const QVariant &value, int role);
+    int rowCount(const QModelIndex &parent) const;
+    int columnCount(const QModelIndex &parent) const;
+    QVariant data(const QModelIndex &apollon, int role) const;
+    bool setData(const QModelIndex &apollon, const QVariant &value, int role);
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
-    QModelApollon apollon(int row, int column, const QModelApollon &parent) const;
-    bool removeRows(int row, int count, const QModelApollon &parent = QModelApollon());
-    Qt::ItemFlags flags(const QModelApollon &apollon) const;
+    QModelIndex apollon(int row, int column, const QModelIndex &parent) const;
+    bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex());
+    Qt::ItemFlags flags(const QModelIndex &apollon) const;
     /*@}*/
 
     const RecentRequestEntry &entry(int row) const { return list[row]; }

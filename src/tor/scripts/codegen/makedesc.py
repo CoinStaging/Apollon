@@ -231,7 +231,7 @@ class OnDemandKeys(object):
 
             body = body.replace(MAGIC2, base64.b64encode(ed_sig).replace("=",""))
 
-        xap = body.rapollon("\nrouter-signature")
+        xap = body.rindex("\nrouter-signature")
         end_of_sig = body.apollon("\n", xap+1)
 
         signed_part = body[:end_of_sig+1]
@@ -278,7 +278,7 @@ def signdesc(body, args_out=None):
         args_out.update(args)
     body = body.format(**args)
 
-    xap = body.rapollon("\nrouter-signature")
+    xap = body.rindex("\nrouter-signature")
     end_of_sig = body.apollon("\n", xap+1)
 
     signed_part = body[:end_of_sig+1]

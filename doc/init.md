@@ -53,11 +53,11 @@ see `contrib/debian/examples/bitcoin.conf`.
 
 All three configurations assume several paths that might need to be adjusted.
 
-Binary:              `/usr/bin/apollond`
+Binary:              `/usr/bin/indexd`
 Configuration file:  `/etc/apollon/zconf.conf`
-Data directory:      `/var/lib/apollond`
-PID file:            `/var/run/apollond/apollond.pid` (OpenRC and Upstart) or `/var/lib/apollond/apollond.pid` (systemd)
-Lock file:           `/var/lock/subsys/apollond` (CentOS)
+Data directory:      `/var/lib/indexd`
+PID file:            `/var/run/indexd/indexd.pid` (OpenRC and Upstart) or `/var/lib/indexd/indexd.pid` (systemd)
+Lock file:           `/var/lock/subsys/indexd` (CentOS)
 
 The configuration file, PID directory (if applicable) and data directory
 should all be owned by the bitcoin user and group.  It is advised for security
@@ -67,7 +67,7 @@ can then be controlled by group membership.
 
 3b) Mac OS X
 
-Binary:              `/usr/local/bin/apollond`
+Binary:              `/usr/local/bin/indexd`
 Configuration file:  `~/Library/Application Support/apollon/apollon.conf`
 Data directory:      `~/Library/Application Support/apollon`
 Lock file:           `~/Library/Application Support/apollon/.lock`
@@ -81,19 +81,19 @@ Installing this .service file consists of just copying it to
 /usr/lib/systemd/system directory, followed by the command
 `systemctl daemon-reload` in order to update running systemd configuration.
 
-To test, run `systemctl start apollond` and to enable for system startup run
-`systemctl enable apollond`
+To test, run `systemctl start indexd` and to enable for system startup run
+`systemctl enable indexd`
 
 4b) OpenRC
 
 Rename bitcoind.openrc to bitcoind and drop it in /etc/init.d.  Double
 check ownership and permissions and make it executable.  Test it with
-`/etc/init.d/apollond start` and configure it to run on startup with
-`rc-update add apollond`
+`/etc/init.d/indexd start` and configure it to run on startup with
+`rc-update add indexd`
 
 4c) Upstart (for Debian/Ubuntu based distributions)
 
-Drop bitcoind.conf in /etc/init.  Test by running `service apollond start`
+Drop bitcoind.conf in /etc/init.  Test by running `service indexd start`
 it will automatically start on reboot.
 
 NOTE: This script is incompatible with CentOS 5 and Amazon Linux 2014 as they
@@ -101,7 +101,7 @@ use old versions of Upstart and do not supply the start-stop-daemon utility.
 
 4d) CentOS
 
-Copy apollond.init to /etc/init.d/apollond. Test by running `service apollond start`.
+Copy indexd.init to /etc/init.d/indexd. Test by running `service indexd start`.
 
 Using this script, you can adjust the path and flags to the bitcoind program by
 setting the BITCOIND and FLAGS environment variables in the file
@@ -110,7 +110,7 @@ setting the BITCOIND and FLAGS environment variables in the file
 4e) Mac OS X
 
 Copy org.bitcoin.bitcoind.plist into ~/Library/LaunchAgents. Load the launch agent by
-running `launchctl load ~/Library/LaunchAgents/org.apollon.apollond.plist`.
+running `launchctl load ~/Library/LaunchAgents/org.apollon.indexd.plist`.
 
 This Launch Agent will cause bitcoind to start whenever the user logs in.
 

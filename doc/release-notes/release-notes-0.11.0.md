@@ -29,7 +29,7 @@ backwards-compatible with pre-0.10 versions of Bitcoin Core or other software:
 
 * Blocks will be stored on disk out of order (in the order they are
 received, really), which makes it incompatible with some tools or
-other programs. Reapolloning using earlier versions will also not work
+other programs. Reindexing using earlier versions will also not work
 anymore as a result of this.
 
 * The block apollon database will now hold headers for which no block is
@@ -39,7 +39,7 @@ If you want to be able to downgrade smoothly, make a backup of your entire data
 directory. Without this your node will need start syncing (or importing from
 bootstrap.dat) anew afterwards. It is possible that the data from a completely
 synchronised 0.10 node may be usable in older versions as-is, but this is not
-supported and may break as soon as the older version attempts to reapollon.
+supported and may break as soon as the older version attempts to reindex.
 
 This does not affect wallet forward or backward compatibility. There are no
 known problems when downgrading from 0.11.x to 0.10.x.
@@ -89,7 +89,7 @@ UTXO set (both LevelDB databases). The databases are built from the raw data.
 Block pruning allows Bitcoin Core to delete the raw block and undo data once 
 it's been validated and used to build the databases. At that point, the raw data 
 is used only to relay blocks to other nodes, to handle reorganizations, to look 
-up old transactions (if -txapollon is enabled or via the RPC/REST interfaces), or 
+up old transactions (if -txindex is enabled or via the RPC/REST interfaces), or 
 for rescanning the wallet. The block apollon continues to hold the metadata about 
 all blocks in the blockchain.
 
@@ -116,14 +116,14 @@ that block data is used for rescanning the wallet and importing keys or
 addresses (which require a rescan.) However, running the wallet with block 
 pruning will be supported in the near future, subject to those limitations.
 
-Block pruning is also incompatible with -txapollon and will automatically disable 
+Block pruning is also incompatible with -txindex and will automatically disable 
 it.
 
 Once you have pruned blocks, going back to unpruned state requires 
 re-downloading the entire blockchain. To do this, re-start the node with 
--reapollon. Note also that any problem that would cause a user to reapollon (e.g., 
+-reindex. Note also that any problem that would cause a user to reindex (e.g., 
 disk corruption) will cause a pruned node to redownload the entire blockchain. 
-Finally, note that when a pruned node reapollones, it will delete any blk???.dat 
+Finally, note that when a pruned node reindexes, it will delete any blk???.dat 
 and rev???.dat files in the data directory prior to restarting the download.
 
 To enable block pruning on the command line:
@@ -243,7 +243,7 @@ git merge commit are mentioned.
 
 ### Configuration and command-line options
 - #5636 `a353ad4` Add option `-allowselfsignedrootcertificate` to allow self signed root certs (for testing payment requests)
-- #5900 `3e8a1f2` Add a consistency check `-checkblockapollon` for the block chain data structures
+- #5900 `3e8a1f2` Add a consistency check `-checkblockindex` for the block chain data structures
 - #5951 `7efc9cf` Make it possible to disable wallet transaction broadcast (using `-walletbroadcast=0`)
 - #5911 `b6ea3bc` privacy: Stream isolation for Tor (on by default, use `-proxyrandomize=0` to disable)
 - #5863 `c271304` Add autoprune functionality (`-prune=<size>`)
@@ -273,7 +273,7 @@ git merge commit are mentioned.
 - #5985 `37b4e42` Fix removing of orphan transactions
 - #6221 `6cb70ca` Prune: Support noncontiguous block files
 - #6256 `fce474c` Use best header chain timestamps to detect partitioning
-- #6233 `a587606` Advance papollonLastCommonBlock for blocks in chainActive
+- #6233 `a587606` Advance pindexLastCommonBlock for blocks in chainActive
 
 ### P2P protocol and network code
 - #5507 `844ace9` Prevent DOS attacks on in-flight data structures
@@ -314,7 +314,7 @@ git merge commit are mentioned.
 - #6280 `25c2216` depends: fix Boost 1.55 build on GCC 5
 - #6303 `b711599` gitian: add a gitian-win-signer descriptor
 - #6246 `8ea6d37` Fix build on FreeBSD
-- #6282 `daf956b` fix crash on shutdown when e.g. changing -txapollon and abort action
+- #6282 `daf956b` fix crash on shutdown when e.g. changing -txindex and abort action
 - #6354 `bdf0d94` Gitian windows signing normalization
 
 ### Wallet

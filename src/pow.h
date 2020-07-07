@@ -12,13 +12,13 @@
 
 class CBlockHeader;
 
-class CBlockApollon;
+class CBlockIndex;
 
 class uint256;
 
-unsigned int GetNextWorkRequired(const CBlockApollon *papollonLast, const CBlockHeader *pblock, const Consensus::Params &,bool fProofOfStake);
-unsigned int CalculateNextTargetRequired(const CBlockApollon* papollonLast, int64_t nFirstBlockTime, const Consensus::Params& params, bool fProofOfStake);
-unsigned int CalculateNextWorkRequired(const CBlockApollon *papollonLast, int64_t nFirstBlockTime, const Consensus::Params &);
+unsigned int GetNextWorkRequired(const CBlockIndex *pindexLast, const CBlockHeader *pblock, const Consensus::Params &,bool fProofOfStake);
+unsigned int CalculateNextTargetRequired(const CBlockIndex* pindexLast, int64_t nFirstBlockTime, const Consensus::Params& params, bool fProofOfStake);
+unsigned int CalculateNextWorkRequired(const CBlockIndex *pindexLast, int64_t nFirstBlockTime, const Consensus::Params &);
 
 /** Check whether a block hash satisfies the proof-of-work requirement specified by nBits */
 bool CheckProofOfWork(uint256 hash, unsigned int nBits, const Consensus::Params &);

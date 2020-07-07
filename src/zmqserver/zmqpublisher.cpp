@@ -5,7 +5,7 @@
 #include "util.h"
 #include "core_io.h"
 #include "chain.h"
-#include "apollonnode-sync.h"
+#include "indexnode-sync.h"
 
 #include "zmqabstract.h"
 #include "zmqpublisher.h"
@@ -196,7 +196,7 @@ bool CZMQAPIStatusEvent::NotifyAPIStatus()
     return true;
 }
 
-bool CZMQApollonnodeListEvent::NotifyApollonnodeList()
+bool CZMQIndexnodeListEvent::NotifyIndexnodeList()
 {
     request.push_back(Pair("type", "initial"));
     Execute();
@@ -236,18 +236,18 @@ bool CZMQTransactionEvent::NotifyTransaction(const CTransaction &transaction)
     return true;
 }
 
-bool CZMQBlockEvent::NotifyBlock(const CBlockApollon *papollon){
+bool CZMQBlockEvent::NotifyBlock(const CBlockIndex *pindex){
     // We always publish on an update to wallet tx's
     if(topic=="address"){
         CBlock block;
-        if(!ReadBlockFromDisk(block, papollon, Params().GetConsensus())){
+        if(!ReadBlockFromDisk(block, pindex, Params().GetConsensus())){
             throw JSONAPIError(API_INVALID_PARAMETER, "Invalid, missing or duplicate parameter");
         }
         BOOST_FOREACH(const CTransaction&tx, block.vtx)
         {
             const CWalletTx *wtx = pwalletMain->GetWalletTx(tx.GetHash());
             if(wtx){
-                request.replace("data", papollon->ToJSON());
+                request.replace("data", pindex->ToJSON());
                 Execute();
                 return true;
             }
@@ -256,16 +256,16 @@ bool CZMQBlockEvent::NotifyBlock(const CBlockApollon *papollon){
     }
 
     // If synced, always publish, if not, every 100 blocks (for better sync speed).
-    if(apollonnodeSync.GetBlockchainSynced() || papollon->nHeight%100==0){
-        request.replace("data", papollon->ToJSON());
+    if(indexnodeSync.GetBlockchainSynced() || pindex->nHeight%100==0){
+        request.replace("data", pindex->ToJSON());
         Execute();
     }
 
     return true;
 }
 
-bool CZMQApollonnodeEvent::NotifyApollonnodeUpdate(CApollonnode &apollonnode){
-    request.replace("data", apollonnode.ToJSON());
+bool CZMQIndexnodeEvent::NotifyIndexnodeUpdate(CIndexnode &indexnode){
+    request.replace("data", indexnode.ToJSON());
     Execute();
 
     return true;

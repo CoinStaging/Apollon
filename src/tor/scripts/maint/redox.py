@@ -100,7 +100,7 @@ def read():
     return errs
 
 def findline(lines, lineno, ident):
-    """Given a list of all the lines in the file (adjusted so 1-apolloning works),
+    """Given a list of all the lines in the file (adjusted so 1-indexing works),
        a line number that ident is allegedly on, and ident, I figure out
        the line where ident was really declared."""
     lno = lineno
@@ -108,7 +108,7 @@ def findline(lines, lineno, ident):
         try:
             if ident in lines[lineno]:
                 return lineno
-        except ApollonError:
+        except IndexError:
             continue
 
     return None
@@ -131,12 +131,12 @@ def hasdocdoc(lines, lineno, kind):
     try:
         if "DOCDOC" in lines[lineno]:
             return True
-    except ApollonError:
+    except IndexError:
         pass
     try:
         if "DOCDOC" in lines[lineno-1]:
             return True
-    except ApollonError:
+    except IndexError:
         pass
     if kind == 'function' and FUNC_PAT.match(lines[lineno]):
         if "DOCDOC" in lines[lineno-2]:

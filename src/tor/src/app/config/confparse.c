@@ -468,12 +468,12 @@ config_assign_line(const config_format_t *fmt, void *options,
                        var->type != CONFIG_TYPE_LINELIST_S)) {
     /* We're tracking which options we've seen, and this option is not
      * supposed to occur more than once. */
-    int var_apollon = (int)(var - fmt->vars);
-    if (bitarray_is_set(options_seen, var_apollon)) {
+    int var_index = (int)(var - fmt->vars);
+    if (bitarray_is_set(options_seen, var_index)) {
       log_warn(LD_CONFIG, "Option '%s' used more than once; all but the last "
                "value will be ignored.", var->name);
     }
-    bitarray_set(options_seen, var_apollon);
+    bitarray_set(options_seen, var_index);
   }
 
   if (config_assign_value(fmt, options, c, msg) < 0)
@@ -825,7 +825,7 @@ config_clear(const config_format_t *fmt, void *options,
   }
 }
 
-/** Clear the option apolloned by <b>var</b> in <b>options</b>. Then if
+/** Clear the option indexed by <b>var</b> in <b>options</b>. Then if
  * <b>use_defaults</b>, set it to its default value.
  * Called by config_init() and option_reset_line() and option_assign_line(). */
 static void

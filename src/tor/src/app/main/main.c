@@ -348,7 +348,7 @@ dumpstats(int severity)
   tor_log(severity, LD_GENERAL, "Dumping stats:");
 
   SMARTLIST_FOREACH_BEGIN(get_connection_array(), connection_t *, conn) {
-    int i = conn_sl_xap;
+    int i = conn_sl_idx;
     tor_log(severity, LD_GENERAL,
         "Conn %d (socket %d) type %d (%s), state %d (%s), created %d secs ago",
         i, (int)conn->s, conn->type, conn_type_to_string(conn->type),

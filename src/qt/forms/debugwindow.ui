@@ -16,7 +16,7 @@
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <widget class="QTabWidget" name="tabWidget">
-     <property name="currentApollon">
+     <property name="currentIndex">
       <number>4</number>
      </property>
      <widget class="QWidget" name="tab_info">
@@ -1617,7 +1617,7 @@
         <bool>true</bool>
        </property>
       </widget>
-      <widget class="QPushButton" name="btn_reapollon">
+      <widget class="QPushButton" name="btn_reindex">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -1630,7 +1630,7 @@
         <string>Rebuild apollon</string>
        </property>
       </widget>
-      <widget class="QLabel" name="label_repair_reapollon">
+      <widget class="QLabel" name="label_repair_reindex">
        <property name="geometry">
         <rect>
          <x>250</x>
@@ -1640,7 +1640,7 @@
         </rect>
        </property>
        <property name="text">
-        <string>-reapollon: Rebuild block chain apollon from current blk000??.dat files.</string>
+        <string>-reindex: Rebuild block chain apollon from current blk000??.dat files.</string>
        </property>
       </widget>
       <widget class="QPushButton" name="btn_resync">

@@ -1862,7 +1862,7 @@ policies_log_first_redundant_entry(const smartlist_t *policy)
   SMARTLIST_FOREACH_BEGIN(policy, const addr_policy_t *, p) {
     sa_family_t family;
     int found_ipv4_wildcard = 0, found_ipv6_wildcard = 0;
-    const int i = p_sl_xap;
+    const int i = p_sl_idx;
 
     /* Look for accept/reject *[4|6|]:* entires */
     if (p->prt_min <= 1 && p->prt_max == 65535 && p->maskbits == 0) {
@@ -2444,7 +2444,7 @@ static int
 policy_summary_split(smartlist_t *summary,
                      uint16_t prt_min, uint16_t prt_max)
 {
-  int start_at_apollon;
+  int start_at_index;
 
   int i = 0;
 
@@ -2456,7 +2456,7 @@ policy_summary_split(smartlist_t *summary,
     smartlist_insert(summary, i+1, new_item);
     i++;
   }
-  start_at_apollon = i;
+  start_at_index = i;
 
   while (AT(i)->prt_max < prt_max)
     i++;
@@ -2466,7 +2466,7 @@ policy_summary_split(smartlist_t *summary,
     smartlist_insert(summary, i+1, new_item);
   }
 
-  return start_at_apollon;
+  return start_at_index;
 }
 
 /** Mark port ranges as accepted if they are below the reject_count for family

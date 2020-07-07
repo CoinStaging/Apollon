@@ -5010,21 +5010,21 @@ find_torrc_filename(config_line_t *cmd_arg,
                     int *using_default_fname, int *ignore_missing_torrc)
 {
   char *fname=NULL;
-  config_line_t *p_apollon;
+  config_line_t *p_index;
   const char *fname_opt = defaults_file ? "--defaults-torrc" : "-f";
   const char *ignore_opt = defaults_file ? NULL : "--ignore-missing-torrc";
 
   if (defaults_file)
     *ignore_missing_torrc = 1;
 
-  for (p_apollon = cmd_arg; p_apollon; p_apollon = p_apollon->next) {
-    if (!strcmp(p_apollon->key, fname_opt)) {
+  for (p_index = cmd_arg; p_index; p_index = p_index->next) {
+    if (!strcmp(p_index->key, fname_opt)) {
       if (fname) {
         log_warn(LD_CONFIG, "Duplicate %s options on command line.",
             fname_opt);
         tor_free(fname);
       }
-      fname = expand_filename(p_apollon->value);
+      fname = expand_filename(p_index->value);
 
       {
         char *absfname;
@@ -5034,7 +5034,7 @@ find_torrc_filename(config_line_t *cmd_arg,
       }
 
       *using_default_fname = 0;
-    } else if (ignore_opt && !strcmp(p_apollon->key,ignore_opt)) {
+    } else if (ignore_opt && !strcmp(p_index->key,ignore_opt)) {
       *ignore_missing_torrc = 1;
     }
   }
@@ -5148,7 +5148,7 @@ options_init_from_torrc(int argc, char **argv)
   int retval = -1;
   char *command_arg = NULL;
   char *errmsg=NULL;
-  config_line_t *p_apollon = NULL;
+  config_line_t *p_index = NULL;
   config_line_t *cmdline_only_options = NULL;
 
   /* Go through command-line variables */
@@ -5225,21 +5225,21 @@ options_init_from_torrc(int argc, char **argv)
   }
 
   command = CMD_RUN_TOR;
-  for (p_apollon = cmdline_only_options; p_apollon; p_apollon = p_apollon->next) {
-    if (!strcmp(p_apollon->key,"--keygen")) {
+  for (p_index = cmdline_only_options; p_index; p_index = p_index->next) {
+    if (!strcmp(p_index->key,"--keygen")) {
       command = CMD_KEYGEN;
-    } else if (!strcmp(p_apollon->key, "--key-expiration")) {
+    } else if (!strcmp(p_index->key, "--key-expiration")) {
       command = CMD_KEY_EXPIRATION;
-      command_arg = p_apollon->value;
-    } else if (!strcmp(p_apollon->key,"--list-fingerprint")) {
+      command_arg = p_index->value;
+    } else if (!strcmp(p_index->key,"--list-fingerprint")) {
       command = CMD_LIST_FINGERPRINT;
-    } else if (!strcmp(p_apollon->key, "--hash-password")) {
+    } else if (!strcmp(p_index->key, "--hash-password")) {
       command = CMD_HASH_PASSWORD;
-      command_arg = p_apollon->value;
-    } else if (!strcmp(p_apollon->key, "--dump-config")) {
+      command_arg = p_index->value;
+    } else if (!strcmp(p_index->key, "--dump-config")) {
       command = CMD_DUMP_CONFIG;
-      command_arg = p_apollon->value;
-    } else if (!strcmp(p_apollon->key, "--verify-config")) {
+      command_arg = p_index->value;
+    } else if (!strcmp(p_index->key, "--verify-config")) {
       command = CMD_VERIFY_CONFIG;
     }
   }
@@ -6265,7 +6265,7 @@ get_options_from_transport_options_line(const char *line,const char *transport)
     goto err;
 
   SMARTLIST_FOREACH_BEGIN(items, const char *, option) {
-    if (option_sl_xap == 0) /* skip the transport field (first field)*/
+    if (option_sl_idx == 0) /* skip the transport field (first field)*/
       continue;
 
     /* validate that it's a k=v value */
@@ -8277,11 +8277,11 @@ verify_and_store_outbound_address(sa_family_t family, tor_addr_t *addr,
   if (type>=OUTBOUND_ADDR_MAX || (family!=AF_INET && family!=AF_INET6)) {
     return -1;
   }
-  int fam_apollon=0;
+  int fam_index=0;
   if (family==AF_INET6) {
-    fam_apollon=1;
+    fam_index=1;
   }
-  tor_addr_t *dest=&options->OutboundBindAddresses[type][fam_apollon];
+  tor_addr_t *dest=&options->OutboundBindAddresses[type][fam_index];
   if (!tor_addr_is_null(dest)) {
     return -1;
   }

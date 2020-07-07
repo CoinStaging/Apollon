@@ -122,7 +122,7 @@ setup_fake_connection_for_channel(channel_tls_t *chan)
   or_connection_t *conn = (or_connection_t*)connection_new(CONN_TYPE_OR,
                                                            AF_INET);
 
-  conn->base_.conn_array_apollon = smartlist_len(connection_array);
+  conn->base_.conn_array_index = smartlist_len(connection_array);
   smartlist_add(connection_array, conn);
 
   conn->chan = chan;

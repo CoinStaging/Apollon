@@ -2,7 +2,7 @@
 from test_framework.test_framework import ElysiumTestFramework
 from test_framework.util import assert_equal, connect_nodes, start_node, stop_node, sync_blocks
 
-class ElysiumSigmaReapollonTest(ElysiumTestFramework):
+class ElysiumSigmaReindexTest(ElysiumTestFramework):
     def run_test(self):
         super().run_test()
 
@@ -45,7 +45,7 @@ class ElysiumSigmaReapollonTest(ElysiumTestFramework):
         unconfirmed_txid = self.nodes[0].elysium_sendmint(self.addrs[0], sigma_property, {0: 1, 1: 1})
         raw_unconfirmed = self.nodes[0].getrawtransaction(unconfirmed_txid)
 
-        # check before reapollon
+        # check before reindex
         self.sync_all()
         confirmed_mints = self.nodes[0].elysium_listmints()
         unconfirmed_mints = self.nodes[0].elysium_listpendingmints()
@@ -53,18 +53,18 @@ class ElysiumSigmaReapollonTest(ElysiumTestFramework):
         assert_equal(2, len(confirmed_mints))
         assert_equal(2, len(unconfirmed_mints))
 
-        # restart with reapolloning
+        # restart with reindexing
         stop_node(self.nodes[0], 0)
-        self.nodes[0] = start_node(0, self.options.tmpdir, ['-elysium', '-reapollon'])
+        self.nodes[0] = start_node(0, self.options.tmpdir, ['-elysium', '-reindex'])
         connect_nodes(self.nodes[0], 1)
 
         sync_blocks(self.nodes)
 
-        reapolloned_confirmed_mints = self.nodes[0].elysium_listmints()
-        self.compare_mints(confirmed_mints, reapolloned_confirmed_mints)
+        reindexed_confirmed_mints = self.nodes[0].elysium_listmints()
+        self.compare_mints(confirmed_mints, reindexed_confirmed_mints)
 
-        reapolloned_unconfirmed_mints = self.nodes[0].elysium_listpendingmints()
-        self.compare_mints(unconfirmed_mints, reapolloned_unconfirmed_mints)
+        reindexed_unconfirmed_mints = self.nodes[0].elysium_listpendingmints()
+        self.compare_mints(unconfirmed_mints, reindexed_unconfirmed_mints)
 
         # spend remaining mints
         self.nodes[0].elysium_sendspend(self.addrs[0], sigma_property, 0)
@@ -97,4 +97,4 @@ class ElysiumSigmaReapollonTest(ElysiumTestFramework):
         assert_equal(balance, self.nodes[0].elysium_getbalance(self.addrs[0], sigma_property)['balance'])
 
 if __name__ == '__main__':
-    ElysiumSigmaReapollonTest().main()
+    ElysiumSigmaReindexTest().main()

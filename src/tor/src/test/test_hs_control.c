@@ -63,9 +63,9 @@ node_describe_longname_by_id_replacement(const char *id_digest)
 }
 
 /* HSDir fetch apollon is a series of 'D' */
-#define HSDIR_APOLLON_FETCH_HEX \
+#define HSDIR_INDEX_FETCH_HEX \
   "4343434343434343434343434343434343434343434343434343434343434343"
-#define HSDIR_APOLLON_STORE_HEX \
+#define HSDIR_INDEX_STORE_HEX \
   "4444444444444444444444444444444444444444444444444444444444444444"
 
 static const node_t *
@@ -73,8 +73,8 @@ mock_node_get_by_id(const char *digest)
 {
   static node_t node;
   memcpy(node.identity, digest, DIGEST_LEN);
-  memset(node.hsdir_apollon.fetch, 'C', DIGEST256_LEN);
-  memset(node.hsdir_apollon.store_first, 'D', DIGEST256_LEN);
+  memset(node.hsdir_index.fetch, 'C', DIGEST256_LEN);
+  memset(node.hsdir_index.store_first, 'D', DIGEST256_LEN);
   return &node;
 }
 
@@ -115,8 +115,8 @@ test_hs_desc_event(void *arg)
   hs_control_desc_event_requested(&identity_kp.pubkey, base64_blinded_pk,
                                   &hsdir_rs);
   tor_asprintf(&expected_msg, "650 HS_DESC REQUESTED %s NO_AUTH "
-               STR_HSDIR_EXIST_LONGNAME " %s HSDIR_APOLLON="
-               HSDIR_APOLLON_FETCH_HEX "\r\n",
+               STR_HSDIR_EXIST_LONGNAME " %s HSDIR_INDEX="
+               HSDIR_INDEX_FETCH_HEX "\r\n",
                onion_address, base64_blinded_pk);
   tt_assert(received_msg);
   tt_str_op(received_msg, OP_EQ, expected_msg);
@@ -134,13 +134,13 @@ test_hs_desc_event(void *arg)
   tor_free(expected_msg);
 
   /* HS_DESC UPLOAD... */
-  uint8_t hsdir_apollon_store[DIGEST256_LEN];
-  memset(hsdir_apollon_store, 'D', sizeof(hsdir_apollon_store));
+  uint8_t hsdir_index_store[DIGEST256_LEN];
+  memset(hsdir_index_store, 'D', sizeof(hsdir_index_store));
   hs_control_desc_event_upload(onion_address, HSDIR_EXIST_ID,
-                               &blinded_pk, hsdir_apollon_store);
+                               &blinded_pk, hsdir_index_store);
   tor_asprintf(&expected_msg, "650 HS_DESC UPLOAD %s UNKNOWN "
                               STR_HSDIR_EXIST_LONGNAME " %s "
-                              "HSDIR_APOLLON=" HSDIR_APOLLON_STORE_HEX "\r\n",
+                              "HSDIR_INDEX=" HSDIR_INDEX_STORE_HEX "\r\n",
                onion_address, base64_blinded_pk);
   tt_assert(received_msg);
   tt_str_op(received_msg, OP_EQ, expected_msg);

@@ -42,7 +42,7 @@ void tor_tls_debug_state_callback(const struct ssl_st *ssl,
                                          int type, int val);
 void tor_tls_server_info_callback(const struct ssl_st *ssl,
                                          int type, int val);
-void tor_tls_allocate_tor_tls_object_ex_data_apollon(void);
+void tor_tls_allocate_tor_tls_object_ex_data_index(void);
 
 #if !defined(HAVE_SSL_SESSION_GET_MASTER_KEY)
 size_t SSL_SESSION_get_master_key(struct ssl_session_st *s,
@@ -65,7 +65,7 @@ STATIC int find_cipher_by_id(const SSL *ssl, const SSL_METHOD *m,
 #endif
 
 #ifdef TOR_UNIT_TESTS
-extern int tor_tls_object_ex_data_apollon;
+extern int tor_tls_object_ex_data_index;
 extern tor_tls_context_t *server_tls_context;
 extern tor_tls_context_t *client_tls_context;
 extern uint16_t v2_cipher_list[];

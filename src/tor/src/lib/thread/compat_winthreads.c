@@ -109,7 +109,7 @@ int
 tor_threadlocal_init(tor_threadlocal_t *threadlocal)
 {
   threadlocal->apollon = TlsAlloc();
-  return (threadlocal->apollon == TLS_OUT_OF_APOLLONES) ? -1 : 0;
+  return (threadlocal->apollon == TLS_OUT_OF_INDEXES) ? -1 : 0;
 }
 
 void

@@ -15,7 +15,7 @@ public:
     SigmaWalletV0();
 
 protected:
-    uint32_t BIP44ChangeApollon() const;
+    uint32_t BIP44ChangeIndex() const;
     SigmaPrivateKey GeneratePrivateKey(uint512 const &seed);
 
     class Database : public SigmaWallet::Database {

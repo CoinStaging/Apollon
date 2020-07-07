@@ -2,28 +2,28 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "activeapollonnode.h"
+#include "activeindexnode.h"
 #include "consensus/consensus.h"
 #include "consensus/validation.h"
 #include "darksend.h"
 #include "init.h"
 //#include "governance.h"
-#include "apollonnode.h"
-#include "apollonnode-payments.h"
-#include "apollonnodeconfig.h"
-#include "apollonnode-sync.h"
-#include "apollonnodeman.h"
+#include "indexnode.h"
+#include "indexnode-payments.h"
+#include "indexnodeconfig.h"
+#include "indexnode-sync.h"
+#include "indexnodeman.h"
 #include "util.h"
 #include "validationinterface.h"
 
 #include <boost/lexical_cast.hpp>
 
 
-CApollonnode::CApollonnode() :
+CIndexnode::CIndexnode() :
         vin(),
         addr(),
         pubKeyCollateralAddress(),
-        pubKeyApollonnode(),
+        pubKeyIndexnode(),
         lastPing(),
         vchSig(),
         sigTime(GetAdjustedTime()),
@@ -31,7 +31,7 @@ CApollonnode::CApollonnode() :
         nTimeLastChecked(0),
         nTimeLastPaid(0),
         nTimeLastWatchdogVote(0),
-        nActiveState(APOLLONNODE_ENABLED),
+        nActiveState(INDEXNODE_ENABLED),
         nCacheCollateralBlock(0),
         nBlockLastPaid(0),
         nProtocolVersion(PROTOCOL_VERSION),
@@ -40,11 +40,11 @@ CApollonnode::CApollonnode() :
         fAllowMixingTx(true),
         fUnitTest(false) {}
 
-CApollonnode::CApollonnode(CService addrNew, CTxIn vinNew, CPubKey pubKeyCollateralAddressNew, CPubKey pubKeyApollonnodeNew, int nProtocolVersionIn) :
+CIndexnode::CIndexnode(CService addrNew, CTxIn vinNew, CPubKey pubKeyCollateralAddressNew, CPubKey pubKeyIndexnodeNew, int nProtocolVersionIn) :
         vin(vinNew),
         addr(addrNew),
         pubKeyCollateralAddress(pubKeyCollateralAddressNew),
-        pubKeyApollonnode(pubKeyApollonnodeNew),
+        pubKeyIndexnode(pubKeyIndexnodeNew),
         lastPing(),
         vchSig(),
         sigTime(GetAdjustedTime()),
@@ -52,7 +52,7 @@ CApollonnode::CApollonnode(CService addrNew, CTxIn vinNew, CPubKey pubKeyCollate
         nTimeLastChecked(0),
         nTimeLastPaid(0),
         nTimeLastWatchdogVote(0),
-        nActiveState(APOLLONNODE_ENABLED),
+        nActiveState(INDEXNODE_ENABLED),
         nCacheCollateralBlock(0),
         nBlockLastPaid(0),
         nProtocolVersion(nProtocolVersionIn),
@@ -61,11 +61,11 @@ CApollonnode::CApollonnode(CService addrNew, CTxIn vinNew, CPubKey pubKeyCollate
         fAllowMixingTx(true),
         fUnitTest(false) {}
 
-CApollonnode::CApollonnode(const CApollonnode &other) :
+CIndexnode::CIndexnode(const CIndexnode &other) :
         vin(other.vin),
         addr(other.addr),
         pubKeyCollateralAddress(other.pubKeyCollateralAddress),
-        pubKeyApollonnode(other.pubKeyApollonnode),
+        pubKeyIndexnode(other.pubKeyIndexnode),
         lastPing(other.lastPing),
         vchSig(other.vchSig),
         sigTime(other.sigTime),
@@ -82,11 +82,11 @@ CApollonnode::CApollonnode(const CApollonnode &other) :
         fAllowMixingTx(other.fAllowMixingTx),
         fUnitTest(other.fUnitTest) {}
 
-CApollonnode::CApollonnode(const CApollonnodeBroadcast &mnb) :
+CIndexnode::CIndexnode(const CIndexnodeBroadcast &mnb) :
         vin(mnb.vin),
         addr(mnb.addr),
         pubKeyCollateralAddress(mnb.pubKeyCollateralAddress),
-        pubKeyApollonnode(mnb.pubKeyApollonnode),
+        pubKeyIndexnode(mnb.pubKeyIndexnode),
         lastPing(mnb.lastPing),
         vchSig(mnb.vchSig),
         sigTime(mnb.sigTime),
@@ -105,12 +105,12 @@ CApollonnode::CApollonnode(const CApollonnodeBroadcast &mnb) :
 
 //CSporkManager sporkManager;
 //
-// When a new apollonnode broadcast is sent, update our information
+// When a new indexnode broadcast is sent, update our information
 //
-bool CApollonnode::UpdateFromNewBroadcast(CApollonnodeBroadcast &mnb) {
+bool CIndexnode::UpdateFromNewBroadcast(CIndexnodeBroadcast &mnb) {
     if (mnb.sigTime <= sigTime && !mnb.fRecovery) return false;
 
-    pubKeyApollonnode = mnb.pubKeyApollonnode;
+    pubKeyIndexnode = mnb.pubKeyIndexnode;
     sigTime = mnb.sigTime;
     vchSig = mnb.vchSig;
     nProtocolVersion = mnb.nProtocolVersion;
@@ -119,20 +119,20 @@ bool CApollonnode::UpdateFromNewBroadcast(CApollonnodeBroadcast &mnb) {
     nPoSeBanHeight = 0;
     nTimeLastChecked = 0;
     int nDos = 0;
-    if (mnb.lastPing == CApollonnodePing() || (mnb.lastPing != CApollonnodePing() && mnb.lastPing.CheckAndUpdate(this, true, nDos))) {
+    if (mnb.lastPing == CIndexnodePing() || (mnb.lastPing != CIndexnodePing() && mnb.lastPing.CheckAndUpdate(this, true, nDos))) {
         SetLastPing(mnb.lastPing);
-        mnodeman.mapSeenApollonnodePing.insert(std::make_pair(lastPing.GetHash(), lastPing));
+        mnodeman.mapSeenIndexnodePing.insert(std::make_pair(lastPing.GetHash(), lastPing));
     }
-    // if it matches our Apollonnode privkey...
-    if (fApollonNode && pubKeyApollonnode == activeApollonnode.pubKeyApollonnode) {
-        nPoSeBanScore = -APOLLONNODE_POSE_BAN_MAX_SCORE;
+    // if it matches our Indexnode privkey...
+    if (fIndexNode && pubKeyIndexnode == activeIndexnode.pubKeyIndexnode) {
+        nPoSeBanScore = -INDEXNODE_POSE_BAN_MAX_SCORE;
         if (nProtocolVersion == PROTOCOL_VERSION) {
             // ... and PROTOCOL_VERSION, then we've been remotely activated ...
-            activeApollonnode.ManageState();
+            activeIndexnode.ManageState();
         } else {
             // ... otherwise we need to reactivate our node, do not add it to the list and do not relay
             // but also do not ban the node we get this message from
-            LogPrintf("CApollonnode::UpdateFromNewBroadcast -- wrong PROTOCOL_VERSION, re-activate your MN: message nProtocolVersion=%d  PROTOCOL_VERSION=%d\n", nProtocolVersion, PROTOCOL_VERSION);
+            LogPrintf("CIndexnode::UpdateFromNewBroadcast -- wrong PROTOCOL_VERSION, re-activate your MN: message nProtocolVersion=%d  PROTOCOL_VERSION=%d\n", nProtocolVersion, PROTOCOL_VERSION);
             return false;
         }
     }
@@ -140,11 +140,11 @@ bool CApollonnode::UpdateFromNewBroadcast(CApollonnodeBroadcast &mnb) {
 }
 
 //
-// Deterministically calculate a given "score" for a Apollonnode depending on how close it's hash is to
+// Deterministically calculate a given "score" for a Indexnode depending on how close it's hash is to
 // the proof of work for that block. The further away they are the better, the furthest will win the election
 // and get paid this block
 //
-arith_uint256 CApollonnode::CalculateScore(const uint256 &blockHash) {
+arith_uint256 CIndexnode::CalculateScore(const uint256 &blockHash) {
     uint256 aux = ArithToUint256(UintToArith256(vin.prevout.hash) + vin.prevout.n);
 
     CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
@@ -159,15 +159,15 @@ arith_uint256 CApollonnode::CalculateScore(const uint256 &blockHash) {
     return (hash3 > hash2 ? hash3 - hash2 : hash2 - hash3);
 }
 
-void CApollonnode::Check(bool fForce) {
+void CIndexnode::Check(bool fForce) {
     LOCK(cs);
 
     if (ShutdownRequested()) return;
 
-    if (!fForce && (GetTime() - nTimeLastChecked < APOLLONNODE_CHECK_SECONDS)) return;
+    if (!fForce && (GetTime() - nTimeLastChecked < INDEXNODE_CHECK_SECONDS)) return;
     nTimeLastChecked = GetTime();
 
-    LogPrint("apollonnode", "CApollonnode::Check -- Apollonnode %s is in %s state\n", vin.prevout.ToStringShort(), GetStateString());
+    LogPrint("indexnode", "CIndexnode::Check -- Indexnode %s is in %s state\n", vin.prevout.ToStringShort(), GetStateString());
 
     //once spent, stop doing the checks
     if (IsOutpointSpent()) return;
@@ -181,8 +181,8 @@ void CApollonnode::Check(bool fForce) {
         if (!pcoinsTip->GetCoins(vin.prevout.hash, coins) ||
             (unsigned int) vin.prevout.n >= coins.vout.size() ||
             coins.vout[vin.prevout.n].IsNull()) {
-            SetStatus(APOLLONNODE_OUTPOINT_SPENT);
-            LogPrint("apollonnode", "CApollonnode::Check -- Failed to find Apollonnode UTXO, apollonnode=%s\n", vin.prevout.ToStringShort());
+            SetStatus(INDEXNODE_OUTPOINT_SPENT);
+            LogPrint("indexnode", "CIndexnode::Check -- Failed to find Indexnode UTXO, indexnode=%s\n", vin.prevout.ToStringShort());
             return;
         }
 
@@ -192,139 +192,139 @@ void CApollonnode::Check(bool fForce) {
     if (IsPoSeBanned()) {
         if (nHeight < nPoSeBanHeight) return; // too early?
         // Otherwise give it a chance to proceed further to do all the usual checks and to change its state.
-        // Apollonnode still will be on the edge and can be banned back easily if it keeps ignoring mnverify
+        // Indexnode still will be on the edge and can be banned back easily if it keeps ignoring mnverify
         // or connect attempts. Will require few mnverify messages to strengthen its position in mn list.
-        LogPrintf("CApollonnode::Check -- Apollonnode %s is unbanned and back in list now\n", vin.prevout.ToStringShort());
+        LogPrintf("CIndexnode::Check -- Indexnode %s is unbanned and back in list now\n", vin.prevout.ToStringShort());
         DecreasePoSeBanScore();
-    } else if (nPoSeBanScore >= APOLLONNODE_POSE_BAN_MAX_SCORE) {
-        SetStatus(APOLLONNODE_POSE_BAN);
+    } else if (nPoSeBanScore >= INDEXNODE_POSE_BAN_MAX_SCORE) {
+        SetStatus(INDEXNODE_POSE_BAN);
         // ban for the whole payment cycle
         nPoSeBanHeight = nHeight + mnodeman.size();
-        LogPrintf("CApollonnode::Check -- Apollonnode %s is banned till block %d now\n", vin.prevout.ToStringShort(), nPoSeBanHeight);
+        LogPrintf("CIndexnode::Check -- Indexnode %s is banned till block %d now\n", vin.prevout.ToStringShort(), nPoSeBanHeight);
         return;
     }
 
     int nActiveStatePrev = nActiveState;
-    bool fOurApollonnode = fApollonNode && activeApollonnode.pubKeyApollonnode == pubKeyApollonnode;
+    bool fOurIndexnode = fIndexNode && activeIndexnode.pubKeyIndexnode == pubKeyIndexnode;
 
-    // apollonnode doesn't meet payment protocol requirements ...
-/*    bool fRequireUpdate = nProtocolVersion < mnpayments.GetMinApollonnodePaymentsProto() ||
+    // indexnode doesn't meet payment protocol requirements ...
+/*    bool fRequireUpdate = nProtocolVersion < mnpayments.GetMinIndexnodePaymentsProto() ||
                           // or it's our own node and we just updated it to the new protocol but we are still waiting for activation ...
-                          (fOurApollonnode && nProtocolVersion < PROTOCOL_VERSION); */
+                          (fOurIndexnode && nProtocolVersion < PROTOCOL_VERSION); */
 
-    // apollonnode doesn't meet payment protocol requirements ...
-    bool fRequireUpdate = nProtocolVersion < mnpayments.GetMinApollonnodePaymentsProto() ||
+    // indexnode doesn't meet payment protocol requirements ...
+    bool fRequireUpdate = nProtocolVersion < mnpayments.GetMinIndexnodePaymentsProto() ||
                           // or it's our own node and we just updated it to the new protocol but we are still waiting for activation ...
-                          (fOurApollonnode && (nProtocolVersion < MIN_APOLLONNODE_PAYMENT_PROTO_VERSION_1 || nProtocolVersion > MIN_APOLLONNODE_PAYMENT_PROTO_VERSION_2));
+                          (fOurIndexnode && (nProtocolVersion < MIN_INDEXNODE_PAYMENT_PROTO_VERSION_1 || nProtocolVersion > MIN_INDEXNODE_PAYMENT_PROTO_VERSION_2));
 
     if (fRequireUpdate) {
-        SetStatus(APOLLONNODE_UPDATE_REQUIRED);
+        SetStatus(INDEXNODE_UPDATE_REQUIRED);
         if (nActiveStatePrev != nActiveState) {
-            LogPrint("apollonnode", "CApollonnode::Check -- Apollonnode %s is in %s state now\n", vin.prevout.ToStringShort(), GetStateString());
+            LogPrint("indexnode", "CIndexnode::Check -- Indexnode %s is in %s state now\n", vin.prevout.ToStringShort(), GetStateString());
         }
         return;
     }
 
-    // keep old apollonnodes on start, give them a chance to receive updates...
-    bool fWaitForPing = !apollonnodeSync.IsApollonnodeListSynced() && !IsPingedWithin(APOLLONNODE_MIN_MNP_SECONDS);
+    // keep old indexnodes on start, give them a chance to receive updates...
+    bool fWaitForPing = !indexnodeSync.IsIndexnodeListSynced() && !IsPingedWithin(INDEXNODE_MIN_MNP_SECONDS);
 
-    if (fWaitForPing && !fOurApollonnode) {
+    if (fWaitForPing && !fOurIndexnode) {
         // ...but if it was already expired before the initial check - return right away
         if (IsExpired() || IsWatchdogExpired() || IsNewStartRequired()) {
-            LogPrint("apollonnode", "CApollonnode::Check -- Apollonnode %s is in %s state, waiting for ping\n", vin.prevout.ToStringShort(), GetStateString());
+            LogPrint("indexnode", "CIndexnode::Check -- Indexnode %s is in %s state, waiting for ping\n", vin.prevout.ToStringShort(), GetStateString());
             return;
         }
     }
 
-    // don't expire if we are still in "waiting for ping" mode unless it's our own apollonnode
-    if (!fWaitForPing || fOurApollonnode) {
+    // don't expire if we are still in "waiting for ping" mode unless it's our own indexnode
+    if (!fWaitForPing || fOurIndexnode) {
 
-        if (!IsPingedWithin(APOLLONNODE_NEW_START_REQUIRED_SECONDS)) {
-            SetStatus(APOLLONNODE_NEW_START_REQUIRED);
+        if (!IsPingedWithin(INDEXNODE_NEW_START_REQUIRED_SECONDS)) {
+            SetStatus(INDEXNODE_NEW_START_REQUIRED);
             if (nActiveStatePrev != nActiveState) {
-                LogPrint("apollonnode", "CApollonnode::Check -- Apollonnode %s is in %s state now\n", vin.prevout.ToStringShort(), GetStateString());
+                LogPrint("indexnode", "CIndexnode::Check -- Indexnode %s is in %s state now\n", vin.prevout.ToStringShort(), GetStateString());
             }
             return;
         }
 
-        bool fWatchdogActive = apollonnodeSync.IsSynced() && mnodeman.IsWatchdogActive();
-        bool fWatchdogExpired = (fWatchdogActive && ((GetTime() - nTimeLastWatchdogVote) > APOLLONNODE_WATCHDOG_MAX_SECONDS));
+        bool fWatchdogActive = indexnodeSync.IsSynced() && mnodeman.IsWatchdogActive();
+        bool fWatchdogExpired = (fWatchdogActive && ((GetTime() - nTimeLastWatchdogVote) > INDEXNODE_WATCHDOG_MAX_SECONDS));
 
-//        LogPrint("apollonnode", "CApollonnode::Check -- outpoint=%s, nTimeLastWatchdogVote=%d, GetTime()=%d, fWatchdogExpired=%d\n",
+//        LogPrint("indexnode", "CIndexnode::Check -- outpoint=%s, nTimeLastWatchdogVote=%d, GetTime()=%d, fWatchdogExpired=%d\n",
 //                vin.prevout.ToStringShort(), nTimeLastWatchdogVote, GetTime(), fWatchdogExpired);
 
         if (fWatchdogExpired) {
-            SetStatus(APOLLONNODE_WATCHDOG_EXPIRED);
+            SetStatus(INDEXNODE_WATCHDOG_EXPIRED);
             if (nActiveStatePrev != nActiveState) {
-                LogPrint("apollonnode", "CApollonnode::Check -- Apollonnode %s is in %s state now\n", vin.prevout.ToStringShort(), GetStateString());
+                LogPrint("indexnode", "CIndexnode::Check -- Indexnode %s is in %s state now\n", vin.prevout.ToStringShort(), GetStateString());
             }
             return;
         }
 
-        if (!IsPingedWithin(APOLLONNODE_EXPIRATION_SECONDS)) {
-            SetStatus(APOLLONNODE_EXPIRED);
+        if (!IsPingedWithin(INDEXNODE_EXPIRATION_SECONDS)) {
+            SetStatus(INDEXNODE_EXPIRED);
             if (nActiveStatePrev != nActiveState) {
-                LogPrint("apollonnode", "CApollonnode::Check -- Apollonnode %s is in %s state now\n", vin.prevout.ToStringShort(), GetStateString());
+                LogPrint("indexnode", "CIndexnode::Check -- Indexnode %s is in %s state now\n", vin.prevout.ToStringShort(), GetStateString());
             }
             return;
         }
     }
 
-    if (lastPing.sigTime - sigTime < APOLLONNODE_MIN_MNP_SECONDS) {
-        SetStatus(APOLLONNODE_PRE_ENABLED);
+    if (lastPing.sigTime - sigTime < INDEXNODE_MIN_MNP_SECONDS) {
+        SetStatus(INDEXNODE_PRE_ENABLED);
         if (nActiveStatePrev != nActiveState) {
-            LogPrint("apollonnode", "CApollonnode::Check -- Apollonnode %s is in %s state now\n", vin.prevout.ToStringShort(), GetStateString());
+            LogPrint("indexnode", "CIndexnode::Check -- Indexnode %s is in %s state now\n", vin.prevout.ToStringShort(), GetStateString());
         }
         return;
     }
 
-    SetStatus(APOLLONNODE_ENABLED); // OK
+    SetStatus(INDEXNODE_ENABLED); // OK
     if (nActiveStatePrev != nActiveState) {
-        LogPrint("apollonnode", "CApollonnode::Check -- Apollonnode %s is in %s state now\n", vin.prevout.ToStringShort(), GetStateString());
+        LogPrint("indexnode", "CIndexnode::Check -- Indexnode %s is in %s state now\n", vin.prevout.ToStringShort(), GetStateString());
     }
 }
 
-bool CApollonnode::IsValidNetAddr() {
+bool CIndexnode::IsValidNetAddr() {
     return IsValidNetAddr(addr);
 }
 
-bool CApollonnode::IsValidForPayment() {
-    if (nActiveState == APOLLONNODE_ENABLED) {
+bool CIndexnode::IsValidForPayment() {
+    if (nActiveState == INDEXNODE_ENABLED) {
         return true;
     }
 //    if(!sporkManager.IsSporkActive(SPORK_14_REQUIRE_SENTINEL_FLAG) &&
-//       (nActiveState == APOLLONNODE_WATCHDOG_EXPIRED)) {
+//       (nActiveState == INDEXNODE_WATCHDOG_EXPIRED)) {
 //        return true;
 //    }
 
     return false;
 }
 
-bool CApollonnode::IsValidNetAddr(CService addrIn) {
+bool CIndexnode::IsValidNetAddr(CService addrIn) {
     // TODO: regtest is fine with any addresses for now,
     // should probably be a bit smarter if one day we start to implement tests for this
     return Params().NetworkIDString() == CBaseChainParams::REGTEST ||
            (addrIn.IsIPv4() && IsReachable(addrIn) && addrIn.IsRoutable());
 }
 
-bool CApollonnode::IsMyApollonnode(){
-    BOOST_FOREACH(CApollonnodeConfig::CApollonnodeEntry mne, apollonnodeConfig.getEntries()) {
+bool CIndexnode::IsMyIndexnode(){
+    BOOST_FOREACH(CIndexnodeConfig::CIndexnodeEntry mne, indexnodeConfig.getEntries()) {
         const std::string& txHash = mne.getTxHash();
-        const std::string& outputApollon = mne.getOutputApollon();
+        const std::string& outputIndex = mne.getOutputIndex();
 
         if(txHash==vin.prevout.hash.ToString().substr(0,64) &&
-           outputApollon==to_string(vin.prevout.n))
+           outputIndex==to_string(vin.prevout.n))
             return true;
     }
     return false;
 }
 
-apollonnode_info_t CApollonnode::GetInfo() {
-    apollonnode_info_t info;
+indexnode_info_t CIndexnode::GetInfo() {
+    indexnode_info_t info;
     info.vin = vin;
     info.addr = addr;
     info.pubKeyCollateralAddress = pubKeyCollateralAddress;
-    info.pubKeyApollonnode = pubKeyApollonnode;
+    info.pubKeyIndexnode = pubKeyIndexnode;
     info.sigTime = sigTime;
     info.nLastDsq = nLastDsq;
     info.nTimeLastChecked = nTimeLastChecked;
@@ -337,82 +337,82 @@ apollonnode_info_t CApollonnode::GetInfo() {
     return info;
 }
 
-std::string CApollonnode::StateToString(int nStateIn) {
+std::string CIndexnode::StateToString(int nStateIn) {
     switch (nStateIn) {
-        case APOLLONNODE_PRE_ENABLED:
+        case INDEXNODE_PRE_ENABLED:
             return "PRE_ENABLED";
-        case APOLLONNODE_ENABLED:
+        case INDEXNODE_ENABLED:
             return "ENABLED";
-        case APOLLONNODE_EXPIRED:
+        case INDEXNODE_EXPIRED:
             return "EXPIRED";
-        case APOLLONNODE_OUTPOINT_SPENT:
+        case INDEXNODE_OUTPOINT_SPENT:
             return "OUTPOINT_SPENT";
-        case APOLLONNODE_UPDATE_REQUIRED:
+        case INDEXNODE_UPDATE_REQUIRED:
             return "UPDATE_REQUIRED";
-        case APOLLONNODE_WATCHDOG_EXPIRED:
+        case INDEXNODE_WATCHDOG_EXPIRED:
             return "WATCHDOG_EXPIRED";
-        case APOLLONNODE_NEW_START_REQUIRED:
+        case INDEXNODE_NEW_START_REQUIRED:
             return "NEW_START_REQUIRED";
-        case APOLLONNODE_POSE_BAN:
+        case INDEXNODE_POSE_BAN:
             return "POSE_BAN";
         default:
             return "UNKNOWN";
     }
 }
 
-std::string CApollonnode::GetStateString() const {
+std::string CIndexnode::GetStateString() const {
     return StateToString(nActiveState);
 }
 
-std::string CApollonnode::GetStatus() const {
+std::string CIndexnode::GetStatus() const {
     // TODO: return smth a bit more human readable here
     return GetStateString();
 }
 
-void CApollonnode::SetStatus(int newState) {
+void CIndexnode::SetStatus(int newState) {
     if(nActiveState!=newState){
         nActiveState = newState;
-        if(IsMyApollonnode())
-            GetMainSignals().UpdatedApollonnode(*this);
+        if(IsMyIndexnode())
+            GetMainSignals().UpdatedIndexnode(*this);
     }
 }
 
-void CApollonnode::SetLastPing(CApollonnodePing newApollonnodePing) {
-    if(lastPing!=newApollonnodePing){
-        lastPing = newApollonnodePing;
-        if(IsMyApollonnode())
-            GetMainSignals().UpdatedApollonnode(*this);
+void CIndexnode::SetLastPing(CIndexnodePing newIndexnodePing) {
+    if(lastPing!=newIndexnodePing){
+        lastPing = newIndexnodePing;
+        if(IsMyIndexnode())
+            GetMainSignals().UpdatedIndexnode(*this);
     }
 }
 
-void CApollonnode::SetTimeLastPaid(int64_t newTimeLastPaid) {
+void CIndexnode::SetTimeLastPaid(int64_t newTimeLastPaid) {
      if(nTimeLastPaid!=newTimeLastPaid){
         nTimeLastPaid = newTimeLastPaid;
-        if(IsMyApollonnode())
-            GetMainSignals().UpdatedApollonnode(*this);
+        if(IsMyIndexnode())
+            GetMainSignals().UpdatedIndexnode(*this);
     }   
 }
 
-void CApollonnode::SetBlockLastPaid(int newBlockLastPaid) {
+void CIndexnode::SetBlockLastPaid(int newBlockLastPaid) {
      if(nBlockLastPaid!=newBlockLastPaid){
         nBlockLastPaid = newBlockLastPaid;
-        if(IsMyApollonnode())
-            GetMainSignals().UpdatedApollonnode(*this);
+        if(IsMyIndexnode())
+            GetMainSignals().UpdatedIndexnode(*this);
     }   
 }
 
-void CApollonnode::SetRank(int newRank) {
+void CIndexnode::SetRank(int newRank) {
      if(nRank!=newRank){
         nRank = newRank;
         if(nRank < 0 || nRank > mnodeman.size()) nRank = 0;
-        if(IsMyApollonnode())
-            GetMainSignals().UpdatedApollonnode(*this);
+        if(IsMyIndexnode())
+            GetMainSignals().UpdatedIndexnode(*this);
     }   
 }
 
-std::string CApollonnode::ToString() const {
+std::string CIndexnode::ToString() const {
     std::string str;
-    str += "apollonnode{";
+    str += "indexnode{";
     str += addr.ToString();
     str += " ";
     str += std::to_string(nProtocolVersion);
@@ -421,16 +421,16 @@ std::string CApollonnode::ToString() const {
     str += " ";
     str += CBitcoinAddress(pubKeyCollateralAddress.GetID()).ToString();
     str += " ";
-    str += std::to_string(lastPing == CApollonnodePing() ? sigTime : lastPing.sigTime);
+    str += std::to_string(lastPing == CIndexnodePing() ? sigTime : lastPing.sigTime);
     str += " ";
-    str += std::to_string(lastPing == CApollonnodePing() ? 0 : lastPing.sigTime - sigTime);
+    str += std::to_string(lastPing == CIndexnodePing() ? 0 : lastPing.sigTime - sigTime);
     str += " ";
     str += std::to_string(nBlockLastPaid);
     str += "}\n";
     return str;
 }
 
-UniValue CApollonnode::ToJSON() const {
+UniValue CIndexnode::ToJSON() const {
     UniValue ret(UniValue::VOBJ);
     std::string payee = CBitcoinAddress(pubKeyCollateralAddress.GetID()).ToString();
     COutPoint outpoint = vin.prevout;
@@ -445,18 +445,18 @@ UniValue CApollonnode::ToJSON() const {
     authorityObj.push_back(Pair("ip", ip));
     authorityObj.push_back(Pair("port", port));
     
-    // get myApollonnode data
+    // get myIndexnode data
     bool isMine = false;
     string label;
-    int fApollon=0;
-    BOOST_FOREACH(CApollonnodeConfig::CApollonnodeEntry mne, apollonnodeConfig.getEntries()) {
-        CTxIn myVin = CTxIn(uint256S(mne.getTxHash()), uint32_t(atoi(mne.getOutputApollon().c_str())));
+    int fIndex=0;
+    BOOST_FOREACH(CIndexnodeConfig::CIndexnodeEntry mne, indexnodeConfig.getEntries()) {
+        CTxIn myVin = CTxIn(uint256S(mne.getTxHash()), uint32_t(atoi(mne.getOutputIndex().c_str())));
         if(outpoint.ToStringShort()==myVin.prevout.ToStringShort()){
             isMine = true;
             label = mne.getAlias();
             break;
         }
-        fApollon++;
+        fIndex++;
     }
 
     ret.push_back(Pair("rank", nRank));
@@ -472,19 +472,19 @@ UniValue CApollonnode::ToJSON() const {
     ret.push_back(Pair("isMine", isMine));
     if(isMine){
         ret.push_back(Pair("label", label));
-        ret.push_back(Pair("position", fApollon));
+        ret.push_back(Pair("position", fIndex));
     }
 
     UniValue qualify(UniValue::VOBJ);
 
-    CApollonnode* apollonnode = const_cast <CApollonnode*> (this);
-    qualify = mnodeman.GetNotQualifyReasonToUniValue(*apollonnode, chainActive.Tip()->nHeight, true, mnodeman.CountEnabled());
+    CIndexnode* indexnode = const_cast <CIndexnode*> (this);
+    qualify = mnodeman.GetNotQualifyReasonToUniValue(*indexnode, chainActive.Tip()->nHeight, true, mnodeman.CountEnabled());
     ret.push_back(Pair("qualify", qualify));
 
     return ret;
 }
 
-int CApollonnode::GetCollateralAge() {
+int CIndexnode::GetCollateralAge() {
     int nHeight;
     {
         TRY_LOCK(cs_main, lockMain);
@@ -504,25 +504,25 @@ int CApollonnode::GetCollateralAge() {
     return nHeight - nCacheCollateralBlock;
 }
 
-void CApollonnode::UpdateLastPaid(const CBlockApollon *papollon, int nMaxBlocksToScanBack) {
-    if (!papollon) {
-        LogPrintf("CApollonnode::UpdateLastPaid papollon is NULL\n");
+void CIndexnode::UpdateLastPaid(const CBlockIndex *pindex, int nMaxBlocksToScanBack) {
+    if (!pindex) {
+        LogPrintf("CIndexnode::UpdateLastPaid pindex is NULL\n");
         return;
     }
 
     const Consensus::Params &params = Params().GetConsensus();
-    const CBlockApollon *BlockReading = papollon;
+    const CBlockIndex *BlockReading = pindex;
 
     CScript mnpayee = GetScriptForDestination(pubKeyCollateralAddress.GetID());
-    LogPrint("apollonnode", "CApollonnode::UpdateLastPaidBlock -- searching for block with payment to %s\n", vin.prevout.ToStringShort());
+    LogPrint("indexnode", "CIndexnode::UpdateLastPaidBlock -- searching for block with payment to %s\n", vin.prevout.ToStringShort());
 
-    LOCK(cs_mapApollonnodeBlocks);
+    LOCK(cs_mapIndexnodeBlocks);
 
     for (int i = 0; BlockReading && BlockReading->nHeight > nBlockLastPaid && i < nMaxBlocksToScanBack; i++) {
-//        LogPrintf("mnpayments.mapApollonnodeBlocks.count(BlockReading->nHeight)=%s\n", mnpayments.mapApollonnodeBlocks.count(BlockReading->nHeight));
-//        LogPrintf("mnpayments.mapApollonnodeBlocks[BlockReading->nHeight].HasPayeeWithVotes(mnpayee, 2)=%s\n", mnpayments.mapApollonnodeBlocks[BlockReading->nHeight].HasPayeeWithVotes(mnpayee, 2));
-        if (mnpayments.mapApollonnodeBlocks.count(BlockReading->nHeight) &&
-            mnpayments.mapApollonnodeBlocks[BlockReading->nHeight].HasPayeeWithVotes(mnpayee, 2)) {
+//        LogPrintf("mnpayments.mapIndexnodeBlocks.count(BlockReading->nHeight)=%s\n", mnpayments.mapIndexnodeBlocks.count(BlockReading->nHeight));
+//        LogPrintf("mnpayments.mapIndexnodeBlocks[BlockReading->nHeight].HasPayeeWithVotes(mnpayee, 2)=%s\n", mnpayments.mapIndexnodeBlocks[BlockReading->nHeight].HasPayeeWithVotes(mnpayee, 2));
+        if (mnpayments.mapIndexnodeBlocks.count(BlockReading->nHeight) &&
+            mnpayments.mapIndexnodeBlocks[BlockReading->nHeight].HasPayeeWithVotes(mnpayee, 2)) {
             // LogPrintf("i=%s, BlockReading->nHeight=%s\n", i, BlockReading->nHeight);
             CBlock block;
             if (!ReadBlockFromDisk(block, BlockReading, Params().GetConsensus())) // shouldn't really happen
@@ -530,13 +530,13 @@ void CApollonnode::UpdateLastPaid(const CBlockApollon *papollon, int nMaxBlocksT
                 LogPrintf("ReadBlockFromDisk failed\n");
                 continue;
             }
-            CAmount nApollonnodePayment = GetApollonnodePayment(params, false,BlockReading->nHeight);
+            CAmount nIndexnodePayment = GetIndexnodePayment(params, false,BlockReading->nHeight);
 
             BOOST_FOREACH(CTxOut txout, block.vtx[0].vout)
-            if (mnpayee == txout.scriptPubKey && nApollonnodePayment == txout.nValue) {
+            if (mnpayee == txout.scriptPubKey && nIndexnodePayment == txout.nValue) {
                 SetBlockLastPaid(BlockReading->nHeight);
                 SetTimeLastPaid(BlockReading->nTime);
-                LogPrint("apollonnode", "CApollonnode::UpdateLastPaidBlock -- searching for block with payment to %s -- found new %d\n", vin.prevout.ToStringShort(), nBlockLastPaid);
+                LogPrint("indexnode", "CIndexnode::UpdateLastPaidBlock -- searching for block with payment to %s -- found new %d\n", vin.prevout.ToStringShort(), nBlockLastPaid);
                 return;
             }
         }
@@ -548,35 +548,35 @@ void CApollonnode::UpdateLastPaid(const CBlockApollon *papollon, int nMaxBlocksT
         BlockReading = BlockReading->pprev;
     }
 
-    // Last payment for this apollonnode wasn't found in latest mnpayments blocks
+    // Last payment for this indexnode wasn't found in latest mnpayments blocks
     // or it was found in mnpayments blocks but wasn't found in the blockchain.
-    // LogPrint("apollonnode", "CApollonnode::UpdateLastPaidBlock -- searching for block with payment to %s -- keeping old %d\n", vin.prevout.ToStringShort(), nBlockLastPaid);
+    // LogPrint("indexnode", "CIndexnode::UpdateLastPaidBlock -- searching for block with payment to %s -- keeping old %d\n", vin.prevout.ToStringShort(), nBlockLastPaid);
 }
 
-bool CApollonnodeBroadcast::Create(std::string strService, std::string strKeyApollonnode, std::string strTxHash, std::string strOutputApollon, std::string &strErrorRet, CApollonnodeBroadcast &mnbRet, bool fOffline) {
-    LogPrintf("CApollonnodeBroadcast::Create\n");
+bool CIndexnodeBroadcast::Create(std::string strService, std::string strKeyIndexnode, std::string strTxHash, std::string strOutputIndex, std::string &strErrorRet, CIndexnodeBroadcast &mnbRet, bool fOffline) {
+    LogPrintf("CIndexnodeBroadcast::Create\n");
     CTxIn txin;
     CPubKey pubKeyCollateralAddressNew;
     CKey keyCollateralAddressNew;
-    CPubKey pubKeyApollonnodeNew;
-    CKey keyApollonnodeNew;
+    CPubKey pubKeyIndexnodeNew;
+    CKey keyIndexnodeNew;
     //need correct blocks to send ping
-    if (!fOffline && !apollonnodeSync.IsBlockchainSynced()) {
-        strErrorRet = "Sync in progress. Must wait until sync is complete to start Apollonnode";
-        LogPrintf("CApollonnodeBroadcast::Create -- %s\n", strErrorRet);
+    if (!fOffline && !indexnodeSync.IsBlockchainSynced()) {
+        strErrorRet = "Sync in progress. Must wait until sync is complete to start Indexnode";
+        LogPrintf("CIndexnodeBroadcast::Create -- %s\n", strErrorRet);
         return false;
     }
 
     //TODO
-    if (!darkSendSigner.GetKeysFromSecret(strKeyApollonnode, keyApollonnodeNew, pubKeyApollonnodeNew)) {
-        strErrorRet = strprintf("Invalid apollonnode key %s", strKeyApollonnode);
-        LogPrintf("CApollonnodeBroadcast::Create -- %s\n", strErrorRet);
+    if (!darkSendSigner.GetKeysFromSecret(strKeyIndexnode, keyIndexnodeNew, pubKeyIndexnodeNew)) {
+        strErrorRet = strprintf("Invalid indexnode key %s", strKeyIndexnode);
+        LogPrintf("CIndexnodeBroadcast::Create -- %s\n", strErrorRet);
         return false;
     }
 
-    if (!pwalletMain->GetApollonnodeVinAndKeys(txin, pubKeyCollateralAddressNew, keyCollateralAddressNew, strTxHash, strOutputApollon)) {
-        strErrorRet = strprintf("Could not allocate txin %s:%s for apollonnode %s", strTxHash, strOutputApollon, strService);
-        LogPrintf("CApollonnodeBroadcast::Create -- %s\n", strErrorRet);
+    if (!pwalletMain->GetIndexnodeVinAndKeys(txin, pubKeyCollateralAddressNew, keyCollateralAddressNew, strTxHash, strOutputIndex)) {
+        strErrorRet = strprintf("Could not allocate txin %s:%s for indexnode %s", strTxHash, strOutputIndex, strService);
+        LogPrintf("CIndexnodeBroadcast::Create -- %s\n", strErrorRet);
         return false;
     }
 
@@ -584,85 +584,85 @@ bool CApollonnodeBroadcast::Create(std::string strService, std::string strKeyApo
     int mainnetDefaultPort = Params(CBaseChainParams::MAIN).GetDefaultPort();
     if (Params().NetworkIDString() == CBaseChainParams::MAIN) {
         if (service.GetPort() != mainnetDefaultPort) {
-            strErrorRet = strprintf("Invalid port %u for apollonnode %s, only %d is supported on mainnet.", service.GetPort(), strService, mainnetDefaultPort);
-            LogPrintf("CApollonnodeBroadcast::Create -- %s\n", strErrorRet);
+            strErrorRet = strprintf("Invalid port %u for indexnode %s, only %d is supported on mainnet.", service.GetPort(), strService, mainnetDefaultPort);
+            LogPrintf("CIndexnodeBroadcast::Create -- %s\n", strErrorRet);
             return false;
         }
     } else if (service.GetPort() == mainnetDefaultPort) {
-        strErrorRet = strprintf("Invalid port %u for apollonnode %s, %d is the only supported on mainnet.", service.GetPort(), strService, mainnetDefaultPort);
-        LogPrintf("CApollonnodeBroadcast::Create -- %s\n", strErrorRet);
+        strErrorRet = strprintf("Invalid port %u for indexnode %s, %d is the only supported on mainnet.", service.GetPort(), strService, mainnetDefaultPort);
+        LogPrintf("CIndexnodeBroadcast::Create -- %s\n", strErrorRet);
         return false;
     }
 
-    return Create(txin, CService(strService), keyCollateralAddressNew, pubKeyCollateralAddressNew, keyApollonnodeNew, pubKeyApollonnodeNew, strErrorRet, mnbRet);
+    return Create(txin, CService(strService), keyCollateralAddressNew, pubKeyCollateralAddressNew, keyIndexnodeNew, pubKeyIndexnodeNew, strErrorRet, mnbRet);
 }
 
-bool CApollonnodeBroadcast::Create(CTxIn txin, CService service, CKey keyCollateralAddressNew, CPubKey pubKeyCollateralAddressNew, CKey keyApollonnodeNew, CPubKey pubKeyApollonnodeNew, std::string &strErrorRet, CApollonnodeBroadcast &mnbRet) {
-    // wait for reapollon and/or import to finish
-    if (fImporting || fReapollon) return false;
+bool CIndexnodeBroadcast::Create(CTxIn txin, CService service, CKey keyCollateralAddressNew, CPubKey pubKeyCollateralAddressNew, CKey keyIndexnodeNew, CPubKey pubKeyIndexnodeNew, std::string &strErrorRet, CIndexnodeBroadcast &mnbRet) {
+    // wait for reindex and/or import to finish
+    if (fImporting || fReindex) return false;
 
-    LogPrint("apollonnode", "CApollonnodeBroadcast::Create -- pubKeyCollateralAddressNew = %s, pubKeyApollonnodeNew.GetID() = %s\n",
+    LogPrint("indexnode", "CIndexnodeBroadcast::Create -- pubKeyCollateralAddressNew = %s, pubKeyIndexnodeNew.GetID() = %s\n",
              CBitcoinAddress(pubKeyCollateralAddressNew.GetID()).ToString(),
-             pubKeyApollonnodeNew.GetID().ToString());
+             pubKeyIndexnodeNew.GetID().ToString());
 
 
-    CApollonnodePing mnp(txin);
-    if (!mnp.Sign(keyApollonnodeNew, pubKeyApollonnodeNew)) {
-        strErrorRet = strprintf("Failed to sign ping, apollonnode=%s", txin.prevout.ToStringShort());
-        LogPrintf("CApollonnodeBroadcast::Create -- %s\n", strErrorRet);
-        mnbRet = CApollonnodeBroadcast();
+    CIndexnodePing mnp(txin);
+    if (!mnp.Sign(keyIndexnodeNew, pubKeyIndexnodeNew)) {
+        strErrorRet = strprintf("Failed to sign ping, indexnode=%s", txin.prevout.ToStringShort());
+        LogPrintf("CIndexnodeBroadcast::Create -- %s\n", strErrorRet);
+        mnbRet = CIndexnodeBroadcast();
         return false;
     }
 
     int nHeight = chainActive.Height();
     if (nHeight < ZC_MODULUS_V2_START_BLOCK) {
-        mnbRet = CApollonnodeBroadcast(service, txin, pubKeyCollateralAddressNew, pubKeyApollonnodeNew, MIN_PEER_PROTO_VERSION);
+        mnbRet = CIndexnodeBroadcast(service, txin, pubKeyCollateralAddressNew, pubKeyIndexnodeNew, MIN_PEER_PROTO_VERSION);
     } else {
-        mnbRet = CApollonnodeBroadcast(service, txin, pubKeyCollateralAddressNew, pubKeyApollonnodeNew, PROTOCOL_VERSION);
+        mnbRet = CIndexnodeBroadcast(service, txin, pubKeyCollateralAddressNew, pubKeyIndexnodeNew, PROTOCOL_VERSION);
     }
 
     if (!mnbRet.IsValidNetAddr()) {
-        strErrorRet = strprintf("Invalid IP address, apollonnode=%s", txin.prevout.ToStringShort());
-        LogPrintf("CApollonnodeBroadcast::Create -- %s\n", strErrorRet);
-        mnbRet = CApollonnodeBroadcast();
+        strErrorRet = strprintf("Invalid IP address, indexnode=%s", txin.prevout.ToStringShort());
+        LogPrintf("CIndexnodeBroadcast::Create -- %s\n", strErrorRet);
+        mnbRet = CIndexnodeBroadcast();
         return false;
     }
     mnbRet.SetLastPing(mnp);
     if (!mnbRet.Sign(keyCollateralAddressNew)) {
-        strErrorRet = strprintf("Failed to sign broadcast, apollonnode=%s", txin.prevout.ToStringShort());
-        LogPrintf("CApollonnodeBroadcast::Create -- %s\n", strErrorRet);
-        mnbRet = CApollonnodeBroadcast();
+        strErrorRet = strprintf("Failed to sign broadcast, indexnode=%s", txin.prevout.ToStringShort());
+        LogPrintf("CIndexnodeBroadcast::Create -- %s\n", strErrorRet);
+        mnbRet = CIndexnodeBroadcast();
         return false;
     }
 
     return true;
 }
 
-bool CApollonnodeBroadcast::SimpleCheck(int &nDos) {
+bool CIndexnodeBroadcast::SimpleCheck(int &nDos) {
     nDos = 0;
 
     // make sure addr is valid
     if (!IsValidNetAddr()) {
-        LogPrintf("CApollonnodeBroadcast::SimpleCheck -- Invalid addr, rejected: apollonnode=%s  addr=%s\n",
+        LogPrintf("CIndexnodeBroadcast::SimpleCheck -- Invalid addr, rejected: indexnode=%s  addr=%s\n",
                   vin.prevout.ToStringShort(), addr.ToString());
         return false;
     }
 
     // make sure signature isn't in the future (past is OK)
     if (sigTime > GetAdjustedTime() + 60 * 60) {
-        LogPrintf("CApollonnodeBroadcast::SimpleCheck -- Signature rejected, too far into the future: apollonnode=%s\n", vin.prevout.ToStringShort());
+        LogPrintf("CIndexnodeBroadcast::SimpleCheck -- Signature rejected, too far into the future: indexnode=%s\n", vin.prevout.ToStringShort());
         nDos = 1;
         return false;
     }
 
     // empty ping or incorrect sigTime/unknown blockhash
-    if (lastPing == CApollonnodePing() || !lastPing.SimpleCheck(nDos)) {
+    if (lastPing == CIndexnodePing() || !lastPing.SimpleCheck(nDos)) {
         // one of us is probably forked or smth, just mark it as expired and check the rest of the rules
-        SetStatus(APOLLONNODE_EXPIRED);
+        SetStatus(INDEXNODE_EXPIRED);
     }
 
-    if (nProtocolVersion < mnpayments.GetMinApollonnodePaymentsProto()) {
-        LogPrintf("CApollonnodeBroadcast::SimpleCheck -- ignoring outdated Apollonnode: apollonnode=%s  nProtocolVersion=%d\n", vin.prevout.ToStringShort(), nProtocolVersion);
+    if (nProtocolVersion < mnpayments.GetMinIndexnodePaymentsProto()) {
+        LogPrintf("CIndexnodeBroadcast::SimpleCheck -- ignoring outdated Indexnode: indexnode=%s  nProtocolVersion=%d\n", vin.prevout.ToStringShort(), nProtocolVersion);
         return false;
     }
 
@@ -670,22 +670,22 @@ bool CApollonnodeBroadcast::SimpleCheck(int &nDos) {
     pubkeyScript = GetScriptForDestination(pubKeyCollateralAddress.GetID());
 
     if (pubkeyScript.size() != 25) {
-        LogPrintf("CApollonnodeBroadcast::SimpleCheck -- pubKeyCollateralAddress has the wrong size\n");
+        LogPrintf("CIndexnodeBroadcast::SimpleCheck -- pubKeyCollateralAddress has the wrong size\n");
         nDos = 100;
         return false;
     }
 
     CScript pubkeyScript2;
-    pubkeyScript2 = GetScriptForDestination(pubKeyApollonnode.GetID());
+    pubkeyScript2 = GetScriptForDestination(pubKeyIndexnode.GetID());
 
     if (pubkeyScript2.size() != 25) {
-        LogPrintf("CApollonnodeBroadcast::SimpleCheck -- pubKeyApollonnode has the wrong size\n");
+        LogPrintf("CIndexnodeBroadcast::SimpleCheck -- pubKeyIndexnode has the wrong size\n");
         nDos = 100;
         return false;
     }
 
     if (!vin.scriptSig.empty()) {
-        LogPrintf("CApollonnodeBroadcast::SimpleCheck -- Ignore Not Empty ScriptSig %s\n", vin.ToString());
+        LogPrintf("CIndexnodeBroadcast::SimpleCheck -- Ignore Not Empty ScriptSig %s\n", vin.ToString());
         nDos = 100;
         return false;
     }
@@ -698,11 +698,11 @@ bool CApollonnodeBroadcast::SimpleCheck(int &nDos) {
     return true;
 }
 
-bool CApollonnodeBroadcast::Update(CApollonnode *pmn, int &nDos) {
+bool CIndexnodeBroadcast::Update(CIndexnode *pmn, int &nDos) {
     nDos = 0;
 
     if (pmn->sigTime == sigTime && !fRecovery) {
-        // mapSeenApollonnodeBroadcast in CApollonnodeMan::CheckMnbAndUpdateApollonnodeList should filter legit duplicates
+        // mapSeenIndexnodeBroadcast in CIndexnodeMan::CheckMnbAndUpdateIndexnodeList should filter legit duplicates
         // but this still can happen if we just started, which is ok, just do nothing here.
         return false;
     }
@@ -710,55 +710,55 @@ bool CApollonnodeBroadcast::Update(CApollonnode *pmn, int &nDos) {
     // this broadcast is older than the one that we already have - it's bad and should never happen
     // unless someone is doing something fishy
     if (pmn->sigTime > sigTime) {
-        LogPrintf("CApollonnodeBroadcast::Update -- Bad sigTime %d (existing broadcast is at %d) for Apollonnode %s %s\n",
+        LogPrintf("CIndexnodeBroadcast::Update -- Bad sigTime %d (existing broadcast is at %d) for Indexnode %s %s\n",
                   sigTime, pmn->sigTime, vin.prevout.ToStringShort(), addr.ToString());
         return false;
     }
 
     pmn->Check();
 
-    // apollonnode is banned by PoSe
+    // indexnode is banned by PoSe
     if (pmn->IsPoSeBanned()) {
-        LogPrintf("CApollonnodeBroadcast::Update -- Banned by PoSe, apollonnode=%s\n", vin.prevout.ToStringShort());
+        LogPrintf("CIndexnodeBroadcast::Update -- Banned by PoSe, indexnode=%s\n", vin.prevout.ToStringShort());
         return false;
     }
 
     // IsVnAssociatedWithPubkey is validated once in CheckOutpoint, after that they just need to match
     if (pmn->pubKeyCollateralAddress != pubKeyCollateralAddress) {
-        LogPrintf("CApollonnodeBroadcast::Update -- Got mismatched pubKeyCollateralAddress and vin\n");
+        LogPrintf("CIndexnodeBroadcast::Update -- Got mismatched pubKeyCollateralAddress and vin\n");
         nDos = 33;
         return false;
     }
 
     if (!CheckSignature(nDos)) {
-        LogPrintf("CApollonnodeBroadcast::Update -- CheckSignature() failed, apollonnode=%s\n", vin.prevout.ToStringShort());
+        LogPrintf("CIndexnodeBroadcast::Update -- CheckSignature() failed, indexnode=%s\n", vin.prevout.ToStringShort());
         return false;
     }
 
-    // if ther was no apollonnode broadcast recently or if it matches our Apollonnode privkey...
-    if (!pmn->IsBroadcastedWithin(APOLLONNODE_MIN_MNB_SECONDS) || (fApollonNode && pubKeyApollonnode == activeApollonnode.pubKeyApollonnode)) {
+    // if ther was no indexnode broadcast recently or if it matches our Indexnode privkey...
+    if (!pmn->IsBroadcastedWithin(INDEXNODE_MIN_MNB_SECONDS) || (fIndexNode && pubKeyIndexnode == activeIndexnode.pubKeyIndexnode)) {
         // take the newest entry
-        LogPrintf("CApollonnodeBroadcast::Update -- Got UPDATED Apollonnode entry: addr=%s\n", addr.ToString());
+        LogPrintf("CIndexnodeBroadcast::Update -- Got UPDATED Indexnode entry: addr=%s\n", addr.ToString());
         if (pmn->UpdateFromNewBroadcast((*this))) {
             pmn->Check();
-            RelayApollonNode();
+            RelayIndexNode();
         }
-        apollonnodeSync.AddedApollonnodeList();
-        GetMainSignals().UpdatedApollonnode(*pmn);
+        indexnodeSync.AddedIndexnodeList();
+        GetMainSignals().UpdatedIndexnode(*pmn);
     }
 
     return true;
 }
 
-bool CApollonnodeBroadcast::CheckOutpoint(int &nDos) {
-    // we are a apollonnode with the same vin (i.e. already activated) and this mnb is ours (matches our Apollonnode privkey)
+bool CIndexnodeBroadcast::CheckOutpoint(int &nDos) {
+    // we are a indexnode with the same vin (i.e. already activated) and this mnb is ours (matches our Indexnode privkey)
     // so nothing to do here for us
-    if (fApollonNode && vin.prevout == activeApollonnode.vin.prevout && pubKeyApollonnode == activeApollonnode.pubKeyApollonnode) {
+    if (fIndexNode && vin.prevout == activeIndexnode.vin.prevout && pubKeyIndexnode == activeIndexnode.pubKeyIndexnode) {
         return false;
     }
 
     if (!CheckSignature(nDos)) {
-        LogPrintf("CApollonnodeBroadcast::CheckOutpoint -- CheckSignature() failed, apollonnode=%s\n", vin.prevout.ToStringShort());
+        LogPrintf("CIndexnodeBroadcast::CheckOutpoint -- CheckSignature() failed, indexnode=%s\n", vin.prevout.ToStringShort());
         return false;
     }
 
@@ -766,8 +766,8 @@ bool CApollonnodeBroadcast::CheckOutpoint(int &nDos) {
         TRY_LOCK(cs_main, lockMain);
         if (!lockMain) {
             // not mnb fault, let it to be checked again later
-            LogPrint("apollonnode", "CApollonnodeBroadcast::CheckOutpoint -- Failed to aquire lock, addr=%s", addr.ToString());
-            mnodeman.mapSeenApollonnodeBroadcast.erase(GetHash());
+            LogPrint("indexnode", "CIndexnodeBroadcast::CheckOutpoint -- Failed to aquire lock, addr=%s", addr.ToString());
+            mnodeman.mapSeenIndexnodeBroadcast.erase(GetHash());
             return false;
         }
 
@@ -775,46 +775,46 @@ bool CApollonnodeBroadcast::CheckOutpoint(int &nDos) {
         if (!pcoinsTip->GetCoins(vin.prevout.hash, coins) ||
             (unsigned int) vin.prevout.n >= coins.vout.size() ||
             coins.vout[vin.prevout.n].IsNull()) {
-            LogPrint("apollonnode", "CApollonnodeBroadcast::CheckOutpoint -- Failed to find Apollonnode UTXO, apollonnode=%s\n", vin.prevout.ToStringShort());
+            LogPrint("indexnode", "CIndexnodeBroadcast::CheckOutpoint -- Failed to find Indexnode UTXO, indexnode=%s\n", vin.prevout.ToStringShort());
             return false;
         }
-        if (coins.vout[vin.prevout.n].nValue != APOLLONNODE_COIN_REQUIRED * COIN) {
-            LogPrint("apollonnode", "CApollonnodeBroadcast::CheckOutpoint -- Apollonnode UTXO should have 1000 XAP, apollonnode=%s\n", vin.prevout.ToStringShort());
+        if (coins.vout[vin.prevout.n].nValue != INDEXNODE_COIN_REQUIRED * COIN) {
+            LogPrint("indexnode", "CIndexnodeBroadcast::CheckOutpoint -- Indexnode UTXO should have 1000 XAP, indexnode=%s\n", vin.prevout.ToStringShort());
             return false;
         }
-        if (chainActive.Height() - coins.nHeight + 1 < Params().GetConsensus().nApollonnodeMinimumConfirmations) {
-            LogPrintf("CApollonnodeBroadcast::CheckOutpoint -- Apollonnode UTXO must have at least %d confirmations, apollonnode=%s\n",
-                      Params().GetConsensus().nApollonnodeMinimumConfirmations, vin.prevout.ToStringShort());
+        if (chainActive.Height() - coins.nHeight + 1 < Params().GetConsensus().nIndexnodeMinimumConfirmations) {
+            LogPrintf("CIndexnodeBroadcast::CheckOutpoint -- Indexnode UTXO must have at least %d confirmations, indexnode=%s\n",
+                      Params().GetConsensus().nIndexnodeMinimumConfirmations, vin.prevout.ToStringShort());
             // maybe we miss few blocks, let this mnb to be checked again later
-            mnodeman.mapSeenApollonnodeBroadcast.erase(GetHash());
+            mnodeman.mapSeenIndexnodeBroadcast.erase(GetHash());
             return false;
         }
     }
 
-    LogPrint("apollonnode", "CApollonnodeBroadcast::CheckOutpoint -- Apollonnode UTXO verified\n");
+    LogPrint("indexnode", "CIndexnodeBroadcast::CheckOutpoint -- Indexnode UTXO verified\n");
 
-    // make sure the vout that was signed is related to the transaction that spawned the Apollonnode
-    //  - this is expensive, so it's only done once per Apollonnode
+    // make sure the vout that was signed is related to the transaction that spawned the Indexnode
+    //  - this is expensive, so it's only done once per Indexnode
     if (!darkSendSigner.IsVinAssociatedWithPubkey(vin, pubKeyCollateralAddress)) {
-        LogPrintf("CApollonnodeMan::CheckOutpoint -- Got mismatched pubKeyCollateralAddress and vin\n");
+        LogPrintf("CIndexnodeMan::CheckOutpoint -- Got mismatched pubKeyCollateralAddress and vin\n");
         nDos = 33;
         return false;
     }
 
     // verify that sig time is legit in past
-    // should be at least not earlier than block when 1000 XAP tx got nApollonnodeMinimumConfirmations
+    // should be at least not earlier than block when 1000 XAP tx got nIndexnodeMinimumConfirmations
     uint256 hashBlock = uint256();
     CTransaction tx2;
     GetTransaction(vin.prevout.hash, tx2, Params().GetConsensus(), hashBlock, true);
     {
         LOCK(cs_main);
-        BlockMap::iterator mi = mapBlockApollon.find(hashBlock);
-        if (mi != mapBlockApollon.end() && (*mi).second) {
-            CBlockApollon *pMNApollon = (*mi).second; // block for 1000 XAP tx -> 1 confirmation
-            CBlockApollon *pConfApollon = chainActive[pMNApollon->nHeight + Params().GetConsensus().nApollonnodeMinimumConfirmations - 1]; // block where tx got nApollonnodeMinimumConfirmations
-            if (pConfApollon->GetBlockTime() > sigTime) {
-                LogPrintf("CApollonnodeBroadcast::CheckOutpoint -- Bad sigTime %d (%d conf block is at %d) for Apollonnode %s %s\n",
-                          sigTime, Params().GetConsensus().nApollonnodeMinimumConfirmations, pConfApollon->GetBlockTime(), vin.prevout.ToStringShort(), addr.ToString());
+        BlockMap::iterator mi = mapBlockIndex.find(hashBlock);
+        if (mi != mapBlockIndex.end() && (*mi).second) {
+            CBlockIndex *pMNIndex = (*mi).second; // block for 1000 XAP tx -> 1 confirmation
+            CBlockIndex *pConfIndex = chainActive[pMNIndex->nHeight + Params().GetConsensus().nIndexnodeMinimumConfirmations - 1]; // block where tx got nIndexnodeMinimumConfirmations
+            if (pConfIndex->GetBlockTime() > sigTime) {
+                LogPrintf("CIndexnodeBroadcast::CheckOutpoint -- Bad sigTime %d (%d conf block is at %d) for Indexnode %s %s\n",
+                          sigTime, Params().GetConsensus().nIndexnodeMinimumConfirmations, pConfIndex->GetBlockTime(), vin.prevout.ToStringShort(), addr.ToString());
                 return false;
             }
         }
@@ -823,42 +823,42 @@ bool CApollonnodeBroadcast::CheckOutpoint(int &nDos) {
     return true;
 }
 
-bool CApollonnodeBroadcast::Sign(CKey &keyCollateralAddress) {
+bool CIndexnodeBroadcast::Sign(CKey &keyCollateralAddress) {
     std::string strError;
     std::string strMessage;
 
     sigTime = GetAdjustedTime();
 
     strMessage = addr.ToString() + boost::lexical_cast<std::string>(sigTime) +
-                 pubKeyCollateralAddress.GetID().ToString() + pubKeyApollonnode.GetID().ToString() +
+                 pubKeyCollateralAddress.GetID().ToString() + pubKeyIndexnode.GetID().ToString() +
                  boost::lexical_cast<std::string>(nProtocolVersion);
 
     if (!darkSendSigner.SignMessage(strMessage, vchSig, keyCollateralAddress)) {
-        LogPrintf("CApollonnodeBroadcast::Sign -- SignMessage() failed\n");
+        LogPrintf("CIndexnodeBroadcast::Sign -- SignMessage() failed\n");
         return false;
     }
 
     if (!darkSendSigner.VerifyMessage(pubKeyCollateralAddress, vchSig, strMessage, strError)) {
-        LogPrintf("CApollonnodeBroadcast::Sign -- VerifyMessage() failed, error: %s\n", strError);
+        LogPrintf("CIndexnodeBroadcast::Sign -- VerifyMessage() failed, error: %s\n", strError);
         return false;
     }
 
     return true;
 }
 
-bool CApollonnodeBroadcast::CheckSignature(int &nDos) {
+bool CIndexnodeBroadcast::CheckSignature(int &nDos) {
     std::string strMessage;
     std::string strError = "";
     nDos = 0;
 
     strMessage = addr.ToString() + boost::lexical_cast<std::string>(sigTime) +
-                 pubKeyCollateralAddress.GetID().ToString() + pubKeyApollonnode.GetID().ToString() +
+                 pubKeyCollateralAddress.GetID().ToString() + pubKeyIndexnode.GetID().ToString() +
                  boost::lexical_cast<std::string>(nProtocolVersion);
 
-    LogPrint("apollonnode", "CApollonnodeBroadcast::CheckSignature -- strMessage: %s  pubKeyCollateralAddress address: %s  sig: %s\n", strMessage, CBitcoinAddress(pubKeyCollateralAddress.GetID()).ToString(), EncodeBase64(&vchSig[0], vchSig.size()));
+    LogPrint("indexnode", "CIndexnodeBroadcast::CheckSignature -- strMessage: %s  pubKeyCollateralAddress address: %s  sig: %s\n", strMessage, CBitcoinAddress(pubKeyCollateralAddress.GetID()).ToString(), EncodeBase64(&vchSig[0], vchSig.size()));
 
     if (!darkSendSigner.VerifyMessage(pubKeyCollateralAddress, vchSig, strMessage, strError)) {
-        LogPrintf("CApollonnodeBroadcast::CheckSignature -- Got bad Apollonnode announce signature, error: %s\n", strError);
+        LogPrintf("CIndexnodeBroadcast::CheckSignature -- Got bad Indexnode announce signature, error: %s\n", strError);
         nDos = 100;
         return false;
     }
@@ -866,13 +866,13 @@ bool CApollonnodeBroadcast::CheckSignature(int &nDos) {
     return true;
 }
 
-void CApollonnodeBroadcast::RelayApollonNode() {
-    LogPrintf("CApollonnodeBroadcast::RelayApollonNode\n");
-    CInv inv(MSG_APOLLONNODE_ANNOUNCE, GetHash());
+void CIndexnodeBroadcast::RelayIndexNode() {
+    LogPrintf("CIndexnodeBroadcast::RelayIndexNode\n");
+    CInv inv(MSG_INDEXNODE_ANNOUNCE, GetHash());
     RelayInv(inv);
 }
 
-CApollonnodePing::CApollonnodePing(CTxIn &vinNew) {
+CIndexnodePing::CIndexnodePing(CTxIn &vinNew) {
     LOCK(cs_main);
     if (!chainActive.Tip() || chainActive.Height() < 12) return;
 
@@ -882,45 +882,45 @@ CApollonnodePing::CApollonnodePing(CTxIn &vinNew) {
     vchSig = std::vector < unsigned char > ();
 }
 
-bool CApollonnodePing::Sign(CKey &keyApollonnode, CPubKey &pubKeyApollonnode) {
+bool CIndexnodePing::Sign(CKey &keyIndexnode, CPubKey &pubKeyIndexnode) {
     std::string strError;
-    std::string strApollonNodeSignMessage;
+    std::string strIndexNodeSignMessage;
 
     sigTime = GetAdjustedTime();
     std::string strMessage = vin.ToString() + blockHash.ToString() + boost::lexical_cast<std::string>(sigTime);
 
-    if (!darkSendSigner.SignMessage(strMessage, vchSig, keyApollonnode)) {
-        LogPrintf("CApollonnodePing::Sign -- SignMessage() failed\n");
+    if (!darkSendSigner.SignMessage(strMessage, vchSig, keyIndexnode)) {
+        LogPrintf("CIndexnodePing::Sign -- SignMessage() failed\n");
         return false;
     }
 
-    if (!darkSendSigner.VerifyMessage(pubKeyApollonnode, vchSig, strMessage, strError)) {
-        LogPrintf("CApollonnodePing::Sign -- VerifyMessage() failed, error: %s\n", strError);
+    if (!darkSendSigner.VerifyMessage(pubKeyIndexnode, vchSig, strMessage, strError)) {
+        LogPrintf("CIndexnodePing::Sign -- VerifyMessage() failed, error: %s\n", strError);
         return false;
     }
 
     return true;
 }
 
-bool CApollonnodePing::CheckSignature(CPubKey &pubKeyApollonnode, int &nDos) {
+bool CIndexnodePing::CheckSignature(CPubKey &pubKeyIndexnode, int &nDos) {
     std::string strMessage = vin.ToString() + blockHash.ToString() + boost::lexical_cast<std::string>(sigTime);
     std::string strError = "";
     nDos = 0;
 
-    if (!darkSendSigner.VerifyMessage(pubKeyApollonnode, vchSig, strMessage, strError)) {
-        LogPrintf("CApollonnodePing::CheckSignature -- Got bad Apollonnode ping signature, apollonnode=%s, error: %s\n", vin.prevout.ToStringShort(), strError);
+    if (!darkSendSigner.VerifyMessage(pubKeyIndexnode, vchSig, strMessage, strError)) {
+        LogPrintf("CIndexnodePing::CheckSignature -- Got bad Indexnode ping signature, indexnode=%s, error: %s\n", vin.prevout.ToStringShort(), strError);
         nDos = 33;
         return false;
     }
     return true;
 }
 
-bool CApollonnodePing::SimpleCheck(int &nDos) {
+bool CIndexnodePing::SimpleCheck(int &nDos) {
     // don't ban by default
     nDos = 0;
 
     if (sigTime > GetAdjustedTime() + 60 * 60) {
-        LogPrintf("CApollonnodePing::SimpleCheck -- Signature rejected, too far into the future, apollonnode=%s\n", vin.prevout.ToStringShort());
+        LogPrintf("CIndexnodePing::SimpleCheck -- Signature rejected, too far into the future, indexnode=%s\n", vin.prevout.ToStringShort());
         nDos = 1;
         return false;
     }
@@ -928,19 +928,19 @@ bool CApollonnodePing::SimpleCheck(int &nDos) {
     {
 //        LOCK(cs_main);
         AssertLockHeld(cs_main);
-        BlockMap::iterator mi = mapBlockApollon.find(blockHash);
-        if (mi == mapBlockApollon.end()) {
-            LogPrint("apollonnode", "CApollonnodePing::SimpleCheck -- Apollonnode ping is invalid, unknown block hash: apollonnode=%s blockHash=%s\n", vin.prevout.ToStringShort(), blockHash.ToString());
+        BlockMap::iterator mi = mapBlockIndex.find(blockHash);
+        if (mi == mapBlockIndex.end()) {
+            LogPrint("indexnode", "CIndexnodePing::SimpleCheck -- Indexnode ping is invalid, unknown block hash: indexnode=%s blockHash=%s\n", vin.prevout.ToStringShort(), blockHash.ToString());
             // maybe we stuck or forked so we shouldn't ban this node, just fail to accept this ping
             // TODO: or should we also request this block?
             return false;
         }
     }
-    LogPrint("apollonnode", "CApollonnodePing::SimpleCheck -- Apollonnode ping verified: apollonnode=%s  blockHash=%s  sigTime=%d\n", vin.prevout.ToStringShort(), blockHash.ToString(), sigTime);
+    LogPrint("indexnode", "CIndexnodePing::SimpleCheck -- Indexnode ping verified: indexnode=%s  blockHash=%s  sigTime=%d\n", vin.prevout.ToStringShort(), blockHash.ToString(), sigTime);
     return true;
 }
 
-bool CApollonnodePing::CheckAndUpdate(CApollonnode *pmn, bool fFromNewBroadcast, int &nDos) {
+bool CIndexnodePing::CheckAndUpdate(CIndexnode *pmn, bool fFromNewBroadcast, int &nDos) {
     // don't ban by default
     nDos = 0;
 
@@ -949,82 +949,82 @@ bool CApollonnodePing::CheckAndUpdate(CApollonnode *pmn, bool fFromNewBroadcast,
     }
 
     if (pmn == NULL) {
-        LogPrint("apollonnode", "CApollonnodePing::CheckAndUpdate -- Couldn't find Apollonnode entry, apollonnode=%s\n", vin.prevout.ToStringShort());
+        LogPrint("indexnode", "CIndexnodePing::CheckAndUpdate -- Couldn't find Indexnode entry, indexnode=%s\n", vin.prevout.ToStringShort());
         return false;
     }
 
     if (!fFromNewBroadcast) {
         if (pmn->IsUpdateRequired()) {
-            LogPrint("apollonnode", "CApollonnodePing::CheckAndUpdate -- apollonnode protocol is outdated, apollonnode=%s\n", vin.prevout.ToStringShort());
+            LogPrint("indexnode", "CIndexnodePing::CheckAndUpdate -- indexnode protocol is outdated, indexnode=%s\n", vin.prevout.ToStringShort());
             return false;
         }
 
         if (pmn->IsNewStartRequired()) {
-            LogPrint("apollonnode", "CApollonnodePing::CheckAndUpdate -- apollonnode is completely expired, new start is required, apollonnode=%s\n", vin.prevout.ToStringShort());
+            LogPrint("indexnode", "CIndexnodePing::CheckAndUpdate -- indexnode is completely expired, new start is required, indexnode=%s\n", vin.prevout.ToStringShort());
             return false;
         }
     }
 
     {
         LOCK(cs_main);
-        BlockMap::iterator mi = mapBlockApollon.find(blockHash);
+        BlockMap::iterator mi = mapBlockIndex.find(blockHash);
         if ((*mi).second && (*mi).second->nHeight < chainActive.Height() - 24) {
-            // LogPrintf("CApollonnodePing::CheckAndUpdate -- Apollonnode ping is invalid, block hash is too old: apollonnode=%s  blockHash=%s\n", vin.prevout.ToStringShort(), blockHash.ToString());
+            // LogPrintf("CIndexnodePing::CheckAndUpdate -- Indexnode ping is invalid, block hash is too old: indexnode=%s  blockHash=%s\n", vin.prevout.ToStringShort(), blockHash.ToString());
             // nDos = 1;
             return false;
         }
     }
 
-    LogPrint("apollonnode", "CApollonnodePing::CheckAndUpdate -- New ping: apollonnode=%s  blockHash=%s  sigTime=%d\n", vin.prevout.ToStringShort(), blockHash.ToString(), sigTime);
+    LogPrint("indexnode", "CIndexnodePing::CheckAndUpdate -- New ping: indexnode=%s  blockHash=%s  sigTime=%d\n", vin.prevout.ToStringShort(), blockHash.ToString(), sigTime);
 
     // LogPrintf("mnping - Found corresponding mn for vin: %s\n", vin.prevout.ToStringShort());
-    // update only if there is no known ping for this apollonnode or
-    // last ping was more then APOLLONNODE_MIN_MNP_SECONDS-60 ago comparing to this one
-    if (pmn->IsPingedWithin(APOLLONNODE_MIN_MNP_SECONDS - 60, sigTime)) {
-        LogPrint("apollonnode", "CApollonnodePing::CheckAndUpdate -- Apollonnode ping arrived too early, apollonnode=%s\n", vin.prevout.ToStringShort());
+    // update only if there is no known ping for this indexnode or
+    // last ping was more then INDEXNODE_MIN_MNP_SECONDS-60 ago comparing to this one
+    if (pmn->IsPingedWithin(INDEXNODE_MIN_MNP_SECONDS - 60, sigTime)) {
+        LogPrint("indexnode", "CIndexnodePing::CheckAndUpdate -- Indexnode ping arrived too early, indexnode=%s\n", vin.prevout.ToStringShort());
         //nDos = 1; //disable, this is happening frequently and causing banned peers
         return false;
     }
 
-    if (!CheckSignature(pmn->pubKeyApollonnode, nDos)) return false;
+    if (!CheckSignature(pmn->pubKeyIndexnode, nDos)) return false;
 
     // so, ping seems to be ok
 
     // if we are still syncing and there was no known ping for this mn for quite a while
-    // (NOTE: assuming that APOLLONNODE_EXPIRATION_SECONDS/2 should be enough to finish mn list sync)
-    if (!apollonnodeSync.IsApollonnodeListSynced() && !pmn->IsPingedWithin(APOLLONNODE_EXPIRATION_SECONDS / 2)) {
+    // (NOTE: assuming that INDEXNODE_EXPIRATION_SECONDS/2 should be enough to finish mn list sync)
+    if (!indexnodeSync.IsIndexnodeListSynced() && !pmn->IsPingedWithin(INDEXNODE_EXPIRATION_SECONDS / 2)) {
         // let's bump sync timeout
-        LogPrint("apollonnode", "CApollonnodePing::CheckAndUpdate -- bumping sync timeout, apollonnode=%s\n", vin.prevout.ToStringShort());
-        apollonnodeSync.AddedApollonnodeList();
-        GetMainSignals().UpdatedApollonnode(*pmn);
+        LogPrint("indexnode", "CIndexnodePing::CheckAndUpdate -- bumping sync timeout, indexnode=%s\n", vin.prevout.ToStringShort());
+        indexnodeSync.AddedIndexnodeList();
+        GetMainSignals().UpdatedIndexnode(*pmn);
     }
 
     // let's store this ping as the last one
-    LogPrint("apollonnode", "CApollonnodePing::CheckAndUpdate -- Apollonnode ping accepted, apollonnode=%s\n", vin.prevout.ToStringShort());
+    LogPrint("indexnode", "CIndexnodePing::CheckAndUpdate -- Indexnode ping accepted, indexnode=%s\n", vin.prevout.ToStringShort());
     pmn->SetLastPing(*this);
 
-    // and update mnodeman.mapSeenApollonnodeBroadcast.lastPing which is probably outdated
-    CApollonnodeBroadcast mnb(*pmn);
+    // and update mnodeman.mapSeenIndexnodeBroadcast.lastPing which is probably outdated
+    CIndexnodeBroadcast mnb(*pmn);
     uint256 hash = mnb.GetHash();
-    if (mnodeman.mapSeenApollonnodeBroadcast.count(hash)) {
-        mnodeman.mapSeenApollonnodeBroadcast[hash].second.SetLastPing(*this);
+    if (mnodeman.mapSeenIndexnodeBroadcast.count(hash)) {
+        mnodeman.mapSeenIndexnodeBroadcast[hash].second.SetLastPing(*this);
     }
 
     pmn->Check(true); // force update, ignoring cache
     if (!pmn->IsEnabled()) return false;
 
-    LogPrint("apollonnode", "CApollonnodePing::CheckAndUpdate -- Apollonnode ping acceepted and relayed, apollonnode=%s\n", vin.prevout.ToStringShort());
+    LogPrint("indexnode", "CIndexnodePing::CheckAndUpdate -- Indexnode ping acceepted and relayed, indexnode=%s\n", vin.prevout.ToStringShort());
     Relay();
 
     return true;
 }
 
-void CApollonnodePing::Relay() {
-    CInv inv(MSG_APOLLONNODE_PING, GetHash());
+void CIndexnodePing::Relay() {
+    CInv inv(MSG_INDEXNODE_PING, GetHash());
     RelayInv(inv);
 }
 
-//void CApollonnode::AddGovernanceVote(uint256 nGovernanceObjectHash)
+//void CIndexnode::AddGovernanceVote(uint256 nGovernanceObjectHash)
 //{
 //    if(mapGovernanceObjectsVotedOn.count(nGovernanceObjectHash)) {
 //        mapGovernanceObjectsVotedOn[nGovernanceObjectHash]++;
@@ -1033,7 +1033,7 @@ void CApollonnodePing::Relay() {
 //    }
 //}
 
-//void CApollonnode::RemoveGovernanceObject(uint256 nGovernanceObjectHash)
+//void CIndexnode::RemoveGovernanceObject(uint256 nGovernanceObjectHash)
 //{
 //    std::map<uint256, int>::iterator it = mapGovernanceObjectsVotedOn.find(nGovernanceObjectHash);
 //    if(it == mapGovernanceObjectsVotedOn.end()) {
@@ -1042,7 +1042,7 @@ void CApollonnodePing::Relay() {
 //    mapGovernanceObjectsVotedOn.erase(it);
 //}
 
-void CApollonnode::UpdateWatchdogVoteTime() {
+void CIndexnode::UpdateWatchdogVoteTime() {
     LOCK(cs);
     nTimeLastWatchdogVote = GetTime();
 }
@@ -1050,10 +1050,10 @@ void CApollonnode::UpdateWatchdogVoteTime() {
 /**
 *   FLAG GOVERNANCE ITEMS AS DIRTY
 *
-*   - When apollonnode come and go on the network, we must flag the items they voted on to recalc it's cached flags
+*   - When indexnode come and go on the network, we must flag the items they voted on to recalc it's cached flags
 *
 */
-//void CApollonnode::FlagGovernanceItemsAsDirty()
+//void CIndexnode::FlagGovernanceItemsAsDirty()
 //{
 //    std::vector<uint256> vecDirty;
 //    {

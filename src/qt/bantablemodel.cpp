@@ -99,19 +99,19 @@ BanTableModel::~BanTableModel()
     // Intentionally left empty
 }
 
-int BanTableModel::rowCount(const QModelApollon &parent) const
+int BanTableModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return priv->size();
 }
 
-int BanTableModel::columnCount(const QModelApollon &parent) const
+int BanTableModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return columns.length();
 }
 
-QVariant BanTableModel::data(const QModelApollon &apollon, int role) const
+QVariant BanTableModel::data(const QModelIndex &apollon, int role) const
 {
     if(!apollon.isValid())
         return QVariant();
@@ -145,7 +145,7 @@ QVariant BanTableModel::headerData(int section, Qt::Orientation orientation, int
     return QVariant();
 }
 
-Qt::ItemFlags BanTableModel::flags(const QModelApollon &apollon) const
+Qt::ItemFlags BanTableModel::flags(const QModelIndex &apollon) const
 {
     if(!apollon.isValid())
         return 0;
@@ -154,14 +154,14 @@ Qt::ItemFlags BanTableModel::flags(const QModelApollon &apollon) const
     return retval;
 }
 
-QModelApollon BanTableModel::apollon(int row, int column, const QModelApollon &parent) const
+QModelIndex BanTableModel::apollon(int row, int column, const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     CCombinedBan *data = priv->apollon(row);
 
     if (data)
-        return createApollon(row, column, data);
-    return QModelApollon();
+        return createIndex(row, column, data);
+    return QModelIndex();
 }
 
 void BanTableModel::refresh()

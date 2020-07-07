@@ -24,7 +24,7 @@ class MerkleBlockTest(BitcoinTestFramework):
         self.nodes.append(start_node(1, self.options.tmpdir, ["-debug"]))
         # Nodes 2/3 are used for testing
         self.nodes.append(start_node(2, self.options.tmpdir, ["-debug"]))
-        self.nodes.append(start_node(3, self.options.tmpdir, ["-debug", "-txapollon"]))
+        self.nodes.append(start_node(3, self.options.tmpdir, ["-debug", "-txindex"]))
         connect_nodes(self.nodes[0], 1)
         connect_nodes(self.nodes[0], 2)
         connect_nodes(self.nodes[0], 3)
@@ -81,7 +81,7 @@ class MerkleBlockTest(BitcoinTestFramework):
             assert_equal(self.nodes[2].verifytxoutproof(self.nodes[2].gettxoutproof([txid1, txid2])), txlist)
         except JSONRPCException:
             assert_equal(self.nodes[2].verifytxoutproof(self.nodes[2].gettxoutproof([txid2, txid1])), txlist)
-        # ...or if we have a -txapollon
+        # ...or if we have a -txindex
         assert_equal(self.nodes[2].verifytxoutproof(self.nodes[3].gettxoutproof([txid_spent])), [txid_spent])
 
 if __name__ == '__main__':

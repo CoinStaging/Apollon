@@ -108,13 +108,13 @@ namespace boost {
 
 } // namespace boost
 
-// apollonnode fApollonnode
-bool fApollonNode = false;
+// indexnode fIndexnode
+bool fIndexNode = false;
 bool fLiteMode = false;
 int nWalletBackups = 10;
 
 const char * const BITCOIN_CONF_FILENAME = "apollon.conf";
-const char * const BITCOIN_PID_FILENAME = "apollond.pid";
+const char * const BITCOIN_PID_FILENAME = "indexd.pid";
 
 map<string, string> mapArgs;
 map<string, vector<string> > mapMultiArgs;
@@ -375,11 +375,11 @@ void ParseParameters(int argc, const char* const argv[])
     {
         std::string str(argv[i]);
         std::string strValue;
-        size_t is_apollon = str.find('=');
-        if (is_apollon != std::string::npos)
+        size_t is_index = str.find('=');
+        if (is_index != std::string::npos)
         {
-            strValue = str.substr(is_apollon+1);
-            str = str.substr(0, is_apollon);
+            strValue = str.substr(is_index+1);
+            str = str.substr(0, is_index);
         }
 #ifdef WIN32
         boost::to_lower(str);
@@ -490,13 +490,13 @@ void PrintExceptionContinue(const std::exception* pex, const char* pszThread)
 fs::path GetDefaultDataDir()
 {
     namespace fs = boost::filesystem;
-    // Windows < Vista: C:\Documents and Settings\Username\Application Data\ApollonApollonChainCore
-    // Windows >= Vista: C:\Users\Username\AppData\Roaming\ApollonChain
-    // Mac: ~/Library/Application Support/ApollonChain
-    // Unix: ~/.ApollonChain
+    // Windows < Vista: C:\Documents and Settings\Username\Application Data\IndexIndexChainCore
+    // Windows >= Vista: C:\Users\Username\AppData\Roaming\IndexChain
+    // Mac: ~/Library/Application Support/IndexChain
+    // Unix: ~/.IndexChain
 #ifdef WIN32
     // Windows
-    return GetSpecialFolderPath(CSIDL_APPDATA) / "ApollonChain";
+    return GetSpecialFolderPath(CSIDL_APPDATA) / "IndexChain";
 #else
     fs::path pathRet;
     char* pszHome = getenv("HOME");
@@ -506,10 +506,10 @@ fs::path GetDefaultDataDir()
         pathRet = fs::path(pszHome);
 #ifdef MAC_OSX
     // Mac
-    return pathRet / "Library/Application Support/ApollonChain";
+    return pathRet / "Library/Application Support/IndexChain";
 #else
     // Unix
-    return pathRet / ".ApollonChain";
+    return pathRet / ".IndexChain";
 #endif
 #endif
 }
@@ -722,9 +722,9 @@ fs::path CreateTxTimestampFile(bool fNetSpecific)
     return pathConfigFile;
 }
 
-fs::path GetApollonnodeConfigFile()
+fs::path GetIndexnodeConfigFile()
 {
-    fs::path pathConfigFile(GetArg("-znconf", "apollonnode.conf"));
+    fs::path pathConfigFile(GetArg("-znconf", "indexnode.conf"));
     if (!pathConfigFile.is_complete()) pathConfigFile = GetDataDir() / pathConfigFile;
     LogPrintf("pathConfigFile=%s\n", pathConfigFile);
     return pathConfigFile;

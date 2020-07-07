@@ -138,7 +138,7 @@
         <translation>Abrir y url...</translation>
     </message>
     <message>
-        <source>Reapolloning blocks on disk...</source>
+        <source>Reindexing blocks on disk...</source>
         <translation>Cargando el apollon de bloques...</translation>
     </message>
     <message>
@@ -784,7 +784,7 @@
     </message>
     <message>
         <source>Error loading block database</source>
-        <translation>Error cargando blkapollon.dat</translation>
+        <translation>Error cargando blkindex.dat</translation>
     </message>
     <message>
         <source>Error: Disk space is low!</source>

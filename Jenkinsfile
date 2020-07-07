@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        docker { image 'ApollonChain/Apollon-builder:latest' }
+        docker { image 'IndexChain/Apollon-builder:latest' }
     }
     environment {
         CCACHE_DIR = '/tmp/.ccache'

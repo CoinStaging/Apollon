@@ -124,7 +124,7 @@ private:
     QAction *showHelpMessageAction;
     QAction *sigmaAction;
     QAction *zc2SigmaAction;
-    QAction *apollonnodeAction;
+    QAction *indexnodeAction;
 
     QSystemTrayIcon *trayIcon;
     QMenu *trayIconMenu;
@@ -218,8 +218,8 @@ private Q_SLOTS:
     void gotoHistoryPage();
     /** Switch directly to Apollon history tab */
     void gotoBitcoinHistoryTab();
-    /** Switch to apollonnode page */
-    void gotoApollonnodePage();
+    /** Switch to indexnode page */
+    void gotoIndexnodePage();
     /** Switch to receive coins page */
     void gotoReceiveCoinsPage();
     /** Switch to send coins page */

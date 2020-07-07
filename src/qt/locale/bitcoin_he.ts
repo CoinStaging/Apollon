@@ -214,7 +214,7 @@
         <translation>פתיחת &amp;כתובת משאב…</translation>
     </message>
     <message>
-        <source>Reapolloning blocks on disk...</source>
+        <source>Reindexing blocks on disk...</source>
         <translation>המקטעים נוספים למפתח בכונן…</translation>
     </message>
     <message>

@@ -23,13 +23,13 @@ def setup():
         programs += ['lxc', 'debootstrap']
     subprocess.check_call(['sudo', 'apt-get', 'install', '-qq'] + programs)
     if not os.path.isdir('gitian.sigs-apollon-apollon'):
-        subprocess.check_call(['git', 'clone', 'https://github.com/ApollonChain/gitian.sigs-apollon'])
+        subprocess.check_call(['git', 'clone', 'https://github.com/IndexChain/gitian.sigs-apollon'])
     if not os.path.isdir('apollon-detached-sigs'):
-        subprocess.check_call(['git', 'clone', 'https://github.com/ApollonChain/apollon-detached-sigs'])
+        subprocess.check_call(['git', 'clone', 'https://github.com/IndexChain/apollon-detached-sigs'])
     if not os.path.isdir('gitian-builder'):
         subprocess.check_call(['git', 'clone', 'https://github.com/devrandom/gitian-builder.git'])
     if not os.path.isdir('Apollon'):
-        subprocess.check_call(['git', 'clone', 'https://github.com/ApollonChain/Apollon'])
+        subprocess.check_call(['git', 'clone', 'https://github.com/IndexChain/Apollon'])
     os.chdir('gitian-builder')
     make_image_prog = ['bin/make-base-vm', '--suite', 'bionic', '--arch', 'amd64']
     if args.docker:
@@ -155,7 +155,7 @@ def main():
     parser = argparse.ArgumentParser(usage='%(prog)s [options] signer version')
     parser.add_argument('-c', '--commit', action='store_true', dest='commit', help='Indicate that the version argument is for a commit or branch')
     parser.add_argument('-p', '--pull', action='store_true', dest='pull', help='Indicate that the version argument is the number of a github repository pull request')
-    parser.add_argument('-u', '--url', dest='url', default='https://github.com/ApollonChain/Apollon', help='Specify the URL of the repository. Default is %(default)s')
+    parser.add_argument('-u', '--url', dest='url', default='https://github.com/IndexChain/Apollon', help='Specify the URL of the repository. Default is %(default)s')
     parser.add_argument('-v', '--verify', action='store_true', dest='verify', help='Verify the Gitian build')
     parser.add_argument('-b', '--build', action='store_true', dest='build', help='Do a Gitian build')
     parser.add_argument('-s', '--sign', action='store_true', dest='sign', help='Make signed binaries for Windows and MacOS')

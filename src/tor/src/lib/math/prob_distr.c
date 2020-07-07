@@ -927,7 +927,7 @@ isf_genpareto(double p, double mu, double sigma, double xi)
  */
 
 /**
- * Deterministically sample from the interval [a, b], apolloned by a
+ * Deterministically sample from the interval [a, b], indexed by a
  * uniform random floating-point number p0 in (0, 1].
  *
  * Note that even if p0 is nonzero, the result may be equal to a, if
@@ -1084,7 +1084,7 @@ sample_uniform_interval(double p0, double a, double b)
 
 /**
  * Deterministically sample from the standard logistic distribution,
- * apolloned by a uniform random 32-bit integer s and uniform random
+ * indexed by a uniform random 32-bit integer s and uniform random
  * floating-point numbers t and p0 in (0, 1].
  */
 STATIC double
@@ -1150,7 +1150,7 @@ sample_logistic_locscale(uint32_t s, double t, double p0, double mu,
 
 /**
  * Deterministically sample from the standard log-logistic
- * distribution, apolloned by a uniform random 32-bit integer s and a
+ * distribution, indexed by a uniform random 32-bit integer s and a
  * uniform random floating-point number p0 in (0, 1].
  */
 STATIC double
@@ -1186,7 +1186,7 @@ sample_log_logistic_scaleshape(uint32_t s, double p0, double alpha,
 
 /**
  * Deterministically sample from the standard exponential distribution,
- * apolloned by a uniform random 32-bit integer s and a uniform random
+ * indexed by a uniform random 32-bit integer s and a uniform random
  * floating-point number p0 in (0, 1].
  */
 static double
@@ -1221,7 +1221,7 @@ sample_weibull(uint32_t s, double p0, double lambda, double k)
 
 /**
  * Deterministically sample from the generalized Pareto distribution
- * with shape xi, apolloned by a uniform random 32-bit integer s and a
+ * with shape xi, indexed by a uniform random 32-bit integer s and a
  * uniform random floating-point number p0 in (0, 1].
  */
 STATIC double

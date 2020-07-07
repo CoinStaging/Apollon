@@ -58,7 +58,7 @@ Build Apollon Core
 Running
 -------
 
-Apollon Core is now available at `./src/apollond`
+Apollon Core is now available at `./src/indexd`
 
 Before running, it's recommended you create an RPC configuration file.
 
@@ -66,7 +66,7 @@ Before running, it's recommended you create an RPC configuration file.
 
     chmod 600 "/Users/${USER}/Library/Application Support/apollon/apollon.conf"
 
-The first time you run apollond, it will start downloading the blockchain. This process could take several hours.
+The first time you run indexd, it will start downloading the blockchain. This process could take several hours.
 
 You can monitor the download process by looking at the debug.log file:
 
@@ -75,7 +75,7 @@ You can monitor the download process by looking at the debug.log file:
 Other commands:
 -------
 
-    ./src/apollond -daemon # Starts the Apollon daemon.
+    ./src/indexd -daemon # Starts the Apollon daemon.
     ./src/apollon-cli --help # Outputs a list of command-line options.
     ./src/apollon-cli help # Outputs a list of RPC commands when the daemon is running.
 

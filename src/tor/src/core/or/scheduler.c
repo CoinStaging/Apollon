@@ -523,7 +523,7 @@ scheduler_channel_doesnt_want_writes,(channel_t *chan))
      */
     smartlist_pqueue_remove(channels_pending,
                             scheduler_compare_channels,
-                            offsetof(channel_t, sched_heap_xap),
+                            offsetof(channel_t, sched_heap_idx),
                             chan);
     scheduler_set_channel_state(chan, SCHED_CHAN_WAITING_TO_WRITE);
   } else {
@@ -557,10 +557,10 @@ scheduler_channel_has_waiting_cells,(channel_t *chan))
      * channels_pending.
      */
     scheduler_set_channel_state(chan, SCHED_CHAN_PENDING);
-    if (!SCHED_BUG(chan->sched_heap_xap != -1, chan)) {
+    if (!SCHED_BUG(chan->sched_heap_idx != -1, chan)) {
       smartlist_pqueue_add(channels_pending,
                            scheduler_compare_channels,
-                           offsetof(channel_t, sched_heap_xap),
+                           offsetof(channel_t, sched_heap_idx),
                            chan);
     }
     /* If we made a channel pending, we potentially have scheduling work to
@@ -650,10 +650,10 @@ scheduler_release_channel,(channel_t *chan))
    * PENDING state but not in the pending list. Furthermore, we release the
    * channel when it changes state to close and a second time when we free it.
    * Not ideal at all but for now that is the way it is. */
-  if (chan->sched_heap_xap != -1) {
+  if (chan->sched_heap_idx != -1) {
     smartlist_pqueue_remove(channels_pending,
                             scheduler_compare_channels,
-                            offsetof(channel_t, sched_heap_xap),
+                            offsetof(channel_t, sched_heap_idx),
                             chan);
   }
 
@@ -681,10 +681,10 @@ scheduler_channel_wants_writes(channel_t *chan)
      * It can write now, so it goes to channels_pending.
      */
     scheduler_set_channel_state(chan, SCHED_CHAN_PENDING);
-    if (!SCHED_BUG(chan->sched_heap_xap != -1, chan)) {
+    if (!SCHED_BUG(chan->sched_heap_idx != -1, chan)) {
       smartlist_pqueue_add(channels_pending,
                            scheduler_compare_channels,
-                           offsetof(channel_t, sched_heap_xap),
+                           offsetof(channel_t, sched_heap_idx),
                            chan);
     }
     /* We just made a channel pending, we have scheduling work to do. */
@@ -755,11 +755,11 @@ scheduler_touch_channel(channel_t *chan)
     /* Remove and re-add it */
     smartlist_pqueue_remove(channels_pending,
                             scheduler_compare_channels,
-                            offsetof(channel_t, sched_heap_xap),
+                            offsetof(channel_t, sched_heap_idx),
                             chan);
     smartlist_pqueue_add(channels_pending,
                          scheduler_compare_channels,
-                         offsetof(channel_t, sched_heap_xap),
+                         offsetof(channel_t, sched_heap_idx),
                          chan);
   }
   /* else no-op, since it isn't in the queue */

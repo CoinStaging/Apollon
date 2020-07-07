@@ -36,25 +36,25 @@ class WalletDumpZerocoinTest(BitcoinTestFramework):
         self.nodes[0].generate(101)
         self.sync_all()
 
-        apollon_denoms = [1, 10, 25, 50, 100]
+        index_denoms = [1, 10, 25, 50, 100]
 
         # make confirmed mints and spends
-        for denom in apollon_denoms:
+        for denom in index_denoms:
             self.nodes[0].mintzerocoin(denom)
             self.nodes[0].mintzerocoin(denom)
             self.nodes[0].mintzerocoin(denom)
 
         self.nodes[0].generate(6)
         
-        for denom in apollon_denoms:
+        for denom in index_denoms:
             self.nodes[0].spendzerocoin(denom)
 
         self.nodes[0].generate(1)
 
         #get list of unspent mints and spends, mints
-        apollon_mints = self.nodes[0].listmintzerocoins().sort(key=lambda x: x['id'], reverse=False)
-        apollon_unspentmints = self.nodes[0].listunspentmintzerocoins().sort(key=lambda x: x['txid'], reverse=False)
-        apollon_spendapollons = self.nodes[0].listspendzerocoins(100).sort(key=lambda x: x['txid'], reverse=False)
+        index_mints = self.nodes[0].listmintzerocoins().sort(key=lambda x: x['id'], reverse=False)
+        index_unspentmints = self.nodes[0].listunspentmintzerocoins().sort(key=lambda x: x['txid'], reverse=False)
+        index_spendindexs = self.nodes[0].listspendzerocoins(100).sort(key=lambda x: x['txid'], reverse=False)
         tmpdir = self.options.tmpdir
 
         try:
@@ -69,13 +69,13 @@ class WalletDumpZerocoinTest(BitcoinTestFramework):
 
         self.nodes[0].importwallet(tmpdir + "/node0/wallet.unencrypted.dump")
 
-        exp_apollon_mints = self.nodes[0].listmintzerocoins().sort(key=lambda x: x['id'], reverse=False)
-        exp_apollon_unspentmints = self.nodes[0].listunspentmintzerocoins().sort(key=lambda x: x['txid'], reverse=False)
-        exp_apollon_spendapollons = self.nodes[0].listspendzerocoins(100).sort(key=lambda x: x['txid'], reverse=False)
+        exp_index_mints = self.nodes[0].listmintzerocoins().sort(key=lambda x: x['id'], reverse=False)
+        exp_index_unspentmints = self.nodes[0].listunspentmintzerocoins().sort(key=lambda x: x['txid'], reverse=False)
+        exp_index_spendindexs = self.nodes[0].listspendzerocoins(100).sort(key=lambda x: x['txid'], reverse=False)
 
-        assert_equal(exp_apollon_mints, apollon_mints)
-        assert_equal(exp_apollon_unspentmints, apollon_unspentmints)
-        assert_equal(exp_apollon_spendapollons, apollon_spendapollons)
+        assert_equal(exp_index_mints, index_mints)
+        assert_equal(exp_index_unspentmints, index_unspentmints)
+        assert_equal(exp_index_spendindexs, index_spendindexs)
 
 if __name__ == '__main__':
     WalletDumpZerocoinTest().main()

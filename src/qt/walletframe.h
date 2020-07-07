@@ -69,8 +69,8 @@ public Q_SLOTS:
     void gotoHistoryPage();
     /** Switch directory to bitcoin tx history tab */
     void gotoBitcoinHistoryTab();
-    /** Switch to apollonnode page */
-    void gotoApollonnodePage();
+    /** Switch to indexnode page */
+    void gotoIndexnodePage();
     /** Switch to receive coins page */
     void gotoReceiveCoinsPage();
     /** Switch to send coins page */

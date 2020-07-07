@@ -282,7 +282,7 @@
         <translation>Ava &amp;URI...</translation>
     </message>
     <message>
-        <source>Reapolloning blocks on disk...</source>
+        <source>Reindexing blocks on disk...</source>
         <translation>Kettal olevate blokkide re-indekseerimine...</translation>
     </message>
     <message>
@@ -363,11 +363,11 @@
     </message>
     <message>
         <source>Request payments (generates QR codes and apollon: URIs)</source>
-        <translation>Loo maksepäring (genereerib QR koodid ja apolloni: URId)</translation>
+        <translation>Loo maksepäring (genereerib QR koodid ja indexi: URId)</translation>
     </message>
     <message>
         <source>Open a apollon: URI or payment request</source>
-        <translation>Ava apolloni: URI või maksepäring</translation>
+        <translation>Ava indexi: URI või maksepäring</translation>
     </message>
     <message>
         <source>&amp;Command-line options</source>
@@ -378,7 +378,7 @@
         <translation><numerusform>%n aktiivne ühendus Zcoini võrku</numerusform><numerusform>%n aktiivset ühendust Zcoini võrku</numerusform></translation>
     </message>
     <message>
-        <source>Apolloning blocks on disk...</source>
+        <source>Indexing blocks on disk...</source>
         <translation>Kõvakettal olevate plokkide indekseerimine...</translation>
     </message>
     <message>

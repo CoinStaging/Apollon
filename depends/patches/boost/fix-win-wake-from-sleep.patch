@@ -18,7 +18,7 @@
 +                    bool const set_time_succeeded=detail_::SetWaitableTimerEx()(timer_handle,&due_time,0,0,0,NULL,tolerable)!=0;
                      if(set_time_succeeded)
                      {
-                         timeout_apollon=handle_count;
+                         timeout_index=handle_count;
 @@ -799,7 +800,8 @@
                      if(time_left.milliseconds/20>tolerable)  // 5%
                          tolerable=time_left.milliseconds/20;
@@ -28,4 +28,4 @@
 +                    bool const set_time_succeeded=detail_::SetWaitableTimerEx()(timer_handle,&due_time,0,0,0,NULL,tolerable)!=0;
                      if(set_time_succeeded)
                      {
-                         timeout_apollon=handle_count;
+                         timeout_index=handle_count;

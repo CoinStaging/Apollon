@@ -171,10 +171,10 @@ def GetP2PKHScript(pubkeyhash):
     return CScript([CScriptOp(OP_DUP), CScriptOp(OP_HASH160), pubkeyhash, CScriptOp(OP_EQUALVERIFY), CScriptOp(OP_CHECKSIG)])
 
 # Add signature for a P2PK witness program.
-def sign_P2PK_witness_input(script, txTo, inXap, hashtype, value, key):
-    tx_hash = SegwitVersion1SignatureHash(script, txTo, inXap, hashtype, value)
+def sign_P2PK_witness_input(script, txTo, inIdx, hashtype, value, key):
+    tx_hash = SegwitVersion1SignatureHash(script, txTo, inIdx, hashtype, value)
     signature = key.sign(tx_hash) + chr(hashtype).encode('latin-1')
-    txTo.wit.vtxinwit[inXap].scriptWitness.stack = [signature, script]
+    txTo.wit.vtxinwit[inIdx].scriptWitness.stack = [signature, script]
     txTo.rehash()
 
 

@@ -122,16 +122,16 @@ static int openssl_bug_7712_is_present = 0;
 
 /** The ex_data apollon in which we store a pointer to an SSL object's
  * corresponding tor_tls_t object. */
-STATIC int tor_tls_object_ex_data_apollon = -1;
+STATIC int tor_tls_object_ex_data_index = -1;
 
-/** Helper: Allocate tor_tls_object_ex_data_apollon. */
+/** Helper: Allocate tor_tls_object_ex_data_index. */
 void
-tor_tls_allocate_tor_tls_object_ex_data_apollon(void)
+tor_tls_allocate_tor_tls_object_ex_data_index(void)
 {
-  if (tor_tls_object_ex_data_apollon == -1) {
-    tor_tls_object_ex_data_apollon =
-      SSL_get_ex_new_apollon(0, NULL, NULL, NULL, NULL);
-    tor_assert(tor_tls_object_ex_data_apollon != -1);
+  if (tor_tls_object_ex_data_index == -1) {
+    tor_tls_object_ex_data_index =
+      SSL_get_ex_new_index(0, NULL, NULL, NULL, NULL);
+    tor_assert(tor_tls_object_ex_data_index != -1);
   }
 }
 
@@ -140,7 +140,7 @@ tor_tls_allocate_tor_tls_object_ex_data_apollon(void)
 tor_tls_t *
 tor_tls_get_by_ssl(const SSL *ssl)
 {
-  tor_tls_t *result = SSL_get_ex_data(ssl, tor_tls_object_ex_data_apollon);
+  tor_tls_t *result = SSL_get_ex_data(ssl, tor_tls_object_ex_data_index);
   if (result)
     tor_assert(result->magic == TOR_TLS_MAGIC);
   return result;
@@ -354,7 +354,7 @@ tor_tls_init(void)
     /* LCOV_EXCL_STOP */
 #endif /* (SIZEOF_VOID_P >= 8 &&                              ... */
 
-    tor_tls_allocate_tor_tls_object_ex_data_apollon();
+    tor_tls_allocate_tor_tls_object_ex_data_index();
 
     tls_library_is_initialized = 1;
   }
@@ -1087,7 +1087,7 @@ tor_tls_new(tor_socket_t sock, int isServer)
   }
   {
     int set_worked =
-      SSL_set_ex_data(result->ssl, tor_tls_object_ex_data_apollon, result);
+      SSL_set_ex_data(result->ssl, tor_tls_object_ex_data_index, result);
     if (!set_worked) {
       log_warn(LD_BUG,
                "Couldn't set the tls for an SSL*; connection will fail");

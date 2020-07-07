@@ -10,7 +10,7 @@
 #include <map>
 #include <boost/thread/thread.hpp>
 
-class CBlockApollon;
+class CBlockIndex;
 class CZMQAbstract;
 
 class CZMQInterface
@@ -36,12 +36,12 @@ public:
 protected:
     // CValidationInterface
     void WalletTransaction(const CTransaction& tx);
-    void UpdatedBlockTip(const CBlockApollon *papollon);
+    void UpdatedBlockTip(const CBlockIndex *pindex);
     void NumConnectionsChanged();
     void UpdateSyncStatus();
-    void NotifyApollonnodeList();
+    void NotifyIndexnodeList();
     void NotifyAPIStatus();
-    void UpdatedApollonnode(CApollonnode &apollonnode);
+    void UpdatedIndexnode(CIndexnode &indexnode);
     void UpdatedMintStatus(std::string update);
     void UpdatedSettings(std::string update);
     void UpdatedBalance();

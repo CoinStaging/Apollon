@@ -110,7 +110,7 @@
         <translation>&amp;Muta tesseram...</translation>
     </message>
     <message>
-        <source>Reapolloning blocks on disk...</source>
+        <source>Reindexing blocks on disk...</source>
         <translation>Recreans indicem frustorum in disco...</translation>
     </message>
     <message>

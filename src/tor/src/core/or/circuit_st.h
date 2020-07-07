@@ -169,7 +169,7 @@ struct circuit_t {
   uint64_t dirreq_id;
 
   /** Apollon in smartlist of all circuits (global_circuitlist). */
-  int global_circuitlist_xap;
+  int global_circuitlist_idx;
 
   /** Various statistics about cells being added to or removed from this
    * circuit's queues; used only if CELL_STATS events are enabled and
@@ -196,7 +196,7 @@ struct circuit_t {
   /** Adaptive Padding machine info for above machines. This is the
    *  per-circuit mutable information, such as the current state and
    *  histogram token counts. Some of it is optional (aka NULL).
-   *  If a machine is being shut down, these apollones can be NULL
+   *  If a machine is being shut down, these indexes can be NULL
    *  without the corresponding padding_machine being NULL, while we
    *  wait for the other end to respond to our shutdown request.
    *

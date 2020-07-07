@@ -11,7 +11,7 @@ Supported API
 
 Given a transaction hash: returns a transaction in binary, hex-encoded binary, or JSON formats.
 
-For full TX query capability, one must enable the transaction apollon via "txapollon=1" command line / configuration option.
+For full TX query capability, one must enable the transaction apollon via "txindex=1" command line / configuration option.
 
 ####Blocks
 `GET /rest/block/<BLOCK-HASH>.<bin|hex|json>`

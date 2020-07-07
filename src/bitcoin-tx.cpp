@@ -303,30 +303,30 @@ static void MutateTxAddOutScript(CMutableTransaction& tx, const string& strInput
     tx.vout.push_back(txout);
 }
 
-static void MutateTxDelInput(CMutableTransaction& tx, const string& strInXap)
+static void MutateTxDelInput(CMutableTransaction& tx, const string& strInIdx)
 {
     // parse requested deletion apollon
-    int inXap = atoi(strInXap);
-    if (inXap < 0 || inXap >= (int)tx.vin.size()) {
-        string strErr = "Invalid TX input apollon '" + strInXap + "'";
+    int inIdx = atoi(strInIdx);
+    if (inIdx < 0 || inIdx >= (int)tx.vin.size()) {
+        string strErr = "Invalid TX input apollon '" + strInIdx + "'";
         throw runtime_error(strErr.c_str());
     }
 
     // delete input from transaction
-    tx.vin.erase(tx.vin.begin() + inXap);
+    tx.vin.erase(tx.vin.begin() + inIdx);
 }
 
-static void MutateTxDelOutput(CMutableTransaction& tx, const string& strOutXap)
+static void MutateTxDelOutput(CMutableTransaction& tx, const string& strOutIdx)
 {
     // parse requested deletion apollon
-    int outXap = atoi(strOutXap);
-    if (outXap < 0 || outXap >= (int)tx.vout.size()) {
-        string strErr = "Invalid TX output apollon '" + strOutXap + "'";
+    int outIdx = atoi(strOutIdx);
+    if (outIdx < 0 || outIdx >= (int)tx.vout.size()) {
+        string strErr = "Invalid TX output apollon '" + strOutIdx + "'";
         throw runtime_error(strErr.c_str());
     }
 
     // delete output from transaction
-    tx.vout.erase(tx.vout.begin() + outXap);
+    tx.vout.erase(tx.vout.begin() + outIdx);
 }
 
 static const unsigned int N_SIGHASH_OPTS = 6;
@@ -409,11 +409,11 @@ static void MutateTxSign(CMutableTransaction& tx, const string& flagStr)
     UniValue keysObj = registers["privatekeys"];
     fGivenKeys = true;
 
-    for (unsigned int kxap = 0; kxap < keysObj.size(); kxap++) {
-        if (!keysObj[kxap].isStr())
+    for (unsigned int kidx = 0; kidx < keysObj.size(); kidx++) {
+        if (!keysObj[kidx].isStr())
             throw runtime_error("privatekey not a string");
         CBitcoinSecret vchSecret;
-        bool fGood = vchSecret.SetString(keysObj[kxap].getValStr());
+        bool fGood = vchSecret.SetString(keysObj[kidx].getValStr());
         if (!fGood)
             throw runtime_error("privatekey not valid");
 
@@ -426,8 +426,8 @@ static void MutateTxSign(CMutableTransaction& tx, const string& flagStr)
         throw runtime_error("prevtxs register variable must be set.");
     UniValue prevtxsObj = registers["prevtxs"];
     {
-        for (unsigned int prevxap = 0; prevxap < prevtxsObj.size(); prevxap++) {
-            UniValue prevOut = prevtxsObj[prevxap];
+        for (unsigned int previdx = 0; previdx < prevtxsObj.size(); previdx++) {
+            UniValue prevOut = prevtxsObj[previdx];
             if (!prevOut.isObject())
                 throw runtime_error("expected prevtxs internal object");
 

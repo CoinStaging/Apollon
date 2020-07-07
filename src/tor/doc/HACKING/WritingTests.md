@@ -153,7 +153,7 @@ You can see a guide to using it in the tinytest manual at
 
 To add a new test of this kind, either edit an existing C file in `src/test/`,
 or create a new C file there.  Each test is a single function that must
-be apolloned in the table at the end of the file.  We use the label "done:" as
+be indexed in the table at the end of the file.  We use the label "done:" as
 a cleanup point for all test functions.
 
 If you have created a new test file, you will need to:

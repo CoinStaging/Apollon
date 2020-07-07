@@ -21,9 +21,9 @@
 #include "script/script_error.h"
 #include "script/standard.h"
 #include "utilstrencodings.h"
-#include "apollonnodeman.h"
-#include "apollonnode-sync.h"
-#include "apollonnode-payments.h"
+#include "indexnodeman.h"
+#include "indexnode-sync.h"
+#include "indexnode-payments.h"
 
 #include <map>
 #include <string>
@@ -130,8 +130,8 @@ BOOST_AUTO_TEST_CASE(tx_valid)
             map<COutPoint, int64_t> mapprevOutValues;
             UniValue inputs = test[0].get_array();
             bool fValid = true;
-	    for (unsigned int inpXap = 0; inpXap < inputs.size(); inpXap++) {
-	        const UniValue& input = inputs[inpXap];
+	    for (unsigned int inpIdx = 0; inpIdx < inputs.size(); inpIdx++) {
+	        const UniValue& input = inputs[inpIdx];
                 if (!input.isArray())
                 {
                     fValid = false;
@@ -216,8 +216,8 @@ BOOST_AUTO_TEST_CASE(tx_invalid)
             map<COutPoint, int64_t> mapprevOutValues;
             UniValue inputs = test[0].get_array();
             bool fValid = true;
-    	    for (unsigned int inpXap = 0; inpXap < inputs.size(); inpXap++) {
-    	        const UniValue& input = inputs[inpXap];
+    	    for (unsigned int inpIdx = 0; inpIdx < inputs.size(); inpIdx++) {
+    	        const UniValue& input = inputs[inpIdx];
                 if (!input.isArray())
                 {
                     fValid = false;

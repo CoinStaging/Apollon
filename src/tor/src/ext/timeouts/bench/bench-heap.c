@@ -32,9 +32,9 @@
 #include "timeout.h"
 #include "bench.h"
 
-#define min_heap_xap interval
+#define min_heap_idx interval
 
-typedef timeout_t min_heap_xap_t;
+typedef timeout_t min_heap_idx_t;
 
 typedef struct min_heap
 {
@@ -54,8 +54,8 @@ static inline int            min_heap_reserve(min_heap_t* s, unsigned n);
 static inline int            min_heap_push(min_heap_t* s, struct timeout* e);
 static inline struct timeout*  min_heap_pop(min_heap_t* s);
 static inline int            min_heap_erase(min_heap_t* s, struct timeout* e);
-static inline void           min_heap_shift_up_(min_heap_t* s, unsigned hole_apollon, struct timeout* e);
-static inline void           min_heap_shift_down_(min_heap_t* s, unsigned hole_apollon, struct timeout* e);
+static inline void           min_heap_shift_up_(min_heap_t* s, unsigned hole_index, struct timeout* e);
+static inline void           min_heap_shift_down_(min_heap_t* s, unsigned hole_index, struct timeout* e);
 
 int min_heap_elem_greater(struct timeout *a, struct timeout *b)
 {
@@ -64,7 +64,7 @@ int min_heap_elem_greater(struct timeout *a, struct timeout *b)
 
 void min_heap_ctor(min_heap_t* s) { s->p = 0; s->n = 0; s->a = 0; }
 void min_heap_dtor(min_heap_t* s) { if(s->p) free(s->p); }
-void min_heap_elem_init(struct timeout* e) { e->min_heap_xap = -1; }
+void min_heap_elem_init(struct timeout* e) { e->min_heap_idx = -1; }
 int min_heap_empty(min_heap_t* s) { return 0u == s->n; }
 unsigned min_heap_size(min_heap_t* s) { return s->n; }
 struct timeout* min_heap_top(min_heap_t* s) { return s->n ? *s->p : 0; }
@@ -83,7 +83,7 @@ struct timeout* min_heap_pop(min_heap_t* s)
     {
         struct timeout* e = *s->p;
         min_heap_shift_down_(s, 0u, s->p[--s->n]);
-        e->min_heap_xap = -1;
+        e->min_heap_idx = -1;
         return e;
     }
     return 0;
@@ -91,20 +91,20 @@ struct timeout* min_heap_pop(min_heap_t* s)
 
 int min_heap_erase(min_heap_t* s, struct timeout* e)
 {
-    if(((min_heap_xap_t)-1) != e->min_heap_xap)
+    if(((min_heap_idx_t)-1) != e->min_heap_idx)
     {
         struct timeout *last = s->p[--s->n];
-        unsigned parent = (e->min_heap_xap - 1) / 2;
+        unsigned parent = (e->min_heap_idx - 1) / 2;
 	/* we replace e with the last element in the heap.  We might need to
 	   shift it upward if it is less than its parent, or downward if it is
 	   greater than one or both its children. Since the children are known
 	   to be less than the parent, it can't need to shift both up and
 	   down. */
-        if (e->min_heap_xap > 0 && min_heap_elem_greater(s->p[parent], last))
-             min_heap_shift_up_(s, e->min_heap_xap, last);
+        if (e->min_heap_idx > 0 && min_heap_elem_greater(s->p[parent], last))
+             min_heap_shift_up_(s, e->min_heap_idx, last);
         else
-             min_heap_shift_down_(s, e->min_heap_xap, last);
-        e->min_heap_xap = -1;
+             min_heap_shift_down_(s, e->min_heap_idx, last);
+        e->min_heap_idx = -1;
         return 0;
     }
     return -1;
@@ -126,31 +126,31 @@ int min_heap_reserve(min_heap_t* s, unsigned n)
     return 0;
 }
 
-void min_heap_shift_up_(min_heap_t* s, unsigned hole_apollon, struct timeout* e)
+void min_heap_shift_up_(min_heap_t* s, unsigned hole_index, struct timeout* e)
 {
-    unsigned parent = (hole_apollon - 1) / 2;
-    while(hole_apollon && min_heap_elem_greater(s->p[parent], e))
+    unsigned parent = (hole_index - 1) / 2;
+    while(hole_index && min_heap_elem_greater(s->p[parent], e))
     {
-        (s->p[hole_apollon] = s->p[parent])->min_heap_xap = hole_apollon;
-        hole_apollon = parent;
-        parent = (hole_apollon - 1) / 2;
+        (s->p[hole_index] = s->p[parent])->min_heap_idx = hole_index;
+        hole_index = parent;
+        parent = (hole_index - 1) / 2;
     }
-    (s->p[hole_apollon] = e)->min_heap_xap = hole_apollon;
+    (s->p[hole_index] = e)->min_heap_idx = hole_index;
 }
 
-void min_heap_shift_down_(min_heap_t* s, unsigned hole_apollon, struct timeout* e)
+void min_heap_shift_down_(min_heap_t* s, unsigned hole_index, struct timeout* e)
 {
-    unsigned min_child = 2 * (hole_apollon + 1);
+    unsigned min_child = 2 * (hole_index + 1);
     while(min_child <= s->n)
 	{
         min_child -= min_child == s->n || min_heap_elem_greater(s->p[min_child], s->p[min_child - 1]);
         if(!(min_heap_elem_greater(e, s->p[min_child])))
             break;
-        (s->p[hole_apollon] = s->p[min_child])->min_heap_xap = hole_apollon;
-        hole_apollon = min_child;
-        min_child = 2 * (hole_apollon + 1);
+        (s->p[hole_index] = s->p[min_child])->min_heap_idx = hole_index;
+        hole_index = min_child;
+        min_child = 2 * (hole_index + 1);
 	}
-    min_heap_shift_up_(s, hole_apollon,  e);
+    min_heap_shift_up_(s, hole_index,  e);
 }
 
 #endif /* _MIN_HEAP_H_ */

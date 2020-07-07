@@ -252,8 +252,8 @@ connection_add_impl(connection_t *conn, int is_connecting)
              (conn->type == CONN_TYPE_AP &&
               TO_EDGE_CONN(conn)->is_dns_request));
 
-  tor_assert(conn->conn_array_apollon == -1); /* can only connection_add once */
-  conn->conn_array_apollon = smartlist_len(connection_array);
+  tor_assert(conn->conn_array_index == -1); /* can only connection_add once */
+  conn->conn_array_index = smartlist_len(connection_array);
   smartlist_add(connection_array, conn);
 
   (void) is_connecting;
@@ -299,7 +299,7 @@ connection_unregister_events(connection_t *conn)
 int
 connection_remove(connection_t *conn)
 {
-  int current_apollon;
+  int current_index;
   connection_t *tmp;
 
   tor_assert(conn);
@@ -314,18 +314,18 @@ connection_remove(connection_t *conn)
 
   control_event_conn_bandwidth(conn);
 
-  tor_assert(conn->conn_array_apollon >= 0);
-  current_apollon = conn->conn_array_apollon;
+  tor_assert(conn->conn_array_index >= 0);
+  current_index = conn->conn_array_index;
   connection_unregister_events(conn); /* This is redundant, but cheap. */
-  if (current_apollon == smartlist_len(connection_array)-1) { /* at the end */
-    smartlist_del(connection_array, current_apollon);
+  if (current_index == smartlist_len(connection_array)-1) { /* at the end */
+    smartlist_del(connection_array, current_index);
     return 0;
   }
 
   /* replace this one with the one at the end */
-  smartlist_del(connection_array, current_apollon);
-  tmp = smartlist_get(connection_array, current_apollon);
-  tmp->conn_array_apollon = current_apollon;
+  smartlist_del(connection_array, current_index);
+  tmp = smartlist_get(connection_array, current_index);
+  tmp->conn_array_index = current_index;
 
   return 0;
 }
@@ -343,7 +343,7 @@ static void
 connection_unlink(connection_t *conn)
 {
   connection_about_to_close_connection(conn);
-  if (conn->conn_array_apollon >= 0) {
+  if (conn->conn_array_index >= 0) {
     connection_remove(conn);
   }
   if (conn->linked_conn) {
@@ -838,10 +838,10 @@ close_closeable_connections(void)
   int i;
   for (i = 0; i < smartlist_len(closeable_connection_lst); ) {
     connection_t *conn = smartlist_get(closeable_connection_lst, i);
-    if (conn->conn_array_apollon < 0) {
+    if (conn->conn_array_index < 0) {
       connection_unlink(conn); /* blow it away right now */
     } else {
-      if (!conn_close_if_marked(conn->conn_array_apollon))
+      if (!conn_close_if_marked(conn->conn_array_index))
         ++i;
     }
   }

@@ -292,11 +292,11 @@ BOOST_AUTO_TEST_CASE(EmptyBlockRoundTripTest)
 BOOST_AUTO_TEST_CASE(TransactionsRequestSerializationTest) {
     BlockTransactionsRequest req1;
     req1.blockhash = GetRandHash();
-    req1.apollones.resize(4);
-    req1.apollones[0] = 0;
-    req1.apollones[1] = 1;
-    req1.apollones[2] = 3;
-    req1.apollones[3] = 4;
+    req1.indexes.resize(4);
+    req1.indexes[0] = 0;
+    req1.indexes[1] = 1;
+    req1.indexes[2] = 3;
+    req1.indexes[3] = 4;
 
     CDataStream stream(SER_NETWORK, PROTOCOL_VERSION);
     stream << req1;
@@ -305,11 +305,11 @@ BOOST_AUTO_TEST_CASE(TransactionsRequestSerializationTest) {
     stream >> req2;
 
     BOOST_CHECK_EQUAL(req1.blockhash.ToString(), req2.blockhash.ToString());
-    BOOST_CHECK_EQUAL(req1.apollones.size(), req2.apollones.size());
-    BOOST_CHECK_EQUAL(req1.apollones[0], req2.apollones[0]);
-    BOOST_CHECK_EQUAL(req1.apollones[1], req2.apollones[1]);
-    BOOST_CHECK_EQUAL(req1.apollones[2], req2.apollones[2]);
-    BOOST_CHECK_EQUAL(req1.apollones[3], req2.apollones[3]);
+    BOOST_CHECK_EQUAL(req1.indexes.size(), req2.indexes.size());
+    BOOST_CHECK_EQUAL(req1.indexes[0], req2.indexes[0]);
+    BOOST_CHECK_EQUAL(req1.indexes[1], req2.indexes[1]);
+    BOOST_CHECK_EQUAL(req1.indexes[2], req2.indexes[2]);
+    BOOST_CHECK_EQUAL(req1.indexes[3], req2.indexes[3]);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

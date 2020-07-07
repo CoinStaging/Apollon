@@ -66,24 +66,24 @@ void smartlist_uniq_digests(smartlist_t *sl);
 void smartlist_uniq_digests256(smartlist_t *sl);
 void *smartlist_bsearch(const smartlist_t *sl, const void *key,
                         int (*compare)(const void *key, const void **member));
-int smartlist_bsearch_xap(const smartlist_t *sl, const void *key,
+int smartlist_bsearch_idx(const smartlist_t *sl, const void *key,
                           int (*compare)(const void *key, const void **member),
                           int *found_out);
 
 void smartlist_pqueue_add(smartlist_t *sl,
                           int (*compare)(const void *a, const void *b),
-                          int xap_field_offset,
+                          int idx_field_offset,
                           void *item);
 void *smartlist_pqueue_pop(smartlist_t *sl,
                            int (*compare)(const void *a, const void *b),
-                           int xap_field_offset);
+                           int idx_field_offset);
 void smartlist_pqueue_remove(smartlist_t *sl,
                              int (*compare)(const void *a, const void *b),
-                             int xap_field_offset,
+                             int idx_field_offset,
                              void *item);
 void smartlist_pqueue_assert_ok(smartlist_t *sl,
                                 int (*compare)(const void *a, const void *b),
-                                int xap_field_offset);
+                                int idx_field_offset);
 
 char *smartlist_join_strings(smartlist_t *sl, const char *join, int terminate,
                              size_t *len_out) ATTR_MALLOC;
@@ -110,22 +110,22 @@ char *smartlist_join_strings2(smartlist_t *sl, const char *join,
  * } SMARTLIST_FOREACH_JOIN_END(rs, ri);
  **/
 /* The example above unpacks (approximately) to:
- *  int rs_sl_xap = 0, rs_sl_len = smartlist_len(routerstatus_list);
- *  int ri_sl_xap, ri_sl_len = smartlist_len(routerinfo_list);
+ *  int rs_sl_idx = 0, rs_sl_len = smartlist_len(routerstatus_list);
+ *  int ri_sl_idx, ri_sl_len = smartlist_len(routerinfo_list);
  *  int rs_ri_cmp;
  *  routerstatus_t *rs;
  *  routerinfo_t *ri;
- *  for (; ri_sl_xap < ri_sl_len; ++ri_sl_xap) {
- *    ri = smartlist_get(routerinfo_list, ri_sl_xap);
- *    while (rs_sl_xap < rs_sl_len) {
- *      rs = smartlist_get(routerstatus_list, rs_sl_xap);
+ *  for (; ri_sl_idx < ri_sl_len; ++ri_sl_idx) {
+ *    ri = smartlist_get(routerinfo_list, ri_sl_idx);
+ *    while (rs_sl_idx < rs_sl_len) {
+ *      rs = smartlist_get(routerstatus_list, rs_sl_idx);
  *      rs_ri_cmp = tor_memcmp(rs->identity_digest, ri->identity_digest, 20);
  *      if (rs_ri_cmp > 0) {
  *        break;
  *      } else if (rs_ri_cmp == 0) {
  *        goto matched_ri;
  *      } else {
- *        ++rs_sl_xap;
+ *        ++rs_sl_idx;
  *      }
  *    }
  *    log_info(LD_GENERAL,"No match for %s", ri->nickname);
@@ -138,22 +138,22 @@ char *smartlist_join_strings2(smartlist_t *sl, const char *join,
 #define SMARTLIST_FOREACH_JOIN(sl1, type1, var1, sl2, type2, var2,      \
                                 cmpexpr, unmatched_var2)                \
   STMT_BEGIN                                                            \
-  int var1 ## _sl_xap = 0, var1 ## _sl_len=(sl1)->num_used;             \
-  int var2 ## _sl_xap = 0, var2 ## _sl_len=(sl2)->num_used;             \
+  int var1 ## _sl_idx = 0, var1 ## _sl_len=(sl1)->num_used;             \
+  int var2 ## _sl_idx = 0, var2 ## _sl_len=(sl2)->num_used;             \
   int var1 ## _ ## var2 ## _cmp;                                        \
   type1 var1;                                                           \
   type2 var2;                                                           \
-  for (; var2##_sl_xap < var2##_sl_len; ++var2##_sl_xap) {              \
-    var2 = (sl2)->list[var2##_sl_xap];                                  \
-    while (var1##_sl_xap < var1##_sl_len) {                             \
-      var1 = (sl1)->list[var1##_sl_xap];                                \
+  for (; var2##_sl_idx < var2##_sl_len; ++var2##_sl_idx) {              \
+    var2 = (sl2)->list[var2##_sl_idx];                                  \
+    while (var1##_sl_idx < var1##_sl_len) {                             \
+      var1 = (sl1)->list[var1##_sl_idx];                                \
       var1##_##var2##_cmp = (cmpexpr);                                  \
       if (var1##_##var2##_cmp > 0) {                                    \
         break;                                                          \
       } else if (var1##_##var2##_cmp == 0) {                            \
         goto matched_##var2;                                            \
       } else {                                                          \
-        ++var1##_sl_xap;                                                \
+        ++var1##_sl_idx;                                                \
       }                                                                 \
     }                                                                   \
     /* Ran out of v1, or no match for var2. */                          \

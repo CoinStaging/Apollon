@@ -145,7 +145,7 @@ BOOST_AUTO_TEST_CASE(prove_and_verify_in_different_set)
     BOOST_CHECK(!verifier.verify(commits, proof, true));
 }
 
-BOOST_AUTO_TEST_CASE(prove_coin_out_of_apollon)
+BOOST_AUTO_TEST_CASE(prove_coin_out_of_index)
 {
     auto params = sigma::Params::get_default();
     int N = 16384;

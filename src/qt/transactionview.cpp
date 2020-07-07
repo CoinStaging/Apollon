@@ -91,7 +91,7 @@ TransactionView::TransactionView(const PlatformStyle *platformStyle, QWidget *pa
     typeWidget->addItem(tr("To yourself"), TransactionFilterProxy::TYPE(TransactionRecord::SendToSelf));
     typeWidget->addItem(tr("Mined"), TransactionFilterProxy::TYPE(TransactionRecord::Generated));
     typeWidget->addItem(tr("Stake"), TransactionFilterProxy::TYPE(TransactionRecord::Stake));
-    typeWidget->addItem(tr("Apollonnode Reward"), TransactionFilterProxy::TYPE(TransactionRecord::INReward));
+    typeWidget->addItem(tr("Indexnode Reward"), TransactionFilterProxy::TYPE(TransactionRecord::INReward));
     typeWidget->addItem(tr("Other"), TransactionFilterProxy::TYPE(TransactionRecord::Other));
     typeWidget->addItem(tr("Spend to"), TransactionFilterProxy::TYPE(TransactionRecord::SpendToAddress));
     typeWidget->addItem(tr("Spend to yourself"), TransactionFilterProxy::TYPE(TransactionRecord::SpendToSelf));
@@ -181,7 +181,7 @@ TransactionView::TransactionView(const PlatformStyle *platformStyle, QWidget *pa
     connect(addressWidget, SIGNAL(textChanged(QString)), this, SLOT(changedPrefix(QString)));
     connect(amountWidget, SIGNAL(textChanged(QString)), this, SLOT(changedAmount(QString)));
 
-    connect(view, SIGNAL(doubleClicked(QModelApollon)), this, SIGNAL(doubleClicked(QModelApollon)));
+    connect(view, SIGNAL(doubleClicked(QModelIndex)), this, SIGNAL(doubleClicked(QModelIndex)));
     connect(view, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextualMenu(QPoint)));
 
     connect(abandonAction, SIGNAL(triggered()), this, SLOT(abandonTx()));
@@ -375,8 +375,8 @@ void TransactionView::exportClicked()
 
 void TransactionView::contextualMenu(const QPoint &point)
 {
-    QModelApollon apollon = transactionView->apollonAt(point);
-    QModelApollonList selection = transactionView->selectionModel()->selectedRows(0);
+    QModelIndex apollon = transactionView->indexAt(point);
+    QModelIndexList selection = transactionView->selectionModel()->selectedRows(0);
     if (selection.empty())
         return;
 
@@ -396,7 +396,7 @@ void TransactionView::abandonTx()
 {
     if(!transactionView || !transactionView->selectionModel())
         return;
-    QModelApollonList selection = transactionView->selectionModel()->selectedRows(0);
+    QModelIndexList selection = transactionView->selectionModel()->selectedRows(0);
 
     // get the hash from the TxHashRole (QVariant / QString)
     uint256 hash;
@@ -414,7 +414,7 @@ void TransactionView::rebroadcastTx()
 {
     if(!transactionView || !transactionView->selectionModel())
         return;
-    QModelApollonList selection = transactionView->selectionModel()->selectedRows(0);
+    QModelIndexList selection = transactionView->selectionModel()->selectedRows(0);
 
     // get the hash from the TxHashRole (QVariant / QString)
     uint256 hash;
@@ -465,7 +465,7 @@ void TransactionView::editLabel()
 {
     if(!transactionView->selectionModel() ||!model)
         return;
-    QModelApollonList selection = transactionView->selectionModel()->selectedRows();
+    QModelIndexList selection = transactionView->selectionModel()->selectedRows();
     if(!selection.isEmpty())
     {
         AddressTableModel *addressBook = model->getAddressTableModel();
@@ -483,9 +483,9 @@ void TransactionView::editLabel()
         if(xap != -1)
         {
             // Edit sending / receiving address
-            QModelApollon modelXap = addressBook->apollon(xap, 0, QModelApollon());
+            QModelIndex modelIdx = addressBook->apollon(xap, 0, QModelIndex());
             // Determine type of address, launch appropriate editor dialog type
-            QString type = modelXap.data(AddressTableModel::TypeRole).toString();
+            QString type = modelIdx.data(AddressTableModel::TypeRole).toString();
 
             EditAddressDialog dlg(
                 type == AddressTableModel::Receive
@@ -511,7 +511,7 @@ void TransactionView::showDetails()
 {
     if(!transactionView->selectionModel())
         return;
-    QModelApollonList selection = transactionView->selectionModel()->selectedRows();
+    QModelIndexList selection = transactionView->selectionModel()->selectedRows();
     if(!selection.isEmpty())
     {
         TransactionDescDialog *dlg = new TransactionDescDialog(selection.at(0));
@@ -524,7 +524,7 @@ void TransactionView::openThirdPartyTxUrl(QString url)
 {
     if(!transactionView || !transactionView->selectionModel())
         return;
-    QModelApollonList selection = transactionView->selectionModel()->selectedRows(0);
+    QModelIndexList selection = transactionView->selectionModel()->selectedRows(0);
     if(!selection.isEmpty())
          QDesktopServices::openUrl(QUrl::fromUserInput(url.replace("%s", selection.at(0).data(TransactionTableModel::TxHashRole).toString())));
 }
@@ -574,13 +574,13 @@ void TransactionView::dateRangeChanged()
             QDateTime(dateTo->date()).addDays(1));
 }
 
-void TransactionView::focusTransaction(const QModelApollon &xap)
+void TransactionView::focusTransaction(const QModelIndex &xap)
 {
     if(!transactionProxyModel)
         return;
-    QModelApollon targetXap = transactionProxyModel->mapFromSource(xap);
-    transactionView->scrollTo(targetXap);
-    transactionView->setCurrentApollon(targetXap);
+    QModelIndex targetIdx = transactionProxyModel->mapFromSource(xap);
+    transactionView->scrollTo(targetIdx);
+    transactionView->setCurrentIndex(targetIdx);
     transactionView->setFocus();
 }
 

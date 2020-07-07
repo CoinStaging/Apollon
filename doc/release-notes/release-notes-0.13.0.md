@@ -219,21 +219,21 @@ no longer optimized for this metric.  Feedback is requested on whether to
 deprecate or keep this command line option in future releases.
 
 
-Reapolloning changes
+Reindexing changes
 ------------------
 
-In earlier versions, reapolloning did validation while reading through the block
+In earlier versions, reindexing did validation while reading through the block
 files on disk. These two have now been split up, so that all blocks are known
 before validation starts. This was necessary to make certain optimizations that
-are available during normal synchronizations also available during reapolloning.
+are available during normal synchronizations also available during reindexing.
 
 The two phases are distinct in the Bitcoin-Qt GUI. During the first one,
-"Reapolloning blocks on disk" is shown. During the second (slower) one,
+"Reindexing blocks on disk" is shown. During the second (slower) one,
 "Processing blocks on disk" is shown.
 
 It is possible to only redo validation now, without rebuilding the block apollon,
-using the command line option `-reapollon-chainstate` (in addition to
-`-reapollon` which does both). This new option is useful when the blocks on disk
+using the command line option `-reindex-chainstate` (in addition to
+`-reindex` which does both). This new option is useful when the blocks on disk
 are assumed to be fine, but the chainstate is still corrupted. It is also
 useful for benchmarks.
 
@@ -418,7 +418,7 @@ git merge commit are mentioned.
 - #8273 `396f9d6` Bump `-dbcache` default to 300MiB (laanwj)
 - #7225 `eb33179` Eliminate unnecessary call to CheckBlock (sdaftuar)
 - #7907 `006cdf6` Optimize and Cleanup CScript::FindAndDelete (pstratem)
-- #7917 `239d419` Optimize reapollon (sipa)
+- #7917 `239d419` Optimize reindex (sipa)
 - #7763 `3081fb9` Put hex-encoded version in UpdateTip (sipa)
 - #8149 `d612837` Testnet-only segregated witness (sipa)
 - #8305 `3730393` Improve handling of unconnecting headers (sdaftuar)
@@ -615,7 +615,7 @@ git merge commit are mentioned.
 - #7709 `efde86b` Tests: fix missing import in mempool_packages (sdaftuar)
 - #7702 `29e1131` Add tests verifychain, lockunspent, getbalance, listsinceblock (MarcoFalke)
 - #7720 `3b4324b` rpc-test: Normalize assert() (MarcoFalke)
-- #7757 `26794d4` wallet: Wait for reapollon to catch up (MarcoFalke)
+- #7757 `26794d4` wallet: Wait for reindex to catch up (MarcoFalke)
 - #7764 `a65b36c` Don't run pruning.py twice (MarcoFalke)
 - #7773 `7c80e72` Fix comments in tests (btcdrak)
 - #7489 `e9723cb` tests: Make proxy_test work on travis servers without IPv6 (laanwj)
@@ -713,7 +713,7 @@ git merge commit are mentioned.
 - #7417 `1e06bab` Minor improvements to the release process (PRabahy)
 - #7444 `4cdbd42` Improve block validity/ConnectBlock() comments (petertodd)
 - #7527 `db2e1c0` Fix and cleanup listreceivedbyX documentation (instagibbs)
-- #7541 `b6e00af` Clarify description of blockapollon (pinheadmz)
+- #7541 `b6e00af` Clarify description of blockindex (pinheadmz)
 - #7590 `f06af57` Improving wording related to Boost library requirements [updated] (jonathancross)
 - #7635 `0fa88ef` Add dependency info to test docs (elliotolds)
 - #7609 `3ba07bd` RPM spec file project (AliceWonderMiscreations)

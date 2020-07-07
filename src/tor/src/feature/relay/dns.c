@@ -391,7 +391,7 @@ set_expiry(cached_resolve_t *resolve, time_t expires)
   resolve->expire = expires;
   smartlist_pqueue_add(cached_resolve_pqueue,
                        compare_cached_resolves_by_expiry_,
-                       offsetof(cached_resolve_t, minheap_xap),
+                       offsetof(cached_resolve_t, minheap_idx),
                        resolve);
 }
 
@@ -438,7 +438,7 @@ purge_expired_resolves(time_t now)
       break;
     smartlist_pqueue_pop(cached_resolve_pqueue,
                          compare_cached_resolves_by_expiry_,
-                         offsetof(cached_resolve_t, minheap_xap));
+                         offsetof(cached_resolve_t, minheap_idx));
 
     if (resolve->state == CACHE_STATE_PENDING) {
       log_debug(LD_EXIT,
@@ -829,7 +829,7 @@ dns_resolve_impl,(edge_connection_t *exitconn, int is_resolve,
   resolve = tor_malloc_zero(sizeof(cached_resolve_t));
   resolve->magic = CACHED_RESOLVE_MAGIC;
   resolve->state = CACHE_STATE_PENDING;
-  resolve->minheap_xap = -1;
+  resolve->minheap_idx = -1;
   strlcpy(resolve->address, exitconn->base_.address, sizeof(resolve->address));
 
   /* add this connection to the pending list */
@@ -2214,7 +2214,7 @@ assert_cache_ok_(void)
 
   smartlist_pqueue_assert_ok(cached_resolve_pqueue,
                              compare_cached_resolves_by_expiry_,
-                             offsetof(cached_resolve_t, minheap_xap));
+                             offsetof(cached_resolve_t, minheap_idx));
 
   SMARTLIST_FOREACH(cached_resolve_pqueue, cached_resolve_t *, res,
     {

@@ -166,12 +166,12 @@
         <translation>Otvoriť &amp;URI...</translation>
     </message>
     <message>
-        <source>Reapolloning blocks on disk...</source>
-        <translation>Preapollonúvam bloky na disku...</translation>
+        <source>Reindexing blocks on disk...</source>
+        <translation>Preindexúvam bloky na disku...</translation>
     </message>
     <message>
         <source>Send coins to a Apollon address</source>
-        <translation>Poslať apollons na adresu</translation>
+        <translation>Poslať indexs na adresu</translation>
     </message>
     <message>
         <source>Backup wallet to another location</source>
@@ -270,8 +270,8 @@
         <translation><numerusform>%n aktívne pripojenie do siete Apollon</numerusform><numerusform>%n aktívne pripojenia do siete Apollon</numerusform><numerusform>%n aktívnych pripojení do siete Apollon</numerusform></translation>
     </message>
     <message>
-        <source>Apolloning blocks on disk...</source>
-        <translation>Apollonujem bloky na disku...</translation>
+        <source>Indexing blocks on disk...</source>
+        <translation>Indexujem bloky na disku...</translation>
     </message>
     <message>
         <source>Processing blocks on disk...</source>
@@ -829,7 +829,7 @@
         <translation>&amp;Zobrazovať hodnoty v jednotkách:</translation>
     </message>
     <message>
-        <source>Choose the default subdivision unit to show in the interface and when sending apollons.</source>
+        <source>Choose the default subdivision unit to show in the interface and when sending indexs.</source>
         <translation>Zvoľte ako deliť apollon pri zobrazovaní pri platbách a užívateľskom rozhraní.</translation>
     </message>
     <message>
@@ -1401,7 +1401,7 @@
     <name>SendCoinsDialog</name>
     <message>
         <source>Send Coins</source>
-        <translation>Poslať apollons</translation>
+        <translation>Poslať indexs</translation>
     </message>
     <message>
         <source>Coin Control Features</source>
@@ -1599,8 +1599,8 @@
         <translation>Odstrániť túto položku</translation>
     </message>
     <message>
-        <source>The fee will be deducted from the amount being sent. The recipient will receive less apollons than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
-        <translation>Poplatok sa odpočíta od čiastky, ktorú odosielate. Príjemca dostane menej apollonov ako zadáte. Ak je vybraných viacero príjemcov, poplatok je rozdelený rovným dielom.</translation>
+        <source>The fee will be deducted from the amount being sent. The recipient will receive less indexs than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
+        <translation>Poplatok sa odpočíta od čiastky, ktorú odosielate. Príjemca dostane menej indexov ako zadáte. Ak je vybraných viacero príjemcov, poplatok je rozdelený rovným dielom.</translation>
     </message>
     <message>
         <source>S&amp;ubtract fee from amount</source>
@@ -2051,16 +2051,16 @@ The network does not appear to fully agree! Some miners appear to be experiencin
         <translation>Redukovanie nemôže byť nastavené na zápornú hodnotu.</translation>
     </message>
     <message>
-        <source>Prune mode is incompatible with -txapollon.</source>
-        <translation>Redukovanie je nekompatibilné s -txapollon.</translation>
+        <source>Prune mode is incompatible with -txindex.</source>
+        <translation>Redukovanie je nekompatibilné s -txindex.</translation>
     </message>
     <message>
         <source>Rebuild chain state and block apollon from the blk*.dat files on disk</source>
         <translation>Obnoviť stav reťazca a apollon blokov zo súborov blk*.dat na disku.</translation>
     </message>
     <message>
-        <source>Rebuild chain state from the currently apolloned blocks</source>
-        <translation>Obnoviť stav reťazca z aktuálne apollonovaných blokov.</translation>
+        <source>Rebuild chain state from the currently indexed blocks</source>
+        <translation>Obnoviť stav reťazca z aktuálne indexovaných blokov.</translation>
     </message>
     <message>
         <source>Set database cache size in megabytes (%d to %d, default: %d)</source>

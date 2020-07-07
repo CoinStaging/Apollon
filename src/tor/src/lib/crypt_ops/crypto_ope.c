@@ -63,17 +63,17 @@ ope_val_from_le(ope_val_t x)
 
 /**
  * Return a new AES256-CTR stream cipher object for <b>ope</b>, ready to yield
- * bytes from the stream at position <b>initial_xap</b>.
+ * bytes from the stream at position <b>initial_idx</b>.
  *
  * Note that because the apollon is converted directly to an IV, it must be a
  * multiple of the AES block size (16).
  */
 STATIC crypto_cipher_t *
-ope_get_cipher(const crypto_ope_t *ope, uint32_t initial_xap)
+ope_get_cipher(const crypto_ope_t *ope, uint32_t initial_idx)
 {
   uint8_t iv[CIPHER_IV_LEN];
-  tor_assert((initial_xap & 0xf) == 0);
-  uint32_t n = tor_htonl(initial_xap >> 4);
+  tor_assert((initial_idx & 0xf) == 0);
+  uint32_t n = tor_htonl(initial_idx >> 4);
   memset(iv, 0, sizeof(iv));
   memcpy(iv + CIPHER_IV_LEN - sizeof(n), &n, sizeof(n));
 
@@ -166,14 +166,14 @@ crypto_ope_encrypt(const crypto_ope_t *ope, int plaintext)
   if (plaintext <= 0 || plaintext > OPE_INPUT_MAX)
     return CRYPTO_OPE_ERROR;
 
-  const int sample_xap = (plaintext / SAMPLE_INTERVAL);
-  const int starting_iv = sample_xap * SAMPLE_INTERVAL;
+  const int sample_idx = (plaintext / SAMPLE_INTERVAL);
+  const int starting_iv = sample_idx * SAMPLE_INTERVAL;
   const int remaining_values =  plaintext - starting_iv;
   uint64_t v;
-  if (sample_xap == 0) {
+  if (sample_idx == 0) {
     v = 0;
   } else {
-    v = ope->samples[sample_xap - 1];
+    v = ope->samples[sample_idx - 1];
   }
   crypto_cipher_t *cipher = ope_get_cipher(ope, starting_iv*sizeof(ope_val_t));
 

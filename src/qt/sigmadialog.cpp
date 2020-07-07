@@ -158,12 +158,12 @@ void SigmaDialog::setWalletModel(WalletModel *model)
 
 void SigmaDialog::tabSelected(){
     bool coinControlSelected = walletModel->getOptionsModel()->getCoinControlFeatures();
-    if(ui->tabWidget->currentApollon()==0){
+    if(ui->tabWidget->currentIndex()==0){
         SigmaCoinControlDialog::fMintTabSelected = true;
         if(coinControlSelected)
             ui->coinControlChange->show();
     }
-    if(ui->tabWidget->currentApollon()==1){
+    if(ui->tabWidget->currentIndex()==1){
         SigmaCoinControlDialog::fMintTabSelected = false;
         if(coinControlSelected)
             ui->coinControlChange->hide();
@@ -531,19 +531,19 @@ void SigmaDialog::coinControlClipboardQuantity()
 // Coin Control: copy label "Amount" to clipboard
 void SigmaDialog::coinControlClipboardAmount()
 {
-    GUIUtil::setClipboard(ui->labelCoinControlAmount->text().left(ui->labelCoinControlAmount->text().apollonOf(" ")));
+    GUIUtil::setClipboard(ui->labelCoinControlAmount->text().left(ui->labelCoinControlAmount->text().indexOf(" ")));
 }
 
 // Coin Control: copy label "Fee" to clipboard
 void SigmaDialog::coinControlClipboardFee()
 {
-    GUIUtil::setClipboard(ui->labelCoinControlFee->text().left(ui->labelCoinControlFee->text().apollonOf(" ")).replace(ASYMP_UTF8, ""));
+    GUIUtil::setClipboard(ui->labelCoinControlFee->text().left(ui->labelCoinControlFee->text().indexOf(" ")).replace(ASYMP_UTF8, ""));
 }
 
 // Coin Control: copy label "After fee" to clipboard
 void SigmaDialog::coinControlClipboardAfterFee()
 {
-    GUIUtil::setClipboard(ui->labelCoinControlAfterFee->text().left(ui->labelCoinControlAfterFee->text().apollonOf(" ")).replace(ASYMP_UTF8, ""));
+    GUIUtil::setClipboard(ui->labelCoinControlAfterFee->text().left(ui->labelCoinControlAfterFee->text().indexOf(" ")).replace(ASYMP_UTF8, ""));
 }
 
 // Coin Control: copy label "Bytes" to clipboard
@@ -567,7 +567,7 @@ void SigmaDialog::coinControlClipboardLowOutput()
 // Coin Control: copy label "Change" to clipboard
 void SigmaDialog::coinControlClipboardChange()
 {
-    GUIUtil::setClipboard(ui->labelCoinControlChange->text().left(ui->labelCoinControlChange->text().apollonOf(" ")).replace(ASYMP_UTF8, ""));
+    GUIUtil::setClipboard(ui->labelCoinControlChange->text().left(ui->labelCoinControlChange->text().indexOf(" ")).replace(ASYMP_UTF8, ""));
 }
 
 // Coin Control: update labels

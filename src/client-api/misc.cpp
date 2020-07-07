@@ -2,7 +2,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "apollonnodeman.h"
+#include "indexnodeman.h"
 #include "main.h"
 #include "init.h"
 #include "util.h"
@@ -10,12 +10,12 @@
 #include "client-api/protocol.h"
 #include "rpc/server.h"
 #include "rpc/client.h"
-#include "apollonnode-sync.h"
+#include "indexnode-sync.h"
 #include "wallet/wallet.h"
-#include "apollonnode.h"
-#include "apollonnodeconfig.h"
-#include "apollonnodeman.h"
-#include "activeapollonnode.h"
+#include "indexnode.h"
+#include "indexnodeconfig.h"
+#include "indexnodeman.h"
+#include "activeindexnode.h"
 #include <zmqserver/zmqabstract.h>
 #include "univalue.h"
 
@@ -146,7 +146,7 @@ UniValue apistatus(Type type, const UniValue& data, const UniValue& auth, bool f
     UniValue modules(UniValue::VOBJ);
     
     modules.push_back(Pair("API", !APIIsInWarmup()));
-    modules.push_back(Pair("Apollonnode", apollonnodeSync.IsSynced()));
+    modules.push_back(Pair("Indexnode", indexnodeSync.IsSynced()));
 
     obj.push_back(Pair("version", CLIENT_VERSION));
     obj.push_back(Pair("protocolVersion", PROTOCOL_VERSION));
@@ -158,19 +158,19 @@ UniValue apistatus(Type type, const UniValue& data, const UniValue& auth, bool f
         }
     }
 
-    UniValue apollonnode(UniValue::VOBJ);
-    apollonnode.push_back(Pair("localCount", apollonnodeConfig.getCount()));
-    apollonnode.push_back(Pair("totalCount", mnodeman.CountApollonnodes()));
-    apollonnode.push_back(Pair("enabledCount", mnodeman.CountEnabled()));
-    obj.push_back(Pair("Apollonnode", apollonnode));
+    UniValue indexnode(UniValue::VOBJ);
+    indexnode.push_back(Pair("localCount", indexnodeConfig.getCount()));
+    indexnode.push_back(Pair("totalCount", mnodeman.CountIndexnodes()));
+    indexnode.push_back(Pair("enabledCount", mnodeman.CountEnabled()));
+    obj.push_back(Pair("Indexnode", indexnode));
 
     obj.push_back(Pair("dataDir",       GetDataDir(true).string()));
     obj.push_back(Pair("network",       ChainNameFromCommandLine()));
     obj.push_back(Pair("blocks",        (int)chainActive.Height()));
     obj.push_back(Pair("connections",   (int)vNodes.size()));
     obj.push_back(Pair("devAuth",       CZMQAbstract::DEV_AUTH));
-    obj.push_back(Pair("synced",        apollonnodeSync.GetBlockchainSynced()));
-    obj.push_back(Pair("reapolloning",    fReapollon || !apollonnodeSync.GetBlockchainSynced()));
+    obj.push_back(Pair("synced",        indexnodeSync.GetBlockchainSynced()));
+    obj.push_back(Pair("reindexing",    fReindex || !indexnodeSync.GetBlockchainSynced()));
     obj.push_back(Pair("safeMode",      GetWarnings("api") != ""));
 
 #ifdef WIN32
@@ -191,7 +191,7 @@ UniValue backup(Type type, const UniValue& data, const UniValue& auth, bool fHel
         system_clock::now().time_since_epoch()
     );
     UniValue firstSeenAt = secs.count();
-    string filename = "apollon_backup-" + to_string(firstSeenAt.get_int64()) + ".zip";
+    string filename = "index_backup-" + to_string(firstSeenAt.get_int64()) + ".zip";
 
     fs::path backupPath (directory);
     backupPath /= filename;
@@ -215,7 +215,7 @@ UniValue stop(Type type, const UniValue& data, const UniValue& auth, bool fHelp)
     if (fHelp)
         throw runtime_error(
             "stop\n"
-            "\nStop ApollonChain server.");
+            "\nStop IndexChain server.");
     // Event loop will exit after current HTTP requests have been handled, so
     // this reply will get back to the client.
     StartShutdown();
@@ -285,6 +285,6 @@ static const CAPICommand commands[] =
 
 void RegisterMiscAPICommands(CAPITable &tableAPI)
 {
-    for (unsigned int vcxap = 0; vcxap < ARRAYLEN(commands); vcxap++)
-        tableAPI.appendCommand(commands[vcxap].collection, &commands[vcxap]);
+    for (unsigned int vcidx = 0; vcidx < ARRAYLEN(commands); vcidx++)
+        tableAPI.appendCommand(commands[vcidx].collection, &commands[vcidx]);
 }

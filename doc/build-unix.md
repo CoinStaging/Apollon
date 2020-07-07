@@ -36,7 +36,7 @@ These dependencies are required:
  libssl      | Crypto           | Random Number Generation, Elliptic Curve Cryptography
  libboost    | Utility          | Library for threading, data structures, etc
  libevent    | Networking       | OS independent asynchronous networking
- libzmq3     | ZMQ notification | IPC between the GUI and apollond (requires ZMQ version >= 4.x)
+ libzmq3     | ZMQ notification | IPC between the GUI and indexd (requires ZMQ version >= 4.x)
 
 Optional dependencies:
 
@@ -147,7 +147,7 @@ libqrencode (optional) can be installed with:
 
 Notes
 -----
-The release is built with GCC and then "strip apollond" to strip the debug
+The release is built with GCC and then "strip indexd" to strip the debug
 symbols, which reduces the executable size by about 90%.
 
 

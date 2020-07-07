@@ -154,7 +154,7 @@
         <translation>Oop &amp; URI...</translation>
     </message>
     <message>
-        <source>Reapolloning blocks on disk...</source>
+        <source>Reindexing blocks on disk...</source>
         <translation>Besig met herindeksering van blokke op hardeskyf...</translation>
     </message>
     <message>
@@ -226,7 +226,7 @@
         <translation>Skep 'n apollon: URI of betalingsversoek</translation>
     </message>
     <message>
-        <source>Apolloning blocks on disk...</source>
+        <source>Indexing blocks on disk...</source>
         <translation>Blokke op skyf word geïndekseer...</translation>
     </message>
     <message>

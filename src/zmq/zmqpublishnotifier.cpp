@@ -141,9 +141,9 @@ bool CZMQAbstractPublishNotifier::SendMessage(const char *command, const void* d
     return true;
 }
 
-bool CZMQPublishHashBlockNotifier::NotifyBlock(const CBlockApollon *papollon)
+bool CZMQPublishHashBlockNotifier::NotifyBlock(const CBlockIndex *pindex)
 {
-    uint256 hash = papollon->GetBlockHash();
+    uint256 hash = pindex->GetBlockHash();
     LogPrint("zmq", "zmq: Publish hashblock %s\n", hash.GetHex());
     char data[32];
     for (unsigned int i = 0; i < 32; i++)
@@ -161,16 +161,16 @@ bool CZMQPublishHashTransactionNotifier::NotifyTransaction(const CTransaction &t
     return SendMessage(MSG_HASHTX, data, 32);
 }
 
-bool CZMQPublishRawBlockNotifier::NotifyBlock(const CBlockApollon *papollon)
+bool CZMQPublishRawBlockNotifier::NotifyBlock(const CBlockIndex *pindex)
 {
-    LogPrint("zmq", "zmq: Publish rawblock %s\n", papollon->GetBlockHash().GetHex());
+    LogPrint("zmq", "zmq: Publish rawblock %s\n", pindex->GetBlockHash().GetHex());
 
     const Consensus::Params& consensusParams = Params().GetConsensus();
     CDataStream ss(SER_NETWORK, PROTOCOL_VERSION | RPCSerializationFlags());
     {
         LOCK(cs_main);
         CBlock block;
-        if(!ReadBlockFromDisk(block, papollon, consensusParams))
+        if(!ReadBlockFromDisk(block, pindex, consensusParams))
         {
             zmqError("Can't read block from disk");
             return false;

@@ -24,7 +24,7 @@ protected:
     secp_primitives::Scalar GenerateSerial(secp256k1_pubkey const &pubkey);
 
 protected:
-    uint32_t BIP44ChangeApollon() const;
+    uint32_t BIP44ChangeIndex() const;
     SigmaPrivateKey GeneratePrivateKey(uint512 const &seed);
     SigmaPrivateKey GeneratePrivateKey(uint512 const &seed, ECDSAPrivateKey &signatureKey);
 

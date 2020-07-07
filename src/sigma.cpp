@@ -13,8 +13,8 @@
 #include "sigma/coinspend.h"
 #include "sigma/coin.h"
 #include "sigma/remint.h"
-#include "apollonnode-payments.h"
-#include "apollonnode-sync.h"
+#include "indexnode-payments.h"
+#include "indexnode-sync.h"
 #include "primitives/zerocoin.h"
 
 #include <atomic>
@@ -190,7 +190,7 @@ bool CheckSigmaSpendTransaction(
         bool fStatefulSigmaCheck,
         CSigmaTxInfo *sigmaTxInfo) {
     bool hasSigmaSpendInputs = false, hasNonSigmaInputs = false;
-    int vinApollon = -1;
+    int vinIndex = -1;
     std::unordered_set<Scalar, sigma::CScalarHash> txSerials;
 
     Consensus::Params const & params = ::Params().GetConsensus();
@@ -205,7 +205,7 @@ bool CheckSigmaSpendTransaction(
         std::unique_ptr<sigma::CoinSpend> spend;
         uint32_t coinGroupId;
 
-        vinApollon++;
+        vinIndex++;
         if (txin.scriptSig.IsSigmaSpend())
             hasSigmaSpendInputs = true;
         else
@@ -248,14 +248,14 @@ bool CheckSigmaSpendTransaction(
         }
 
         CSigmaState::SigmaCoinGroupInfo coinGroup;
-        if (!sigmaState.GetCoinGroupInfo(targetDenominations[vinApollon], coinGroupId, coinGroup))
+        if (!sigmaState.GetCoinGroupInfo(targetDenominations[vinIndex], coinGroupId, coinGroup))
             return state.DoS(100, false, NO_MINT_ZEROCOIN,
                     "CheckSigmaSpendTransaction: Error: no coins were minted with such parameters");
 
         bool passVerify = false;
-        CBlockApollon *apollon = coinGroup.lastBlock;
+        CBlockIndex *apollon = coinGroup.lastBlock;
         pair<sigma::CoinDenomination, int> denominationAndId = std::make_pair(
-            targetDenominations[vinApollon], coinGroupId);
+            targetDenominations[vinIndex], coinGroupId);
 
         uint256 accumulatorBlockHash = spend->getAccumulatorBlockHash();
 
@@ -501,7 +501,7 @@ bool CheckSigmaTransaction(
     return true;
 }
 
-void RemoveSigmaSpendsReferencingBlock(CTxMemPool& pool, CBlockApollon* blockApollon) {
+void RemoveSigmaSpendsReferencingBlock(CTxMemPool& pool, CBlockIndex* blockIndex) {
     LOCK2(cs_main, pool.cs);
     std::vector<CTransaction> txn_to_remove;
     for (CTxMemPool::txiter mi = pool.mapTx.begin(); mi != pool.mapTx.end(); ++mi) {
@@ -515,7 +515,7 @@ void RemoveSigmaSpendsReferencingBlock(CTxMemPool& pool, CBlockApollon* blockApo
                     uint32_t pubcoinId;
                     std::tie(spend, pubcoinId) = ParseSigmaSpend(txin);
                     uint256 accumulatorBlockHash = spend->getAccumulatorBlockHash();
-                    if (accumulatorBlockHash == blockApollon->GetBlockHash()) {
+                    if (accumulatorBlockHash == blockIndex->GetBlockHash()) {
                         // Do not remove transaction immediately, that will invalidate iterator mi.
                         txn_to_remove.push_back(tx);
                         break;
@@ -532,12 +532,12 @@ void RemoveSigmaSpendsReferencingBlock(CTxMemPool& pool, CBlockApollon* blockApo
     }
 }
 
-void DisconnectTipSigma(CBlock& block, CBlockApollon *papollonDelete) {
-    sigmaState.RemoveBlock(papollonDelete);
+void DisconnectTipSigma(CBlock& block, CBlockIndex *pindexDelete) {
+    sigmaState.RemoveBlock(pindexDelete);
 
     // Also remove from mempool sigma spends that reference given block hash.
-    RemoveSigmaSpendsReferencingBlock(mempool, papollonDelete);
-    RemoveSigmaSpendsReferencingBlock(stempool, papollonDelete);
+    RemoveSigmaSpendsReferencingBlock(mempool, pindexDelete);
+    RemoveSigmaSpendsReferencingBlock(stempool, pindexDelete);
 }
 
 Scalar GetSigmaSpendSerialNumber(const CTransaction &tx, const CTxIn &txin) {
@@ -587,19 +587,19 @@ CAmount GetSigmaSpendInput(const CTransaction &tx) {
 
 /**
  * Connect a new ZCblock to chainActive. pblock is either NULL or a pointer to a CBlock
- * corresponding to papollonNew, to bypass loading it again from disk.
+ * corresponding to pindexNew, to bypass loading it again from disk.
  */
 bool ConnectBlockSigma(
         CValidationState &state,
         const CChainParams &chainparams,
-        CBlockApollon *papollonNew,
+        CBlockIndex *pindexNew,
         const CBlock *pblock,
         bool fJustCheck) {
     // Add zerocoin transaction information to apollon
     if (pblock && pblock->sigmaTxInfo) {
         if (!fJustCheck) {
-            papollonNew->sigmaMintedPubCoins.clear();
-            papollonNew->sigmaSpentSerials.clear();
+            pindexNew->sigmaMintedPubCoins.clear();
+            pindexNew->sigmaSpentSerials.clear();
         }
 
         if (!CheckSigmaBlock(state, *pblock)) {
@@ -611,14 +611,14 @@ bool ConnectBlockSigma(
                     state,
                     pblock->sigmaTxInfo.get(),
                     serial.first,
-                    papollonNew->nHeight,
+                    pindexNew->nHeight,
                     true /* fConnectTip */
                     )) {
                 return false;
             }
 
             if (!fJustCheck) {
-                papollonNew->sigmaSpentSerials.insert(serial);
+                pindexNew->sigmaSpentSerials.insert(serial);
                 sigmaState.AddSpend(serial.first, serial.second.denomination, serial.second.coinGroupId);
             }
         }
@@ -626,10 +626,10 @@ bool ConnectBlockSigma(
         if (fJustCheck)
             return true;
 
-        sigmaState.AddMintsToStateAndBlockApollon(papollonNew, pblock);
+        sigmaState.AddMintsToStateAndBlockIndex(pindexNew, pblock);
     }
     else if (!fJustCheck) { // TODO(martun): not sure if this else is necessary here. Check again later.
-        sigmaState.AddBlock(papollonNew);
+        sigmaState.AddBlock(pindexNew);
     }
     return true;
 }
@@ -638,7 +638,7 @@ bool GetOutPointFromBlock(COutPoint& outPoint, const GroupElement &pubCoinValue,
     secp_primitives::GroupElement txPubCoinValue;
     // cycle transaction hashes, looking for this pubcoin.
     BOOST_FOREACH(CTransaction tx, block.vtx){
-        uint32_t nApollon = 0;
+        uint32_t nIndex = 0;
         for (const CTxOut &txout: tx.vout) {
             if (txout.scriptPubKey.IsSigmaMint()){
 
@@ -648,11 +648,11 @@ bool GetOutPointFromBlock(COutPoint& outPoint, const GroupElement &pubCoinValue,
                                                       txout.scriptPubKey.end());
                 txPubCoinValue.deserialize(&coin_serialised[0]);
                 if(pubCoinValue==txPubCoinValue){
-                    outPoint = COutPoint(tx.GetHash(), nApollon);
+                    outPoint = COutPoint(tx.GetHash(), nIndex);
                     return true;
                 }
             }
-            nApollon++;
+            nIndex++;
         }
     }
 
@@ -670,7 +670,7 @@ bool GetOutPoint(COutPoint& outPoint, const sigma::PublicCoin &pubCoin) {
         return false;
 
     // get block containing mint
-    CBlockApollon *mintBlock = chainActive[mintHeight];
+    CBlockIndex *mintBlock = chainActive[mintHeight];
     CBlock block;
     if(!ReadBlockFromDisk(block, mintBlock, ::Params().GetConsensus()))
         LogPrintf("can't read block from disk.\n");
@@ -698,7 +698,7 @@ bool GetOutPoint(COutPoint& outPoint, const GroupElement &pubCoinValue) {
         return false;
 
     // get block containing mint
-    CBlockApollon *mintBlock = chainActive[mintHeight];
+    CBlockIndex *mintBlock = chainActive[mintHeight];
     CBlock block;
     if(!ReadBlockFromDisk(block, mintBlock, ::Params().GetConsensus()))
         LogPrintf("can't read block from disk.\n");
@@ -716,10 +716,10 @@ bool GetOutPoint(COutPoint& outPoint, const uint256 &pubCoinValueHash) {
     return GetOutPoint(outPoint, pubCoinValue);
 }
 
-bool BuildSigmaStateFromApollon(CChain *chain) {
-    for (CBlockApollon *blockApollon = chain->Genesis(); blockApollon; blockApollon=chain->Next(blockApollon))
+bool BuildSigmaStateFromIndex(CChain *chain) {
+    for (CBlockIndex *blockIndex = chain->Genesis(); blockIndex; blockIndex=chain->Next(blockIndex))
     {
-        sigmaState.AddBlock(blockApollon);
+        sigmaState.AddBlock(blockIndex);
     }
     // DEBUG
     LogPrintf(
@@ -835,8 +835,8 @@ CSigmaState::CSigmaState()
 :containers(surgeCondition)
 {}
 
-void CSigmaState::AddMintsToStateAndBlockApollon(
-        CBlockApollon *apollon,
+void CSigmaState::AddMintsToStateAndBlockIndex(
+        CBlockIndex *apollon,
         const CBlock* pblock) {
 
     std::unordered_map<sigma::CoinDenomination, std::vector<sigma::PublicCoin>> blockDenomMints;
@@ -881,7 +881,7 @@ void CSigmaState::AddMintsToStateAndBlockApollon(
         for (const auto& mint : mintsWithThisDenom) {
             containers.AddMint(mint, CMintedCoinInfo::make(denomination, mintCoinGroupId, apollon->nHeight));
 
-            LogPrintf("AddMintsToStateAndBlockApollon: mint added denomination=%d, id=%d\n", denomination, mintCoinGroupId);
+            LogPrintf("AddMintsToStateAndBlockIndex: mint added denomination=%d, id=%d\n", denomination, mintCoinGroupId);
             apollon->sigmaMintedPubCoins[{denomination, mintCoinGroupId}].push_back(mint);
         }
     }
@@ -891,7 +891,7 @@ void CSigmaState::AddSpend(const Scalar &serial, CoinDenomination denom, int coi
     containers.AddSpend(serial, CSpendCoinInfo::make(denom, coinGroupId));
 }
 
-void CSigmaState::AddBlock(CBlockApollon *apollon) {
+void CSigmaState::AddBlock(CBlockIndex *apollon) {
     BOOST_FOREACH(
         const PAIRTYPE(PAIRTYPE(sigma::CoinDenomination, int), vector<sigma::PublicCoin>) &pubCoins,
             apollon->sigmaMintedPubCoins) {
@@ -915,7 +915,7 @@ void CSigmaState::AddBlock(CBlockApollon *apollon) {
     }
 }
 
-void CSigmaState::RemoveBlock(CBlockApollon *apollon) {
+void CSigmaState::RemoveBlock(CBlockIndex *apollon) {
     // roll back accumulator updates
     BOOST_FOREACH(
         const PAIRTYPE(PAIRTYPE(sigma::CoinDenomination, int),vector<sigma::PublicCoin>) &coin,
@@ -1028,7 +1028,7 @@ int CSigmaState::GetCoinSetForSpend(
     SigmaCoinGroupInfo coinGroup = coinGroups[denomAndId];
 
     int numberOfCoins = 0;
-    for (CBlockApollon *block = coinGroup.lastBlock;
+    for (CBlockIndex *block = coinGroup.lastBlock;
             ;
             block = block->pprev) {
         if (block->sigmaMintedPubCoins[denomAndId].size() > 0) {

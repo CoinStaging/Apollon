@@ -24,8 +24,8 @@
 #include "main.h"
 #include "consensus/validation.h"
 #include "core_io.h"
-#include "apollonnode-sync.h"
-#include "apollonnodeconfig.h"
+#include "indexnode-sync.h"
+#include "indexnodeconfig.h"
 
 using namespace std;
 CScript script;
@@ -237,7 +237,7 @@ BOOST_AUTO_TEST_CASE(transaction_test)
     BOOST_CHECK_THROW(CallAPI(valRequest, true), runtime_error);
 }
 
-BOOST_AUTO_TEST_CASE(sendapollon_test)
+BOOST_AUTO_TEST_CASE(sendindex_test)
 {
     // verify txid field is filled in result.
     UniValue valRequest(UniValue::VOBJ);
@@ -454,7 +454,7 @@ BOOST_AUTO_TEST_CASE(statewallet_test)
 
 }
 
-BOOST_AUTO_TEST_CASE(apollonnodelist_test)
+BOOST_AUTO_TEST_CASE(indexnodelist_test)
 {
     // Verify "Create" initially.
     UniValue valRequest(UniValue::VOBJ);
@@ -463,18 +463,18 @@ BOOST_AUTO_TEST_CASE(apollonnodelist_test)
     UniValue result(UniValue::VOBJ);
 
     valRequest.push_back(Pair("type", "initial"));
-    valRequest.push_back(Pair("collection", "apollonnodeList"));
+    valRequest.push_back(Pair("collection", "indexnodeList"));
     //valRequest.push_back(Pair("auth", auth));
 
     BOOST_CHECK_THROW(CallAPI(valRequest, true), runtime_error);
 
-    // artificially finish apollonnode sync to test list call
-    while(!apollonnodeSync.IsSynced()){
-        apollonnodeSync.SwitchToNextAsset();
+    // artificially finish indexnode sync to test list call
+    while(!indexnodeSync.IsSynced()){
+        indexnodeSync.SwitchToNextAsset();
     }
 
     result = CallAPI(valRequest, true);
-    BOOST_CHECK(!result.isNull()); // empty apollonnode list
+    BOOST_CHECK(!result.isNull()); // empty indexnode list
 }
 
 BOOST_AUTO_TEST_CASE(balance_test)

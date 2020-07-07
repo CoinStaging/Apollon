@@ -1,11 +1,11 @@
-#include "activeapollonnode.h"
+#include "activeindexnode.h"
 #include "darksend.h"
 #include "init.h"
 #include "main.h"
-#include "apollonnode-payments.h"
-#include "apollonnode-sync.h"
-#include "apollonnodeconfig.h"
-#include "apollonnodeman.h"
+#include "indexnode-payments.h"
+#include "indexnode-sync.h"
+#include "indexnodeconfig.h"
+#include "indexnodeman.h"
 #include "rpc/server.h"
 #include "util.h"
 #include "utilmoneystr.h"
@@ -35,8 +35,8 @@ UniValue privatesend(const UniValue &params, bool fHelp) {
             EnsureWalletIsUnlocked();
         }
 
-        if (fApollonNode)
-            return "Mixing is not supported from apollonnodes";
+        if (fIndexNode)
+            return "Mixing is not supported from indexnodes";
 
         fEnablePrivateSend = true;
         bool result = darkSendPool.DoAutomaticDenominating();
@@ -70,9 +70,9 @@ UniValue getpoolinfo(const UniValue &params, bool fHelp) {
     obj.push_back(Pair("entries", darkSendPool.GetEntriesCount()));
     obj.push_back(Pair("status", darkSendPool.GetStatus()));
 
-    if (darkSendPool.pSubmittedToApollonnode) {
-        obj.push_back(Pair("outpoint", darkSendPool.pSubmittedToApollonnode->vin.prevout.ToStringShort()));
-        obj.push_back(Pair("addr", darkSendPool.pSubmittedToApollonnode->addr.ToString()));
+    if (darkSendPool.pSubmittedToIndexnode) {
+        obj.push_back(Pair("outpoint", darkSendPool.pSubmittedToIndexnode->vin.prevout.ToStringShort()));
+        obj.push_back(Pair("addr", darkSendPool.pSubmittedToIndexnode->addr.ToString()));
     }
 
     if (pwalletMain) {
@@ -85,7 +85,7 @@ UniValue getpoolinfo(const UniValue &params, bool fHelp) {
 }
 
 
-UniValue apollonnode(const UniValue &params, bool fHelp) {
+UniValue indexnode(const UniValue &params, bool fHelp) {
     std::string strCommand;
     if (params.size() >= 1) {
         strCommand = params[0].get_str();
@@ -102,24 +102,24 @@ UniValue apollonnode(const UniValue &params, bool fHelp) {
          strCommand != "genkey" &&
          strCommand != "connect" && strCommand != "outputs" && strCommand != "status"))
         throw std::runtime_error(
-                "apollonnode \"command\"...\n"
-                        "Set of commands to execute apollonnode related actions\n"
+                "indexnode \"command\"...\n"
+                        "Set of commands to execute indexnode related actions\n"
                         "\nArguments:\n"
                         "1. \"command\"        (string or set of strings, required) The command to execute\n"
                         "\nAvailable commands:\n"
-                        "  count        - Print number of all known apollonnodes (optional: 'ps', 'enabled', 'all', 'qualify')\n"
-                        "  current      - Print info on current apollonnode winner to be paid the next block (calculated locally)\n"
-                        "  debug        - Print apollonnode status\n"
-                        "  genkey       - Generate new apollonnodeprivkey\n"
-                        "  outputs      - Print apollonnode compatible outputs\n"
-                        "  start        - Start local Hot apollonnode configured in dash.conf\n"
-                        "  start-alias  - Start single remote apollonnode by assigned alias configured in apollonnode.conf\n"
-                        "  start-<mode> - Start remote apollonnodes configured in apollonnode.conf (<mode>: 'all', 'missing', 'disabled')\n"
-                        "  status       - Print apollonnode status information\n"
-                        "  list         - Print list of all known apollonnodes (see apollonnodelist for more info)\n"
-                        "  list-conf    - Print apollonnode.conf in JSON format\n"
-                        "  winner       - Print info on next apollonnode winner to vote for\n"
-                        "  winners      - Print list of apollonnode winners\n"
+                        "  count        - Print number of all known indexnodes (optional: 'ps', 'enabled', 'all', 'qualify')\n"
+                        "  current      - Print info on current indexnode winner to be paid the next block (calculated locally)\n"
+                        "  debug        - Print indexnode status\n"
+                        "  genkey       - Generate new indexnodeprivkey\n"
+                        "  outputs      - Print indexnode compatible outputs\n"
+                        "  start        - Start local Hot indexnode configured in dash.conf\n"
+                        "  start-alias  - Start single remote indexnode by assigned alias configured in indexnode.conf\n"
+                        "  start-<mode> - Start remote indexnodes configured in indexnode.conf (<mode>: 'all', 'missing', 'disabled')\n"
+                        "  status       - Print indexnode status information\n"
+                        "  list         - Print list of all known indexnodes (see indexnodelist for more info)\n"
+                        "  list-conf    - Print indexnode.conf in JSON format\n"
+                        "  winner       - Print info on next indexnode winner to vote for\n"
+                        "  winners      - Print list of indexnode winners\n"
         );
 
     if (strCommand == "list") {
@@ -128,12 +128,12 @@ UniValue apollonnode(const UniValue &params, bool fHelp) {
         for (unsigned int i = 1; i < params.size(); i++) {
             newParams.push_back(params[i]);
         }
-        return apollonnodelist(newParams, fHelp);
+        return indexnodelist(newParams, fHelp);
     }
 
     if (strCommand == "connect") {
         if (params.size() < 2)
-            throw JSONRPCError(RPC_INVALID_PARAMETER, "Apollonnode address required");
+            throw JSONRPCError(RPC_INVALID_PARAMETER, "Indexnode address required");
 
         std::string strAddress = params[1].get_str();
 
@@ -141,7 +141,7 @@ UniValue apollonnode(const UniValue &params, bool fHelp) {
 
         CNode *pnode = ConnectNode(CAddress(addr, NODE_NETWORK), NULL);
         if (!pnode)
-            throw JSONRPCError(RPC_INTERNAL_ERROR, strprintf("Couldn't connect to apollonnode %s", strAddress));
+            throw JSONRPCError(RPC_INTERNAL_ERROR, strprintf("Couldn't connect to indexnode %s", strAddress));
 
         return "successfully connected";
     }
@@ -162,7 +162,7 @@ UniValue apollonnode(const UniValue &params, bool fHelp) {
             return mnodeman.CountEnabled();
 
         int nCount;
-        mnodeman.GetNextApollonnodeInQueueForPayment(true, nCount);
+        mnodeman.GetNextIndexnodeInQueueForPayment(true, nCount);
 
         if (strMode == "qualify")
             return nCount;
@@ -176,13 +176,13 @@ UniValue apollonnode(const UniValue &params, bool fHelp) {
     if (strCommand == "current" || strCommand == "winner") {
         int nCount;
         int nHeight;
-        CApollonnode *winner = NULL;
+        CIndexnode *winner = NULL;
         {
             LOCK(cs_main);
             nHeight = chainActive.Height() + (strCommand == "current" ? 1 : 10);
         }
         mnodeman.UpdateLastPaid();
-        winner = mnodeman.GetNextApollonnodeInQueueForPayment(nHeight, true, nCount);
+        winner = mnodeman.GetNextIndexnodeInQueueForPayment(nHeight, true, nCount);
         if (!winner) return "unknown";
 
         UniValue obj(UniValue::VOBJ);
@@ -192,44 +192,44 @@ UniValue apollonnode(const UniValue &params, bool fHelp) {
         obj.push_back(Pair("protocol", (int64_t) winner->nProtocolVersion));
         obj.push_back(Pair("vin", winner->vin.prevout.ToStringShort()));
         obj.push_back(Pair("payee", CBitcoinAddress(winner->pubKeyCollateralAddress.GetID()).ToString()));
-        obj.push_back(Pair("lastseen", (winner->lastPing == CApollonnodePing()) ? winner->sigTime :
+        obj.push_back(Pair("lastseen", (winner->lastPing == CIndexnodePing()) ? winner->sigTime :
                                        winner->lastPing.sigTime));
-        obj.push_back(Pair("activeseconds", (winner->lastPing == CApollonnodePing()) ? 0 :
+        obj.push_back(Pair("activeseconds", (winner->lastPing == CIndexnodePing()) ? 0 :
                                             (winner->lastPing.sigTime - winner->sigTime)));
         obj.push_back(Pair("nBlockLastPaid", winner->nBlockLastPaid));
         return obj;
     }
 
     if (strCommand == "debug") {
-        if (activeApollonnode.nState != ACTIVE_APOLLONNODE_INITIAL || !apollonnodeSync.GetBlockchainSynced())
-            return activeApollonnode.GetStatus();
+        if (activeIndexnode.nState != ACTIVE_INDEXNODE_INITIAL || !indexnodeSync.GetBlockchainSynced())
+            return activeIndexnode.GetStatus();
 
         CTxIn vin;
         CPubKey pubkey;
         CKey key;
 
-        if (!pwalletMain || !pwalletMain->GetApollonnodeVinAndKeys(vin, pubkey, key))
+        if (!pwalletMain || !pwalletMain->GetIndexnodeVinAndKeys(vin, pubkey, key))
             throw JSONRPCError(RPC_INVALID_PARAMETER,
-                               "Missing apollonnode input, please look at the documentation for instructions on apollonnode creation");
+                               "Missing indexnode input, please look at the documentation for instructions on indexnode creation");
 
-        return activeApollonnode.GetStatus();
+        return activeIndexnode.GetStatus();
     }
 
     if (strCommand == "start") {
-        if (!fApollonNode)
-            throw JSONRPCError(RPC_INTERNAL_ERROR, "You must set apollonnode=1 in the configuration");
+        if (!fIndexNode)
+            throw JSONRPCError(RPC_INTERNAL_ERROR, "You must set indexnode=1 in the configuration");
 
         {
             LOCK(pwalletMain->cs_wallet);
             EnsureWalletIsUnlocked();
         }
 
-        if (activeApollonnode.nState != ACTIVE_APOLLONNODE_STARTED) {
-            activeApollonnode.nState = ACTIVE_APOLLONNODE_INITIAL; // TODO: consider better way
-            activeApollonnode.ManageState();
+        if (activeIndexnode.nState != ACTIVE_INDEXNODE_STARTED) {
+            activeIndexnode.nState = ACTIVE_INDEXNODE_INITIAL; // TODO: consider better way
+            activeIndexnode.ManageState();
         }
 
-        return activeApollonnode.GetStatus();
+        return activeIndexnode.GetStatus();
     }
 
     if (strCommand == "start-alias") {
@@ -248,23 +248,23 @@ UniValue apollonnode(const UniValue &params, bool fHelp) {
         UniValue statusObj(UniValue::VOBJ);
         statusObj.push_back(Pair("alias", strAlias));
 
-        BOOST_FOREACH(CApollonnodeConfig::CApollonnodeEntry mne, apollonnodeConfig.getEntries()) {
+        BOOST_FOREACH(CIndexnodeConfig::CIndexnodeEntry mne, indexnodeConfig.getEntries()) {
             if (mne.getAlias() == strAlias) {
                 fFound = true;
                 std::string strError;
-                CApollonnodeBroadcast mnb;
+                CIndexnodeBroadcast mnb;
 
-                bool fResult = CApollonnodeBroadcast::Create(mne.getIp(), mne.getPrivKey(), mne.getTxHash(),
-                                                            mne.getOutputApollon(), strError, mnb);
+                bool fResult = CIndexnodeBroadcast::Create(mne.getIp(), mne.getPrivKey(), mne.getTxHash(),
+                                                            mne.getOutputIndex(), strError, mnb);
                 statusObj.push_back(Pair("result", fResult ? "successful" : "failed"));
                 if (fResult) {
-                    mnodeman.UpdateApollonnodeList(mnb);
-                    mnb.RelayApollonNode();
+                    mnodeman.UpdateIndexnodeList(mnb);
+                    mnb.RelayIndexNode();
                 } else {
                     LogPrintf("Start-alias: errorMessage = %s\n", strError);
                     statusObj.push_back(Pair("errorMessage", strError));
                 }
-                mnodeman.NotifyApollonnodeUpdates();
+                mnodeman.NotifyIndexnodeUpdates();
                 break;
             }
         }
@@ -287,9 +287,9 @@ UniValue apollonnode(const UniValue &params, bool fHelp) {
         }
 
         if ((strCommand == "start-missing" || strCommand == "start-disabled") &&
-            !apollonnodeSync.IsApollonnodeListSynced()) {
+            !indexnodeSync.IsIndexnodeListSynced()) {
             throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD,
-                               "You can't use this command until apollonnode list is synced");
+                               "You can't use this command until indexnode list is synced");
         }
 
         int nSuccessful = 0;
@@ -297,18 +297,18 @@ UniValue apollonnode(const UniValue &params, bool fHelp) {
 
         UniValue resultsObj(UniValue::VOBJ);
 
-        BOOST_FOREACH(CApollonnodeConfig::CApollonnodeEntry mne, apollonnodeConfig.getEntries()) {
+        BOOST_FOREACH(CIndexnodeConfig::CIndexnodeEntry mne, indexnodeConfig.getEntries()) {
             std::string strError;
 
-            CTxIn vin = CTxIn(uint256S(mne.getTxHash()), uint32_t(atoi(mne.getOutputApollon().c_str())));
-            CApollonnode *pmn = mnodeman.Find(vin);
-            CApollonnodeBroadcast mnb;
+            CTxIn vin = CTxIn(uint256S(mne.getTxHash()), uint32_t(atoi(mne.getOutputIndex().c_str())));
+            CIndexnode *pmn = mnodeman.Find(vin);
+            CIndexnodeBroadcast mnb;
 
             if (strCommand == "start-missing" && pmn) continue;
             if (strCommand == "start-disabled" && pmn && pmn->IsEnabled()) continue;
 
-            bool fResult = CApollonnodeBroadcast::Create(mne.getIp(), mne.getPrivKey(), mne.getTxHash(),
-                                                        mne.getOutputApollon(), strError, mnb);
+            bool fResult = CIndexnodeBroadcast::Create(mne.getIp(), mne.getPrivKey(), mne.getTxHash(),
+                                                        mne.getOutputIndex(), strError, mnb);
 
             UniValue statusObj(UniValue::VOBJ);
             statusObj.push_back(Pair("alias", mne.getAlias()));
@@ -316,8 +316,8 @@ UniValue apollonnode(const UniValue &params, bool fHelp) {
 
             if (fResult) {
                 nSuccessful++;
-                mnodeman.UpdateApollonnodeList(mnb);
-                mnb.RelayApollonNode();
+                mnodeman.UpdateIndexnodeList(mnb);
+                mnb.RelayIndexNode();
             } else {
                 nFailed++;
                 statusObj.push_back(Pair("errorMessage", strError));
@@ -325,11 +325,11 @@ UniValue apollonnode(const UniValue &params, bool fHelp) {
 
             resultsObj.push_back(Pair("status", statusObj));
         }
-        mnodeman.NotifyApollonnodeUpdates();
+        mnodeman.NotifyIndexnodeUpdates();
 
         UniValue returnObj(UniValue::VOBJ);
         returnObj.push_back(Pair("overall",
-                                 strprintf("Successfully started %d apollonnodes, failed to start %d, total %d",
+                                 strprintf("Successfully started %d indexnodes, failed to start %d, total %d",
                                            nSuccessful, nFailed, nSuccessful + nFailed)));
         returnObj.push_back(Pair("detail", resultsObj));
 
@@ -346,9 +346,9 @@ UniValue apollonnode(const UniValue &params, bool fHelp) {
     if (strCommand == "list-conf") {
         UniValue resultObj(UniValue::VOBJ);
 
-        BOOST_FOREACH(CApollonnodeConfig::CApollonnodeEntry mne, apollonnodeConfig.getEntries()) {
-            CTxIn vin = CTxIn(uint256S(mne.getTxHash()), uint32_t(atoi(mne.getOutputApollon().c_str())));
-            CApollonnode *pmn = mnodeman.Find(vin);
+        BOOST_FOREACH(CIndexnodeConfig::CIndexnodeEntry mne, indexnodeConfig.getEntries()) {
+            CTxIn vin = CTxIn(uint256S(mne.getTxHash()), uint32_t(atoi(mne.getOutputIndex().c_str())));
+            CIndexnode *pmn = mnodeman.Find(vin);
 
             std::string strStatus = pmn ? pmn->GetStatus() : "MISSING";
 
@@ -357,9 +357,9 @@ UniValue apollonnode(const UniValue &params, bool fHelp) {
             mnObj.push_back(Pair("address", mne.getIp()));
             mnObj.push_back(Pair("privateKey", mne.getPrivKey()));
             mnObj.push_back(Pair("txHash", mne.getTxHash()));
-            mnObj.push_back(Pair("outputApollon", mne.getOutputApollon()));
+            mnObj.push_back(Pair("outputIndex", mne.getOutputIndex()));
             mnObj.push_back(Pair("status", strStatus));
-            resultObj.push_back(Pair("apollonnode", mnObj));
+            resultObj.push_back(Pair("indexnode", mnObj));
         }
 
         return resultObj;
@@ -381,20 +381,20 @@ UniValue apollonnode(const UniValue &params, bool fHelp) {
     }
 
     if (strCommand == "status") {
-        if (!fApollonNode)
-            throw JSONRPCError(RPC_INTERNAL_ERROR, "This is not a apollonnode");
+        if (!fIndexNode)
+            throw JSONRPCError(RPC_INTERNAL_ERROR, "This is not a indexnode");
 
         UniValue mnObj(UniValue::VOBJ);
 
-        mnObj.push_back(Pair("vin", activeApollonnode.vin.ToString()));
-        mnObj.push_back(Pair("service", activeApollonnode.service.ToString()));
+        mnObj.push_back(Pair("vin", activeIndexnode.vin.ToString()));
+        mnObj.push_back(Pair("service", activeIndexnode.service.ToString()));
 
-        CApollonnode mn;
-        if (mnodeman.Get(activeApollonnode.vin, mn)) {
+        CIndexnode mn;
+        if (mnodeman.Get(activeIndexnode.vin, mn)) {
             mnObj.push_back(Pair("payee", CBitcoinAddress(mn.pubKeyCollateralAddress.GetID()).ToString()));
         }
 
-        mnObj.push_back(Pair("status", activeApollonnode.GetStatus()));
+        mnObj.push_back(Pair("status", activeIndexnode.GetStatus()));
         return mnObj;
     }
 
@@ -402,10 +402,10 @@ UniValue apollonnode(const UniValue &params, bool fHelp) {
         int nHeight;
         {
             LOCK(cs_main);
-            CBlockApollon *papollon = chainActive.Tip();
-            if (!papollon) return NullUniValue;
+            CBlockIndex *pindex = chainActive.Tip();
+            if (!pindex) return NullUniValue;
 
-            nHeight = papollon->nHeight;
+            nHeight = pindex->nHeight;
         }
 
         int nLast = 10;
@@ -420,7 +420,7 @@ UniValue apollonnode(const UniValue &params, bool fHelp) {
         }
 
         if (params.size() > 3)
-            throw JSONRPCError(RPC_INVALID_PARAMETER, "Correct usage is 'apollonnode winners ( \"count\" \"filter\" )'");
+            throw JSONRPCError(RPC_INVALID_PARAMETER, "Correct usage is 'indexnode winners ( \"count\" \"filter\" )'");
 
         UniValue obj(UniValue::VOBJ);
 
@@ -436,7 +436,7 @@ UniValue apollonnode(const UniValue &params, bool fHelp) {
     return NullUniValue;
 }
 
-UniValue apollonnodelist(const UniValue &params, bool fHelp) {
+UniValue indexnodelist(const UniValue &params, bool fHelp) {
     std::string strMode = "status";
     std::string strFilter = "";
 
@@ -449,27 +449,27 @@ UniValue apollonnodelist(const UniValue &params, bool fHelp) {
             strMode != "protocol" && strMode != "payee" && strMode != "rank" && strMode != "qualify" &&
             strMode != "status")) {
         throw std::runtime_error(
-                "apollonnodelist ( \"mode\" \"filter\" )\n"
-                        "Get a list of apollonnodes in different modes\n"
+                "indexnodelist ( \"mode\" \"filter\" )\n"
+                        "Get a list of indexnodes in different modes\n"
                         "\nArguments:\n"
                         "1. \"mode\"      (string, optional/required to use filter, defaults = status) The mode to run list in\n"
                         "2. \"filter\"    (string, optional) Filter results. Partial match by outpoint by default in all modes,\n"
                         "                                    additional matches in some modes are also available\n"
                         "\nAvailable modes:\n"
-                        "  activeseconds  - Print number of seconds apollonnode recognized by the network as enabled\n"
-                        "                   (since latest issued \"apollonnode start/start-many/start-alias\")\n"
-                        "  addr           - Print ip address associated with a apollonnode (can be additionally filtered, partial match)\n"
+                        "  activeseconds  - Print number of seconds indexnode recognized by the network as enabled\n"
+                        "                   (since latest issued \"indexnode start/start-many/start-alias\")\n"
+                        "  addr           - Print ip address associated with a indexnode (can be additionally filtered, partial match)\n"
                         "  full           - Print info in format 'status protocol payee lastseen activeseconds lastpaidtime lastpaidblock IP'\n"
                         "                   (can be additionally filtered, partial match)\n"
                         "  lastpaidblock  - Print the last block height a node was paid on the network\n"
                         "  lastpaidtime   - Print the last time a node was paid on the network\n"
-                        "  lastseen       - Print timestamp of when a apollonnode was last seen on the network\n"
-                        "  payee          - Print Apollon address associated with a apollonnode (can be additionally filtered,\n"
+                        "  lastseen       - Print timestamp of when a indexnode was last seen on the network\n"
+                        "  payee          - Print Apollon address associated with a indexnode (can be additionally filtered,\n"
                         "                   partial match)\n"
-                        "  protocol       - Print protocol of a apollonnode (can be additionally filtered, exact match))\n"
-                        "  rank           - Print rank of a apollonnode based on current block\n"
-                        "  qualify        - Print qualify status of a apollonnode based on current block\n"
-                        "  status         - Print apollonnode status: PRE_ENABLED / ENABLED / EXPIRED / WATCHDOG_EXPIRED / NEW_START_REQUIRED /\n"
+                        "  protocol       - Print protocol of a indexnode (can be additionally filtered, exact match))\n"
+                        "  rank           - Print rank of a indexnode based on current block\n"
+                        "  qualify        - Print qualify status of a indexnode based on current block\n"
+                        "  status         - Print indexnode status: PRE_ENABLED / ENABLED / EXPIRED / WATCHDOG_EXPIRED / NEW_START_REQUIRED /\n"
                         "                   UPDATE_REQUIRED / POSE_BAN / OUTPOINT_SPENT (can be additionally filtered, partial match)\n"
         );
     }
@@ -480,16 +480,16 @@ UniValue apollonnodelist(const UniValue &params, bool fHelp) {
 
     UniValue obj(UniValue::VOBJ);
     if (strMode == "rank") {
-        std::vector <std::pair<int, CApollonnode>> vApollonnodeRanks = mnodeman.GetApollonnodeRanks();
-        BOOST_FOREACH(PAIRTYPE(int, CApollonnode) & s, vApollonnodeRanks)
+        std::vector <std::pair<int, CIndexnode>> vIndexnodeRanks = mnodeman.GetIndexnodeRanks();
+        BOOST_FOREACH(PAIRTYPE(int, CIndexnode) & s, vIndexnodeRanks)
         {
             std::string strOutpoint = s.second.vin.prevout.ToStringShort();
             if (strFilter != "" && strOutpoint.find(strFilter) == std::string::npos) continue;
             obj.push_back(Pair(strOutpoint, s.first));
         }
     } else {
-        std::vector <CApollonnode> vApollonnodes = mnodeman.GetFullApollonnodeVector();
-        BOOST_FOREACH(CApollonnode & mn, vApollonnodes)
+        std::vector <CIndexnode> vIndexnodes = mnodeman.GetFullIndexnodeVector();
+        BOOST_FOREACH(CIndexnode & mn, vIndexnodes)
         {
             std::string strOutpoint = mn.vin.prevout.ToStringShort();
             if (strMode == "activeseconds") {
@@ -548,10 +548,10 @@ UniValue apollonnodelist(const UniValue &params, bool fHelp) {
                 int nBlockHeight;
                 {
                     LOCK(cs_main);
-                    CBlockApollon *papollon = chainActive.Tip();
-                    if (!papollon) return NullUniValue;
+                    CBlockIndex *pindex = chainActive.Tip();
+                    if (!pindex) return NullUniValue;
 
-                    nBlockHeight = papollon->nHeight;
+                    nBlockHeight = pindex->nHeight;
                 }
                 int nMnCount = mnodeman.CountEnabled();
                 char* reasonStr = mnodeman.GetNotQualifyReason(mn, nBlockHeight, true, nMnCount);
@@ -564,7 +564,7 @@ UniValue apollonnodelist(const UniValue &params, bool fHelp) {
     return obj;
 }
 
-bool DecodeHexVecMnb(std::vector <CApollonnodeBroadcast> &vecMnb, std::string strHexMnb) {
+bool DecodeHexVecMnb(std::vector <CIndexnodeBroadcast> &vecMnb, std::string strHexMnb) {
 
     if (!IsHex(strHexMnb))
         return false;
@@ -581,7 +581,7 @@ bool DecodeHexVecMnb(std::vector <CApollonnodeBroadcast> &vecMnb, std::string st
     return true;
 }
 
-UniValue apollonnodebroadcast(const UniValue &params, bool fHelp) {
+UniValue indexnodebroadcast(const UniValue &params, bool fHelp) {
     std::string strCommand;
     if (params.size() >= 1)
         strCommand = params[0].get_str();
@@ -589,21 +589,21 @@ UniValue apollonnodebroadcast(const UniValue &params, bool fHelp) {
     if (fHelp ||
         (strCommand != "create-alias" && strCommand != "create-all" && strCommand != "decode" && strCommand != "relay"))
         throw std::runtime_error(
-                "apollonnodebroadcast \"command\"...\n"
-                        "Set of commands to create and relay apollonnode broadcast messages\n"
+                "indexnodebroadcast \"command\"...\n"
+                        "Set of commands to create and relay indexnode broadcast messages\n"
                         "\nArguments:\n"
                         "1. \"command\"        (string or set of strings, required) The command to execute\n"
                         "\nAvailable commands:\n"
-                        "  create-alias  - Create single remote apollonnode broadcast message by assigned alias configured in apollonnode.conf\n"
-                        "  create-all    - Create remote apollonnode broadcast messages for all apollonnodes configured in apollonnode.conf\n"
-                        "  decode        - Decode apollonnode broadcast message\n"
-                        "  relay         - Relay apollonnode broadcast message to the network\n"
+                        "  create-alias  - Create single remote indexnode broadcast message by assigned alias configured in indexnode.conf\n"
+                        "  create-all    - Create remote indexnode broadcast messages for all indexnodes configured in indexnode.conf\n"
+                        "  decode        - Decode indexnode broadcast message\n"
+                        "  relay         - Relay indexnode broadcast message to the network\n"
         );
 
     if (strCommand == "create-alias") {
-        // wait for reapollon and/or import to finish
-        if (fImporting || fReapollon)
-            throw JSONRPCError(RPC_INTERNAL_ERROR, "Wait for reapollon and/or import to finish");
+        // wait for reindex and/or import to finish
+        if (fImporting || fReindex)
+            throw JSONRPCError(RPC_INTERNAL_ERROR, "Wait for reindex and/or import to finish");
 
         if (params.size() < 2)
             throw JSONRPCError(RPC_INVALID_PARAMETER, "Please specify an alias");
@@ -617,19 +617,19 @@ UniValue apollonnodebroadcast(const UniValue &params, bool fHelp) {
         std::string strAlias = params[1].get_str();
 
         UniValue statusObj(UniValue::VOBJ);
-        std::vector <CApollonnodeBroadcast> vecMnb;
+        std::vector <CIndexnodeBroadcast> vecMnb;
 
         statusObj.push_back(Pair("alias", strAlias));
 
-        BOOST_FOREACH(CApollonnodeConfig::CApollonnodeEntry
-        mne, apollonnodeConfig.getEntries()) {
+        BOOST_FOREACH(CIndexnodeConfig::CIndexnodeEntry
+        mne, indexnodeConfig.getEntries()) {
             if (mne.getAlias() == strAlias) {
                 fFound = true;
                 std::string strError;
-                CApollonnodeBroadcast mnb;
+                CIndexnodeBroadcast mnb;
 
-                bool fResult = CApollonnodeBroadcast::Create(mne.getIp(), mne.getPrivKey(), mne.getTxHash(),
-                                                            mne.getOutputApollon(), strError, mnb, true);
+                bool fResult = CIndexnodeBroadcast::Create(mne.getIp(), mne.getPrivKey(), mne.getTxHash(),
+                                                            mne.getOutputIndex(), strError, mnb, true);
 
                 statusObj.push_back(Pair("result", fResult ? "successful" : "failed"));
                 if (fResult) {
@@ -654,31 +654,31 @@ UniValue apollonnodebroadcast(const UniValue &params, bool fHelp) {
     }
 
     if (strCommand == "create-all") {
-        // wait for reapollon and/or import to finish
-        if (fImporting || fReapollon)
-            throw JSONRPCError(RPC_INTERNAL_ERROR, "Wait for reapollon and/or import to finish");
+        // wait for reindex and/or import to finish
+        if (fImporting || fReindex)
+            throw JSONRPCError(RPC_INTERNAL_ERROR, "Wait for reindex and/or import to finish");
 
         {
             LOCK(pwalletMain->cs_wallet);
             EnsureWalletIsUnlocked();
         }
 
-        std::vector <CApollonnodeConfig::CApollonnodeEntry> mnEntries;
-        mnEntries = apollonnodeConfig.getEntries();
+        std::vector <CIndexnodeConfig::CIndexnodeEntry> mnEntries;
+        mnEntries = indexnodeConfig.getEntries();
 
         int nSuccessful = 0;
         int nFailed = 0;
 
         UniValue resultsObj(UniValue::VOBJ);
-        std::vector <CApollonnodeBroadcast> vecMnb;
+        std::vector <CIndexnodeBroadcast> vecMnb;
 
-        BOOST_FOREACH(CApollonnodeConfig::CApollonnodeEntry
-        mne, apollonnodeConfig.getEntries()) {
+        BOOST_FOREACH(CIndexnodeConfig::CIndexnodeEntry
+        mne, indexnodeConfig.getEntries()) {
             std::string strError;
-            CApollonnodeBroadcast mnb;
+            CIndexnodeBroadcast mnb;
 
-            bool fResult = CApollonnodeBroadcast::Create(mne.getIp(), mne.getPrivKey(), mne.getTxHash(),
-                                                        mne.getOutputApollon(), strError, mnb, true);
+            bool fResult = CIndexnodeBroadcast::Create(mne.getIp(), mne.getPrivKey(), mne.getTxHash(),
+                                                        mne.getOutputIndex(), strError, mnb, true);
 
             UniValue statusObj(UniValue::VOBJ);
             statusObj.push_back(Pair("alias", mne.getAlias()));
@@ -699,7 +699,7 @@ UniValue apollonnodebroadcast(const UniValue &params, bool fHelp) {
         ssVecMnb << vecMnb;
         UniValue returnObj(UniValue::VOBJ);
         returnObj.push_back(Pair("overall", strprintf(
-                "Successfully created broadcast messages for %d apollonnodes, failed to create %d, total %d",
+                "Successfully created broadcast messages for %d indexnodes, failed to create %d, total %d",
                 nSuccessful, nFailed, nSuccessful + nFailed)));
         returnObj.push_back(Pair("detail", resultsObj));
         returnObj.push_back(Pair("hex", HexStr(ssVecMnb.begin(), ssVecMnb.end())));
@@ -709,19 +709,19 @@ UniValue apollonnodebroadcast(const UniValue &params, bool fHelp) {
 
     if (strCommand == "decode") {
         if (params.size() != 2)
-            throw JSONRPCError(RPC_INVALID_PARAMETER, "Correct usage is 'apollonnodebroadcast decode \"hexstring\"'");
+            throw JSONRPCError(RPC_INVALID_PARAMETER, "Correct usage is 'indexnodebroadcast decode \"hexstring\"'");
 
-        std::vector <CApollonnodeBroadcast> vecMnb;
+        std::vector <CIndexnodeBroadcast> vecMnb;
 
         if (!DecodeHexVecMnb(vecMnb, params[1].get_str()))
-            throw JSONRPCError(RPC_DESERIALIZATION_ERROR, "Apollonnode broadcast message decode failed");
+            throw JSONRPCError(RPC_DESERIALIZATION_ERROR, "Indexnode broadcast message decode failed");
 
         int nSuccessful = 0;
         int nFailed = 0;
         int nDos = 0;
         UniValue returnObj(UniValue::VOBJ);
 
-        BOOST_FOREACH(CApollonnodeBroadcast & mnb, vecMnb)
+        BOOST_FOREACH(CIndexnodeBroadcast & mnb, vecMnb)
         {
             UniValue resultObj(UniValue::VOBJ);
 
@@ -731,7 +731,7 @@ UniValue apollonnodebroadcast(const UniValue &params, bool fHelp) {
                 resultObj.push_back(Pair("addr", mnb.addr.ToString()));
                 resultObj.push_back(Pair("pubKeyCollateralAddress",
                                          CBitcoinAddress(mnb.pubKeyCollateralAddress.GetID()).ToString()));
-                resultObj.push_back(Pair("pubKeyApollonnode", CBitcoinAddress(mnb.pubKeyApollonnode.GetID()).ToString()));
+                resultObj.push_back(Pair("pubKeyIndexnode", CBitcoinAddress(mnb.pubKeyIndexnode.GetID()).ToString()));
                 resultObj.push_back(Pair("vchSig", EncodeBase64(&mnb.vchSig[0], mnb.vchSig.size())));
                 resultObj.push_back(Pair("sigTime", mnb.sigTime));
                 resultObj.push_back(Pair("protocolVersion", mnb.nProtocolVersion));
@@ -747,14 +747,14 @@ UniValue apollonnodebroadcast(const UniValue &params, bool fHelp) {
                 resultObj.push_back(Pair("lastPing", lastPingObj));
             } else {
                 nFailed++;
-                resultObj.push_back(Pair("errorMessage", "Apollonnode broadcast signature verification failed"));
+                resultObj.push_back(Pair("errorMessage", "Indexnode broadcast signature verification failed"));
             }
 
             returnObj.push_back(Pair(mnb.GetHash().ToString(), resultObj));
         }
 
         returnObj.push_back(Pair("overall", strprintf(
-                "Successfully decoded broadcast messages for %d apollonnodes, failed to decode %d, total %d",
+                "Successfully decoded broadcast messages for %d indexnodes, failed to decode %d, total %d",
                 nSuccessful, nFailed, nSuccessful + nFailed)));
 
         return returnObj;
@@ -762,15 +762,15 @@ UniValue apollonnodebroadcast(const UniValue &params, bool fHelp) {
 
     if (strCommand == "relay") {
         if (params.size() < 2 || params.size() > 3)
-            throw JSONRPCError(RPC_INVALID_PARAMETER, "apollonnodebroadcast relay \"hexstring\" ( fast )\n"
+            throw JSONRPCError(RPC_INVALID_PARAMETER, "indexnodebroadcast relay \"hexstring\" ( fast )\n"
                     "\nArguments:\n"
                     "1. \"hex\"      (string, required) Broadcast messages hex string\n"
                     "2. fast       (string, optional) If none, using safe method\n");
 
-        std::vector <CApollonnodeBroadcast> vecMnb;
+        std::vector <CIndexnodeBroadcast> vecMnb;
 
         if (!DecodeHexVecMnb(vecMnb, params[1].get_str()))
-            throw JSONRPCError(RPC_DESERIALIZATION_ERROR, "Apollonnode broadcast message decode failed");
+            throw JSONRPCError(RPC_DESERIALIZATION_ERROR, "Indexnode broadcast message decode failed");
 
         int nSuccessful = 0;
         int nFailed = 0;
@@ -778,7 +778,7 @@ UniValue apollonnodebroadcast(const UniValue &params, bool fHelp) {
         UniValue returnObj(UniValue::VOBJ);
 
         // verify all signatures first, bailout if any of them broken
-        BOOST_FOREACH(CApollonnodeBroadcast & mnb, vecMnb)
+        BOOST_FOREACH(CIndexnodeBroadcast & mnb, vecMnb)
         {
             UniValue resultObj(UniValue::VOBJ);
 
@@ -789,13 +789,13 @@ UniValue apollonnodebroadcast(const UniValue &params, bool fHelp) {
             bool fResult;
             if (mnb.CheckSignature(nDos)) {
                 if (fSafe) {
-                    fResult = mnodeman.CheckMnbAndUpdateApollonnodeList(NULL, mnb, nDos);
+                    fResult = mnodeman.CheckMnbAndUpdateIndexnodeList(NULL, mnb, nDos);
                 } else {
-                    mnodeman.UpdateApollonnodeList(mnb);
-                    mnb.RelayApollonNode();
+                    mnodeman.UpdateIndexnodeList(mnb);
+                    mnb.RelayIndexNode();
                     fResult = true;
                 }
-                mnodeman.NotifyApollonnodeUpdates();
+                mnodeman.NotifyIndexnodeUpdates();
             } else fResult = false;
 
             if (fResult) {
@@ -803,14 +803,14 @@ UniValue apollonnodebroadcast(const UniValue &params, bool fHelp) {
                 resultObj.push_back(Pair(mnb.GetHash().ToString(), "successful"));
             } else {
                 nFailed++;
-                resultObj.push_back(Pair("errorMessage", "Apollonnode broadcast signature verification failed"));
+                resultObj.push_back(Pair("errorMessage", "Indexnode broadcast signature verification failed"));
             }
 
             returnObj.push_back(Pair(mnb.GetHash().ToString(), resultObj));
         }
 
         returnObj.push_back(Pair("overall", strprintf(
-                "Successfully relayed broadcast messages for %d apollonnodes, failed to relay %d, total %d", nSuccessful,
+                "Successfully relayed broadcast messages for %d indexnodes, failed to relay %d, total %d", nSuccessful,
                 nFailed, nSuccessful + nFailed)));
 
         return returnObj;

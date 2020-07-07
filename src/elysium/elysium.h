@@ -1,7 +1,7 @@
 #ifndef ZCOIN_ELYSIUM_ELYSIUM_H
 #define ZCOIN_ELYSIUM_ELYSIUM_H
 
-class CBlockApollon;
+class CBlockIndex;
 class CCoinsView;
 class CCoinsViewCache;
 class CTransaction;
@@ -172,7 +172,7 @@ public:
     }
 
     void recordMatchedTrade(const uint256 txid1, const uint256 txid2, string address1, string address2, unsigned int prop1, unsigned int prop2, uint64_t amount1, uint64_t amount2, int blockNum, int64_t fee);
-    void recordNewTrade(const uint256& txid, const std::string& address, uint32_t propertyIdForSale, uint32_t propertyIdDesired, int blockNum, int blockApollon);
+    void recordNewTrade(const uint256& txid, const std::string& address, uint32_t propertyIdForSale, uint32_t propertyIdDesired, int blockNum, int blockIndex);
     int deleteAboveBlock(int blockNum);
     bool exists(const uint256 &txid);
     void printStats();
@@ -259,12 +259,12 @@ void CheckWalletUpdate(bool forceUpdate = false);
 /** Used to notify that the number of tokens for a property has changed. */
 void NotifyTotalTokensChanged(uint32_t propertyId, int block);
 
-int elysium_handler_disc_begin(int nBlockNow, CBlockApollon const * pBlockApollon);
-int elysium_handler_disc_end(int nBlockNow, CBlockApollon const * pBlockApollon);
-int elysium_handler_block_begin(int nBlockNow, CBlockApollon const * pBlockApollon);
-int elysium_handler_block_end(int nBlockNow, CBlockApollon const * pBlockApollon, unsigned int);
-bool elysium_handler_tx(const CTransaction& tx, int nBlock, unsigned int xap, const CBlockApollon* pBlockApollon);
-int elysium_save_state( CBlockApollon const *pBlockApollon );
+int elysium_handler_disc_begin(int nBlockNow, CBlockIndex const * pBlockIndex);
+int elysium_handler_disc_end(int nBlockNow, CBlockIndex const * pBlockIndex);
+int elysium_handler_block_begin(int nBlockNow, CBlockIndex const * pBlockIndex);
+int elysium_handler_block_end(int nBlockNow, CBlockIndex const * pBlockIndex, unsigned int);
+bool elysium_handler_tx(const CTransaction& tx, int nBlock, unsigned int xap, const CBlockIndex* pBlockIndex);
+int elysium_save_state( CBlockIndex const *pBlockIndex );
 
 namespace elysium
 {

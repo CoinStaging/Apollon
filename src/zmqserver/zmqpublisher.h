@@ -7,13 +7,13 @@
 
 #include "zmqabstract.h"
 #include "univalue.h"
-#include "apollonnode.h"
+#include "indexnode.h"
 #include "client-api/server.h"
 #include <boost/thread/thread.hpp>
 #include <boost/chrono.hpp>
 #include "validationinterface.h"
 
-class CBlockApollon;
+class CBlockIndex;
 
 class CZMQAbstractPublisher : public CZMQAbstract
 {
@@ -56,7 +56,7 @@ class CZMQBlockEvent : virtual public CZMQAbstractPublisher
     /* Data related to a new block (updatedblocktip)
     */
 public:
-    bool NotifyBlock(const CBlockApollon *papollon);
+    bool NotifyBlock(const CBlockIndex *pindex);
 };
 
 
@@ -92,12 +92,12 @@ public:
     bool NotifyAPIStatus();
 };
 
-class CZMQApollonnodeListEvent : virtual public CZMQAbstractPublisher
+class CZMQIndexnodeListEvent : virtual public CZMQAbstractPublisher
 {
-    /* Apollonnode List notification
+    /* Indexnode List notification
     */
 public:
-    bool NotifyApollonnodeList();
+    bool NotifyIndexnodeList();
 };
 
 class CZMQSettingsEvent : virtual public CZMQAbstractPublisher
@@ -108,17 +108,17 @@ public:
     bool NotifySettingsUpdate(std::string update);
 };
 
-class CZMQApollonnodeEvent : virtual public CZMQAbstractPublisher
+class CZMQIndexnodeEvent : virtual public CZMQAbstractPublisher
 {
-    /* Data related to an updated Apollonnode
+    /* Data related to an updated Indexnode
     */
 public:
-    bool NotifyApollonnodeUpdate(CApollonnode &apollonnode);
+    bool NotifyIndexnodeUpdate(CIndexnode &indexnode);
 };
 
 class CZMQMintStatusEvent : virtual public CZMQAbstractPublisher
 {
-    /* Data related to an updated Apollonnode
+    /* Data related to an updated Indexnode
     */
 public:
     bool NotifyMintStatusUpdate(std::string update);
@@ -182,18 +182,18 @@ public:
     void SetMethod(){ method= "apiStatus";}
 };
 
-class CZMQApollonnodeListTopic : public CZMQApollonnodeListEvent
+class CZMQIndexnodeListTopic : public CZMQIndexnodeListEvent
 {
 public:
-    void SetTopic(){ topic = "apollonnodeList";}
-    void SetMethod(){ method= "apollonnodeList";}
+    void SetTopic(){ topic = "indexnodeList";}
+    void SetMethod(){ method= "indexnodeList";}
 };
 
-class CZMQApollonnodeTopic : public CZMQApollonnodeEvent
+class CZMQIndexnodeTopic : public CZMQIndexnodeEvent
 {
 public:
-    void SetTopic(){ topic = "apollonnode";}
-    void SetMethod(){ method= "apollonnodeUpdate";}
+    void SetTopic(){ topic = "indexnode";}
+    void SetMethod(){ method= "indexnodeUpdate";}
 };
 
 class CZMQMintStatusTopic : public CZMQMintStatusEvent

@@ -264,7 +264,7 @@ SigmaDatabase::~SigmaDatabase()
 {
 }
 
-std::pair<SigmaMintGroup, SigmaMintApollon> SigmaDatabase::RecordMint(
+std::pair<SigmaMintGroup, SigmaMintIndex> SigmaDatabase::RecordMint(
     PropertyId propertyId,
     SigmaDenomination denomination,
     const SigmaPublicKey& pubKey,
@@ -276,15 +276,15 @@ std::pair<SigmaMintGroup, SigmaMintApollon> SigmaDatabase::RecordMint(
     if (mints > groupSize) {
         throw std::runtime_error("mints count is exceed group limit");
     }
-    auto nextXap = mints;
+    auto nextIdx = mints;
 
     if (mints == groupSize) {
         lastGroup++;
-        nextXap = 0;
+        nextIdx = 0;
     }
 
     // Add mint entry.
-    auto keyData = CreateMintKey(propertyId, denomination, lastGroup, nextXap);
+    auto keyData = CreateMintKey(propertyId, denomination, lastGroup, nextIdx);
     auto key = GetSlice(keyData);
 
     std::vector<uint8_t> buffer(pubKey.commitment.memoryRequired());
@@ -293,9 +293,9 @@ std::pair<SigmaMintGroup, SigmaMintApollon> SigmaDatabase::RecordMint(
     AddEntry(key, GetSlice(buffer), height);
 
     // Raise event.
-    MintAdded(propertyId, denomination, lastGroup, nextXap, pubKey, height);
+    MintAdded(propertyId, denomination, lastGroup, nextIdx, pubKey, height);
 
-    return std::make_pair(lastGroup, nextXap);
+    return std::make_pair(lastGroup, nextIdx);
 }
 
 void SigmaDatabase::RecordSpendSerial(
@@ -526,19 +526,19 @@ size_t SigmaDatabase::GetAnonimityGroup(
     it->Seek(GetSlice(firstKey));
 
     uint32_t mintPropId, mintGroupId;
-    uint16_t mintXap;
+    uint16_t mintIdx;
     uint8_t mintDenom;
 
     size_t i = 0;
     for (; i < count && it->Valid(); i++, it->Next()) {
-        if (!ParseMintKey(it->key(), mintPropId, mintDenom, mintGroupId, mintXap) ||
+        if (!ParseMintKey(it->key(), mintPropId, mintDenom, mintGroupId, mintIdx) ||
             mintPropId != propertyId ||
             mintDenom != denomination ||
             mintGroupId != groupId) {
             break;
         }
 
-        if (mintXap != i) {
+        if (mintIdx != i) {
             throw std::runtime_error("GetAnonimityGroup() : coin apollon is out of order");
         }
 
@@ -567,9 +567,9 @@ uint32_t SigmaDatabase::GetLastGroupId(
         auto key = it->key();
 
         uint32_t mintPropId, mintGroupId;
-        uint16_t mintXap;
+        uint16_t mintIdx;
         uint8_t mintDenom;
-        if (ParseMintKey(key, mintPropId, mintDenom, mintGroupId, mintXap)
+        if (ParseMintKey(key, mintPropId, mintDenom, mintGroupId, mintIdx)
             && propertyId == mintPropId
             && denomination == mintDenom) {
             groupId = mintGroupId;
@@ -592,13 +592,13 @@ size_t SigmaDatabase::GetMintCount(
         auto key = it->key();
 
         uint32_t mintPropId, mintGroupId;
-        uint16_t mintXap;
+        uint16_t mintIdx;
         uint8_t mintDenom;
-        if (ParseMintKey(key, mintPropId, mintDenom, mintGroupId, mintXap)
+        if (ParseMintKey(key, mintPropId, mintDenom, mintGroupId, mintIdx)
             && propertyId == mintPropId
             && denomination == mintDenom
             && groupId == mintGroupId) {
-            count = mintXap + 1;
+            count = mintIdx + 1;
         }
     }
 

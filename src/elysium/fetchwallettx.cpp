@@ -41,7 +41,7 @@ unsigned int GetTransactionByteOffset(const uint256& txid)
     LOCK(cs_main);
 
     CDiskTxPos position;
-    if (pblocktree->ReadTxApollon(txid, position)) {
+    if (pblocktree->ReadTxIndex(txid, position)) {
         return position.nTxOffset;
     }
 
@@ -77,10 +77,10 @@ std::map<std::string, uint256> FetchWalletElysiumTransactions(unsigned int count
             if (!p_txlistdb->exists(txHash)) continue;
         }
         const uint256& blockHash = pwtx->hashBlock;
-        if (blockHash.IsNull() || (NULL == GetBlockApollon(blockHash))) continue;
-        const CBlockApollon* pBlockApollon = GetBlockApollon(blockHash);
-        if (NULL == pBlockApollon) continue;
-        int blockHeight = pBlockApollon->nHeight;
+        if (blockHash.IsNull() || (NULL == GetBlockIndex(blockHash))) continue;
+        const CBlockIndex* pBlockIndex = GetBlockIndex(blockHash);
+        if (NULL == pBlockIndex) continue;
+        int blockHeight = pBlockIndex->nHeight;
         if (blockHeight < startBlock || blockHeight > endBlock) continue;
         int blockPosition = GetTransactionByteOffset(txHash);
         std::string sortKey = strprintf("%06d%010d", blockHeight, blockPosition);

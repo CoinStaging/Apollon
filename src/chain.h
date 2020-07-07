@@ -135,7 +135,7 @@ enum BlockStatus: uint32_t {
     /**
      * Only first tx is coinbase, 2 <= coinbase input script length <= 100, transactions valid, no duplicate txids,
      * sigops, size, merkle root. Implies all parents are at least TREE but not necessarily TRANSACTIONS. When all
-     * parent blocks also have TRANSACTIONS, CBlockApollon::nChainTx will be set.
+     * parent blocks also have TRANSACTIONS, CBlockIndex::nChainTx will be set.
      */
     BLOCK_VALID_TRANSACTIONS =    3,
 
@@ -165,20 +165,20 @@ enum BlockStatus: uint32_t {
 
 /** The block chain is a tree shaped structure starting with the
  * genesis block at the root, with each block potentially having multiple
- * candidates to be the next block. A blockapollon may have multiple pprev pointing
+ * candidates to be the next block. A blockindex may have multiple pprev pointing
  * to it, but at most one of them can be part of the currently active branch.
  */
-class CBlockApollon
+class CBlockIndex
 {
 public:
-    //! pointer to the hash of the block, if any. Memory is owned by this CBlockApollon
+    //! pointer to the hash of the block, if any. Memory is owned by this CBlockIndex
     const uint256* phashBlock;
 
     //! pointer to the apollon of the predecessor of this block
-    CBlockApollon* pprev;
+    CBlockIndex* pprev;
 
     //! pointer to the apollon of some further predecessor of this block
-    CBlockApollon* pskip;
+    CBlockIndex* pskip;
 
     //! height of the entry in the chain. The genesis block has height 0
     int nHeight;
@@ -276,12 +276,12 @@ public:
         nStakeModifier = uint256();
     }
 
-    CBlockApollon()
+    CBlockIndex()
     {
         SetNull();
     }
 
-    CBlockApollon(const CBlockHeader& block)
+    CBlockIndex(const CBlockHeader& block)
     {
         SetNull();
 
@@ -375,9 +375,9 @@ public:
         int64_t* pbegin = &pmedian[nMedianTimeSpan];
         int64_t* pend = &pmedian[nMedianTimeSpan];
 
-        const CBlockApollon* papollon = this;
-        for (int i = 0; i < nMedianTimeSpan && papollon; i++, papollon = papollon->pprev)
-            *(--pbegin) = papollon->GetBlockTime();
+        const CBlockIndex* pindex = this;
+        for (int i = 0; i < nMedianTimeSpan && pindex; i++, pindex = pindex->pprev)
+            *(--pbegin) = pindex->GetBlockTime();
 
         std::sort(pbegin, pend);
         return pbegin[(pend - pbegin)/2];
@@ -405,7 +405,7 @@ public:
 
     std::string ToString() const
     {
-        return strprintf("CBlockApollon(pprev=%p, nHeight=%d, merkle=%s, hashBlock=%s)",
+        return strprintf("CBlockIndex(pprev=%p, nHeight=%d, merkle=%s, hashBlock=%s)",
             pprev, nHeight,
             hashMerkleRoot.ToString(),
             GetBlockHash().ToString());
@@ -415,7 +415,7 @@ public:
     {
         UniValue ret(UniValue::VOBJ);
 
-        ret.push_back(Pair("type", "CBlockApollon"));
+        ret.push_back(Pair("type", "CBlockIndex"));
         ret.push_back(Pair("pprev", pprev));
         ret.push_back(Pair("nHeight", nHeight));
         ret.push_back(Pair("merkle", hashMerkleRoot.ToString()));
@@ -461,28 +461,28 @@ public:
     void BuildSkip();
 
     //! Efficiently find an ancestor of this block.
-    CBlockApollon* GetAncestor(int height);
-    const CBlockApollon* GetAncestor(int height) const;
+    CBlockIndex* GetAncestor(int height);
+    const CBlockIndex* GetAncestor(int height) const;
 };
 
-arith_uint256 GetBlockProof(const CBlockApollon& block);
+arith_uint256 GetBlockProof(const CBlockIndex& block);
 /** Return the time it would take to redo the work difference between from and to, assuming the current hashrate corresponds to the difficulty at tip, in seconds. */
-int64_t GetBlockProofEquivalentTime(const CBlockApollon& to, const CBlockApollon& from, const CBlockApollon& tip, const Consensus::Params&);
+int64_t GetBlockProofEquivalentTime(const CBlockIndex& to, const CBlockIndex& from, const CBlockIndex& tip, const Consensus::Params&);
 
 /** Used to marshal pointers into hashes for db storage. */
-class CDiskBlockApollon : public CBlockApollon
+class CDiskBlockIndex : public CBlockIndex
 {
 public:
     uint256 hashPrev;
     int nDiskBlockVersion;
 
-    CDiskBlockApollon() {
+    CDiskBlockIndex() {
         hashPrev = uint256();
         // value doesn't really matter but we won't leave it uninitialized
         nDiskBlockVersion = 0;
     }
 
-    explicit CDiskBlockApollon(const CBlockApollon* papollon) : CBlockApollon(*papollon) {
+    explicit CDiskBlockIndex(const CBlockIndex* pindex) : CBlockIndex(*pindex) {
         hashPrev = (pprev ? pprev->GetBlockHash() : uint256());
         nDiskBlockVersion = 0;
     }
@@ -514,7 +514,7 @@ public:
         if(nNonce == 0)
             READWRITE(vchBlockSig); // qtum
 
-        if (!(nType & SER_GETHASH) && nVersion >= ZC_ADVANCED_APOLLON_VERSION) {
+        if (!(nType & SER_GETHASH) && nVersion >= ZC_ADVANCED_INDEX_VERSION) {
             READWRITE(mintedPubCoins);
 		    READWRITE(accumulatorChanges);
             READWRITE(spentSerials);
@@ -546,8 +546,8 @@ public:
 
     std::string ToString() const
     {
-        std::string str = "CDiskBlockApollon(";
-        str += CBlockApollon::ToString();
+        std::string str = "CDiskBlockIndex(";
+        str += CBlockIndex::ToString();
         str += strprintf("\n                hashBlock=%s, hashPrev=%s)",
             GetBlockHash().ToString(),
             hashPrev.ToString());
@@ -555,24 +555,24 @@ public:
     }
 };
 
-/** An in-memory apolloned chain of blocks. */
+/** An in-memory indexed chain of blocks. */
 class CChain {
 private:
-    std::vector<CBlockApollon*> vChain;
+    std::vector<CBlockIndex*> vChain;
 
 public:
     /** Returns the apollon entry for the genesis block of this chain, or NULL if none. */
-    CBlockApollon *Genesis() const {
+    CBlockIndex *Genesis() const {
         return vChain.size() > 0 ? vChain[0] : NULL;
     }
 
     /** Returns the apollon entry for the tip of this chain, or NULL if none. */
-    CBlockApollon *Tip() const {
+    CBlockIndex *Tip() const {
         return vChain.size() > 0 ? vChain[vChain.size() - 1] : NULL;
     }
 
     /** Returns the apollon entry at a particular height in this chain, or NULL if no such height exists. */
-    CBlockApollon *operator[](int nHeight) const {
+    CBlockIndex *operator[](int nHeight) const {
         if (nHeight < 0 || nHeight >= (int)vChain.size())
             return NULL;
         return vChain[nHeight];
@@ -585,14 +585,14 @@ public:
     }
 
     /** Efficiently check whether a block is present in this chain. */
-    bool Contains(const CBlockApollon *papollon) const {
-        return (*this)[papollon->nHeight] == papollon;
+    bool Contains(const CBlockIndex *pindex) const {
+        return (*this)[pindex->nHeight] == pindex;
     }
 
     /** Find the successor of a block in this chain, or NULL if the given apollon is not found or is the tip. */
-    CBlockApollon *Next(const CBlockApollon *papollon) const {
-        if (Contains(papollon))
-            return (*this)[papollon->nHeight + 1];
+    CBlockIndex *Next(const CBlockIndex *pindex) const {
+        if (Contains(pindex))
+            return (*this)[pindex->nHeight + 1];
         else
             return NULL;
     }
@@ -603,14 +603,14 @@ public:
     }
 
     /** Set/initialize a chain with a given tip. */
-    void SetTip(CBlockApollon *papollon);
+    void SetTip(CBlockIndex *pindex);
 
     /** Return a CBlockLocator that refers to a block in this chain (by default the tip). */
-    CBlockLocator GetLocator(const CBlockApollon *papollon = NULL) const;
+    CBlockLocator GetLocator(const CBlockIndex *pindex = NULL) const;
 
     /** Find the last common block between this chain and a block apollon entry. */
-    const CBlockApollon *FindFork(const CBlockApollon *papollon) const;
+    const CBlockIndex *FindFork(const CBlockIndex *pindex) const;
 };
-const CBlockApollon* GetLastBlockApollon(const CBlockApollon* papollon, bool fProofOfStake);
+const CBlockIndex* GetLastBlockIndex(const CBlockIndex* pindex, bool fProofOfStake);
 
 #endif // BITCOIN_CHAIN_H

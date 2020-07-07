@@ -637,7 +637,7 @@ microdesc_cache_clean(microdesc_cache_t *cache, time_t cutoff, int force)
             }
           }
           log_warn(LD_BUG, "  [%d]: ID=%s. md=%p, rs=%p, ri=%p. %s.%s",
-                   node_sl_xap,
+                   node_sl_idx,
                    hex_str(node->identity, DIGEST_LEN),
                    node->md, node->rs, node->ri, rs_match, rs_present);
         } SMARTLIST_FOREACH_END(node);

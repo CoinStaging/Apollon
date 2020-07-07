@@ -459,7 +459,7 @@ The following list includes relevant pull requests merged into this release:
 - #17 Handle shutdown requests during initial parsing
 - #42 Integrate Travis CI and OmniJ into workflow
 - #50 Allow debug levels to be specified without needing to recompile
-- #34 Set `txapollon=1` flag during startup, if confirmed by user
+- #34 Set `txindex=1` flag during startup, if confirmed by user
 - #68 Various code cleanups and improved code documentation
 - #68 Resolve and refine several `LOCKs`
 - #68 Support concurrent RPC queries
@@ -472,7 +472,7 @@ The following list includes relevant pull requests merged into this release:
 - #91 Rename files to `omnicore-qt`, `omnicored`, `omnicore-cli`, ...
 - #102, #126 Fully support cross-platform, and deterministic, building
 - #113, #118 Unify and improve RPC help descriptions
-- #121 Fix shutdown issue after declining to reapollon blockchain
+- #121 Fix shutdown issue after declining to reindex blockchain
 - #126 Add images to installer icon for deterministic building
 - #127 Reduce math and big numbers in crowdsale participation
 - #128 Run OmniJ tests with all build targets except OS X

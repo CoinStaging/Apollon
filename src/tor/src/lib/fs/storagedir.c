@@ -558,7 +558,7 @@ storage_dir_shrink(storage_dir_t *d,
   const int n = smartlist_len(d->contents);
   shrinking_dir_entry_t *ents = tor_calloc(n, sizeof(shrinking_dir_entry_t));
   SMARTLIST_FOREACH_BEGIN(d->contents, const char *, fname) {
-    shrinking_dir_entry_t *ent = &ents[fname_sl_xap];
+    shrinking_dir_entry_t *ent = &ents[fname_sl_idx];
     struct stat st;
     tor_asprintf(&ent->path, "%s/%s", d->directory, fname);
     if (stat(sandbox_intern_string(ent->path), &st) == 0) {

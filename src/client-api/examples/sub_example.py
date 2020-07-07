@@ -89,8 +89,8 @@ if __name__ == "__main__":
     transactionfilter = b"transaction"
     socket.setsockopt(zmq.SUBSCRIBE, transactionfilter)
 
-    apollonnodefilter = b"apollonnode"
-    socket.setsockopt(zmq.SUBSCRIBE, apollonnodefilter)
+    indexnodefilter = b"indexnode"
+    socket.setsockopt(zmq.SUBSCRIBE, indexnodefilter)
 
     mintstatusfilter = b"mintStatus"
     socket.setsockopt(zmq.SUBSCRIBE, mintstatusfilter)

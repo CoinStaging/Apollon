@@ -624,20 +624,20 @@ circuit_count_pending_on_channel(channel_t *chan)
 static void
 circuit_remove_from_origin_circuit_list(origin_circuit_t *origin_circ)
 {
-  int origin_xap = origin_circ->global_origin_circuit_list_xap;
-  if (origin_xap < 0)
+  int origin_idx = origin_circ->global_origin_circuit_list_idx;
+  if (origin_idx < 0)
     return;
   origin_circuit_t *c2;
-  tor_assert(origin_xap <= smartlist_len(global_origin_circuit_list));
-  c2 = smartlist_get(global_origin_circuit_list, origin_xap);
+  tor_assert(origin_idx <= smartlist_len(global_origin_circuit_list));
+  c2 = smartlist_get(global_origin_circuit_list, origin_idx);
   tor_assert(origin_circ == c2);
-  smartlist_del(global_origin_circuit_list, origin_xap);
-  if (origin_xap < smartlist_len(global_origin_circuit_list)) {
+  smartlist_del(global_origin_circuit_list, origin_idx);
+  if (origin_idx < smartlist_len(global_origin_circuit_list)) {
     origin_circuit_t *replacement =
-      smartlist_get(global_origin_circuit_list, origin_xap);
-    replacement->global_origin_circuit_list_xap = origin_xap;
+      smartlist_get(global_origin_circuit_list, origin_idx);
+    replacement->global_origin_circuit_list_idx = origin_idx;
   }
-  origin_circ->global_origin_circuit_list_xap = -1;
+  origin_circ->global_origin_circuit_list_idx = -1;
 }
 
 /** Add <b>origin_circ</b> to the global list of origin circuits. Called
@@ -645,10 +645,10 @@ circuit_remove_from_origin_circuit_list(origin_circuit_t *origin_circ)
 static void
 circuit_add_to_origin_circuit_list(origin_circuit_t *origin_circ)
 {
-  tor_assert(origin_circ->global_origin_circuit_list_xap == -1);
+  tor_assert(origin_circ->global_origin_circuit_list_idx == -1);
   smartlist_t *lst = circuit_get_global_origin_circuit_list();
   smartlist_add(lst, origin_circ);
-  origin_circ->global_origin_circuit_list_xap = smartlist_len(lst) - 1;
+  origin_circ->global_origin_circuit_list_idx = smartlist_len(lst) - 1;
 }
 
 /** Detach from the global circuit list, and deallocate, all
@@ -665,13 +665,13 @@ circuit_close_all_marked(void)
     tor_assert(circ->marked_for_close);
 
     /* Remove it from the circuit list. */
-    int xap = circ->global_circuitlist_xap;
+    int xap = circ->global_circuitlist_idx;
     smartlist_del(lst, xap);
     if (xap < smartlist_len(lst)) {
       circuit_t *replacement = smartlist_get(lst, xap);
-      replacement->global_circuitlist_xap = xap;
+      replacement->global_circuitlist_idx = xap;
     }
-    circ->global_circuitlist_xap = -1;
+    circ->global_circuitlist_idx = -1;
 
     /* Remove it from the origin circuit list, if appropriate. */
     if (CIRCUIT_IS_ORIGIN(circ)) {
@@ -990,7 +990,7 @@ init_circuit_base(circuit_t *circ)
   cell_queue_init(&circ->n_chan_cells);
 
   smartlist_add(circuit_get_global_list(), circ);
-  circ->global_circuitlist_xap = smartlist_len(circuit_get_global_list()) - 1;
+  circ->global_circuitlist_idx = smartlist_len(circuit_get_global_list()) - 1;
 }
 
 /** If we haven't yet decided on a good timeout value for circuit
@@ -1022,7 +1022,7 @@ origin_circuit_new(void)
   init_circuit_base(TO_CIRCUIT(circ));
 
   /* Add to origin-list. */
-  circ->global_origin_circuit_list_xap = -1;
+  circ->global_origin_circuit_list_idx = -1;
   circuit_add_to_origin_circuit_list(circ);
 
   circuit_build_times_update_last_circ(get_circuit_build_times_mutable());
@@ -1209,14 +1209,14 @@ circuit_free_(circuit_t *circ)
   extend_info_free(circ->n_hop);
   tor_free(circ->n_chan_create_cell);
 
-  if (circ->global_circuitlist_xap != -1) {
-    int xap = circ->global_circuitlist_xap;
+  if (circ->global_circuitlist_idx != -1) {
+    int xap = circ->global_circuitlist_idx;
     circuit_t *c2 = smartlist_get(global_circuitlist, xap);
     tor_assert(c2 == circ);
     smartlist_del(global_circuitlist, xap);
     if (xap < smartlist_len(global_circuitlist)) {
       c2 = smartlist_get(global_circuitlist, xap);
-      c2->global_circuitlist_xap = xap;
+      c2->global_circuitlist_idx = xap;
     }
   }
 
@@ -1290,7 +1290,7 @@ circuit_free_all(void)
         or_circ->resolving_streams = next_conn;
       }
     }
-    tmp->global_circuitlist_xap = -1;
+    tmp->global_circuitlist_idx = -1;
     circuit_about_to_free_atexit(tmp);
     circuit_free(tmp);
     SMARTLIST_DEL_CURRENT(lst, tmp);
@@ -1360,14 +1360,14 @@ cpath_ref_decref(crypt_path_reference_t *cpath_ref)
 static void
 circuit_dump_conn_details(int severity,
                           circuit_t *circ,
-                          int conn_array_apollon,
+                          int conn_array_index,
                           const char *type,
                           circid_t this_circid,
                           circid_t other_circid)
 {
   tor_log(severity, LD_CIRC, "Conn %d has %s circuit: circID %u "
       "(other side %u), state %d (%s), born %ld:",
-      conn_array_apollon, type, (unsigned)this_circid, (unsigned)other_circid,
+      conn_array_index, type, (unsigned)this_circid, (unsigned)other_circid,
       circ->state, circuit_state_to_string(circ->state),
       (long)circ->timestamp_began.tv_sec);
   if (CIRCUIT_IS_ORIGIN(circ)) { /* circ starts at this node */
@@ -1398,7 +1398,7 @@ circuit_dump_by_conn(connection_t *conn, int severity)
       for (tmpconn=TO_ORIGIN_CIRCUIT(circ)->p_streams; tmpconn;
            tmpconn=tmpconn->next_stream) {
         if (TO_CONN(tmpconn) == conn) {
-          circuit_dump_conn_details(severity, circ, conn->conn_array_apollon,
+          circuit_dump_conn_details(severity, circ, conn->conn_array_index,
                                     "App-ward", p_circ_id, n_circ_id);
         }
       }
@@ -1408,7 +1408,7 @@ circuit_dump_by_conn(connection_t *conn, int severity)
       for (tmpconn=TO_OR_CIRCUIT(circ)->n_streams; tmpconn;
            tmpconn=tmpconn->next_stream) {
         if (TO_CONN(tmpconn) == conn) {
-          circuit_dump_conn_details(severity, circ, conn->conn_array_apollon,
+          circuit_dump_conn_details(severity, circ, conn->conn_array_index,
                                     "Exit-ward", n_circ_id, p_circ_id);
         }
       }
@@ -1623,7 +1623,7 @@ circuit_unlink_all_from_channel(channel_t *chan, int reason)
     smartlist_sort_pointers(detached_2);
 
     SMARTLIST_FOREACH(detached, circuit_t *, c,
-        if (c != smartlist_get(detached_2, c_sl_xap))
+        if (c != smartlist_get(detached_2, c_sl_idx))
           mismatch = 1;
     );
 
@@ -1726,7 +1726,7 @@ circuit_get_next_intro_circ(const origin_circuit_t *start,
   smartlist_t *lst = circuit_get_global_list();
 
   if (start) {
-    xap = TO_CIRCUIT(start)->global_circuitlist_xap + 1;
+    xap = TO_CIRCUIT(start)->global_circuitlist_idx + 1;
   }
 
   for ( ; xap < smartlist_len(lst); ++xap) {
@@ -1777,7 +1777,7 @@ circuit_get_next_service_rp_circ(origin_circuit_t *start)
   smartlist_t *lst = circuit_get_global_list();
 
   if (start) {
-    xap = TO_CIRCUIT(start)->global_circuitlist_xap + 1;
+    xap = TO_CIRCUIT(start)->global_circuitlist_idx + 1;
   }
 
   for ( ; xap < smartlist_len(lst); ++xap) {
@@ -1814,7 +1814,7 @@ circuit_get_next_by_pk_and_purpose(origin_circuit_t *start,
   if (start == NULL)
     xap = 0;
   else
-    xap = TO_CIRCUIT(start)->global_circuitlist_xap + 1;
+    xap = TO_CIRCUIT(start)->global_circuitlist_idx + 1;
 
   for ( ; xap < smartlist_len(lst); ++xap) {
     circuit_t *circ = smartlist_get(lst, xap);
@@ -2668,7 +2668,7 @@ circuits_handle_oom(size_t current_allocation)
 {
   smartlist_t *circlist;
   smartlist_t *connection_array = get_connection_array();
-  int conn_xap;
+  int conn_idx;
   size_t mem_to_recover;
   size_t mem_recovered=0;
   int n_circuits_killed=0;
@@ -2711,7 +2711,7 @@ circuits_handle_oom(size_t current_allocation)
 
   /* Fix up the indices before we run into trouble */
   SMARTLIST_FOREACH_BEGIN(circlist, circuit_t *, circ) {
-    circ->global_circuitlist_xap = circ_sl_xap;
+    circ->global_circuitlist_idx = circ_sl_idx;
   } SMARTLIST_FOREACH_END(circ);
 
   /* Now sort the connection array ... */
@@ -2721,21 +2721,21 @@ circuits_handle_oom(size_t current_allocation)
 
   /* Fix up the connection array to its new order. */
   SMARTLIST_FOREACH_BEGIN(connection_array, connection_t *, conn) {
-    conn->conn_array_apollon = conn_sl_xap;
+    conn->conn_array_index = conn_sl_idx;
   } SMARTLIST_FOREACH_END(conn);
 
   /* Okay, now the worst circuits and connections are at the front of their
    * respective lists. Let's mark them, and reclaim their storage
    * aggressively. */
-  conn_xap = 0;
+  conn_idx = 0;
   SMARTLIST_FOREACH_BEGIN(circlist, circuit_t *, circ) {
     size_t n;
     size_t freed;
 
     /* Free storage in any non-linked directory connections that have buffered
      * data older than this circuit. */
-    while (conn_xap < smartlist_len(connection_array)) {
-      connection_t *conn = smartlist_get(connection_array, conn_xap);
+    while (conn_idx < smartlist_len(connection_array)) {
+      connection_t *conn = smartlist_get(connection_array, conn_idx);
       uint32_t conn_age = conn_get_buffer_age(conn, now_ts);
       if (conn_age < circ->age_tmp) {
         break;
@@ -2750,7 +2750,7 @@ circuits_handle_oom(size_t current_allocation)
         if (mem_recovered >= mem_to_recover)
           goto done_recovering_mem;
       }
-      ++conn_xap;
+      ++conn_idx;
     }
 
     /* Now, kill the circuit. */

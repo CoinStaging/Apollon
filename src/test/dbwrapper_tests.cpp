@@ -167,8 +167,8 @@ BOOST_AUTO_TEST_CASE(existing_data_no_obfuscate)
     BOOST_CHECK_EQUAL(res3.ToString(), in2.ToString());
 }
                         
-// Ensure that we start obfuscating during a reapollon.
-BOOST_AUTO_TEST_CASE(existing_data_reapollon)
+// Ensure that we start obfuscating during a reindex.
+BOOST_AUTO_TEST_CASE(existing_data_reindex)
 {
     // We're going to share this path between two wrappers
     path ph = temp_directory_path() / unique_path();
@@ -187,7 +187,7 @@ BOOST_AUTO_TEST_CASE(existing_data_reapollon)
     // Call the destructor to free leveldb LOCK
     delete dbw;
 
-    // Simulate a -reapollon by wiping the existing data store
+    // Simulate a -reindex by wiping the existing data store
     CDBWrapper odbw(ph, (1 << 10), false, true, true);
 
     // Check that the key/val we wrote with unobfuscated wrapper doesn't exist

@@ -85,7 +85,7 @@ struct cell_ewma_s {
   unsigned int is_for_p_chan : 1;
   /** The position of the circuit within the OR connection's priority
    * queue. */
-  int heap_apollon;
+  int heap_index;
 };
 
 struct ewma_policy_data_s {
@@ -331,7 +331,7 @@ ewma_alloc_circ_data(circuitmux_t *cmux,
    */
   cdata->cell_ewma.last_adjusted_tick = cell_ewma_get_tick();
   cdata->cell_ewma.cell_count = 0.0;
-  cdata->cell_ewma.heap_apollon = -1;
+  cdata->cell_ewma.heap_index = -1;
   if (direction == CELL_DIRECTION_IN) {
     cdata->cell_ewma.is_for_p_chan = 1;
   } else {
@@ -779,7 +779,7 @@ add_cell_ewma(ewma_policy_data_t *pol, cell_ewma_t *ewma)
   tor_assert(pol);
   tor_assert(pol->active_circuit_pqueue);
   tor_assert(ewma);
-  tor_assert(ewma->heap_apollon == -1);
+  tor_assert(ewma->heap_index == -1);
 
   scale_single_cell_ewma(
       ewma,
@@ -787,7 +787,7 @@ add_cell_ewma(ewma_policy_data_t *pol, cell_ewma_t *ewma)
 
   smartlist_pqueue_add(pol->active_circuit_pqueue,
                        compare_cell_ewma_counts,
-                       offsetof(cell_ewma_t, heap_apollon),
+                       offsetof(cell_ewma_t, heap_index),
                        ewma);
 }
 
@@ -798,11 +798,11 @@ remove_cell_ewma(ewma_policy_data_t *pol, cell_ewma_t *ewma)
   tor_assert(pol);
   tor_assert(pol->active_circuit_pqueue);
   tor_assert(ewma);
-  tor_assert(ewma->heap_apollon != -1);
+  tor_assert(ewma->heap_index != -1);
 
   smartlist_pqueue_remove(pol->active_circuit_pqueue,
                           compare_cell_ewma_counts,
-                          offsetof(cell_ewma_t, heap_apollon),
+                          offsetof(cell_ewma_t, heap_index),
                           ewma);
 }
 
@@ -816,7 +816,7 @@ pop_first_cell_ewma(ewma_policy_data_t *pol)
 
   return smartlist_pqueue_pop(pol->active_circuit_pqueue,
                               compare_cell_ewma_counts,
-                              offsetof(cell_ewma_t, heap_apollon));
+                              offsetof(cell_ewma_t, heap_index));
 }
 
 /**

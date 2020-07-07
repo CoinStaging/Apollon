@@ -940,7 +940,7 @@ circuit_log_ancient_one_hop_circuits(int age)
     log_notice(LD_HEARTBEAT, "  #%d created at %s. %s, %s. %s for close. "
                "Package window: %d. "
                "%s for new conns. %s.",
-               ocirc_sl_xap,
+               ocirc_sl_idx,
                created,
                circuit_state_to_string(circ->state),
                circuit_purpose_to_string(circ->purpose),

@@ -146,8 +146,8 @@
         <translation>Abrir &amp;URL...</translation>
     </message>
     <message>
-        <source>Reapolloning blocks on disk...</source>
-        <translation>Reapollonando bloques en el disco...</translation>
+        <source>Reindexing blocks on disk...</source>
+        <translation>Reindexando bloques en el disco...</translation>
     </message>
     <message>
         <source>Send coins to a Apollon address</source>

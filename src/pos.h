@@ -24,7 +24,7 @@
 using namespace std;
 
 /** Compute the hash modifier for proof-of-stake */
-uint256 ComputeStakeModifier(const CBlockApollon* papollonPrev, const uint256& kernel);
+uint256 ComputeStakeModifier(const CBlockIndex* pindexPrev, const uint256& kernel);
 
 struct CStakeCache{
     CStakeCache(uint256 hashBlock_, const CTransaction txPrev_) : hashBlock(hashBlock_), txPrev(txPrev_){
@@ -36,10 +36,10 @@ struct CStakeCache{
 // Check whether the coinstake timestamp meets protocol
 bool CheckCoinStakeTimestamp(int64_t nTimeBlock, int64_t nTimeTx);
 bool CheckStakeBlockTimestamp(int64_t nTimeBlock);
-bool CheckKernel(CBlockApollon* papollonPrev, unsigned int nBits, uint32_t nTimeBlock, const COutPoint& prevout);
-bool CheckKernel(CBlockApollon* papollonPrev, unsigned int nBits, uint32_t nTime, const COutPoint& prevout, const std::map<COutPoint, CStakeCache>& cache, int64_t *pBlockTime);
-bool CheckStakeKernelHash(const CBlockApollon* papollonPrev, unsigned int nBits, unsigned int nBlockTime, const CCoins* txPrev, const COutPoint& prevout, unsigned int nTimeTx, bool fPrintProofOfStake = false);
-bool CheckProofOfStake(CBlockApollon* papollonPrev, const CTransaction& tx, unsigned int nBlockTime, unsigned int nBits, CValidationState &state,CBlockApollon* mapBlockApollonFallback);
-void CacheKernel(std::map<COutPoint, CStakeCache>& cache, const COutPoint& prevout, CBlockApollon* papollonPrev);
+bool CheckKernel(CBlockIndex* pindexPrev, unsigned int nBits, uint32_t nTimeBlock, const COutPoint& prevout);
+bool CheckKernel(CBlockIndex* pindexPrev, unsigned int nBits, uint32_t nTime, const COutPoint& prevout, const std::map<COutPoint, CStakeCache>& cache, int64_t *pBlockTime);
+bool CheckStakeKernelHash(const CBlockIndex* pindexPrev, unsigned int nBits, unsigned int nBlockTime, const CCoins* txPrev, const COutPoint& prevout, unsigned int nTimeTx, bool fPrintProofOfStake = false);
+bool CheckProofOfStake(CBlockIndex* pindexPrev, const CTransaction& tx, unsigned int nBlockTime, unsigned int nBits, CValidationState &state,CBlockIndex* mapBlockIndexFallback);
+void CacheKernel(std::map<COutPoint, CStakeCache>& cache, const COutPoint& prevout, CBlockIndex* pindexPrev);
 bool VerifySignature(const CTransaction& txFrom, const CTransaction& txTo, unsigned int nIn, unsigned int flags, int nHashType);
 #endif // NOIR_POS_H

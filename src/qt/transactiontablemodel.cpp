@@ -104,8 +104,8 @@ public:
             cachedWallet.begin(), cachedWallet.end(), hash, TxLessThan());
         QList<TransactionRecord>::iterator upper = qUpperBound(
             cachedWallet.begin(), cachedWallet.end(), hash, TxLessThan());
-        int lowerApollon = (lower - cachedWallet.begin());
-        int upperApollon = (upper - cachedWallet.begin());
+        int lowerIndex = (lower - cachedWallet.begin());
+        int upperIndex = (upper - cachedWallet.begin());
         bool inModel = (lower != upper);
 
         if(status == CT_UPDATED)
@@ -117,7 +117,7 @@ public:
         }
 
         qDebug() << "    inModel=" + QString::number(inModel) +
-                    " Apollon=" + QString::number(lowerApollon) + "-" + QString::number(upperApollon) +
+                    " Apollon=" + QString::number(lowerIndex) + "-" + QString::number(upperIndex) +
                     " showTransaction=" + QString::number(showTransaction) + " derivedStatus=" + QString::number(status);
 
         switch(status)
@@ -143,12 +143,12 @@ public:
                         TransactionRecord::decomposeTransaction(wallet, mi->second);
                 if(!toInsert.isEmpty()) /* only if something to insert */
                 {
-                    parent->beginInsertRows(QModelApollon(), lowerApollon, lowerApollon+toInsert.size()-1);
-                    int insert_xap = lowerApollon;
+                    parent->beginInsertRows(QModelIndex(), lowerIndex, lowerIndex+toInsert.size()-1);
+                    int insert_idx = lowerIndex;
                     Q_FOREACH(const TransactionRecord &rec, toInsert)
                     {
-                        cachedWallet.insert(insert_xap, rec);
-                        insert_xap += 1;
+                        cachedWallet.insert(insert_idx, rec);
+                        insert_idx += 1;
                     }
                     parent->endInsertRows();
                 }
@@ -161,7 +161,7 @@ public:
                 break;
             }
             // Removed -- remove entire transaction from table
-            parent->beginRemoveRows(QModelApollon(), lowerApollon, upperApollon-1);
+            parent->beginRemoveRows(QModelIndex(), lowerIndex, upperIndex-1);
             cachedWallet.erase(lower, upper);
             parent->endRemoveRows();
             break;
@@ -288,13 +288,13 @@ void TransactionTableModel::updateConfirmations()
     Q_EMIT dataChanged(apollon(0, ToAddress), apollon(priv->size()-1, ToAddress));
 }
 
-int TransactionTableModel::rowCount(const QModelApollon &parent) const
+int TransactionTableModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return priv->size();
 }
 
-int TransactionTableModel::columnCount(const QModelApollon &parent) const
+int TransactionTableModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return columns.length();
@@ -395,7 +395,7 @@ QString TransactionTableModel::formatTxType(const TransactionRecord *wtx) const
     case TransactionRecord::Stake:
            return tr("Stake");
     case TransactionRecord::INReward:
-            return tr("Apollonnode Reward");
+            return tr("Indexnode Reward");
     default:
         return QString();
     }
@@ -548,7 +548,7 @@ QString TransactionTableModel::formatTooltip(const TransactionRecord *rec) const
     return tooltip;
 }
 
-QVariant TransactionTableModel::data(const QModelApollon &apollon, int role) const
+QVariant TransactionTableModel::data(const QModelIndex &apollon, int role) const
 {
     if(!apollon.isValid())
         return QVariant();
@@ -721,15 +721,15 @@ QVariant TransactionTableModel::headerData(int section, Qt::Orientation orientat
     return QVariant();
 }
 
-QModelApollon TransactionTableModel::apollon(int row, int column, const QModelApollon &parent) const
+QModelIndex TransactionTableModel::apollon(int row, int column, const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     TransactionRecord *data = priv->apollon(row);
     if(data)
     {
-        return createApollon(row, column, priv->apollon(row));
+        return createIndex(row, column, priv->apollon(row));
     }
-    return QModelApollon();
+    return QModelIndex();
 }
 
 void TransactionTableModel::updateDisplayUnit()

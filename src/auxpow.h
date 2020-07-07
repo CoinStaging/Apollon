@@ -18,7 +18,7 @@ public:
     // root must be present inside the coinbase
     std::vector <uint256> vChainMerkleBranch;
     // Apollon of chain in chains merkle tree
-    unsigned int nChainApollon;
+    unsigned int nChainIndex;
     CBlockHeader parentBlockHeader;
     ADD_SERIALIZE_METHODS;
 
@@ -28,7 +28,7 @@ public:
         READWRITE(*(CMerkleTx *) this);
         nVersion = this->nVersion;
         READWRITE(vChainMerkleBranch);
-        READWRITE(nChainApollon);
+        READWRITE(nChainIndex);
         // Always serialize the saved parent block as header so that the size of CAuxPow
         // is consistent.
         READWRITE(parentBlockHeader);

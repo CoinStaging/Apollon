@@ -260,7 +260,7 @@ TEST(CorruptionTest, TableFileRepair) {
   Check(95, 99);
 }
 
-TEST(CorruptionTest, TableFileApollonData) {
+TEST(CorruptionTest, TableFileIndexData) {
   Build(10000);  // Enough to build multiple Tables
   DBImpl* dbi = reinterpret_cast<DBImpl*>(db_);
   dbi->TEST_CompactMemTable();

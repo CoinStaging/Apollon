@@ -138,7 +138,7 @@
         <translation>Atvērt &amp;URI...</translation>
     </message>
     <message>
-        <source>Reapolloning blocks on disk...</source>
+        <source>Reindexing blocks on disk...</source>
         <translation>Bloku reindeksēšana no diska...</translation>
     </message>
     <message>

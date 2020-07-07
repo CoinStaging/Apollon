@@ -10,38 +10,38 @@ using namespace std;
 /**
  * CChain implementation
  */
-void CChain::SetTip(CBlockApollon *papollon) {
-    if (papollon == NULL) {
+void CChain::SetTip(CBlockIndex *pindex) {
+    if (pindex == NULL) {
         vChain.clear();
         return;
     }
-    vChain.resize(papollon->nHeight + 1);
-    while (papollon && vChain[papollon->nHeight] != papollon) {
-        vChain[papollon->nHeight] = papollon;
-        papollon = papollon->pprev;
+    vChain.resize(pindex->nHeight + 1);
+    while (pindex && vChain[pindex->nHeight] != pindex) {
+        vChain[pindex->nHeight] = pindex;
+        pindex = pindex->pprev;
     }
 }
 
-CBlockLocator CChain::GetLocator(const CBlockApollon *papollon) const {
+CBlockLocator CChain::GetLocator(const CBlockIndex *pindex) const {
     int nStep = 1;
     std::vector<uint256> vHave;
     vHave.reserve(32);
 
-    if (!papollon)
-        papollon = Tip();
-    while (papollon) {
-        vHave.push_back(papollon->GetBlockHash());
+    if (!pindex)
+        pindex = Tip();
+    while (pindex) {
+        vHave.push_back(pindex->GetBlockHash());
         // Stop when we have added the genesis block.
-        if (papollon->nHeight == 0)
+        if (pindex->nHeight == 0)
             break;
         // Exponentially larger steps back, plus the genesis block.
-        int nHeight = std::max(papollon->nHeight - nStep, 0);
-        if (Contains(papollon)) {
+        int nHeight = std::max(pindex->nHeight - nStep, 0);
+        if (Contains(pindex)) {
             // Use O(1) CChain apollon if possible.
-            papollon = (*this)[nHeight];
+            pindex = (*this)[nHeight];
         } else {
             // Otherwise, use O(log n) skiplist.
-            papollon = papollon->GetAncestor(nHeight);
+            pindex = pindex->GetAncestor(nHeight);
         }
         if (vHave.size() > 10)
             nStep *= 2;
@@ -50,21 +50,21 @@ CBlockLocator CChain::GetLocator(const CBlockApollon *papollon) const {
     return CBlockLocator(vHave);
 }
 
-const CBlockApollon *CChain::FindFork(const CBlockApollon *papollon) const {
-    if (papollon == NULL) {
+const CBlockIndex *CChain::FindFork(const CBlockIndex *pindex) const {
+    if (pindex == NULL) {
         return NULL;
     }
-    if (papollon->nHeight > Height())
-        papollon = papollon->GetAncestor(Height());
-    while (papollon && !Contains(papollon))
-        papollon = papollon->pprev;
-    return papollon;
+    if (pindex->nHeight > Height())
+        pindex = pindex->GetAncestor(Height());
+    while (pindex && !Contains(pindex))
+        pindex = pindex->pprev;
+    return pindex;
 }
 
 /** Turn the lowest '1' bit in the binary representation of a number into a '0'. */
 int static inline InvertLowestOne(int n) { return n & (n - 1); }
 
-/** Compute what height to jump back to with the CBlockApollon::pskip pointer. */
+/** Compute what height to jump back to with the CBlockIndex::pskip pointer. */
 int static inline GetSkipHeight(int height) {
     if (height < 2)
         return 0;
@@ -75,51 +75,51 @@ int static inline GetSkipHeight(int height) {
     return (height & 1) ? InvertLowestOne(InvertLowestOne(height - 1)) + 1 : InvertLowestOne(height);
 }
 
-CBlockApollon* CBlockApollon::GetAncestor(int height)
+CBlockIndex* CBlockIndex::GetAncestor(int height)
 {
     if (height > nHeight || height < 0)
         return NULL;
 
-    CBlockApollon* papollonWalk = this;
+    CBlockIndex* pindexWalk = this;
     int heightWalk = nHeight;
     while (heightWalk > height) {
         int heightSkip = GetSkipHeight(heightWalk);
         int heightSkipPrev = GetSkipHeight(heightWalk - 1);
-        if (papollonWalk->pskip != NULL &&
+        if (pindexWalk->pskip != NULL &&
             (heightSkip == height ||
              (heightSkip > height && !(heightSkipPrev < heightSkip - 2 &&
                                        heightSkipPrev >= height)))) {
             // Only follow pskip if pprev->pskip isn't better than pskip->pprev.
-            papollonWalk = papollonWalk->pskip;
+            pindexWalk = pindexWalk->pskip;
             heightWalk = heightSkip;
         } else {
-            //assert(papollonWalk->pprev);
-            papollonWalk = papollonWalk->pprev;
+            //assert(pindexWalk->pprev);
+            pindexWalk = pindexWalk->pprev;
             heightWalk--;
         }
     }
-    return papollonWalk;
+    return pindexWalk;
 }
 
-const CBlockApollon* CBlockApollon::GetAncestor(int height) const
+const CBlockIndex* CBlockIndex::GetAncestor(int height) const
 {
-    return const_cast<CBlockApollon*>(this)->GetAncestor(height);
+    return const_cast<CBlockIndex*>(this)->GetAncestor(height);
 }
 
-void CBlockApollon::BuildSkip()
+void CBlockIndex::BuildSkip()
 {
     if (pprev)
         pskip = pprev->GetAncestor(GetSkipHeight(nHeight));
 }
 
-const CBlockApollon* GetLastBlockApollon(const CBlockApollon* papollon, bool fProofOfStake)
+const CBlockIndex* GetLastBlockIndex(const CBlockIndex* pindex, bool fProofOfStake)
 {
-    while (papollon && papollon->pprev && (papollon->IsProofOfStake() != fProofOfStake))
-        papollon = papollon->pprev;
-    return papollon;
+    while (pindex && pindex->pprev && (pindex->IsProofOfStake() != fProofOfStake))
+        pindex = pindex->pprev;
+    return pindex;
 }
 
-arith_uint256 GetBlockProof(const CBlockApollon& block)
+arith_uint256 GetBlockProof(const CBlockIndex& block)
 {
     arith_uint256 bnTarget;
     bool fNegative;
@@ -134,7 +134,7 @@ arith_uint256 GetBlockProof(const CBlockApollon& block)
     return (~bnTarget / (bnTarget + 1)) + 1;
 }
 
-int64_t GetBlockProofEquivalentTime(const CBlockApollon& to, const CBlockApollon& from, const CBlockApollon& tip, const Consensus::Params& params)
+int64_t GetBlockProofEquivalentTime(const CBlockIndex& to, const CBlockIndex& from, const CBlockIndex& tip, const Consensus::Params& params)
 {
     arith_uint256 r;
     int sign = 1;

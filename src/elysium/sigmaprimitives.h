@@ -202,7 +202,7 @@ public:
 
 typedef uint8_t SigmaDenomination;
 typedef uint32_t SigmaMintGroup;
-typedef uint16_t SigmaMintApollon;
+typedef uint16_t SigmaMintIndex;
 
 extern const SigmaParams DefaultSigmaParams;
 

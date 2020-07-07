@@ -47,9 +47,9 @@ secp_primitives::Scalar SigmaWalletV1::GenerateSerial(secp256k1_pubkey const &pu
     return serial;
 }
 
-uint32_t SigmaWalletV1::BIP44ChangeApollon() const
+uint32_t SigmaWalletV1::BIP44ChangeIndex() const
 {
-    return BIP44_ELYSIUM_MINT_APOLLON_V1;
+    return BIP44_ELYSIUM_MINT_INDEX_V1;
 }
 
 SigmaPrivateKey SigmaWalletV1::GeneratePrivateKey(uint512 const &seed)

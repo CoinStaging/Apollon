@@ -9,7 +9,7 @@
 #include "coins.h"
 #include "dbwrapper.h"
 #include "chain.h"
-#include "spentapollon.h"
+#include "spentindex.h"
 
 #include <map>
 #include <string>
@@ -18,7 +18,7 @@
 
 #include <boost/function.hpp>
 
-class CBlockApollon;
+class CBlockIndex;
 class CCoinsViewDBCursor;
 class uint256;
 
@@ -28,12 +28,12 @@ static const int64_t nDefaultDbCache = 300;
 static const int64_t nMaxDbCache = sizeof(void*) > 4 ? 16384 : 1024;
 //! min. -dbcache (MiB)
 static const int64_t nMinDbCache = 4;
-//! Max memory allocated to block tree DB specific cache, if no -txapollon (MiB)
+//! Max memory allocated to block tree DB specific cache, if no -txindex (MiB)
 static const int64_t nMaxBlockDBCache = 2;
-//! Max memory allocated to block tree DB specific cache, if -txapollon (MiB)
-// Unlike for the UTXO database, for the txapollon scenario the leveldb cache make
+//! Max memory allocated to block tree DB specific cache, if -txindex (MiB)
+// Unlike for the UTXO database, for the txindex scenario the leveldb cache make
 // a meaningful difference: https://github.com/bitcoin/bitcoin/pull/8273#issuecomment-229601991
-static const int64_t nMaxBlockDBAndTxApollonCache = 1024;
+static const int64_t nMaxBlockDBAndTxIndexCache = 1024;
 //! Max memory allocated to coin DB specific cache (MiB)
 static const int64_t nMaxCoinsDBCache = 8;
 
@@ -108,31 +108,31 @@ private:
     CBlockTreeDB(const CBlockTreeDB&);
     void operator=(const CBlockTreeDB&);
 public:
-    bool WriteBatchSync(const std::vector<std::pair<int, const CBlockFileInfo*> >& fileInfo, int nLastFile, const std::vector<const CBlockApollon*>& blockinfo);
+    bool WriteBatchSync(const std::vector<std::pair<int, const CBlockFileInfo*> >& fileInfo, int nLastFile, const std::vector<const CBlockIndex*>& blockinfo);
     bool ReadBlockFileInfo(int nFile, CBlockFileInfo &fileinfo);
     bool ReadLastBlockFile(int &nFile);
-    bool WriteReapolloning(bool fReapollon);
-    bool ReadReapolloning(bool &fReapollon);
-    bool ReadTxApollon(const uint256 &txid, CDiskTxPos &pos);
-    bool WriteTxApollon(const std::vector<std::pair<uint256, CDiskTxPos> > &list);
-    bool ReadSpentApollon(CSpentApollonKey &key, CSpentApollonValue &value);
-    bool UpdateSpentApollon(const std::vector<std::pair<CSpentApollonKey, CSpentApollonValue> >&vect);
-    bool UpdateAddressUnspentApollon(const std::vector<std::pair<CAddressUnspentKey, CAddressUnspentValue > >&vect);
-    bool ReadAddressUnspentApollon(uint160 addressHash, AddressType type,
+    bool WriteReindexing(bool fReindex);
+    bool ReadReindexing(bool &fReindex);
+    bool ReadTxIndex(const uint256 &txid, CDiskTxPos &pos);
+    bool WriteTxIndex(const std::vector<std::pair<uint256, CDiskTxPos> > &list);
+    bool ReadSpentIndex(CSpentIndexKey &key, CSpentIndexValue &value);
+    bool UpdateSpentIndex(const std::vector<std::pair<CSpentIndexKey, CSpentIndexValue> >&vect);
+    bool UpdateAddressUnspentIndex(const std::vector<std::pair<CAddressUnspentKey, CAddressUnspentValue > >&vect);
+    bool ReadAddressUnspentIndex(uint160 addressHash, AddressType type,
                                  std::vector<std::pair<CAddressUnspentKey, CAddressUnspentValue> > &vect);
-    bool WriteAddressApollon(const std::vector<std::pair<CAddressApollonKey, CAmount> > &vect);
-    bool EraseAddressApollon(const std::vector<std::pair<CAddressApollonKey, CAmount> > &vect);
-    bool ReadAddressApollon(uint160 addressHash, AddressType type,
-                          std::vector<std::pair<CAddressApollonKey, CAmount> > &addressApollon,
+    bool WriteAddressIndex(const std::vector<std::pair<CAddressIndexKey, CAmount> > &vect);
+    bool EraseAddressIndex(const std::vector<std::pair<CAddressIndexKey, CAmount> > &vect);
+    bool ReadAddressIndex(uint160 addressHash, AddressType type,
+                          std::vector<std::pair<CAddressIndexKey, CAmount> > &addressIndex,
                           int start = 0, int end = 0);
 
-    bool WriteTimestampApollon(const CTimestampApollonKey &timestampApollon);
-    bool ReadTimestampApollon(const unsigned int &high, const unsigned int &low, std::vector<uint256> &vect);
+    bool WriteTimestampIndex(const CTimestampIndexKey &timestampIndex);
+    bool ReadTimestampIndex(const unsigned int &high, const unsigned int &low, std::vector<uint256> &vect);
     bool WriteFlag(const std::string &name, bool fValue);
     bool ReadFlag(const std::string &name, bool &fValue);
-    bool LoadBlockApollonGuts(boost::function<CBlockApollon*(const uint256&)> insertBlockApollon);
-    int GetBlockApollonVersion();
-    int GetBlockApollonVersion(uint256 const & blockHash);
+    bool LoadBlockIndexGuts(boost::function<CBlockIndex*(const uint256&)> insertBlockIndex);
+    int GetBlockIndexVersion();
+    int GetBlockIndexVersion(uint256 const & blockHash);
     bool AddTotalSupply(CAmount const & supply);
     bool ReadTotalSupply(CAmount & supply);
 };
@@ -141,32 +141,32 @@ public:
 /**
  * This class was introduced as the logic for address and tx indices became too intricate.
  *
- * @param addressApollon, spentApollon - true if to update the corresponding apollon
+ * @param addressIndex, spentIndex - true if to update the corresponding apollon
  *
- * It is undefined behavior if the helper was created with addressApollon == false
- * and getAddressApollon was called later (same for spentApollon and unspentApollon).
+ * It is undefined behavior if the helper was created with addressIndex == false
+ * and getAddressIndex was called later (same for spentIndex and unspentIndex).
  */
-class CDbApollonHelper : boost::noncopyable
+class CDbIndexHelper : boost::noncopyable
 {
 public:
-    CDbApollonHelper(bool addressApollon, bool spentApollon);
+    CDbIndexHelper(bool addressIndex, bool spentIndex);
 
     void ConnectTransaction(CTransaction const & tx, int height, int txNumber, CCoinsViewCache const & view);
     void DisconnectTransactionInputs(CTransaction const & tx, int height, int txNumber, CCoinsViewCache const & view);
     void DisconnectTransactionOutputs(CTransaction const & tx, int height, int txNumber, CCoinsViewCache const & view);
 
-    using AddressApollon = std::vector<std::pair<CAddressApollonKey, CAmount> >;
-    using AddressUnspentApollon = std::vector<std::pair<CAddressUnspentKey, CAddressUnspentValue> >;
-    using SpentApollon = std::vector<std::pair<CSpentApollonKey, CSpentApollonValue> >;
+    using AddressIndex = std::vector<std::pair<CAddressIndexKey, CAmount> >;
+    using AddressUnspentIndex = std::vector<std::pair<CAddressUnspentKey, CAddressUnspentValue> >;
+    using SpentIndex = std::vector<std::pair<CSpentIndexKey, CSpentIndexValue> >;
 
-    AddressApollon const & getAddressApollon() const;
-    AddressUnspentApollon const & getAddressUnspentApollon() const;
-    SpentApollon const & getSpentApollon() const;
+    AddressIndex const & getAddressIndex() const;
+    AddressUnspentIndex const & getAddressUnspentIndex() const;
+    SpentIndex const & getSpentIndex() const;
 
 private:
-    boost::optional<AddressApollon> addressApollon;
-    boost::optional<AddressUnspentApollon> addressUnspentApollon;
-    boost::optional<SpentApollon> spentApollon;
+    boost::optional<AddressIndex> addressIndex;
+    boost::optional<AddressUnspentIndex> addressUnspentIndex;
+    boost::optional<SpentIndex> spentIndex;
 };
 
 #endif // BITCOIN_TXDB_H

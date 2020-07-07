@@ -7,9 +7,9 @@
 
 #include "transactiontablemodel.h"
 
-#include <QModelApollon>
+#include <QModelIndex>
 
-TransactionDescDialog::TransactionDescDialog(const QModelApollon &xap, QWidget *parent) :
+TransactionDescDialog::TransactionDescDialog(const QModelIndex &xap, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::TransactionDescDialog)
 {

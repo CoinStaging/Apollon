@@ -85,7 +85,7 @@ private:
         COLUMN_CONFIRMATIONS,
         COLUMN_PRIORITY,
         COLUMN_TXHASH,
-        COLUMN_VOUT_APOLLON,
+        COLUMN_VOUT_INDEX,
     };
     friend class CSigmaCoinControlWidgetItem;
 

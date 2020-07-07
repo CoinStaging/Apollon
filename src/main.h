@@ -21,7 +21,7 @@
 #include "versionbits.h"
 #include "timedata.h"
 #include "chainparams.h"
-#include "spentapollon.h"
+#include "spentindex.h"
 #include <algorithm>
 #include <exception>
 #include <map>
@@ -35,7 +35,7 @@
 
 #include <boost/unordered_map.hpp>
 
-class CBlockApollon;
+class CBlockIndex;
 class CBlockTreeDB;
 class CBloomFilter;
 class CChainParams;
@@ -109,7 +109,7 @@ static const int MAX_CMPCTBLOCK_DEPTH = 5;
 static const int MAX_BLOCKTXN_DEPTH = 10;
 /** Size of the "block download window": how far ahead of our current height do we fetch?
  *  Larger windows tolerate larger download speed differences between peer, but increase the potential
- *  degree of disordering of blocks on disk (which make reapolloning and in the future perhaps pruning
+ *  degree of disordering of blocks on disk (which make reindexing and in the future perhaps pruning
  *  harder). We'll probably want to make this a per-peer adaptive value at some point. */
 static const unsigned int BLOCK_DOWNLOAD_WINDOW = 1024;
 /** Time to wait (in seconds) between writing blocks/block apollon to disk. */
@@ -144,10 +144,10 @@ static const int64_t DEFAULT_MAX_TIP_AGE = 24 * 60 * 60;
 /** Default for -permitbaremultisig */
 static const bool DEFAULT_PERMIT_BAREMULTISIG = true;
 static const bool DEFAULT_CHECKPOINTS_ENABLED = true;
-static const bool DEFAULT_TXAPOLLON = true;
-static const bool DEFAULT_TIMESTAMPAPOLLON = false;
-static const bool DEFAULT_ADDRESSAPOLLON = false;
-static const bool DEFAULT_SPENTAPOLLON = false;
+static const bool DEFAULT_TXINDEX = true;
+static const bool DEFAULT_TIMESTAMPINDEX = false;
+static const bool DEFAULT_ADDRESSINDEX = false;
+static const bool DEFAULT_SPENTINDEX = false;
 static const bool DEFAULT_TOR_SETUP = false;
 static const unsigned int DEFAULT_BANSCORE_THRESHOLD = 100;
 
@@ -168,7 +168,7 @@ static std::map<int, CBlock> mapBlockData;
 static const bool DEFAULT_PEERBLOOMFILTERS = true;
 /** Default for -blockspamfilter, use header spam filter */
 static const bool DEFAULT_BLOCK_SPAM_FILTER = true;
-/** Default for -blockspamfiltermaxsize, maximum size of the list of apollones in the block spam filter */
+/** Default for -blockspamfiltermaxsize, maximum size of the list of indexes in the block spam filter */
 static const unsigned int DEFAULT_BLOCK_SPAM_FILTER_MAX_SIZE = 100;
 /** Default for -blockspamfiltermaxavg, maximum average size of an apollon occurrence in the block spam filter */
 static const unsigned int DEFAULT_BLOCK_SPAM_FILTER_MAX_AVG = 10;
@@ -189,8 +189,8 @@ extern CScript COINBASE_FLAGS;
 extern CCriticalSection cs_main;
 extern CTxMemPool mempool;
 extern CTxMemPool stempool;
-typedef boost::unordered_map<uint256, CBlockApollon*, BlockHasher> BlockMap;
-extern BlockMap mapBlockApollon;
+typedef boost::unordered_map<uint256, CBlockIndex*, BlockHasher> BlockMap;
+extern BlockMap mapBlockIndex;
 extern uint64_t nLastBlockTx;
 extern uint64_t nLastBlockSize;
 extern uint64_t nLastBlockWeight;
@@ -198,12 +198,12 @@ extern const std::string strMessageMagic;
 extern CWaitableCriticalSection csBestBlock;
 extern CConditionVariable cvBlockChange;
 extern bool fImporting;
-extern bool fReapollon;
+extern bool fReindex;
 extern int nScriptCheckThreads;
-extern bool fTxApollon;
+extern bool fTxIndex;
 extern bool fIsBareMultisigStd;
 extern bool fRequireStandard;
-extern bool fCheckBlockApollon;
+extern bool fCheckBlockIndex;
 extern bool fCheckpointsEnabled;
 extern int64_t nLastCoinStakeSearchInterval;
 
@@ -223,7 +223,7 @@ extern int64_t nMaxTipAge;
 extern bool fEnableReplacement;
 
 /** Best header we've seen so far (used for getheaders queries' starting points). */
-extern CBlockApollon *papollonBestHeader;
+extern CBlockIndex *pindexBestHeader;
 
 /** Minimum disk space required - used in CheckDiskSpace() */
 static const uint64_t nMinDiskSpace = 52428800;
@@ -280,11 +280,11 @@ fs::path GetBlockPosFilename(const CDiskBlockPos &pos, const char *prefix);
 /** Import blocks from an external file */
 bool LoadExternalBlockFile(const CChainParams& chainparams, FILE* fileIn, CDiskBlockPos *dbp = NULL);
 /** Initialize a new block tree database + block data on disk */
-bool InitBlockApollon(const CChainParams& chainparams);
+bool InitBlockIndex(const CChainParams& chainparams);
 /** Load the block tree and coins database from disk */
-bool LoadBlockApollon();
+bool LoadBlockIndex();
 /** Unload database information */
-void UnloadBlockApollon();
+void UnloadBlockIndex();
 /** Process protocol messages received from a given node */
 bool ProcessMessages(CNode* pfrom);
 /**
@@ -314,7 +314,7 @@ CAmount GetBlockSubsidy(int nHeight, const Consensus::Params& consensusParams, i
 /**
  * Prune block and undo files (blk???.dat and undo???.dat) so that the disk space used is less than a user-defined target.
  * The user sets the target (in MB) on the command line or in config file.  This will be run on startup and whenever new
- * space is allocated in a block or undo file, staying below the target. Changing back to unpruned requires a reapollon
+ * space is allocated in a block or undo file, staying below the target. Changing back to unpruned requires a reindex
  * (which in this case means the blockchain must be re-downloaded.)
  *
  * Pruning functions are called from FlushStateToDisk when the global fCheckForPruning flag has been set.
@@ -334,7 +334,7 @@ void FindFilesToPrune(std::set<int>& setFilesToPrune, uint64_t nPruneAfterHeight
 void UnlinkPrunedFiles(std::set<int>& setFilesToPrune);
 
 /** Create a new block apollon entry for a given block hash */
-CBlockApollon * InsertBlockApollon(uint256 hash);
+CBlockIndex * InsertBlockIndex(uint256 hash);
 /** Abort with a message */
 bool AbortNode(const std::string &strMessage, const std::string &userMessage);
 /* Sends out an alert */
@@ -343,7 +343,7 @@ void AlertNotify(const std::string &strMessage);
 bool GetNodeStateStats(NodeId nodeid, CNodeStateStats &stats);
 /** Increase a node's misbehavior score. */
 void Misbehaving(NodeId nodeid, int howmuch);
-/** Flush all state, apollones and buffers to disk. */
+/** Flush all state, indexes and buffers to disk. */
 void FlushStateToDisk();
 /** Prune block files and flush state to disk. */
 void PruneAndFlush();
@@ -439,7 +439,7 @@ bool TestLockPointValidity(const LockPoints* lp);
  * Check if transaction is final per BIP 68 sequence numbers and can be included in a block.
  * Consensus critical. Takes as input a list of heights at which tx's inputs (in order) confirmed.
  */
-bool SequenceLocks(const CTransaction &tx, int flags, std::vector<int>* prevHeights, const CBlockApollon& block);
+bool SequenceLocks(const CTransaction &tx, int flags, std::vector<int>* prevHeights, const CBlockIndex& block);
 
 /**
  * Check if transaction will be BIP 68 final in the next block to be created.
@@ -503,10 +503,10 @@ public:
     ScriptError GetScriptError() const { return error; }
 };
 
-bool GetTimestampApollon(const unsigned int &high, const unsigned int &low, std::vector<uint256> &hashes);
-bool GetSpentApollon(CSpentApollonKey &key, CSpentApollonValue &value);
-bool GetAddressApollon(uint160 addressHash, AddressType type,
-                     std::vector<std::pair<CAddressApollonKey, CAmount> > &addressApollon,
+bool GetTimestampIndex(const unsigned int &high, const unsigned int &low, std::vector<uint256> &hashes);
+bool GetSpentIndex(CSpentIndexKey &key, CSpentIndexValue &value);
+bool GetAddressIndex(uint160 addressHash, AddressType type,
+                     std::vector<std::pair<CAddressIndexKey, CAmount> > &addressIndex,
                      int start = 0, int end = 0);
 bool GetAddressUnspent(uint160 addressHash, AddressType type,
                        std::vector<std::pair<CAddressUnspentKey, CAddressUnspentValue> > &unspentOutputs);
@@ -514,7 +514,7 @@ bool GetAddressUnspent(uint160 addressHash, AddressType type,
 /** Functions for disk access for blocks */
 bool WriteBlockToDisk(const CBlock& block, CDiskBlockPos& pos, const CMessageHeader::MessageStartChars& messageStart);
 bool ReadBlockFromDisk(CBlock& block, const CDiskBlockPos& pos, int nHeight, const Consensus::Params& consensusParams);
-bool ReadBlockFromDisk(CBlock& block, const CBlockApollon* papollon, const Consensus::Params& consensusParams);
+bool ReadBlockFromDisk(CBlock& block, const CBlockIndex* pindex, const Consensus::Params& consensusParams);
 
 /** Functions for validating blocks and updating the block tree */
 
@@ -529,20 +529,20 @@ bool IsBlockHashInChain(const uint256& hashBlock);
 /** Context-dependent validity checks.
  *  By "context", we mean only the previous block headers, but not the UTXO
  *  set; UTXO-related validity checks are done in ConnectBlock(). */
-bool ContextualCheckBlockHeader(const CBlockHeader& block, CValidationState& state, const Consensus::Params& consensusParams, CBlockApollon* papollonPrev, int64_t nAdjustedTime, bool isTestBlockValidity = false);
-bool ContextualCheckBlock(const CBlock& block, CValidationState& state, CBlockApollon *papollonPrev);
+bool ContextualCheckBlockHeader(const CBlockHeader& block, CValidationState& state, const Consensus::Params& consensusParams, CBlockIndex* pindexPrev, int64_t nAdjustedTime, bool isTestBlockValidity = false);
+bool ContextualCheckBlock(const CBlock& block, CValidationState& state, CBlockIndex *pindexPrev);
 
 /** Apply the effects of this block (with given apollon) on the UTXO set represented by coins.
  *  Validity checks that depend on the UTXO set are also done; ConnectBlock()
  *  can fail if those validity checks fail (among other reasons). */
-bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockApollon* papollon, CCoinsViewCache& coins,
+bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pindex, CCoinsViewCache& coins,
                   const CChainParams& chainparams, bool fJustCheck = false);
 
 /** Undo the effects of this block (with given apollon) on the UTXO set represented by coins.
  *  In case pfClean is provided, operation will try to be tolerant about errors, and *pfClean
  *  will be true if no problems were found. Otherwise, the return value will be false in case
  *  of problems. Note that in any case, coins may be modified. */
-bool DisconnectBlock(const CBlock& block, CValidationState& state, const CBlockApollon* papollon, CCoinsViewCache& coins, bool* pfClean = NULL);
+bool DisconnectBlock(const CBlock& block, CValidationState& state, const CBlockIndex* pindex, CCoinsViewCache& coins, bool* pfClean = NULL);
 
 /** Reprocess a number of blocks to try and get on the correct chain again **/
 bool DisconnectBlocks(int blocks);
@@ -555,22 +555,22 @@ int GetUTXOHeight(const COutPoint& outpoint);
 int GetInputAge(const CTxIn &txin);
 int GetInputAgeIX(const uint256 &nTXHash, const CTxIn &txin);
 int GetIXConfirmations(const uint256 &nTXHash);
-CAmount GetApollonnodePayment(const Consensus::Params &params, bool fMTP,int nHeight);
+CAmount GetIndexnodePayment(const Consensus::Params &params, bool fMTP,int nHeight);
 
 /** Check a block is completely valid from start to finish (only works on top of our current best block, with cs_main held) */
-bool TestBlockValidity(CValidationState& state, const CChainParams& chainparams, const CBlock& block, CBlockApollon* papollonPrev, bool fCheckPOW = true, bool fCheckMerkleRoot = true);
+bool TestBlockValidity(CValidationState& state, const CChainParams& chainparams, const CBlock& block, CBlockIndex* pindexPrev, bool fCheckPOW = true, bool fCheckMerkleRoot = true);
 
 /** Check whether witness commitments are required for block. */
-bool IsWitnessEnabled(const CBlockApollon* papollonPrev, const Consensus::Params& params);
+bool IsWitnessEnabled(const CBlockIndex* pindexPrev, const Consensus::Params& params);
 
 /** When there are blocks in the active chain with missing data, rewind the chainstate and remove them from the block apollon */
-bool RewindBlockApollon(const CChainParams& params);
+bool RewindBlockIndex(const CChainParams& params);
 
 /** Update uncommitted block structures (currently: only the witness nonce). This is safe for submitted blocks. */
-void UpdateUncommittedBlockStructures(CBlock& block, const CBlockApollon* papollonPrev, const Consensus::Params& consensusParams);
+void UpdateUncommittedBlockStructures(CBlock& block, const CBlockIndex* pindexPrev, const Consensus::Params& consensusParams);
 
 /** Produce the necessary coinbase commitment for a block (modifies the hash, don't call for mined blocks). */
-std::vector<unsigned char> GenerateCoinbaseCommitment(CBlock& block, const CBlockApollon* papollonPrev, const Consensus::Params& consensusParams);
+std::vector<unsigned char> GenerateCoinbaseCommitment(CBlock& block, const CBlockIndex* pindexPrev, const Consensus::Params& consensusParams);
 
 /** RAII wrapper for VerifyDB: Verify consistency of the block and coin databases */
 class CVerifyDB {
@@ -581,16 +581,16 @@ public:
 };
 
 /** Find the last common block between the parameter chain and a locator. */
-CBlockApollon* FindForkInGlobalApollon(const CChain& chain, const CBlockLocator& locator);
+CBlockIndex* FindForkInGlobalIndex(const CChain& chain, const CBlockLocator& locator);
 
 /** Mark a block as invalid. */
-bool InvalidateBlock(CValidationState& state, const CChainParams& chainparams, CBlockApollon *papollon);
+bool InvalidateBlock(CValidationState& state, const CChainParams& chainparams, CBlockIndex *pindex);
 
 /** Remove invalidity status from a block and its descendants. */
-bool ReconsiderBlock(CValidationState& state, CBlockApollon *papollon);
+bool ReconsiderBlock(CValidationState& state, CBlockIndex *pindex);
 
 /** Remove invalidity status from a block and its descendants. */
-bool ResetBlockFailureFlags(CBlockApollon *papollon);
+bool ResetBlockFailureFlags(CBlockIndex *pindex);
 
 /** The currently-connected chain of blocks (protected by cs_main). */
 extern CChain chainActive;
@@ -613,7 +613,7 @@ extern VersionBitsCache versionbitscache;
 /**
  * Determine what nVersion a new block should use.
  */
-int32_t ComputeBlockVersion(const CBlockApollon* papollonPrev, const Consensus::Params& params);
+int32_t ComputeBlockVersion(const CBlockIndex* pindexPrev, const Consensus::Params& params);
 
 /** Reject codes greater or equal to this can be returned by AcceptToMemPool
  * for transactions, to signal internal conditions. They cannot and should not

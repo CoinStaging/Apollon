@@ -154,8 +154,8 @@
         <translation>&amp;URI azonosító megnyitása...</translation>
     </message>
     <message>
-        <source>Reapolloning blocks on disk...</source>
-        <translation>Lemezen lévő blokkok újraapollonelése...</translation>
+        <source>Reindexing blocks on disk...</source>
+        <translation>Lemezen lévő blokkok újraindexelése...</translation>
     </message>
     <message>
         <source>Send coins to a Apollon address</source>
@@ -1571,11 +1571,11 @@
     </message>
     <message>
         <source>Insufficient funds</source>
-        <translation>Nincs elég apollonod.</translation>
+        <translation>Nincs elég indexod.</translation>
     </message>
     <message>
         <source>Loading block apollon...</source>
-        <translation>Blokkapollon betöltése...</translation>
+        <translation>Blokkindex betöltése...</translation>
     </message>
     <message>
         <source>Add a node to connect to and attempt to keep the connection open</source>

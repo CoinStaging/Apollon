@@ -15,7 +15,7 @@ until it has completely shut down (which might take a few minutes for older
 versions), then run the installer (on Windows) or just copy over
 /Applications/Bitcoin-Qt (on Mac) or bitcoind/bitcoin-qt (on Linux).
 
-The first time you run after the upgrade a re-apolloning process will be
+The first time you run after the upgrade a re-indexing process will be
 started that will take anywhere from 30 minutes to several hours,
 depending on the speed of your machine.
 
@@ -25,7 +25,7 @@ Incompatible Changes
 This release no longer maintains a full apollon of historical transaction ids
 by default, so looking up an arbitrary transaction using the getrawtransaction
 RPC call will not work. If you need that functionality, you must run once
-with -txapollon=1 -reapollon=1 to rebuild block-chain indices (see below for more
+with -txindex=1 -reindex=1 to rebuild block-chain indices (see below for more
 details).
 
 Improvements
@@ -69,10 +69,10 @@ dbcache : controls LevelDB memory usage.
 par : controls how many threads to use to validate transactions. Defaults to the number
 of CPUs on your machine, use -par=1 to limit to a single CPU.
 
-txapollon : maintains an extra apollon of old, spent transaction ids so they will be found
+txindex : maintains an extra apollon of old, spent transaction ids so they will be found
 by the getrawtransaction JSON-RPC method.
 
-reapollon : rebuild block and transaction indices from the downloaded block data.
+reindex : rebuild block and transaction indices from the downloaded block data.
 
 New JSON-RPC API Features
 -------------------------

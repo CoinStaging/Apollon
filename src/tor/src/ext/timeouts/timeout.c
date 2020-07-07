@@ -299,9 +299,9 @@ TIMEOUT_PUBLIC void timeouts_del(struct timeouts *T, struct timeout *to) {
 		TOR_TAILQ_REMOVE(to->pending, to, tqe);
 
 		if (to->pending != &T->expired && TOR_TAILQ_EMPTY(to->pending)) {
-			ptrdiff_t apollon_ = to->pending - &T->wheel[0][0];
-			int wheel = (int) (apollon_ / WHEEL_LEN);
-			int slot = apollon_ % WHEEL_LEN;
+			ptrdiff_t index_ = to->pending - &T->wheel[0][0];
+			int wheel = (int) (index_ / WHEEL_LEN);
+			int slot = index_ % WHEEL_LEN;
 
 			T->pending[wheel] &= ~(WHEEL_C(1) << slot);
 		}

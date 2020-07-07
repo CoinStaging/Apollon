@@ -16,7 +16,7 @@ class CInstantSend;
 extern CInstantSend instantsend;
 
 /*
-    At 15 signatures, 1/2 of the apollonnode network can be owned by
+    At 15 signatures, 1/2 of the indexnode network can be owned by
     one party without comprimising the security of InstantSend
     (1000/2150.0)**10 = 0.00047382219560689856
     (1000/2900.0)**10 = 2.3769498616783657e-05
@@ -39,7 +39,7 @@ private:
     static const int ORPHAN_VOTE_SECONDS            = 60;
 
     // Keep track of current block apollon
-    const CBlockApollon *pCurrentBlockApollon;
+    const CBlockIndex *pCurrentBlockIndex;
 
     // maps for AlreadyHave
     std::map<uint256, CTxLockRequest> mapLockRequestAccepted; // tx hash - tx
@@ -52,8 +52,8 @@ private:
     std::map<COutPoint, std::set<uint256> > mapVotedOutpoints; // utxo - tx hash set
     std::map<COutPoint, uint256> mapLockedOutpoints; // utxo - tx hash
 
-    //track apollonnodes who voted with no txreq (for DOS protection)
-    std::map<COutPoint, int64_t> mapApollonnodeOrphanVotes; // mn outpoint - time
+    //track indexnodes who voted with no txreq (for DOS protection)
+    std::map<COutPoint, int64_t> mapIndexnodeOrphanVotes; // mn outpoint - time
 
     bool CreateTxLockCandidate(const CTxLockRequest& txLockRequest);
     void Vote(CTxLockCandidate& txLockCandidate);
@@ -63,7 +63,7 @@ private:
     void ProcessOrphanTxLockVotes();
     bool IsEnoughOrphanVotesForTx(const CTxLockRequest& txLockRequest);
     bool IsEnoughOrphanVotesForTxAndOutPoint(const uint256& txHash, const COutPoint& outpoint);
-    int64_t GetAverageApollonnodeOrphanVoteTime();
+    int64_t GetAverageIndexnodeOrphanVoteTime();
 
     void TryToFinalizeLockCandidate(const CTxLockCandidate& txLockCandidate);
     void LockTransactionInputs(const CTxLockCandidate& txLockCandidate);
@@ -103,7 +103,7 @@ public:
 
     void Relay(const uint256& txHash);
 
-    void UpdatedBlockTip(const CBlockApollon *papollon);
+    void UpdatedBlockTip(const CBlockIndex *pindex);
     void SyncTransaction(const CTransaction& tx, const CBlock* pblock);
 };
 
@@ -138,8 +138,8 @@ class CTxLockVote
 private:
     uint256 txHash;
     COutPoint outpoint;
-    COutPoint outpointApollonnode;
-    std::vector<unsigned char> vchApollonnodeSignature;
+    COutPoint outpointIndexnode;
+    std::vector<unsigned char> vchIndexnodeSignature;
     // local memory only
     int nConfirmedHeight; // when corresponding tx is 0-confirmed or conflicted, nConfirmedHeight is -1
     int64_t nTimeCreated;
@@ -148,17 +148,17 @@ public:
     CTxLockVote() :
         txHash(),
         outpoint(),
-        outpointApollonnode(),
-        vchApollonnodeSignature(),
+        outpointIndexnode(),
+        vchIndexnodeSignature(),
         nConfirmedHeight(-1),
         nTimeCreated(GetTime())
         {}
 
-    CTxLockVote(const uint256& txHashIn, const COutPoint& outpointIn, const COutPoint& outpointApollonnodeIn) :
+    CTxLockVote(const uint256& txHashIn, const COutPoint& outpointIn, const COutPoint& outpointIndexnodeIn) :
         txHash(txHashIn),
         outpoint(outpointIn),
-        outpointApollonnode(outpointApollonnodeIn),
-        vchApollonnodeSignature(),
+        outpointIndexnode(outpointIndexnodeIn),
+        vchIndexnodeSignature(),
         nConfirmedHeight(-1),
         nTimeCreated(GetTime())
         {}
@@ -169,15 +169,15 @@ public:
     inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
         READWRITE(txHash);
         READWRITE(outpoint);
-        READWRITE(outpointApollonnode);
-        READWRITE(vchApollonnodeSignature);
+        READWRITE(outpointIndexnode);
+        READWRITE(vchIndexnodeSignature);
     }
 
     uint256 GetHash() const;
 
     uint256 GetTxHash() const { return txHash; }
     COutPoint GetOutpoint() const { return outpoint; }
-    COutPoint GetApollonnodeOutpoint() const { return outpointApollonnode; }
+    COutPoint GetIndexnodeOutpoint() const { return outpointIndexnode; }
     int64_t GetTimeCreated() const { return nTimeCreated; }
 
     bool IsValid(CNode* pnode) const;
@@ -194,7 +194,7 @@ class COutPointLock
 {
 private:
     COutPoint outpoint; // utxo
-    std::map<COutPoint, CTxLockVote> mapApollonnodeVotes; // apollonnode outpoint - vote
+    std::map<COutPoint, CTxLockVote> mapIndexnodeVotes; // indexnode outpoint - vote
 
 public:
     static const int SIGNATURES_REQUIRED        = 6;
@@ -202,15 +202,15 @@ public:
 
     COutPointLock(const COutPoint& outpointIn) :
         outpoint(outpointIn),
-        mapApollonnodeVotes()
+        mapIndexnodeVotes()
         {}
 
     COutPoint GetOutpoint() const { return outpoint; }
 
     bool AddVote(const CTxLockVote& vote);
     std::vector<CTxLockVote> GetVotes() const;
-    bool HasApollonnodeVoted(const COutPoint& outpointApollonnodeIn) const;
-    int CountVotes() const { return mapApollonnodeVotes.size(); }
+    bool HasIndexnodeVoted(const COutPoint& outpointIndexnodeIn) const;
+    int CountVotes() const { return mapIndexnodeVotes.size(); }
     bool IsReady() const { return CountVotes() >= SIGNATURES_REQUIRED; }
 
     void Relay() const;
@@ -237,7 +237,7 @@ public:
     bool AddVote(const CTxLockVote& vote);
     bool IsAllOutPointsReady() const;
 
-    bool HasApollonnodeVoted(const COutPoint& outpointIn, const COutPoint& outpointApollonnodeIn);
+    bool HasIndexnodeVoted(const COutPoint& outpointIn, const COutPoint& outpointIndexnodeIn);
     int CountVotes() const;
 
     void SetConfirmedHeight(int nConfirmedHeightIn) { nConfirmedHeight = nConfirmedHeightIn; }

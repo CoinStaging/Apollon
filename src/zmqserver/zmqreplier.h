@@ -8,7 +8,7 @@
 #include "zmqabstract.h"
 #include <boost/thread/thread.hpp>
 
-class CBlockApollon;
+class CBlockIndex;
 
 class CZMQAbstractReplier : public CZMQAbstract
 {  

@@ -135,7 +135,7 @@ public:
     QString getTxID() const;
 
     /** Return the output apollon of the subtransaction  */
-    int getOutputApollon() const;
+    int getOutputIndex() const;
 
     /** Update status from core wallet tx.
      */

@@ -736,7 +736,7 @@ compute_weighted_bandwidths(const smartlist_t *sl,
       final_weight = weight*this_bw;
     }
 
-    bandwidths[node_sl_xap] = final_weight;
+    bandwidths[node_sl_idx] = final_weight;
     total_bandwidth += final_weight;
   } SMARTLIST_FOREACH_END(node);
 
@@ -787,7 +787,7 @@ frac_nodes_with_descriptors(const smartlist_t *sl,
   present = 0.0;
   SMARTLIST_FOREACH_BEGIN(sl, const node_t *, node) {
     if (node_has_preferred_descriptor(node, for_direct_conn))
-      present += bandwidths[node_sl_xap];
+      present += bandwidths[node_sl_idx];
   } SMARTLIST_FOREACH_END(node);
 
   tor_free(bandwidths);

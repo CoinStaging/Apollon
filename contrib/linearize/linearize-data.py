@@ -70,19 +70,19 @@ def get_blk_dt(blk_hdr):
 	return (dt_ym, nTime)
 
 def get_block_hashes(settings):
-	blkapollon = []
+	blkindex = []
 	f = open(settings['hashlist'], "r")
 	for line in f:
 		line = line.rstrip()
-		blkapollon.append(line)
+		blkindex.append(line)
 
-	print("Read " + str(len(blkapollon)) + " hashes")
+	print("Read " + str(len(blkindex)) + " hashes")
 
-	return blkapollon
+	return blkindex
 
-def mkblockmap(blkapollon):
+def mkblockmap(blkindex):
 	blkmap = {}
-	for height,hash in enumerate(blkapollon):
+	for height,hash in enumerate(blkindex):
 		blkmap[hash] = height
 	return blkmap
 
@@ -90,9 +90,9 @@ def mkblockmap(blkapollon):
 BlockExtent = namedtuple('BlockExtent', ['fn', 'offset', 'inhdr', 'blkhdr', 'size'])
 
 class BlockDataCopier:
-	def __init__(self, settings, blkapollon, blkmap):
+	def __init__(self, settings, blkindex, blkmap):
 		self.settings = settings
-		self.blkapollon = blkapollon
+		self.blkindex = blkindex
 		self.blkmap = blkmap
 
 		self.inFn = 0
@@ -164,7 +164,7 @@ class BlockDataCopier:
 
 		if (self.blkCountOut % 1000) == 0:
 			print('%i blocks scanned, %i blocks written (of %i, %.1f%% complete)' % 
-					(self.blkCountIn, self.blkCountOut, len(self.blkapollon), 100.0 * self.blkCountOut / len(self.blkapollon)))
+					(self.blkCountIn, self.blkCountOut, len(self.blkindex), 100.0 * self.blkCountOut / len(self.blkindex)))
 
 	def inFileName(self, fn):
 		return os.path.join(self.settings['input'], "blk%05d.dat" % fn)
@@ -188,7 +188,7 @@ class BlockDataCopier:
 		self.writeBlock(extent.inhdr, extent.blkhdr, rawblock)
 
 	def run(self):
-		while self.blkCountOut < len(self.blkapollon):
+		while self.blkCountOut < len(self.blkindex):
 			if not self.inF:
 				fname = self.inFileName(self.inFn)
 				print("Input file " + fname)
@@ -292,12 +292,12 @@ if __name__ == '__main__':
 		print("Missing output file / directory")
 		sys.exit(1)
 
-	blkapollon = get_block_hashes(settings)
-	blkmap = mkblockmap(blkapollon)
+	blkindex = get_block_hashes(settings)
+	blkmap = mkblockmap(blkindex)
 
 	if not settings['genesis'] in blkmap:
 		print("Genesis block not found in hashlist")
 	else:
-		BlockDataCopier(settings, blkapollon, blkmap).run()
+		BlockDataCopier(settings, blkindex, blkmap).run()
 
 

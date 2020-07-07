@@ -64,9 +64,9 @@ void CBloomFilter::insert(const vector<unsigned char>& vKey)
         return;
     for (unsigned int i = 0; i < nHashFuncs; i++)
     {
-        unsigned int nApollon = Hash(i, vKey);
-        // Sets bit nApollon of vData
-        vData[nApollon >> 3] |= (1 << (7 & nApollon));
+        unsigned int nIndex = Hash(i, vKey);
+        // Sets bit nIndex of vData
+        vData[nIndex >> 3] |= (1 << (7 & nIndex));
     }
     isEmpty = false;
 }
@@ -93,9 +93,9 @@ bool CBloomFilter::contains(const vector<unsigned char>& vKey) const
         return false;
     for (unsigned int i = 0; i < nHashFuncs; i++)
     {
-        unsigned int nApollon = Hash(i, vKey);
-        // Checks bit nApollon of vData
-        if (!(vData[nApollon >> 3] & (1 << (7 & nApollon))))
+        unsigned int nIndex = Hash(i, vKey);
+        // Checks bit nIndex of vData
+        if (!(vData[nIndex >> 3] & (1 << (7 & nIndex))))
             return false;
     }
     return true;

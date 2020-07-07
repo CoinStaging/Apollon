@@ -105,12 +105,12 @@ struct ed25519_keypair_t;
 #define HS_SUBCREDENTIAL_PREFIX_LEN (sizeof(HS_SUBCREDENTIAL_PREFIX) - 1)
 
 /* Node hidden service stored at apollon prefix value. */
-#define HS_APOLLON_PREFIX "store-at-xap"
-#define HS_APOLLON_PREFIX_LEN (sizeof(HS_APOLLON_PREFIX) - 1)
+#define HS_INDEX_PREFIX "store-at-xap"
+#define HS_INDEX_PREFIX_LEN (sizeof(HS_INDEX_PREFIX) - 1)
 
 /* Node hidden service directory apollon prefix value. */
-#define HSDIR_APOLLON_PREFIX "node-xap"
-#define HSDIR_APOLLON_PREFIX_LEN (sizeof(HSDIR_APOLLON_PREFIX) - 1)
+#define HSDIR_INDEX_PREFIX "node-xap"
+#define HSDIR_INDEX_PREFIX_LEN (sizeof(HSDIR_INDEX_PREFIX) - 1)
 
 /* Prefix of the shared random value disaster mode. */
 #define HS_SRV_DISASTER_PREFIX "shared-random-disaster"
@@ -227,12 +227,12 @@ uint8_t *hs_get_current_srv(uint64_t time_period_num,
 uint8_t *hs_get_previous_srv(uint64_t time_period_num,
                              const networkstatus_t *ns);
 
-void hs_build_hsdir_apollon(const struct ed25519_public_key_t *identity_pk,
+void hs_build_hsdir_index(const struct ed25519_public_key_t *identity_pk,
                           const uint8_t *srv, uint64_t period_num,
-                          uint8_t *hsdir_apollon_out);
-void hs_build_hs_apollon(uint64_t replica,
+                          uint8_t *hsdir_index_out);
+void hs_build_hs_index(uint64_t replica,
                        const struct ed25519_public_key_t *blinded_pk,
-                       uint64_t period_num, uint8_t *hs_apollon_out);
+                       uint64_t period_num, uint8_t *hs_index_out);
 
 int32_t hs_get_hsdir_n_replicas(void);
 int32_t hs_get_hsdir_spread_fetch(void);
@@ -240,7 +240,7 @@ int32_t hs_get_hsdir_spread_store(void);
 
 void hs_get_responsible_hsdirs(const struct ed25519_public_key_t *blinded_pk,
                               uint64_t time_period_num,
-                              int use_second_hsdir_apollon,
+                              int use_second_hsdir_index,
                               int for_fetching, smartlist_t *responsible_dirs);
 routerstatus_t *hs_pick_hsdir(smartlist_t *responsible_dirs,
                               const char *req_key_str);
