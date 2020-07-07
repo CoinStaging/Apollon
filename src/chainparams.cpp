@@ -57,7 +57,7 @@ static CBlock CreateGenesisBlock(const char *pszTimestamp, const CScript &genesi
  */
 static CBlock CreateGenesisBlock(uint32_t nTime, uint32_t nNonce, uint32_t nBits, int32_t nVersion, const CAmount &genesisReward,
         std::vector<unsigned char> extraNonce) {
-    const char *pszTimestamp = "Bitcoin Recovers from Below $7.2K After Schiff Says ‘Game Is Over";
+    const char *pszTimestamp = "Bitcoin Up 27% in First Half of 2020, Beating Gold, Silver and Platinum";
     const CScript genesisOutputScript = CScript();
     return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBits, nVersion, genesisReward,
                               extraNonce);
@@ -139,7 +139,7 @@ public:
         nFulfilledRequestExpireTime = 60*60; // fulfilled requests expire in 1 hour
         strSporkPubKey = "024faf77b973d9c858991c6e1d6b5865f6221831467691718108ebbb907e7d5ccd";
         //Stake stuff
-        consensus.nFirstPOSBlock = 52;
+        consensus.nFirstPOSBlock = 100;
         consensus.nStakeTimestampMask = 0xf; // 15
         consensus.posLimit = uint256S("00ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
 
@@ -152,10 +152,10 @@ public:
        `  * a large 32-bit integer with any alignment.
          */
         //btzc: update apollon pchMessage
-        pchMessageStart[0] = 0xe5;
-        pchMessageStart[1] = 0xd3;
-        pchMessageStart[2] = 0xf7;
-        pchMessageStart[3] = 0x4d;
+        pchMessageStart[0] = 0x90;
+        pchMessageStart[1] = 0xd1;
+        pchMessageStart[2] = 0xeb;
+        pchMessageStart[3] = 0xfd;
         nDefaultPort = 7082;
         nPruneAfterHeight = 100000;
 
@@ -170,19 +170,13 @@ public:
         assert(genesis.hashMerkleRoot     == uint256S("b6f05125e30ba39aac82cd89a07afe985ecf1fbbceeb2abde4e6e78da22a9b22"));
         //Initial seeders for use
         vSeeds.push_back(CDNSSeedData("mineit.io", "mineit.io", false));
-        vSeeds.push_back(CDNSSeedData("202.182.107.84", "202.182.107.84", false));
-        vSeeds.push_back(CDNSSeedData("idxseeder.mineit.io", "idxseeder.ineit.io", false));
-        vSeeds.push_back(CDNSSeedData("45.76.196.198", "45.76.196.198", false));
-        vSeeds.push_back(CDNSSeedData("198.13.41.221", "198.13.41.221", false));
-        vSeeds.push_back(CDNSSeedData("202.182.101.157", "202.182.101.157", false));
-        vSeeds.push_back(CDNSSeedData("207.148.96.237", "207.148.96.237", false));
 
         // Note that of those with the service bits flag, most only support a subset of possible options
-        base58Prefixes[PUBKEY_ADDRESS] = std::vector < unsigned char > (1, 102);//Apollon address starts with 'i'
-        base58Prefixes[SCRIPT_ADDRESS] = std::vector < unsigned char > (1, 7);
-        base58Prefixes[SECRET_KEY] = std::vector < unsigned char > (1, 210);
-        base58Prefixes[EXT_PUBLIC_KEY] = boost::assign::list_of(0x04)(0x88)(0xB2)(0x1E).convert_to_container < std::vector < unsigned char > > ();
-        base58Prefixes[EXT_SECRET_KEY] = boost::assign::list_of(0x04)(0x88)(0xAD)(0xE4).convert_to_container < std::vector < unsigned char > > ();
+        base58Prefixes[PUBKEY_ADDRESS] = std::vector < unsigned char > (1, 23);
+        base58Prefixes[SCRIPT_ADDRESS] = std::vector < unsigned char > (1, 85);
+        base58Prefixes[SECRET_KEY] = std::vector < unsigned char > (1, 153);
+        base58Prefixes[EXT_PUBLIC_KEY] = boost::assign::list_of(0x04)(0x88)(0xB2)(0x1E).convert_to_container<std::vector<unsigned char> >();
+        base58Prefixes[EXT_SECRET_KEY] = boost::assign::list_of(0x04)(0x88)(0xAD)(0xE4).convert_to_container<std::vector<unsigned char> >();
 
         vFixedSeeds = std::vector<SeedSpec6>(pnSeed6_main, pnSeed6_main + ARRAYLEN(pnSeed6_main));
 
@@ -195,14 +189,7 @@ public:
         nMaxPoWBlocks = 1000;
         checkpointData = (CCheckpointData) {
                 boost::assign::map_list_of
-                    (0, genesis.GetHash())
-                    (86810,uint256S("0x2eac965dcd0e10574dc05f44ee14756e5224bf521358e5455f33da1ad8a9536c"))
-                    (86818,uint256S("0x00000000068be20010a30c14f4002161b02d4694c109cd4c38958ccb3bb2a8cd"))
-                    (86980,uint256S("0x047f44feee06d93a16e5184fc8f8b85e9bdac2bc1676fff6c1d54d615b512b20"))
-                    (88000,uint256S("0x6575eee6bd423a6a0aa74fec962d2a16a4fd49c46c3bbd2d42310e1a5098a457"))
-                    (89000,uint256S("0x000000000d3e6b5cc7ce270f44fb6559784f36d6263cfeabe5ee312b1f16c315"))
-                    (90000,uint256S("0x0000000005f9711eb7bc1a8c7729426efeae8c92873a56093c3f4a681ea757e6"))
-                    (90041,uint256S("0x0000000000c4d71827f765ce757239b86bff22422ff64dd5aac8cd88e5419a80")),
+                    (0, genesis.GetHash()),
 
                 1591286991, // * UNIX timestamp of last checkpoint block
                 148510,    // * total number of transactions between genesis and last checkpoint
