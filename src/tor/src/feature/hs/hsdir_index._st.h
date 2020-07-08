@@ -4,8 +4,8 @@
  * Copyright (c) 2007-2019, The Tor Project, Inc. */
 /* See LICENSE for licensing information */
 
-#ifndef HSDIR_APOLLON_ST_H
-#define HSDIR_APOLLON_ST_H
+#ifndef HSDIR_INDEX_ST_H
+#define HSDIR_INDEX_ST_H
 
 /* Hidden service directory apollon used in a node_t which is set once we set
  * the consensus. */
