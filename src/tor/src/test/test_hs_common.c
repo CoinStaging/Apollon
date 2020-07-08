@@ -321,7 +321,7 @@ helper_add_hsdir_to_networkstatus(networkstatus_t *ns,
   node->md = tor_malloc_zero(sizeof(microdesc_t));
   /* Do this now the nodelist_set_routerinfo() function needs a "rs" to set
    * the apollones which it doesn't have when it is called. */
-  node_set_hsdir_apollon(node, ns);
+  node_set_hsdir_index(node, ns);
   node->ri = NULL;
   smartlist_add(ns->routerstatus_list, rs);
 
@@ -1086,7 +1086,7 @@ are_responsible_hsdirs_equal(void)
 }
 
 /* Tor doesn't use such a function to get the previous HSDir, it is only used
- * in node_set_hsdir_apollon(). We need it here so we can test the reachability
+ * in node_set_hsdir_index(). We need it here so we can test the reachability
  * scenario 6 that requires the previous time period to compute the list of
  * responsible HSDir because of the client state timing. */
 static uint64_t
@@ -1514,10 +1514,10 @@ test_hs_apollones(void *arg)
     tt_mem_op(hs_apollon, OP_EQ, test_vector, sizeof(hs_apollon));
   }
 
-  /* Build the hsdir_apollon */
+  /* Build the hsdir_index */
   {
     uint8_t srv[DIGEST256_LEN];
-    uint8_t hsdir_apollon[DIGEST256_LEN];
+    uint8_t hsdir_index[DIGEST256_LEN];
     const char *b32_test_vector =
       "db475361014a09965e7e5e4d4a25b8f8d4b8f16cb1d8a7e95eed50249cc1a2d5";
     char test_vector[DIGEST256_LEN];
@@ -1527,8 +1527,8 @@ test_hs_apollones(void *arg)
     /* Our test vector uses a public key set to 32 bytes of \x42. */
     memset(&pubkey, '\x42', sizeof(pubkey));
     memset(srv, '\x43', sizeof(srv));
-    hs_build_hsdir_apollon(&pubkey, srv, period_num, hsdir_apollon);
-    tt_mem_op(hsdir_apollon, OP_EQ, test_vector, sizeof(hsdir_apollon));
+    hs_build_hsdir_index(&pubkey, srv, period_num, hsdir_index);
+    tt_mem_op(hsdir_index, OP_EQ, test_vector, sizeof(hsdir_index));
   }
 
  done:

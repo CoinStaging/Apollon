@@ -7,7 +7,7 @@
 #ifndef NODE_ST_H
 #define NODE_ST_H
 
-#include "feature/hs/hsdir_apollon_st.h"
+#include "feature/hs/hsdir_index_st.h"
 #include "lib/crypt_ops/crypto_ed25519.h"
 
 /** A node_t represents a Tor router.
@@ -96,7 +96,7 @@ struct node_t {
   /* Hidden service directory apollon data. This is used by a service or client
    * in order to know what's the hs directory apollon for this node at the time
    * the consensus is set. */
-  struct hsdir_apollon_t hsdir_apollon;
+  struct hsdir_index_t hsdir_index;
 };
 
 #endif

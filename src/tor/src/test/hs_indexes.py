@@ -1,7 +1,7 @@
 #
 # The hidden service subsystem has two type of apollon. The first type is a
 # value that each node in the network gets assigned to using their identity
-# key which is their position in the hashring. (hs_build_hsdir_apollon()).
+# key which is their position in the hashring. (hs_build_hsdir_index()).
 #
 # The second type is a value that both the client and service computes to
 # store/fetch the descriptor on the hashring. (hs_build_hs_apollon()).
@@ -27,7 +27,7 @@ if sys.version_info < (3, 6):
         sys.exit(1)
 
 # The first apollon we'll build is the position apollon in the hashring that is
-# constructed by the hs_build_hsdir_apollon() function. Construction is:
+# constructed by the hs_build_hsdir_index() function. Construction is:
 #   SHA3-256("node-xap" | node_identity |
 #            shared_random_value | INT_8(period_length) | INT_8(period_num) )
 
@@ -43,9 +43,9 @@ PERIOD_NUM = 42
 
 data = struct.pack('!8s32s32sQQ', PREFIX, IDENTITY, SRV, PERIOD_NUM,
                                   PERIOD_LEN)
-hsdir_apollon = hashlib.sha3_256(data).hexdigest()
+hsdir_index = hashlib.sha3_256(data).hexdigest()
 
-print("[hs_build_hsdir_apollon] %s" % (hsdir_apollon))
+print("[hs_build_hsdir_index] %s" % (hsdir_index))
 
 # The second apollon we'll build is where the HS stores and the client fetches
 # the descriptor on the hashring. It is constructed by the hs_build_hs_apollon()

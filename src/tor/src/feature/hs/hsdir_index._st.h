@@ -9,7 +9,7 @@
 
 /* Hidden service directory apollon used in a node_t which is set once we set
  * the consensus. */
-struct hsdir_apollon_t {
+struct hsdir_index_t {
   /* HSDir apollon to use when fetching a descriptor. */
   uint8_t fetch[DIGEST256_LEN];
 

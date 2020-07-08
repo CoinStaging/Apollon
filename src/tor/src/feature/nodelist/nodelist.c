@@ -351,7 +351,7 @@ node_add_to_ed25519_map(node_t *node)
  * for the node, both current and next if possible. This can only fails if the
  * node_t ed25519 identity key can't be found which would be a bug. */
 STATIC void
-node_set_hsdir_apollon(node_t *node, const networkstatus_t *ns)
+node_set_hsdir_index(node_t *node, const networkstatus_t *ns)
 {
   time_t now = approx_time();
   const ed25519_public_key_t *node_identity_pk;
@@ -403,27 +403,27 @@ node_set_hsdir_apollon(node_t *node, const networkstatus_t *ns)
   store_second_srv = hs_get_current_srv(store_second_tp, ns);
 
   /* Build the fetch apollon. */
-  hs_build_hsdir_apollon(node_identity_pk, fetch_srv, fetch_tp,
-                       node->hsdir_apollon.fetch);
+  hs_build_hsdir_index(node_identity_pk, fetch_srv, fetch_tp,
+                       node->hsdir_index.fetch);
 
   /* If we are in the time segment between SRV#N and TP#N, the fetch apollon is
      the same as the first store apollon */
   if (!hs_in_period_between_tp_and_srv(ns, now)) {
-    memcpy(node->hsdir_apollon.store_first, node->hsdir_apollon.fetch,
-           sizeof(node->hsdir_apollon.store_first));
+    memcpy(node->hsdir_index.store_first, node->hsdir_index.fetch,
+           sizeof(node->hsdir_index.store_first));
   } else {
-    hs_build_hsdir_apollon(node_identity_pk, store_first_srv, store_first_tp,
-                         node->hsdir_apollon.store_first);
+    hs_build_hsdir_index(node_identity_pk, store_first_srv, store_first_tp,
+                         node->hsdir_index.store_first);
   }
 
   /* If we are in the time segment between TP#N and SRV#N+1, the fetch apollon is
      the same as the second store apollon */
   if (hs_in_period_between_tp_and_srv(ns, now)) {
-    memcpy(node->hsdir_apollon.store_second, node->hsdir_apollon.fetch,
-           sizeof(node->hsdir_apollon.store_second));
+    memcpy(node->hsdir_index.store_second, node->hsdir_index.fetch,
+           sizeof(node->hsdir_index.store_second));
   } else {
-    hs_build_hsdir_apollon(node_identity_pk, store_second_srv, store_second_tp,
-                         node->hsdir_apollon.store_second);
+    hs_build_hsdir_index(node_identity_pk, store_second_srv, store_second_tp,
+                         node->hsdir_index.store_second);
   }
 
  done:
@@ -531,7 +531,7 @@ nodelist_set_routerinfo(routerinfo_t *ri, routerinfo_t **ri_old_out)
    * only be found either in the ri or md. This is why this is called here.
    * Only nodes supporting HSDir=2 protocol version needs this apollon. */
   if (node->rs && node->rs->pv.supports_v3_hsdir) {
-    node_set_hsdir_apollon(node,
+    node_set_hsdir_index(node,
                          networkstatus_get_latest_consensus());
   }
 
@@ -575,7 +575,7 @@ nodelist_add_microdesc(microdesc_t *md)
    * only be found either in the ri or md. This is why this is called here.
    * Only nodes supporting HSDir=2 protocol version needs this apollon. */
   if (rs->pv.supports_v3_hsdir) {
-    node_set_hsdir_apollon(node, ns);
+    node_set_hsdir_index(node, ns);
   }
   node_add_to_ed25519_map(node);
   node_add_to_address_set(node);
@@ -636,7 +636,7 @@ nodelist_set_consensus(networkstatus_t *ns)
     }
 
     if (rs->pv.supports_v3_hsdir) {
-      node_set_hsdir_apollon(node, ns);
+      node_set_hsdir_index(node, ns);
     }
     node_set_country(node);
 
