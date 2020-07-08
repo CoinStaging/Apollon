@@ -7,18 +7,17 @@
 #ifndef HSDIR_INDEX_ST_H
 #define HSDIR_INDEX_ST_H
 
-/* Hidden service directory apollon used in a node_t which is set once we set
+/* Hidden service directory index used in a node_t which is set once we set
  * the consensus. */
 struct hsdir_index_t {
-  /* HSDir apollon to use when fetching a descriptor. */
-  uint8_t fetch[DIGEST256_LEN];
+    /* HSDir index to use when fetching a descriptor. */
+    uint8_t fetch[DIGEST256_LEN];
 
-  /* HSDir apollon used by services to store their first and second
+    /* HSDir index used by services to store their first and second
    * descriptor. The first descriptor is chronologically older than the second
    * one and uses older TP and SRV values. */
-  uint8_t store_first[DIGEST256_LEN];
-  uint8_t store_second[DIGEST256_LEN];
+    uint8_t store_first[DIGEST256_LEN];
+    uint8_t store_second[DIGEST256_LEN];
 };
 
-#endif
-
+#endif /* !defined(HSDIR_INDEX_ST_H) */
