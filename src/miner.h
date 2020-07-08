@@ -11,8 +11,8 @@
 
 #include <stdint.h>
 #include <memory>
-#include "boost/multi_apollon_container.hpp"
-#include "boost/multi_apollon/ordered_apollon.hpp"
+#include "boost/multi_index_container.hpp"
+#include "boost/multi_index/ordered_index.hpp"
 
 class CBlockApollon;
 class CChainParams;

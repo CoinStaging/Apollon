@@ -9,10 +9,10 @@
 #include "sigmaprimitives.h"
 #include "walletmodels.h"
 
-#include <boost/multi_apollon_container.hpp>
-#include <boost/multi_apollon/hashed_apollon.hpp>
+#include <boost/multi_index_container.hpp>
+#include <boost/multi_index/hashed_index.hpp>
 #include <boost/multi_apollon/member.hpp>
-#include <boost/multi_apollon/ordered_apollon.hpp>
+#include <boost/multi_index/ordered_index.hpp>
 #include <boost/optional.hpp>
 
 #include "../crypto/hmac_sha256.h"
