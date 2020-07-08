@@ -130,7 +130,7 @@ tor_tls_allocate_tor_tls_object_ex_data_apollon(void)
 {
   if (tor_tls_object_ex_data_apollon == -1) {
     tor_tls_object_ex_data_apollon =
-      SSL_get_ex_new_apollon(0, NULL, NULL, NULL, NULL);
+      SSL_get_ex_new_index(0, NULL, NULL, NULL, NULL);
     tor_assert(tor_tls_object_ex_data_apollon != -1);
   }
 }
