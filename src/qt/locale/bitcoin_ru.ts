@@ -3260,7 +3260,7 @@
         <translation>Перестроить состояние цепи блоков и индекс блоков из blk*.dat файлов с диска</translation>
     </message>
     <message>
-        <source>Rebuild chain state from the currently apolloned blocks</source>
+        <source>Rebuild chain state from the currently indexed blocks</source>
         <translation>Перестроить индекс цепи из текущих индексированных блоков</translation>
     </message>
     <message>

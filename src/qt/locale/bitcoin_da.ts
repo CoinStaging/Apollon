@@ -3280,7 +3280,7 @@
         <translation>Genopbyg kædetilstand og blokindeks fra blk*.dat-filerne på disken</translation>
     </message>
     <message>
-        <source>Rebuild chain state from the currently apolloned blocks</source>
+        <source>Rebuild chain state from the currently indexed blocks</source>
         <translation>Genopbyg kædetilstand ud fra de aktuelt indekserede blokke</translation>
     </message>
     <message>

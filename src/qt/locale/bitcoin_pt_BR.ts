@@ -3268,7 +3268,7 @@
         <translation>Reconstruir índice de cadeia de bloco a partir dos arquivos blk*.dat no disco</translation>
     </message>
     <message>
-        <source>Rebuild chain state from the currently apolloned blocks</source>
+        <source>Rebuild chain state from the currently indexed blocks</source>
         <translation>Reconstruir estado a partir dos blocos apollonados</translation>
     </message>
     <message>

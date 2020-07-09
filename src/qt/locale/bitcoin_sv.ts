@@ -2353,7 +2353,7 @@ Var vänlig och försök igen.</translation>
         <translation>Återskapa blockkedjans status och apollon från blk*.dat filer på disken</translation>
     </message>
     <message>
-        <source>Rebuild chain state from the currently apolloned blocks</source>
+        <source>Rebuild chain state from the currently indexed blocks</source>
         <translation>Återskapa blockkedjans status från aktuella apollonerade block</translation>
     </message>
     <message>

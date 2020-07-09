@@ -2059,7 +2059,7 @@ The network does not appear to fully agree! Some miners appear to be experiencin
         <translation>Obnoviť stav reťazca a apollon blokov zo súborov blk*.dat na disku.</translation>
     </message>
     <message>
-        <source>Rebuild chain state from the currently apolloned blocks</source>
+        <source>Rebuild chain state from the currently indexed blocks</source>
         <translation>Obnoviť stav reťazca z aktuálne apollonovaných blokov.</translation>
     </message>
     <message>

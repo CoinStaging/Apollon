@@ -436,7 +436,7 @@ std::string HelpMessage(HelpMessageMode mode) {
                       "Warning: Reverting this setting requires re-downloading the entire blockchain. "
                       "(default: 0 = disable pruning blocks, >%u = target size in MiB to use for block files)"),
             MIN_DISK_SPACE_FOR_BLOCK_FILES / 1024 / 1024));
-    strUsage += HelpMessageOpt("-reapollon-chainstate", _("Rebuild chain state from the currently apolloned blocks"));
+    strUsage += HelpMessageOpt("-reapollon-chainstate", _("Rebuild chain state from the currently indexed blocks"));
     strUsage += HelpMessageOpt("-reapollon", _("Rebuild chain state and block apollon from the blk*.dat files on disk"));
     strUsage += HelpMessageOpt("-resync", _("Delete blockchain folders and resync from scratch") + " " + _("on startup"));
 #ifndef WIN32

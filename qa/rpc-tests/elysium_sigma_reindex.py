@@ -60,11 +60,11 @@ class ElysiumSigmaReapollonTest(ElysiumTestFramework):
 
         sync_blocks(self.nodes)
 
-        reapolloned_confirmed_mints = self.nodes[0].elysium_listmints()
-        self.compare_mints(confirmed_mints, reapolloned_confirmed_mints)
+        reindexed_confirmed_mints = self.nodes[0].elysium_listmints()
+        self.compare_mints(confirmed_mints, reindexed_confirmed_mints)
 
-        reapolloned_unconfirmed_mints = self.nodes[0].elysium_listpendingmints()
-        self.compare_mints(unconfirmed_mints, reapolloned_unconfirmed_mints)
+        reindexed_unconfirmed_mints = self.nodes[0].elysium_listpendingmints()
+        self.compare_mints(unconfirmed_mints, reindexed_unconfirmed_mints)
 
         # spend remaining mints
         self.nodes[0].elysium_sendspend(self.addrs[0], sigma_property, 0)

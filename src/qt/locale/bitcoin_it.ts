@@ -2105,7 +2105,7 @@ Per specificare più URL separarli con una barra verticale "|".</translation>
         <translation>Ricostruisci lo stato della catena e l'indice dei blocchi partendo dai file blk*.dat presenti sul disco</translation>
     </message>
     <message>
-        <source>Rebuild chain state from the currently apolloned blocks</source>
+        <source>Rebuild chain state from the currently indexed blocks</source>
         <translation>Ricrea l'indice della catena dei blocchi partendo da quelli già indicizzati</translation>
     </message>
     <message>

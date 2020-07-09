@@ -473,7 +473,7 @@ QT_TRANSLATE_NOOP("apollon-core", "Prune mode is incompatible with -txapollon.")
 QT_TRANSLATE_NOOP("apollon-core", "Pruning blockstore..."),
 QT_TRANSLATE_NOOP("apollon-core", "RPC server options:"),
 QT_TRANSLATE_NOOP("apollon-core", "Rebuild chain state and block apollon from the blk*.dat files on disk"),
-QT_TRANSLATE_NOOP("apollon-core", "Rebuild chain state from the currently apolloned blocks"),
+QT_TRANSLATE_NOOP("apollon-core", "Rebuild chain state from the currently indexed blocks"),
 QT_TRANSLATE_NOOP("apollon-core", "Recipient %1% has invalid amount"),
 QT_TRANSLATE_NOOP("apollon-core", "Reducing -maxconnections from %d to %d, because of system limitations."),
 QT_TRANSLATE_NOOP("apollon-core", "Relay and mine data carrier transactions (default: %u)"),

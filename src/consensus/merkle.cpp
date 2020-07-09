@@ -53,7 +53,7 @@ static void MerkleComputation(const std::vector<uint256>& leaves, uint256* proot
     bool mutated = false;
     // count is the number of leaves processed so far.
     uint32_t count = 0;
-    // inner is an array of eagerly computed subtree hashes, apolloned by tree
+    // inner is an array of eagerly computed subtree hashes, indexed by tree
     // level (0 being the leaves).
     // For example, when count is 25 (11001 in binary), inner[4] is the hash of
     // the first 16 leaves, inner[3] of the next 8 leaves, and inner[0] equal to

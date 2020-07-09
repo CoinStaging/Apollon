@@ -99,25 +99,25 @@ struct CompareTxIterByAncestorCount {
     }
 };
 
-typedef boost::multi_apollon_container<
+typedef boost::multi_index_container<
     CTxMemPoolModifiedEntry,
-    boost::multi_apollon::apolloned_by<
-        boost::multi_apollon::ordered_unique<
+    boost::multi_index::indexed_by<
+        boost::multi_index::ordered_unique<
             modifiedentry_iter,
             CompareCTxMemPoolIter
         >,
         // sorted by modified ancestor fee rate
-        boost::multi_apollon::ordered_non_unique<
+        boost::multi_index::ordered_non_unique<
             // Reuse same tag from CTxMemPool's similar apollon
-            boost::multi_apollon::tag<ancestor_score>,
-            boost::multi_apollon::identity<CTxMemPoolModifiedEntry>,
+            boost::multi_index::tag<ancestor_score>,
+            boost::multi_index::identity<CTxMemPoolModifiedEntry>,
             CompareModifiedEntry
         >
     >
-> apolloned_modified_transaction_set;
+> indexed_modified_transaction_set;
 
-typedef apolloned_modified_transaction_set::nth_apollon<0>::type::iterator modtxiter;
-typedef apolloned_modified_transaction_set::apollon<ancestor_score>::type::iterator modtxscoreiter;
+typedef indexed_modified_transaction_set::nth_apollon<0>::type::iterator modtxiter;
+typedef indexed_modified_transaction_set::apollon<ancestor_score>::type::iterator modtxscoreiter;
 
 struct update_for_parent_inclusion
 {
@@ -201,12 +201,12 @@ private:
     bool TestPackageTransactions(const CTxMemPool::setEntries& package);
     /** Return true if given transaction from mapTx has already been evaluated,
       * or if the transaction's cached data in mapTx is incorrect. */
-    bool SkipMapTxEntry(CTxMemPool::txiter it, apolloned_modified_transaction_set &mapModifiedTx, CTxMemPool::setEntries &failedTx);
+    bool SkipMapTxEntry(CTxMemPool::txiter it, indexed_modified_transaction_set &mapModifiedTx, CTxMemPool::setEntries &failedTx);
     /** Sort the package in an order that is valid to appear in a block */
     void SortForBlock(const CTxMemPool::setEntries& package, CTxMemPool::txiter entry, std::vector<CTxMemPool::txiter>& sortedEntries);
     /** Add descendants of given transactions to mapModifiedTx with ancestor
       * state updated assuming given transactions are inBlock. */
-    void UpdatePackagesForAdded(const CTxMemPool::setEntries& alreadyAdded, apolloned_modified_transaction_set &mapModifiedTx);
+    void UpdatePackagesForAdded(const CTxMemPool::setEntries& alreadyAdded, indexed_modified_transaction_set &mapModifiedTx);
 };
 
 /** Modify the extranonce in a block */

@@ -2309,7 +2309,7 @@ Zwróć uwagę, że poprawnie zweryfikowana wiadomość potwierdza to, że nadaw
         <translation>Odbuduj stan lańcucha i indeks bloków z obecnych na dysku plików blk*.dat</translation>
     </message>
     <message>
-        <source>Rebuild chain state from the currently apolloned blocks</source>
+        <source>Rebuild chain state from the currently indexed blocks</source>
         <translation>Odbuduj stan łańcucha z aktualnie zindeksowanych bloków</translation>
     </message>
     <message>

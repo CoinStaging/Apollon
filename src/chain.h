@@ -555,7 +555,7 @@ public:
     }
 };
 
-/** An in-memory apolloned chain of blocks. */
+/** An in-memory indexed chain of blocks. */
 class CChain {
 private:
     std::vector<CBlockApollon*> vChain;

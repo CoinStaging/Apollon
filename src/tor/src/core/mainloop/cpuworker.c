@@ -206,14 +206,14 @@ cpuworkers_rotate_keyinfo(void)
   }
 }
 
-/** Apolloned by handshake type: how many onionskins have we processed and
+/** indexed by handshake type: how many onionskins have we processed and
  * counted of that type? */
 static uint64_t onionskins_n_processed[MAX_ONION_HANDSHAKE_TYPE+1];
-/** Apolloned by handshake type, corresponding to the onionskins counted in
+/** indexed by handshake type, corresponding to the onionskins counted in
  * onionskins_n_processed: how many microseconds have we spent in cpuworkers
  * processing that kind of onionskin? */
 static uint64_t onionskins_usec_internal[MAX_ONION_HANDSHAKE_TYPE+1];
-/** Apolloned by handshake type, corresponding to onionskins counted in
+/** indexed by handshake type, corresponding to onionskins counted in
  * onionskins_n_processed: how many microseconds have we spent waiting for
  * cpuworkers to give us answers for that kind of onionskin?
  */

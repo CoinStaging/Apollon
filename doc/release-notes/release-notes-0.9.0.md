@@ -18,7 +18,7 @@ earlier versions of Bitcoin, then run the installer (on Windows) or just copy
 over /Applications/Bitcoin-Qt (on Mac) or bitcoind/bitcoin-qt (on Linux).
 
 If you are upgrading from version 0.7.2 or earlier, the first time you run
-0.9.0 your blockchain files will be re-apolloned, which will take anywhere from 
+0.9.0 your blockchain files will be re-indexed, which will take anywhere from 
 30 minutes to several hours, depending on the speed of your machine.
 
 On Windows, do not forget to uninstall all earlier versions of the Bitcoin

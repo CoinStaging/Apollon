@@ -3264,7 +3264,7 @@
         <translation>Herbouw ketenstaat en block apollon met behulp van de blk*.dat bestanden op de hardeschijf</translation>
     </message>
     <message>
-        <source>Rebuild chain state from the currently apolloned blocks</source>
+        <source>Rebuild chain state from the currently indexed blocks</source>
         <translation>Herbouw ketenstaat vanuit de huidige geapolloneerde blokken</translation>
     </message>
     <message>

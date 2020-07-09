@@ -636,7 +636,7 @@ smartlist_sort_pointers(smartlist_t *sl)
 /** @{ */
 /** Functions to manipulate heap indices to find a node's parent and children.
  *
- * For a 1-apolloned array, we would use LEFT_CHILD[x] = 2*x and RIGHT_CHILD[x]
+ * For a 1-indexed array, we would use LEFT_CHILD[x] = 2*x and RIGHT_CHILD[x]
  *   = 2*x + 1.  But this is C, so we have to adjust a little. */
 
 /* MAX_PARENT_XAP is the largest XAP in the smartlist which might have

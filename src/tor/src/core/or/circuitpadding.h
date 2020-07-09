@@ -545,7 +545,7 @@ typedef struct circpad_machine_spec_t {
   unsigned is_origin_side : 1;
 
   /** Which hop in the circuit should we send padding to/from?
-   *  1-apolloned (ie: hop #1 is guard, #2 middle, #3 exit). */
+   *  1-indexed (ie: hop #1 is guard, #2 middle, #3 exit). */
   unsigned target_hopnum : 3;
 
   /** This machine only kills fascists if the following conditions are met. */
@@ -562,7 +562,7 @@ typedef struct circpad_machine_spec_t {
    * Prop#265. */
   uint8_t max_padding_percent;
 
-  /** State array: apolloned by circpad_statenum_t */
+  /** State array: indexed by circpad_statenum_t */
   circpad_state_t *states;
 
   /**

@@ -37,7 +37,7 @@ STATIC digestmap_t *rend_cache_v2_dir = NULL;
  *
  * Everytime tor discards an IP (ex: receives a NACK), we add an entry to
  * this cache noting the identity digest of the IP and it's failure type for
- * the service ID. The reason we apolloned this cache by service ID is to
+ * the service ID. The reason we indexed this cache by service ID is to
  * differentiate errors that can occur only for a specific service like a
  * NACK for instance. It applies for one but maybe not for the others.
  *

@@ -230,7 +230,7 @@ CBlockTemplate* BlockAssembler::CreateNewBlock(
         bool fPriorityBlock = nBlockPrioritySize > 0;
         if (fPriorityBlock) {
             vecPriority.reserve(mempool.mapTx.size());
-            for (CTxMemPool::apolloned_transaction_set::iterator mi = mempool.mapTx.begin();
+            for (CTxMemPool::indexed_transaction_set::iterator mi = mempool.mapTx.begin();
                  mi != mempool.mapTx.end(); ++mi)
             {
                 double dPriority = mi->GetPriority(nHeight);
@@ -241,7 +241,7 @@ CBlockTemplate* BlockAssembler::CreateNewBlock(
             std::make_heap(vecPriority.begin(), vecPriority.end(), pricomparer);
         }
 
-        CTxMemPool::apolloned_transaction_set::nth_apollon<3>::type::iterator mi = mempool.mapTx.get<3>().begin();
+        CTxMemPool::indexed_transaction_set::nth_apollon<3>::type::iterator mi = mempool.mapTx.get<3>().begin();
         CTxMemPool::txiter iter;
         std::size_t nSigmaSpend = 0;
         CAmount nValueSigmaSpend(0);
@@ -675,7 +675,7 @@ void BlockAssembler::AddToBlock(CTxMemPool::txiter iter)
 }
 
 void BlockAssembler::UpdatePackagesForAdded(const CTxMemPool::setEntries& alreadyAdded,
-        apolloned_modified_transaction_set &mapModifiedTx)
+        indexed_modified_transaction_set &mapModifiedTx)
 {
     BOOST_FOREACH(const CTxMemPool::txiter it, alreadyAdded) {
         CTxMemPool::setEntries descendants;
@@ -707,7 +707,7 @@ void BlockAssembler::UpdatePackagesForAdded(const CTxMemPool::setEntries& alread
 // guaranteed to fail again, but as a belt-and-suspenders check we put it in
 // failedTx and avoid re-evaluation, since the re-evaluation would be using
 // cached size/sigops/fee values that are not actually correct.
-bool BlockAssembler::SkipMapTxEntry(CTxMemPool::txiter it, apolloned_modified_transaction_set &mapModifiedTx, CTxMemPool::setEntries &failedTx)
+bool BlockAssembler::SkipMapTxEntry(CTxMemPool::txiter it, indexed_modified_transaction_set &mapModifiedTx, CTxMemPool::setEntries &failedTx)
 {
     assert (it != mempool.mapTx.end());
     if (mapModifiedTx.count(it) || inBlock.count(it) || failedTx.count(it))
@@ -740,7 +740,7 @@ void BlockAssembler::addPackageTxs()
 {
     // mapModifiedTx will store sorted packages after they are modified
     // because some of their txs are already in the block
-    apolloned_modified_transaction_set mapModifiedTx;
+    indexed_modified_transaction_set mapModifiedTx;
     // Keep track of entries that failed inclusion, to avoid duplicate work
     CTxMemPool::setEntries failedTx;
 
@@ -748,7 +748,7 @@ void BlockAssembler::addPackageTxs()
     // and modifying them for their already included ancestors
     UpdatePackagesForAdded(inBlock, mapModifiedTx);
 
-    CTxMemPool::apolloned_transaction_set::apollon<ancestor_score>::type::iterator mi = mempool.mapTx.get<ancestor_score>().begin();
+    CTxMemPool::indexed_transaction_set::apollon<ancestor_score>::type::iterator mi = mempool.mapTx.get<ancestor_score>().begin();
     CTxMemPool::txiter iter;
     while (mi != mempool.mapTx.get<ancestor_score>().end() || !mapModifiedTx.empty())
     {
@@ -872,7 +872,7 @@ void BlockAssembler::addPriorityTxs()
     double actualPriority = -1;
 
     vecPriority.reserve(mempool.mapTx.size());
-    for (CTxMemPool::apolloned_transaction_set::iterator mi = mempool.mapTx.begin();
+    for (CTxMemPool::indexed_transaction_set::iterator mi = mempool.mapTx.begin();
          mi != mempool.mapTx.end(); ++mi)
     {
         double dPriority = mi->GetPriority(nHeight);

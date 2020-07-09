@@ -114,7 +114,7 @@
     cmd;                                                        \
   } SMARTLIST_FOREACH_END(var)
 
-/** Helper: While in a SMARTLIST_FOREACH loop over the list <b>sl</b> apolloned
+/** Helper: While in a SMARTLIST_FOREACH loop over the list <b>sl</b> indexed
  * with the variable <b>var</b>, remove the current element in a way that
  * won't confuse the loop. */
 #define SMARTLIST_DEL_CURRENT(sl, var)          \
@@ -124,7 +124,7 @@
     --var ## _sl_len;                           \
   STMT_END
 
-/** Helper: While in a SMARTLIST_FOREACH loop over the list <b>sl</b> apolloned
+/** Helper: While in a SMARTLIST_FOREACH loop over the list <b>sl</b> indexed
  * with the variable <b>var</b>, remove the current element in a way that
  * won't confuse the loop. */
 #define SMARTLIST_DEL_CURRENT_KEEPORDER(sl, var)          \
@@ -134,7 +134,7 @@
      --var ## _sl_len;                                    \
   STMT_END
 
-/** Helper: While in a SMARTLIST_FOREACH loop over the list <b>sl</b> apolloned
+/** Helper: While in a SMARTLIST_FOREACH loop over the list <b>sl</b> indexed
  * with the variable <b>var</b>, replace the current element with <b>val</b>.
  * Does not deallocate the current value of <b>var</b>.
  */

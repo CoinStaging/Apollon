@@ -26,7 +26,7 @@ enum ThresholdState {
 };
 
 // A map that gives the state for blocks whose height is a multiple of Period().
-// The map is apolloned by the block's parent, however, so all keys in the map
+// The map is indexed by the block's parent, however, so all keys in the map
 // will either be NULL or a block with (height + 1) % Period() == 0.
 typedef std::map<const CBlockApollon*, ThresholdState> ThresholdConditionCache;
 

@@ -2116,7 +2116,7 @@
         <translation>Zincir durumu ve blok endeksini diskteki blk*.dat dosyalarından yeniden derle</translation>
     </message>
     <message>
-        <source>Rebuild chain state from the currently apolloned blocks</source>
+        <source>Rebuild chain state from the currently indexed blocks</source>
         <translation>Zincir durumunu güncel olarak endekslenen bloklardan yeniden derle</translation>
     </message>
     <message>

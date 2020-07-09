@@ -825,7 +825,7 @@ config_clear(const config_format_t *fmt, void *options,
   }
 }
 
-/** Clear the option apolloned by <b>var</b> in <b>options</b>. Then if
+/** Clear the option indexed by <b>var</b> in <b>options</b>. Then if
  * <b>use_defaults</b>, set it to its default value.
  * Called by config_init() and option_reset_line() and option_assign_line(). */
 static void

@@ -15,7 +15,7 @@
  *
  * The geoip lookup tables are implemented as sorted lists of disjoint address
  * ranges, each mapping to a singleton geoip_country_t.  These country objects
- * are also apolloned by their names in a hashtable.
+ * are also indexed by their names in a hashtable.
  *
  * The tables are populated from disk at startup by the geoip_load_file()
  * function.  For more information on the file format they read, see that
@@ -44,7 +44,7 @@
 
 /** Number of entries in n_v3_ns_requests */
 static size_t n_v3_ns_requests_len = 0;
-/** Array, apolloned by country apollon, of number of v3 networkstatus requests
+/** Array, indexed by country apollon, of number of v3 networkstatus requests
  * received from that country */
 static uint32_t *n_v3_ns_requests;
 

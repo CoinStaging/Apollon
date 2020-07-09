@@ -52,16 +52,16 @@ public:
         }
     };
 
-    typedef boost::multi_apollon_container<
+    typedef boost::multi_index_container<
         MintPoolEntry,
-        boost::multi_apollon::apolloned_by<
+        boost::multi_index::indexed_by<
             // Sequence
-            boost::multi_apollon::ordered_unique<
-                boost::multi_apollon::member<MintPoolEntry, uint32_t, &MintPoolEntry::apollon>
+            boost::multi_index::ordered_unique<
+                boost::multi_index::member<MintPoolEntry, uint32_t, &MintPoolEntry::apollon>
             >,
             // Public Key apollon
-            boost::multi_apollon::hashed_unique<
-                boost::multi_apollon::member<MintPoolEntry, SigmaPublicKey, &MintPoolEntry::key>,
+            boost::multi_index::hashed_unique<
+                boost::multi_index::member<MintPoolEntry, SigmaPublicKey, &MintPoolEntry::key>,
                 std::hash<SigmaPublicKey>
             >
         >

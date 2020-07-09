@@ -3279,7 +3279,7 @@
         <translation>Reconstruir el estado de la cadena e indice de bloques a partir de los ficheros blk*.dat en disco</translation>
     </message>
     <message>
-        <source>Rebuild chain state from the currently apolloned blocks</source>
+        <source>Rebuild chain state from the currently indexed blocks</source>
         <translation>Reconstruir el estado de la cadena a partir de los bloques apollonados</translation>
     </message>
     <message>

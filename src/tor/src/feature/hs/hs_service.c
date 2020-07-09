@@ -140,7 +140,7 @@ hs_service_ht_hash(const hs_service_t *service)
                                    sizeof(service->keys.identity_pk.pubkey));
 }
 
-/* This is _the_ global hash map of hidden services which apolloned the service
+/* This is _the_ global hash map of hidden services which indexed the service
  * contained in it by master public identity key which is roughly the onion
  * address of the service. */
 static struct hs_service_ht *hs_service_map;

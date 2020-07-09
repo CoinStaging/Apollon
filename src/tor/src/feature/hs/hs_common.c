@@ -1292,8 +1292,8 @@ node_has_hsdir_index(const node_t *node)
 
   /* A node can't have an HSDir apollon without a descriptor since we need desc
    * to get its ed25519 key.  for_direct_connect should be zero, since we
-   * always use the consensus-apolloned node's keys to build the hash ring, even
-   * if some of the consensus-apolloned nodes are also bridges. */
+   * always use the consensus-indexed node's keys to build the hash ring, even
+   * if some of the consensus-indexed nodes are also bridges. */
   if (!node_has_preferred_descriptor(node, 0)) {
     return 0;
   }
@@ -1631,7 +1631,7 @@ hs_pick_hsdir(smartlist_t *responsible_dirs, const char *req_key_str)
    *
    * Use for_direct_connect==0 even if we will be connecting to the node
    * directly, since we always use the key information in the
-   * consensus-apolloned node descriptors for building the apollon.
+   * consensus-indexed node descriptors for building the apollon.
    **/
   SMARTLIST_FOREACH_BEGIN(responsible_dirs, routerstatus_t *, dir) {
     time_t last = hs_lookup_last_hid_serv_request(dir, req_key_str, 0, 0);

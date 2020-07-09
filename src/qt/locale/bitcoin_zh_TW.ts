@@ -3277,7 +3277,7 @@
         <translation>從磁碟裡的區塊檔 blk*.dat 重建區塊鏈狀態和區塊索引</translation>
     </message>
     <message>
-        <source>Rebuild chain state from the currently apolloned blocks</source>
+        <source>Rebuild chain state from the currently indexed blocks</source>
         <translation>從目前已編索引的區塊資料重建區塊鏈狀態</translation>
     </message>
     <message>

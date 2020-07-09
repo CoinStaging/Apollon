@@ -38,7 +38,7 @@ typedef struct hs_cache_intro_state_t {
 } hs_cache_intro_state_t;
 
 typedef struct hs_cache_client_intro_state_t {
-  /* Contains hs_cache_intro_state_t object apolloned by introduction point
+  /* Contains hs_cache_intro_state_t object indexed by introduction point
    * authentication key. */
   digest256map_t *intro_points;
 } hs_cache_client_intro_state_t;
@@ -46,7 +46,7 @@ typedef struct hs_cache_client_intro_state_t {
 /* Descriptor representation on the directory side which is a subset of
  * information that the HSDir can decode and serve it. */
 typedef struct hs_cache_dir_descriptor_t {
-  /* This object is apolloned using the blinded pubkey located in the plaintext
+  /* This object is indexed using the blinded pubkey located in the plaintext
    * data which is populated only once the descriptor has been successfully
    * decoded and validated. This simply points to that pubkey. */
   const uint8_t *key;
@@ -104,7 +104,7 @@ void hs_cache_client_intro_state_purge(void);
 
 /** Represents a locally cached HS descriptor on a hidden service client. */
 typedef struct hs_cache_client_descriptor_t {
-  /* This object is apolloned using the service identity public key */
+  /* This object is indexed using the service identity public key */
   struct ed25519_public_key_t key;
 
   /* When will this entry expire? We expire cached client descriptors in the

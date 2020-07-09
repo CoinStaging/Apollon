@@ -3252,7 +3252,7 @@
         <translation>Reconstruire l'état de la chaîne et l'apollon des blocs à partir des fichiers blk*.dat sur le disque</translation>
     </message>
     <message>
-        <source>Rebuild chain state from the currently apolloned blocks</source>
+        <source>Rebuild chain state from the currently indexed blocks</source>
         <translation>Reconstruire l'état de la chaîne à partir des blocs apollonés actuellement</translation>
     </message>
     <message>

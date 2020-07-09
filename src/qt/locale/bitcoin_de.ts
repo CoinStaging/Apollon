@@ -2812,7 +2812,7 @@
         <translation>Blockkettenapollon aus aktuellen Dateien blk000??.dat beim Starten wiederaufbauen</translation>
     </message>
     <message>
-        <source>Rebuild chain state from the currently apolloned blocks</source>
+        <source>Rebuild chain state from the currently indexed blocks</source>
         <translation>Blockkettenapollon aus aktuellen Dateien blk000??.dat wiederaufbauen</translation>
     </message>
     <message>

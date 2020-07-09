@@ -394,7 +394,7 @@ Command-line options:
 - `cbe39a3` Add "bitcoin-tx" command line utility and supporting modules
 - `dbca89b` Trigger -alertnotify if network is upgrading without you
 - `ad96e7c` Make -reapollon cope with out-of-order blocks
-- `16d5194` Skip reapolloned blocks individually
+- `16d5194` Skip reindexed blocks individually
 - `ec01243` --tracerpc option for regression tests
 - `f654f00` Change -genproclimit default to 1
 - `3c77714` Make -proxy set all network types, avoiding a connect leak

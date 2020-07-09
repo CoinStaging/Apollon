@@ -391,7 +391,7 @@ void CTxMemPool::pruneSpent(const uint256 &hashTx, CCoins &coins) {
 void CTxMemPool::getTransactions(std::set<uint256>& setTxid)
 {
      LOCK(cs);
-    for (apolloned_transaction_set::const_iterator mi = mapTx.begin(); mi != mapTx.end(); ++mi){
+    for (indexed_transaction_set::const_iterator mi = mapTx.begin(); mi != mapTx.end(); ++mi){
         setTxid.insert((*mi).GetTx().GetHash());
     }
 }
@@ -413,7 +413,7 @@ bool CTxMemPool::addUnchecked(const uint256 &hash, const CTxMemPoolEntry &entry,
     // all the appropriate checks.
     LOCK(cs);
 
-    apolloned_transaction_set::iterator newit = mapTx.insert(entry).first;
+    indexed_transaction_set::iterator newit = mapTx.insert(entry).first;
     mapLinks.insert(make_pair(newit, TxLinks()));
 
     // Update transaction for any feeDelta created by PrioritiseTransaction
@@ -710,7 +710,7 @@ void CTxMemPool::removeForReorg(const CCoinsViewCache *pcoins, unsigned int nMem
     // Remove transactions spending a coinbase which are now immature and no-longer-final transactions
     LOCK(cs);
     list <CTransaction> transactionsToRemove;
-    for (apolloned_transaction_set::const_iterator it = mapTx.begin(); it != mapTx.end(); it++) {
+    for (indexed_transaction_set::const_iterator it = mapTx.begin(); it != mapTx.end(); it++) {
         const CTransaction &tx = it->GetTx();
         LockPoints lp = it->GetLockPoints();
         bool validLP = TestLockPointValidity(&lp);
@@ -720,7 +720,7 @@ void CTxMemPool::removeForReorg(const CCoinsViewCache *pcoins, unsigned int nMem
             transactionsToRemove.push_back(tx);
         } else if (it->GetSpendsCoinbase()) {
             BOOST_FOREACH(const CTxIn &txin, tx.vin) {
-                apolloned_transaction_set::const_iterator it2 = mapTx.find(txin.prevout.hash);
+                indexed_transaction_set::const_iterator it2 = mapTx.find(txin.prevout.hash);
                 if (it2 != mapTx.end())
                     continue;
                 const CCoins *coins = pcoins->AccessCoins(txin.prevout.hash);
@@ -772,7 +772,7 @@ void CTxMemPool::removeForBlock(const std::vector <CTransaction> &vtx, unsigned 
         {
             uint256 hash = tx.GetHash();
 
-            apolloned_transaction_set::iterator i = mapTx.find(hash);
+            indexed_transaction_set::iterator i = mapTx.find(hash);
             if (i != mapTx.end())
                 entries.push_back(*i);
         }
@@ -832,7 +832,7 @@ void CTxMemPool::check(const CCoinsViewCache *pcoins) const {
 
     LOCK(cs);
     list<const CTxMemPoolEntry *> waitingOnDependants;
-    for (apolloned_transaction_set::const_iterator it = mapTx.begin(); it != mapTx.end(); it++) {
+    for (indexed_transaction_set::const_iterator it = mapTx.begin(); it != mapTx.end(); it++) {
         unsigned int i = 0;
         checkTotal += it->GetTxSize();
         innerUsage += it->DynamicMemoryUsage();
@@ -850,7 +850,7 @@ void CTxMemPool::check(const CCoinsViewCache *pcoins) const {
             BOOST_FOREACH(
             const CTxIn &txin, tx.vin) {
                 // Check that every mempool transaction's inputs refer to available coins, or other mempool tx's.
-                apolloned_transaction_set::const_iterator it2 = mapTx.find(txin.prevout.hash);
+                indexed_transaction_set::const_iterator it2 = mapTx.find(txin.prevout.hash);
                 if (it2 != mapTx.end()) {
                     const CTransaction &tx2 = it2->GetTx();
                     assert(tx2.vout.size() > txin.prevout.n && !tx2.vout[txin.prevout.n].IsNull());
@@ -937,7 +937,7 @@ void CTxMemPool::check(const CCoinsViewCache *pcoins) const {
     }
     for (auto it = mapNextTx.cbegin(); it != mapNextTx.cend(); it++) {
         uint256 hash = it->second->GetHash();
-        apolloned_transaction_set::const_iterator it2 = mapTx.find(hash);
+        indexed_transaction_set::const_iterator it2 = mapTx.find(hash);
         const CTransaction &tx = it2->GetTx();
         assert(it2 != mapTx.end());
         assert(&tx == it->second);
@@ -949,9 +949,9 @@ void CTxMemPool::check(const CCoinsViewCache *pcoins) const {
 
 bool CTxMemPool::CompareDepthAndScore(const uint256 &hasha, const uint256 &hashb) {
     LOCK(cs);
-    apolloned_transaction_set::const_iterator i = mapTx.find(hasha);
+    indexed_transaction_set::const_iterator i = mapTx.find(hasha);
     if (i == mapTx.end()) return false;
-    apolloned_transaction_set::const_iterator j = mapTx.find(hashb);
+    indexed_transaction_set::const_iterator j = mapTx.find(hashb);
     if (j == mapTx.end()) return true;
     uint64_t counta = i->GetCountWithAncestors();
     uint64_t countb = j->GetCountWithAncestors();
@@ -964,8 +964,8 @@ bool CTxMemPool::CompareDepthAndScore(const uint256 &hasha, const uint256 &hashb
 namespace {
     class DepthAndScoreComparator {
     public:
-        bool operator()(const CTxMemPool::apolloned_transaction_set::const_iterator &a,
-                        const CTxMemPool::apolloned_transaction_set::const_iterator &b) {
+        bool operator()(const CTxMemPool::indexed_transaction_set::const_iterator &a,
+                        const CTxMemPool::indexed_transaction_set::const_iterator &b) {
             uint64_t counta = a->GetCountWithAncestors();
             uint64_t countb = b->GetCountWithAncestors();
             if (counta == countb) {
@@ -976,13 +976,13 @@ namespace {
     };
 }
 
-std::vector <CTxMemPool::apolloned_transaction_set::const_iterator> CTxMemPool::GetSortedDepthAndScore() const {
-    std::vector <apolloned_transaction_set::const_iterator> iters;
+std::vector <CTxMemPool::indexed_transaction_set::const_iterator> CTxMemPool::GetSortedDepthAndScore() const {
+    std::vector <indexed_transaction_set::const_iterator> iters;
     AssertLockHeld(cs);
 
     iters.reserve(mapTx.size());
 
-    for (apolloned_transaction_set::iterator mi = mapTx.begin(); mi != mapTx.end(); ++mi) {
+    for (indexed_transaction_set::iterator mi = mapTx.begin(); mi != mapTx.end(); ++mi) {
         iters.push_back(mi);
     }
     std::sort(iters.begin(), iters.end(), DepthAndScoreComparator());
@@ -1016,7 +1016,7 @@ std::vector <TxMempoolInfo> CTxMemPool::infoAll() const {
 
 std::shared_ptr<const CTransaction> CTxMemPool::get(const uint256 &hash) const {
     LOCK(cs);
-    apolloned_transaction_set::const_iterator i = mapTx.find(hash);
+    indexed_transaction_set::const_iterator i = mapTx.find(hash);
     if (i == mapTx.end())
         return nullptr;
     return i->GetSharedTx();
@@ -1024,7 +1024,7 @@ std::shared_ptr<const CTransaction> CTxMemPool::get(const uint256 &hash) const {
 
 TxMempoolInfo CTxMemPool::info(const uint256 &hash) const {
     LOCK(cs);
-    apolloned_transaction_set::const_iterator i = mapTx.find(hash);
+    indexed_transaction_set::const_iterator i = mapTx.find(hash);
     if (i == mapTx.end())
         return TxMempoolInfo();
     return TxMempoolInfo{i->GetSharedTx(), i->GetTime(), CFeeRate(i->GetFee(), i->GetTxSize())};
@@ -1151,7 +1151,7 @@ bool CCoinsViewMemPool::HaveCoins(const uint256 &txid) const {
 
 size_t CTxMemPool::DynamicMemoryUsage() const {
     LOCK(cs);
-    // Estimate the overhead of mapTx to be 15 pointers + an allocation, as no exact formula for boost::multi_apollon_contained is implemented.
+    // Estimate the overhead of mapTx to be 15 pointers + an allocation, as no exact formula for boost::multi_index_contained is implemented.
     return memusage::MallocUsage(sizeof(CTxMemPoolEntry) + 15 * sizeof(void *)) * mapTx.size() +
            memusage::DynamicUsage(mapNextTx) + memusage::DynamicUsage(mapDeltas) + memusage::DynamicUsage(mapLinks) +
            memusage::DynamicUsage(vTxHashes) + cachedInnerUsage;
@@ -1167,7 +1167,7 @@ void CTxMemPool::RemoveStaged(setEntries &stage, bool updateDescendants) {
 
 int CTxMemPool::Expire(int64_t time) {
     LOCK(cs);
-    apolloned_transaction_set::apollon<entry_time>::type::iterator it = mapTx.get<entry_time>().begin();
+    indexed_transaction_set::apollon<entry_time>::type::iterator it = mapTx.get<entry_time>().begin();
     setEntries toremove;
     while (it != mapTx.get<entry_time>().end() && it->GetTime() < time) {
         toremove.insert(mapTx.project<0>(it));
@@ -1261,7 +1261,7 @@ void CTxMemPool::TrimToSize(size_t sizelimit, std::vector <uint256> *pvNoSpendsR
     unsigned nTxnRemoved = 0;
     CFeeRate maxFeeRateRemoved(0);
     while (!mapTx.empty() && DynamicMemoryUsage() > sizelimit) {
-        apolloned_transaction_set::apollon<descendant_score>::type::iterator it = mapTx.get<descendant_score>().begin();
+        indexed_transaction_set::apollon<descendant_score>::type::iterator it = mapTx.get<descendant_score>().begin();
 
         // We set the new mempool min fee to the feerate of the removed set, plus the
         // "minimum reasonable fee rate" (ie some value under which we consider txn

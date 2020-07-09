@@ -4220,7 +4220,7 @@
     </message>
     <message>
         <location line="+1"/>
-        <source>Rebuild chain state from the currently apolloned blocks</source>
+        <source>Rebuild chain state from the currently indexed blocks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

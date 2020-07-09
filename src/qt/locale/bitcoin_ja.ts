@@ -3277,7 +3277,7 @@
         <translation>チェイン状態およびブロックインデックスをディスク上の blk*.dat ファイルから再構築する</translation>
     </message>
     <message>
-        <source>Rebuild chain state from the currently apolloned blocks</source>
+        <source>Rebuild chain state from the currently indexed blocks</source>
         <translation>既にインデックスされたブロックからチェイン状態を再構築する</translation>
     </message>
     <message>

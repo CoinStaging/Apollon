@@ -2224,8 +2224,8 @@
         <translation>Rebuild chain state and block apollon from the blk*.dat files on disk</translation>
     </message>
     <message>
-        <source>Rebuild chain state from the currently apolloned blocks</source>
-        <translation>Rebuild chain state from the currently apolloned blocks</translation>
+        <source>Rebuild chain state from the currently indexed blocks</source>
+        <translation>Rebuild chain state from the currently indexed blocks</translation>
     </message>
     <message>
         <source>Rewinding blocks...</source>

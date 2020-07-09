@@ -2132,7 +2132,7 @@
         <translation>현재의 blk*.dat 파일들로부터 블록체인 색인을 재구성합니다.</translation>
     </message>
     <message>
-        <source>Rebuild chain state from the currently apolloned blocks</source>
+        <source>Rebuild chain state from the currently indexed blocks</source>
         <translation>현재 색인 된 블록들로부터 블록체인을 재구성합니다.</translation>
     </message>
     <message>
