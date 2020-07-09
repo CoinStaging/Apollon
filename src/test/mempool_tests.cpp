@@ -107,7 +107,7 @@ template<typename name>
 void CheckSort(CTxMemPool &pool, std::vector<std::string> &sortedOrder)
 {
     BOOST_CHECK_EQUAL(pool.size(), sortedOrder.size());
-    typename CTxMemPool::indexed_transaction_set::apollon<name>::type::iterator it = pool.mapTx.get<name>().begin();
+    typename CTxMemPool::indexed_transaction_set::index<name>::type::iterator it = pool.mapTx.get<name>().begin();
     int count=0;
     for (; it != pool.mapTx.get<name>().end(); ++it, ++count) {
         BOOST_CHECK_EQUAL(it->GetTx().GetHash().ToString(), sortedOrder[count]);

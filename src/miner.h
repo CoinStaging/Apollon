@@ -116,8 +116,8 @@ typedef boost::multi_index_container<
     >
 > indexed_modified_transaction_set;
 
-typedef indexed_modified_transaction_set::nth_apollon<0>::type::iterator modtxiter;
-typedef indexed_modified_transaction_set::apollon<ancestor_score>::type::iterator modtxscoreiter;
+typedef indexed_modified_transaction_set::nth_index<0>::type::iterator modtxiter;
+typedef indexed_modified_transaction_set::index<ancestor_score>::type::iterator modtxscoreiter;
 
 struct update_for_parent_inclusion
 {

@@ -241,7 +241,7 @@ CBlockTemplate* BlockAssembler::CreateNewBlock(
             std::make_heap(vecPriority.begin(), vecPriority.end(), pricomparer);
         }
 
-        CTxMemPool::indexed_transaction_set::nth_apollon<3>::type::iterator mi = mempool.mapTx.get<3>().begin();
+        CTxMemPool::indexed_transaction_set::nth_index<3>::type::iterator mi = mempool.mapTx.get<3>().begin();
         CTxMemPool::txiter iter;
         std::size_t nSigmaSpend = 0;
         CAmount nValueSigmaSpend(0);
@@ -748,7 +748,7 @@ void BlockAssembler::addPackageTxs()
     // and modifying them for their already included ancestors
     UpdatePackagesForAdded(inBlock, mapModifiedTx);
 
-    CTxMemPool::indexed_transaction_set::apollon<ancestor_score>::type::iterator mi = mempool.mapTx.get<ancestor_score>().begin();
+    CTxMemPool::indexed_transaction_set::index<ancestor_score>::type::iterator mi = mempool.mapTx.get<ancestor_score>().begin();
     CTxMemPool::txiter iter;
     while (mi != mempool.mapTx.get<ancestor_score>().end() || !mapModifiedTx.empty())
     {

@@ -462,7 +462,7 @@ public:
     mutable CCriticalSection cs;
     indexed_transaction_set mapTx;
 
-    typedef indexed_transaction_set::nth_apollon<0>::type::iterator txiter;
+    typedef indexed_transaction_set::nth_index<0>::type::iterator txiter;
     std::vector<std::pair<uint256, txiter> > vTxHashes; //!< All tx witness hashes/entries in mapTx, in random order
 
     struct CompareIteratorByHash {

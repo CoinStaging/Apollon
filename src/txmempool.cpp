@@ -1167,7 +1167,7 @@ void CTxMemPool::RemoveStaged(setEntries &stage, bool updateDescendants) {
 
 int CTxMemPool::Expire(int64_t time) {
     LOCK(cs);
-    indexed_transaction_set::apollon<entry_time>::type::iterator it = mapTx.get<entry_time>().begin();
+    indexed_transaction_set::index<entry_time>::type::iterator it = mapTx.get<entry_time>().begin();
     setEntries toremove;
     while (it != mapTx.get<entry_time>().end() && it->GetTime() < time) {
         toremove.insert(mapTx.project<0>(it));
@@ -1261,7 +1261,7 @@ void CTxMemPool::TrimToSize(size_t sizelimit, std::vector <uint256> *pvNoSpendsR
     unsigned nTxnRemoved = 0;
     CFeeRate maxFeeRateRemoved(0);
     while (!mapTx.empty() && DynamicMemoryUsage() > sizelimit) {
-        indexed_transaction_set::apollon<descendant_score>::type::iterator it = mapTx.get<descendant_score>().begin();
+        indexed_transaction_set::index<descendant_score>::type::iterator it = mapTx.get<descendant_score>().begin();
 
         // We set the new mempool min fee to the feerate of the removed set, plus the
         // "minimum reasonable fee rate" (ie some value under which we consider txn
