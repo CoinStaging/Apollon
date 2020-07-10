@@ -41,7 +41,7 @@ class ZerocoinPage;
 class Zc2SigmaPage;
 
 QT_BEGIN_NAMESPACE
-class QModelApollon;
+class QModelIndex;
 class QProgressDialog;
 class QTabWidget;
 QT_END_NAMESPACE
@@ -136,7 +136,7 @@ public Q_SLOTS:
     /** Switch specifically to bitcoin tx history tab */
     void gotoBitcoinHistoryTab();
     /** Switch to bitcoin tx history tab and focus on specific transaction */
-    void focusBitcoinHistoryTab(const QModelApollon &xap);
+    void focusBitcoinHistoryTab(const QModelIndex &xap);
     /** Switch to apollonnode page */
     void gotoApollonnodePage();
     /** Switch to receive coins page */
@@ -159,7 +159,7 @@ public Q_SLOTS:
 
         The new items are those between start and end inclusive, under the given parent item.
     */
-    void processNewTransaction(const QModelApollon& parent, int start, int /*end*/);
+    void processNewTransaction(const QModelIndex& parent, int start, int /*end*/);
     /** Encrypt the wallet */
     void encryptWallet(bool status);
     /** Backup the wallet */

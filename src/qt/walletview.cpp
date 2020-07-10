@@ -106,7 +106,7 @@ WalletView::WalletView(const PlatformStyle *platformStyle, QWidget *parent):
     addWidget(apollonnodeListPage);
 
     // Clicking on a transaction on the overview pre-selects the transaction on the transaction history page
-    connect(overviewPage, SIGNAL(transactionClicked(QModelApollon)), this, SLOT(focusBitcoinHistoryTab(QModelApollon)));
+    connect(overviewPage, SIGNAL(transactionClicked(QModelIndex)), this, SLOT(focusBitcoinHistoryTab(QModelIndex)));
     #ifdef ENABLE_ELYSIUM
     connect(overviewPage, SIGNAL(elysiumTransactionClicked(uint256)), this, SLOT(focusElysiumTransaction(uint256)));
     #endif
@@ -121,7 +121,7 @@ void WalletView::setupTransactionPage()
     // Create Apollon transactions list
     apollonTransactionList = new TransactionView(platformStyle);
 
-    connect(apollonTransactionList, SIGNAL(doubleClicked(QModelApollon)), apollonTransactionList, SLOT(showDetails()));
+    connect(apollonTransactionList, SIGNAL(doubleClicked(QModelIndex)), apollonTransactionList, SLOT(showDetails()));
     connect(apollonTransactionList, SIGNAL(message(QString, QString, unsigned int)), this, SIGNAL(message(QString, QString, unsigned int)));
 
     // Create export panel for Apollon transactions
@@ -245,7 +245,7 @@ void WalletView::setBitcoinGUI(BitcoinGUI *gui)
     if (gui)
     {
         // Clicking on a transaction on the overview page simply sends you to transaction history page
-        connect(overviewPage, SIGNAL(transactionClicked(QModelApollon)), gui, SLOT(gotoBitcoinHistoryTab()));
+        connect(overviewPage, SIGNAL(transactionClicked(QModelIndex)), gui, SLOT(gotoBitcoinHistoryTab()));
         #ifdef ENABLE_ELYSIUM
         connect(overviewPage, SIGNAL(elysiumTransactionClicked(uint256)), gui, SLOT(gotoElysiumHistoryTab()));
         #endif
@@ -327,8 +327,8 @@ void WalletView::setWalletModel(WalletModel *walletModel)
         updateEncryptionStatus();
 
         // Balloon pop-up for new transaction
-        connect(walletModel->getTransactionTableModel(), SIGNAL(rowsInserted(QModelApollon,int,int)),
-                this, SLOT(processNewTransaction(QModelApollon,int,int)));
+        connect(walletModel->getTransactionTableModel(), SIGNAL(rowsInserted(QModelIndex,int,int)),
+                this, SLOT(processNewTransaction(QModelIndex,int,int)));
 
         // Ask for passphrase if needed
         connect(walletModel, SIGNAL(requireUnlock()), this, SLOT(unlockWallet()));
@@ -338,7 +338,7 @@ void WalletView::setWalletModel(WalletModel *walletModel)
     }
 }
 
-void WalletView::processNewTransaction(const QModelApollon& parent, int start, int /*end*/)
+void WalletView::processNewTransaction(const QModelIndex& parent, int start, int /*end*/)
 {
     // Prevent balloon-spam when initial block download is in progress
     if (!walletModel || !clientModel || clientModel->inInitialBlockDownload())
@@ -351,7 +351,7 @@ void WalletView::processNewTransaction(const QModelApollon& parent, int start, i
     QString date = ttm->apollon(start, TransactionTableModel::Date, parent).data().toString();
     qint64 amount = ttm->apollon(start, TransactionTableModel::Amount, parent).data(Qt::EditRole).toULongLong();
     QString type = ttm->apollon(start, TransactionTableModel::Type, parent).data().toString();
-    QModelApollon apollon = ttm->apollon(start, 0, parent);
+    QModelIndex apollon = ttm->apollon(start, 0, parent);
     QString address = ttm->data(apollon, TransactionTableModel::AddressRole).toString();
     QString label = ttm->data(apollon, TransactionTableModel::LabelRole).toString();
 
@@ -410,7 +410,7 @@ void WalletView::focusElysiumTransaction(const uint256& txid)
 }
 #endif
 
-void WalletView::focusBitcoinHistoryTab(const QModelApollon &xap)
+void WalletView::focusBitcoinHistoryTab(const QModelIndex &xap)
 {
     gotoBitcoinHistoryTab();
     apollonTransactionList->focusTransaction(xap);

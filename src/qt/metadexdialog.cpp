@@ -85,7 +85,7 @@ MetaDExDialog::MetaDExDialog(QWidget *parent) :
     connect(ui->sellAmountSaleLE, SIGNAL(textEdited(const QString &)), this, SLOT(RecalcSellValues()));
     connect(ui->sellAmountDesiredLE, SIGNAL(textEdited(const QString &)), this, SLOT(RecalcSellValues()));
     connect(ui->sellUnitPriceLE, SIGNAL(textEdited(const QString &)), this, SLOT(RecalcSellValues()));
-    connect(ui->sellList, SIGNAL(doubleClicked(QModelApollon)), this, SLOT(ShowDetails()));
+    connect(ui->sellList, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(ShowDetails()));
     connect(ui->sellButton, SIGNAL(clicked()), this, SLOT(sendTrade()));
 
     FullRefresh();

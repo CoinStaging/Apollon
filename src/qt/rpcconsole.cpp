@@ -466,7 +466,7 @@ void RPCConsole::setClientModel(ClientModel *model)
         connect(unbanAction, SIGNAL(triggered()), this, SLOT(unbanSelectedNode()));
 
         // ban table signal handling - clear peer details when clicking a peer in the ban table
-        connect(ui->banlistWidget, SIGNAL(clicked(const QModelApollon&)), this, SLOT(clearSelectedNode()));
+        connect(ui->banlistWidget, SIGNAL(clicked(const QModelIndex&)), this, SLOT(clearSelectedNode()));
         // ban table signal handling - ensure ban table is shown or hidden (if empty)
         connect(model->getBanTableModel(), SIGNAL(layoutChanged()), this, SLOT(showOrHideBanTableIfRequired()));
         showOrHideBanTableIfRequired();
@@ -844,7 +844,7 @@ void RPCConsole::peerLayoutChanged()
 
     // find the currently selected row
     int selectedRow = -1;
-    QModelApollonList selectedModelApollon = ui->peerWidget->selectionModel()->selectedApollones();
+    QModelIndexList selectedModelApollon = ui->peerWidget->selectionModel()->selectedApollones();
     if (!selectedModelApollon.isEmpty()) {
         selectedRow = selectedModelApollon.first().row();
     }
@@ -961,14 +961,14 @@ void RPCConsole::hideEvent(QHideEvent *event)
 
 void RPCConsole::showPeersTableContextMenu(const QPoint& point)
 {
-    QModelApollon apollon = ui->peerWidget->apollonAt(point);
+    QModelIndex apollon = ui->peerWidget->apollonAt(point);
     if (apollon.isValid())
         peersTableContextMenu->exec(QCursor::pos());
 }
 
 void RPCConsole::showBanTableContextMenu(const QPoint& point)
 {
-    QModelApollon apollon = ui->banlistWidget->apollonAt(point);
+    QModelIndex apollon = ui->banlistWidget->apollonAt(point);
     if (apollon.isValid())
         banTableContextMenu->exec(QCursor::pos());
 }

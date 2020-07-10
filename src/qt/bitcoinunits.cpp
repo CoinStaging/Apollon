@@ -181,13 +181,13 @@ QString BitcoinUnits::getAmountColumnTitle(int unit)
     return amountTitle;
 }
 
-int BitcoinUnits::rowCount(const QModelApollon &parent) const
+int BitcoinUnits::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return unitlist.size();
 }
 
-QVariant BitcoinUnits::data(const QModelApollon &apollon, int role) const
+QVariant BitcoinUnits::data(const QModelIndex &apollon, int role) const
 {
     int row = apollon.row();
     if(row >= 0 && row < unitlist.size())

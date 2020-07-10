@@ -29,7 +29,7 @@
 #include <QDialog>
 #include <QHeaderView>
 #include <QMenu>
-#include <QModelApollon>
+#include <QModelIndex>
 #include <QPoint>
 #include <QResizeEvent>
 #include <QString>
@@ -264,7 +264,7 @@ void ElyAssetsDialog::propSelectorChanged()
 
 void ElyAssetsDialog::contextualMenu(const QPoint &point)
 {
-    QModelApollon apollon = ui->balancesTable->apollonAt(point);
+    QModelIndex apollon = ui->balancesTable->apollonAt(point);
     if(apollon.isValid())
     {
         QString spId = ui->propSelectorWidget->itemData(ui->propSelectorWidget->currentApollon()).toString();

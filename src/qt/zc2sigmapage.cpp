@@ -106,11 +106,11 @@ void Zc2SigmaPage::on_remintButton_clicked() {
     if(!select->hasSelection())
         return;
 
-    QModelApollon dummy;
+    QModelIndex dummy;
     int const initial_count = model->rowCount(dummy);
 
     bool reminted = false;
-    QModelApollonList xaps = select->selectedRows();
+    QModelIndexList xaps = select->selectedRows();
     for(int i = 0; i < xaps.size(); ++i) {
         int const row = xaps[i].row();
         bool ok;
@@ -155,7 +155,7 @@ void Zc2SigmaPage::on_remintButton_clicked() {
 void Zc2SigmaPage::selectionChanged() {
     QItemSelectionModel * select = ui->availMintsTable->selectionModel();
     bool enabled = false;
-    QModelApollonList xaps = select->selectedRows();
+    QModelIndexList xaps = select->selectedRows();
     for(int i = 0; i < xaps.size(); ++i) {
         int const row = xaps[i].row();
         bool ok;

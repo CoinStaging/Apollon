@@ -24,7 +24,7 @@ namespace Ui {
 }
 
 QT_BEGIN_NAMESPACE
-class QModelApollon;
+class QModelIndex;
 QT_END_NAMESPACE
 
 /** Dialog for requesting payment of bitcoins */
@@ -67,7 +67,7 @@ private Q_SLOTS:
     void on_receiveButton_clicked();
     void on_showRequestButton_clicked();
     void on_removeRequestButton_clicked();
-    void on_recentRequestsView_doubleClicked(const QModelApollon &apollon);
+    void on_recentRequestsView_doubleClicked(const QModelIndex &apollon);
     void recentRequestsView_selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
     void updateDisplayUnit();
     void showMenu(const QPoint &point);

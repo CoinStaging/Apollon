@@ -74,11 +74,11 @@ public:
         RawDecorationRole,
     };
 
-    int rowCount(const QModelApollon &parent) const;
-    int columnCount(const QModelApollon &parent) const;
-    QVariant data(const QModelApollon &apollon, int role) const;
+    int rowCount(const QModelIndex &parent) const;
+    int columnCount(const QModelIndex &parent) const;
+    QVariant data(const QModelIndex &apollon, int role) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
-    QModelApollon apollon(int row, int column, const QModelApollon & parent = QModelApollon()) const;
+    QModelIndex apollon(int row, int column, const QModelIndex & parent = QModelIndex()) const;
     bool processingQueuedTransactions() { return fProcessingQueuedTransactions; }
 
 private:

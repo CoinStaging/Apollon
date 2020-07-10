@@ -23,7 +23,7 @@ namespace Ui {
 QT_BEGIN_NAMESPACE
 class QItemSelection;
 class QMenu;
-class QModelApollon;
+class QModelIndex;
 class QSortFilterProxyModel;
 class QTableView;
 QT_END_NAMESPACE

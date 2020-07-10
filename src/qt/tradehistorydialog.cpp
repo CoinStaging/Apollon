@@ -48,7 +48,7 @@
 #include <QHeaderView>
 #include <QIcon>
 #include <QMenu>
-#include <QModelApollon>
+#include <QModelIndex>
 #include <QPoint>
 #include <QResizeEvent>
 #include <QSortFilterProxyModel>
@@ -121,7 +121,7 @@ TradeHistoryDialog::TradeHistoryDialog(QWidget *parent) :
     contextMenu->addAction(copyTxIDAction);
     contextMenu->addAction(showDetailsAction);
     connect(ui->tradeHistoryTable, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextualMenu(QPoint)));
-    connect(ui->tradeHistoryTable, SIGNAL(doubleClicked(QModelApollon)), this, SLOT(showDetails()));
+    connect(ui->tradeHistoryTable, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(showDetails()));
     connect(ui->hideInactiveTrades, SIGNAL(stateChanged(int)), this, SLOT(RepopulateTradeHistoryTable(int)));
     connect(copyTxIDAction, SIGNAL(triggered()), this, SLOT(copyTxID()));
     connect(showDetailsAction, SIGNAL(triggered()), this, SLOT(showDetails()));
@@ -176,7 +176,7 @@ void TradeHistoryDialog::UpdateTradeHistoryTable(bool forceUpdate)
             tradeHistoryProxy.setSourceModel(tradeHistoryAbstractModel);
             tradeHistoryProxy.setFilterKeyColumn(0);
             tradeHistoryProxy.setFilterFixedString(QString::fromStdString(txid.GetHex()));
-            QModelApollon rowApollon = tradeHistoryProxy.mapToSource(tradeHistoryProxy.apollon(0,0));
+            QModelIndex rowApollon = tradeHistoryProxy.mapToSource(tradeHistoryProxy.apollon(0,0));
             if (rowApollon.isValid()) continue;
 
             // new entry is required, append a new row (sorting will take care of ordering)
@@ -333,7 +333,7 @@ int TradeHistoryDialog::PopulateTradeHistoryMap()
                 tradeHistoryProxy.setSourceModel(tradeHistoryAbstractModel);
                 tradeHistoryProxy.setFilterKeyColumn(0);
                 tradeHistoryProxy.setFilterFixedString(QString::fromStdString(hash.GetHex()));
-                QModelApollon rowApollon = tradeHistoryProxy.mapToSource(tradeHistoryProxy.apollon(0,0)); // map to the row in the actual table
+                QModelIndex rowApollon = tradeHistoryProxy.mapToSource(tradeHistoryProxy.apollon(0,0)); // map to the row in the actual table
                 if(rowApollon.isValid()) ui->tradeHistoryTable->removeRow(rowApollon.row()); // delete the pending tx row, it'll be readded as a proper confirmed transaction
                 ui->tradeHistoryTable->setSortingEnabled(true); // re-enable sorting
             }
@@ -542,7 +542,7 @@ void TradeHistoryDialog::setClientModel(ClientModel *model)
 
 void TradeHistoryDialog::contextualMenu(const QPoint &point)
 {
-    QModelApollon apollon = ui->tradeHistoryTable->apollonAt(point);
+    QModelIndex apollon = ui->tradeHistoryTable->apollonAt(point);
     if(apollon.isValid()) contextMenu->exec(QCursor::pos());
 }
 

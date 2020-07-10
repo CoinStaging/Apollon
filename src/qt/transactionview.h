@@ -20,7 +20,7 @@ class QDateTimeEdit;
 class QFrame;
 class QLineEdit;
 class QMenu;
-class QModelApollon;
+class QModelIndex;
 class QSignalMapper;
 class QTableView;
 QT_END_NAMESPACE
@@ -103,7 +103,7 @@ private Q_SLOTS:
     void rebroadcastTx();
 
 Q_SIGNALS:
-    void doubleClicked(const QModelApollon&);
+    void doubleClicked(const QModelIndex&);
 
     /**  Fired when a message should be reported to the user */
     void message(const QString &title, const QString &message, unsigned int style);
@@ -115,7 +115,7 @@ public Q_SLOTS:
     void changedPrefix(const QString &prefix);
     void changedAmount(const QString &amount);
     void exportClicked();
-    void focusTransaction(const QModelApollon&);
+    void focusTransaction(const QModelIndex&);
 
 };
 

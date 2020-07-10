@@ -22,7 +22,7 @@ class ClientModel;
 class WalletModel;
 
 QT_BEGIN_NAMESPACE
-class QModelApollon;
+class QModelIndex;
 QT_END_NAMESPACE
 
 /** Apollonnode Manager page widget */

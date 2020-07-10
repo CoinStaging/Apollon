@@ -51,7 +51,7 @@ AddressBookPage::AddressBookPage(const PlatformStyle *platformStyle, Mode mode, 
                     setWindowTitle(tr("Choose the address to receive coins with"));
                     break;
             }
-            connect(ui->tableView, SIGNAL(doubleClicked(QModelApollon)), this, SLOT(accept()));
+            connect(ui->tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(accept()));
             ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
             ui->tableView->setFocus();
             ui->closeButton->setText(tr("C&hoose"));
@@ -149,7 +149,7 @@ void AddressBookPage::setModel(AddressTableModel *model) {
             this, SLOT(selectionChanged()));
 
     // Select row for newly created address
-    connect(model, SIGNAL(rowsInserted(QModelApollon, int, int)), this, SLOT(selectNewAddress(QModelApollon, int, int)));
+    connect(model, SIGNAL(rowsInserted(QModelIndex, int, int)), this, SLOT(selectNewAddress(QModelIndex, int, int)));
 
     selectionChanged();
 }
@@ -169,7 +169,7 @@ void AddressBookPage::onEditAction() {
 
     if (!ui->tableView->selectionModel())
         return;
-    QModelApollonList apollones = ui->tableView->selectionModel()->selectedRows();
+    QModelIndexList apollones = ui->tableView->selectionModel()->selectedRows();
     if (apollones.isEmpty())
         return;
 
@@ -178,7 +178,7 @@ void AddressBookPage::onEditAction() {
             EditAddressDialog::EditSendingAddress :
             EditAddressDialog::EditReceivingAddress, this);
     dlg.setModel(model);
-    QModelApollon origApollon = proxyModel->mapToSource(apollones.at(0));
+    QModelIndex origApollon = proxyModel->mapToSource(apollones.at(0));
     dlg.loadRow(origApollon.row());
     dlg.exec();
 }
@@ -202,7 +202,7 @@ void AddressBookPage::on_deleteAddress_clicked() {
     if (!table->selectionModel())
         return;
 
-    QModelApollonList apollones = table->selectionModel()->selectedRows();
+    QModelIndexList apollones = table->selectionModel()->selectedRows();
     if (!apollones.isEmpty()) {
         table->model()->removeRow(apollones.at(0).row());
     }
@@ -242,10 +242,10 @@ void AddressBookPage::done(int retval) {
         return;
 
     // Figure out which address was selected, and return it
-    QModelApollonList apollones = table->selectionModel()->selectedRows(AddressTableModel::Address);
+    QModelIndexList apollones = table->selectionModel()->selectedRows(AddressTableModel::Address);
 
     Q_FOREACH(
-    const QModelApollon &apollon, apollones) {
+    const QModelIndex &apollon, apollones) {
         QVariant address = table->model()->data(apollon);
         returnValue = address.toString();
     }
@@ -282,14 +282,14 @@ void AddressBookPage::on_exportButton_clicked() {
 }
 
 void AddressBookPage::contextualMenu(const QPoint &point) {
-    QModelApollon apollon = ui->tableView->apollonAt(point);
+    QModelIndex apollon = ui->tableView->apollonAt(point);
     if (apollon.isValid()) {
         contextMenu->exec(QCursor::pos());
     }
 }
 
-void AddressBookPage::selectNewAddress(const QModelApollon &parent, int begin, int /*end*/) {
-    QModelApollon xap = proxyModel->mapFromSource(model->apollon(begin, AddressTableModel::Address, parent));
+void AddressBookPage::selectNewAddress(const QModelIndex &parent, int begin, int /*end*/) {
+    QModelIndex xap = proxyModel->mapFromSource(model->apollon(begin, AddressTableModel::Address, parent));
     if (xap.isValid() && (xap.data(Qt::EditRole).toString() == newAddressToSelect)) {
         // Select row of newly created address, once
         ui->tableView->setFocus();

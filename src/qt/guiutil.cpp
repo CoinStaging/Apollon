@@ -271,7 +271,7 @@ void copyEntryData(QAbstractItemView *view, int column, int role)
 {
     if(!view || !view->selectionModel())
         return;
-    QModelApollonList selection = view->selectionModel()->selectedRows(column);
+    QModelIndexList selection = view->selectionModel()->selectedRows(column);
 
     if(!selection.isEmpty())
     {
@@ -284,7 +284,7 @@ QString getEntryData(QAbstractItemView *view, int column, int role)
 {
     if(!view || !view->selectionModel())
         return QString();
-    QModelApollonList selection = view->selectionModel()->selectedRows(column);
+    QModelIndexList selection = view->selectionModel()->selectedRows(column);
 
     if(!selection.isEmpty()) {
         // Return first item

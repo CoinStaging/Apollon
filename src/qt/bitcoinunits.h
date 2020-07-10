@@ -103,8 +103,8 @@ public:
         /** Unit identifier */
         UnitRole = Qt::UserRole
     };
-    int rowCount(const QModelApollon &parent) const;
-    QVariant data(const QModelApollon &apollon, int role) const;
+    int rowCount(const QModelIndex &parent) const;
+    QVariant data(const QModelIndex &apollon, int role) const;
     ///@}
 
     static QString removeSpaces(QString text)

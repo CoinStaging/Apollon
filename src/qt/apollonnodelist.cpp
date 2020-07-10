@@ -329,11 +329,11 @@ void ApollonnodeList::on_startButton_clicked()
         LOCK(cs_mymnlist);
         // Find selected node alias
         QItemSelectionModel* selectionModel = ui->tableWidgetMyApollonnodes->selectionModel();
-        QModelApollonList selected = selectionModel->selectedRows();
+        QModelIndexList selected = selectionModel->selectedRows();
 
         if(selected.count() == 0) return;
 
-        QModelApollon apollon = selected.at(0);
+        QModelIndex apollon = selected.at(0);
         int nSelectedRow = apollon.row();
         strAlias = ui->tableWidgetMyApollonnodes->item(nSelectedRow, 0)->text().toStdString();
     }

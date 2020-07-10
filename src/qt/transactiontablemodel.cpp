@@ -143,7 +143,7 @@ public:
                         TransactionRecord::decomposeTransaction(wallet, mi->second);
                 if(!toInsert.isEmpty()) /* only if something to insert */
                 {
-                    parent->beginInsertRows(QModelApollon(), lowerApollon, lowerApollon+toInsert.size()-1);
+                    parent->beginInsertRows(QModelIndex(), lowerApollon, lowerApollon+toInsert.size()-1);
                     int insert_xap = lowerApollon;
                     Q_FOREACH(const TransactionRecord &rec, toInsert)
                     {
@@ -161,7 +161,7 @@ public:
                 break;
             }
             // Removed -- remove entire transaction from table
-            parent->beginRemoveRows(QModelApollon(), lowerApollon, upperApollon-1);
+            parent->beginRemoveRows(QModelIndex(), lowerApollon, upperApollon-1);
             cachedWallet.erase(lower, upper);
             parent->endRemoveRows();
             break;
@@ -288,13 +288,13 @@ void TransactionTableModel::updateConfirmations()
     Q_EMIT dataChanged(apollon(0, ToAddress), apollon(priv->size()-1, ToAddress));
 }
 
-int TransactionTableModel::rowCount(const QModelApollon &parent) const
+int TransactionTableModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return priv->size();
 }
 
-int TransactionTableModel::columnCount(const QModelApollon &parent) const
+int TransactionTableModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return columns.length();
@@ -548,7 +548,7 @@ QString TransactionTableModel::formatTooltip(const TransactionRecord *rec) const
     return tooltip;
 }
 
-QVariant TransactionTableModel::data(const QModelApollon &apollon, int role) const
+QVariant TransactionTableModel::data(const QModelIndex &apollon, int role) const
 {
     if(!apollon.isValid())
         return QVariant();
@@ -721,7 +721,7 @@ QVariant TransactionTableModel::headerData(int section, Qt::Orientation orientat
     return QVariant();
 }
 
-QModelApollon TransactionTableModel::apollon(int row, int column, const QModelApollon &parent) const
+QModelIndex TransactionTableModel::apollon(int row, int column, const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     TransactionRecord *data = priv->apollon(row);
@@ -729,7 +729,7 @@ QModelApollon TransactionTableModel::apollon(int row, int column, const QModelAp
     {
         return createApollon(row, column, priv->apollon(row));
     }
-    return QModelApollon();
+    return QModelIndex();
 }
 
 void TransactionTableModel::updateDisplayUnit()

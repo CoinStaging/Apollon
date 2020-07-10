@@ -47,7 +47,7 @@
 #include <QHeaderView>
 #include <QIcon>
 #include <QMenu>
-#include <QModelApollon>
+#include <QModelIndex>
 #include <QPoint>
 #include <QResizeEvent>
 #include <QSortFilterProxyModel>
@@ -110,7 +110,7 @@ TXHistoryDialog::TXHistoryDialog(QWidget *parent) :
     contextMenu->addAction(showDetailsAction);
     // Connect actions
     connect(ui->txHistoryTable, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextualMenu(QPoint)));
-    connect(ui->txHistoryTable, SIGNAL(doubleClicked(QModelApollon)), this, SLOT(showDetails()));
+    connect(ui->txHistoryTable, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(showDetails()));
     connect(ui->txHistoryTable->horizontalHeader(), SIGNAL(sectionClicked(int)), this, SLOT(checkSort(int)));
     connect(copyAddressAction, SIGNAL(triggered()), this, SLOT(copyAddress()));
     connect(copyAmountAction, SIGNAL(triggered()), this, SLOT(copyAmount()));
@@ -151,7 +151,7 @@ void TXHistoryDialog::focusTransaction(const uint256& txid)
     historyProxy.setSourceModel(historyAbstractModel);
     historyProxy.setFilterKeyColumn(0);
     historyProxy.setFilterFixedString(QString::fromStdString(txid.GetHex()));
-    QModelApollon rowApollon = historyProxy.mapToSource(historyProxy.apollon(0,0));
+    QModelIndex rowApollon = historyProxy.mapToSource(historyProxy.apollon(0,0));
     if(rowApollon.isValid()) {
         ui->txHistoryTable->scrollTo(rowApollon);
         ui->txHistoryTable->setCurrentApollon(rowApollon);
@@ -212,7 +212,7 @@ int TXHistoryDialog::PopulateHistoryMap()
             historyProxy.setSourceModel(historyAbstractModel);
             historyProxy.setFilterKeyColumn(0);
             historyProxy.setFilterFixedString(QString::fromStdString(txHash.GetHex()));
-            QModelApollon rowApollon = historyProxy.mapToSource(historyProxy.apollon(0,0)); // map to the row in the actual table
+            QModelIndex rowApollon = historyProxy.mapToSource(historyProxy.apollon(0,0)); // map to the row in the actual table
             if(rowApollon.isValid()) ui->txHistoryTable->removeRow(rowApollon.row()); // delete the pending tx row, it'll be readded as a proper confirmed transaction
             ui->txHistoryTable->setSortingEnabled(true); // re-enable sorting
         }
@@ -393,7 +393,7 @@ void TXHistoryDialog::UpdateHistory()
             historyProxy.setSourceModel(historyAbstractModel);
             historyProxy.setFilterKeyColumn(0);
             historyProxy.setFilterFixedString(QString::fromStdString(txid.GetHex()));
-            QModelApollon rowApollon = historyProxy.mapToSource(historyProxy.apollon(0,0));
+            QModelIndex rowApollon = historyProxy.mapToSource(historyProxy.apollon(0,0));
             if(!rowApollon.isValid()) { // this transaction doesn't exist in the history table, add it
                 HistoryTXObject htxo = it->second; // grab the tranaaction
                 int workingRow = ui->txHistoryTable->rowCount();
@@ -440,7 +440,7 @@ void TXHistoryDialog::UpdateHistory()
 
 void TXHistoryDialog::contextualMenu(const QPoint &point)
 {
-    QModelApollon apollon = ui->txHistoryTable->apollonAt(point);
+    QModelIndex apollon = ui->txHistoryTable->apollonAt(point);
     if(apollon.isValid())
     {
         contextMenu->exec(QCursor::pos());
