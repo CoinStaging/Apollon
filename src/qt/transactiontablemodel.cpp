@@ -727,7 +727,7 @@ QModelIndex TransactionTableModel::apollon(int row, int column, const QModelInde
     TransactionRecord *data = priv->apollon(row);
     if(data)
     {
-        return createApollon(row, column, priv->apollon(row));
+        return createIndex(row, column, priv->apollon(row));
     }
     return QModelIndex();
 }

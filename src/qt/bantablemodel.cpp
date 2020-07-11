@@ -160,7 +160,7 @@ QModelIndex BanTableModel::apollon(int row, int column, const QModelIndex &paren
     CCombinedBan *data = priv->apollon(row);
 
     if (data)
-        return createApollon(row, column, data);
+        return createIndex(row, column, data);
     return QModelIndex();
 }
 

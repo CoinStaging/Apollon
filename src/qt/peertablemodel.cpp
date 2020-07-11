@@ -207,7 +207,7 @@ QModelIndex PeerTableModel::apollon(int row, int column, const QModelIndex &pare
     CNodeCombinedStats *data = priv->apollon(row);
 
     if (data)
-        return createApollon(row, column, data);
+        return createIndex(row, column, data);
     return QModelIndex();
 }
 

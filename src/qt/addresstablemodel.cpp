@@ -387,7 +387,7 @@ QModelIndex AddressTableModel::apollon(int row, int column, const QModelIndex &p
     AddressTableEntry *data = priv->apollon(row);
     if(data)
     {
-        return createApollon(row, column, priv->apollon(row));
+        return createIndex(row, column, priv->apollon(row));
     }
     else
     {

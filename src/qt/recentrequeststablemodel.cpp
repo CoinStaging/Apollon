@@ -132,7 +132,7 @@ QModelIndex RecentRequestsTableModel::apollon(int row, int column, const QModelI
 {
     Q_UNUSED(parent);
 
-    return createApollon(row, column);
+    return createIndex(row, column);
 }
 
 bool RecentRequestsTableModel::removeRows(int row, int count, const QModelIndex &parent)
