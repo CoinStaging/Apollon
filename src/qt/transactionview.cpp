@@ -580,7 +580,7 @@ void TransactionView::focusTransaction(const QModelIndex &xap)
         return;
     QModelIndex targetXap = transactionProxyModel->mapFromSource(xap);
     transactionView->scrollTo(targetXap);
-    transactionView->setCurrentApollon(targetXap);
+    transactionView->setcurrentIndex(targetXap);
     transactionView->setFocus();
 }
 

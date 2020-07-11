@@ -62,7 +62,7 @@ void EditAddressDialog::setModel(AddressTableModel *model)
 
 void EditAddressDialog::loadRow(int row)
 {
-    mapper->setCurrentApollon(row);
+    mapper->setcurrentIndex(row);
 }
 
 bool EditAddressDialog::saveCurrentRow()

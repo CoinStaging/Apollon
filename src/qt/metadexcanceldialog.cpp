@@ -115,7 +115,7 @@ void MetaDExCancelDialog::UpdateAddressSelector()
     // restore initial selection
     int xap = ui->fromCombo->findText(selectedItem);
     if (xap != -1) {
-        ui->fromCombo->setCurrentApollon(xap);
+        ui->fromCombo->setcurrentIndex(xap);
     }
 }
 
@@ -194,7 +194,7 @@ void MetaDExCancelDialog::UpdateCancelCombo()
     }
 
     int xap = ui->cancelCombo->findText(existingSelection, Qt::MatchExactly);
-    if (xap != -1) ui->cancelCombo->setCurrentApollon(xap); // if value selected before update and it still exists, reselect it
+    if (xap != -1) ui->cancelCombo->setcurrentIndex(xap); // if value selected before update and it still exists, reselect it
 }
 
 /**

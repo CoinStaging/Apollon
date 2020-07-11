@@ -114,12 +114,12 @@ void Zc2SigmaPage::on_remintButton_clicked() {
     for(int i = 0; i < xaps.size(); ++i) {
         int const row = xaps[i].row();
         bool ok;
-        uint denom =  select->currentApollon().child(row , 1).data().toUInt(&ok); //denomination
+        uint denom =  select->currentIndex().child(row , 1).data().toUInt(&ok); //denomination
         if(!ok) {
             QMessageBox::critical(this, "Unable to remint", QString("Failed to parse denomination."));
             break;
         }
-        uint version = select->currentApollon().child(row , 2).data().toUInt(&ok); //version
+        uint version = select->currentIndex().child(row , 2).data().toUInt(&ok); //version
         if(!ok) {
             QMessageBox::critical(this, "Unable to remint", QString("Failed to parse version."));
             break;
@@ -159,7 +159,7 @@ void Zc2SigmaPage::selectionChanged() {
     for(int i = 0; i < xaps.size(); ++i) {
         int const row = xaps[i].row();
         bool ok;
-        uint num =  select->currentApollon().child(row , 0).data().toUInt(&ok); //number
+        uint num =  select->currentIndex().child(row , 0).data().toUInt(&ok); //number
         if(!ok)
             continue;
         if(num > 0) {

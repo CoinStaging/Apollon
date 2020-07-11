@@ -653,7 +653,7 @@ void RPCConsole::clear(bool clearHistory)
 
 void RPCConsole::showRepair()
 {
-    ui->tabWidget->setCurrentApollon(4);
+    ui->tabWidget->setcurrentIndex(4);
     show();
 }
 
@@ -1041,5 +1041,5 @@ void RPCConsole::showOrHideBanTableIfRequired()
 
 void RPCConsole::setTabFocus(enum TabTypes tabType)
 {
-    ui->tabWidget->setCurrentApollon(tabType);
+    ui->tabWidget->setcurrentIndex(tabType);
 }

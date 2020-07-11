@@ -122,7 +122,7 @@
          <height>200</height>
         </size>
        </property>
-       <property name="currentApollon">
+       <property name="currentIndex">
         <number>1</number>
        </property>
        <widget class="QWidget" name="tab">

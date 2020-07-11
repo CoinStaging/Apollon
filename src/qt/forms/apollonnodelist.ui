@@ -46,7 +46,7 @@
      </item>
      <item>
       <widget class="QTabWidget" name="tabWidget">
-       <property name="currentApollon">
+       <property name="currentIndex">
         <number>1</number>
        </property>
        <widget class="QWidget" name="tabMyApollonnodes">

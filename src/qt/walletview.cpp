@@ -383,7 +383,7 @@ void WalletView::gotoElysiumHistoryTab()
     }
 
     setCurrentWidget(transactionsPage);
-    transactionTabs->setCurrentApollon(1);
+    transactionTabs->setcurrentIndex(1);
 }
 #endif
 
@@ -393,7 +393,7 @@ void WalletView::gotoBitcoinHistoryTab()
 
 #ifdef ENABLE_ELYSIUM
     if (transactionTabs) {
-        transactionTabs->setCurrentApollon(0);
+        transactionTabs->setcurrentIndex(0);
     }
 #endif
 }
@@ -489,7 +489,7 @@ bool WalletView::handlePaymentRequest(const SendCoinsRecipient& recipient)
 {
 #ifdef ENABLE_ELYSIUM
     if (sendCoinsTabs) {
-        sendCoinsTabs->setCurrentApollon(0);
+        sendCoinsTabs->setcurrentIndex(0);
     }
 #endif
 

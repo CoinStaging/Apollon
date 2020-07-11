@@ -111,7 +111,7 @@ void SendMPDialog::updatePropSelector()
 
     uint32_t nextPropIdMainEco = GetNextPropertyId(true);  // these allow us to end the for loop at the highest existing
     uint32_t nextPropIdTestEco = GetNextPropertyId(false); // property ID rather than a fixed value like 100000 (optimization)
-    QString spId = ui->propertyComboBox->itemData(ui->propertyComboBox->currentApollon()).toString();
+    QString spId = ui->propertyComboBox->itemData(ui->propertyComboBox->currentIndex()).toString();
     ui->propertyComboBox->clear();
 
     for (unsigned int propertyId = 1; propertyId < nextPropIdMainEco; propertyId++) {
@@ -135,7 +135,7 @@ void SendMPDialog::updatePropSelector()
         }
     }
     int propXap = ui->propertyComboBox->findData(spId);
-    if (propXap != -1) { ui->propertyComboBox->setCurrentApollon(propXap); }
+    if (propXap != -1) { ui->propertyComboBox->setcurrentIndex(propXap); }
 }
 
 void SendMPDialog::clearFields()
@@ -162,7 +162,7 @@ void SendMPDialog::updateFrom()
         ui->feeWarningLabel->setVisible(false);
     } else {
         // update the balance for the selected address
-        QString spId = ui->propertyComboBox->itemData(ui->propertyComboBox->currentApollon()).toString();
+        QString spId = ui->propertyComboBox->itemData(ui->propertyComboBox->currentIndex()).toString();
         uint32_t propertyId = spId.toUInt();
         if (propertyId > 0) {
             ui->balanceLabel->setText(QString::fromStdString("Address Balance: " + FormatMP(propertyId, getUserAvailableMPbalance(currentSetFromAddress, propertyId)) + getTokenLabel(propertyId)));
@@ -184,7 +184,7 @@ void SendMPDialog::updateProperty()
     ui->sendFromComboBox->clear();
 
     // populate from address selector
-    QString spId = ui->propertyComboBox->itemData(ui->propertyComboBox->currentApollon()).toString();
+    QString spId = ui->propertyComboBox->itemData(ui->propertyComboBox->currentIndex()).toString();
     uint32_t propertyId = spId.toUInt();
     LOCK(cs_main);
     for (std::unordered_map<string, CMPTally>::iterator my_it = mp_tally_map.begin(); my_it != mp_tally_map.end(); ++my_it) {
@@ -203,7 +203,7 @@ void SendMPDialog::updateProperty()
 
     // attempt to set from address back to cached value
     int fromXap = ui->sendFromComboBox->findText(QString::fromStdString(currentSetFromAddress), Qt::MatchContains);
-    if (fromXap != -1) { ui->sendFromComboBox->setCurrentApollon(fromXap); } // -1 means the cached from address doesn't have a balance in the newly selected property
+    if (fromXap != -1) { ui->sendFromComboBox->setcurrentIndex(fromXap); } // -1 means the cached from address doesn't have a balance in the newly selected property
 
     // populate balance for global wallet
     ui->globalBalanceLabel->setText(QString::fromStdString("Wallet Balance (Available): " + FormatMP(propertyId, global_balance_money[propertyId])));
@@ -217,7 +217,7 @@ void SendMPDialog::updateProperty()
 void SendMPDialog::sendMPTransaction()
 {
     // get the property being sent and get divisibility
-    QString spId = ui->propertyComboBox->itemData(ui->propertyComboBox->currentApollon()).toString();
+    QString spId = ui->propertyComboBox->itemData(ui->propertyComboBox->currentIndex()).toString();
     if (spId.toStdString().empty()) {
         QMessageBox::critical( this, "Unable to send transaction",
         "The property selected is not valid.\n\nPlease double-check the transction details thoroughly before retrying your send transaction." );

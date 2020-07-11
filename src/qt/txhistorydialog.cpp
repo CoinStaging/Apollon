@@ -154,7 +154,7 @@ void TXHistoryDialog::focusTransaction(const uint256& txid)
     QModelIndex rowApollon = historyProxy.mapToSource(historyProxy.apollon(0,0));
     if(rowApollon.isValid()) {
         ui->txHistoryTable->scrollTo(rowApollon);
-        ui->txHistoryTable->setCurrentApollon(rowApollon);
+        ui->txHistoryTable->setcurrentIndex(rowApollon);
         ui->txHistoryTable->setFocus();
     }
 }

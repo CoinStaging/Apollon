@@ -98,14 +98,14 @@ MetaDExDialog::~MetaDExDialog()
 
 uint32_t MetaDExDialog::GetPropForSale()
 {
-    QString propStr = ui->comboPairTokenA->itemData(ui->comboPairTokenA->currentApollon()).toString();
+    QString propStr = ui->comboPairTokenA->itemData(ui->comboPairTokenA->currentIndex()).toString();
     if (propStr.isEmpty()) return 0;
     return propStr.toUInt();
 }
 
 uint32_t MetaDExDialog::GetPropDesired()
 {
-    QString propStr = ui->comboPairTokenB->itemData(ui->comboPairTokenB->currentApollon()).toString();
+    QString propStr = ui->comboPairTokenB->itemData(ui->comboPairTokenB->currentIndex()).toString();
     if (propStr.isEmpty()) return 0;
     return propStr.toUInt();
 }
@@ -149,7 +149,7 @@ void MetaDExDialog::PopulateAddresses()
             }
         }
         int xap = ui->comboAddress->findText(currentSetAddress);
-        if (xap != -1) { ui->comboAddress->setCurrentApollon(xap); }
+        if (xap != -1) { ui->comboAddress->setcurrentIndex(xap); }
     }
     UpdateBalance();
 }
@@ -182,17 +182,17 @@ void MetaDExDialog::UpdateProperties()
     if (ui->comboPairTokenA->count() > 1) {
         int xapA = ui->comboPairTokenA->findText(currentSetPropA);
         if (xapA != -1) {
-            ui->comboPairTokenA->setCurrentApollon(xapA);
+            ui->comboPairTokenA->setcurrentIndex(xapA);
         } else {
-            ui->comboPairTokenA->setCurrentApollon(0);
+            ui->comboPairTokenA->setcurrentIndex(0);
         }
     }
     if (ui->comboPairTokenB->count() > 2) {
         int xapB = ui->comboPairTokenB->findText(currentSetPropB);
         if (xapB != -1) {
-            ui->comboPairTokenB->setCurrentApollon(xapB);
+            ui->comboPairTokenB->setcurrentIndex(xapB);
         } else {
-            ui->comboPairTokenB->setCurrentApollon(1);
+            ui->comboPairTokenB->setcurrentIndex(1);
         }
     }
 }
@@ -227,8 +227,8 @@ void MetaDExDialog::UpdateBalance()
 // Change markets when one of the property selector combos is changed
 void MetaDExDialog::SwitchMarket()
 {
-    QString propAStr = ui->comboPairTokenA->itemData(ui->comboPairTokenA->currentApollon()).toString();
-    QString propBStr = ui->comboPairTokenB->itemData(ui->comboPairTokenB->currentApollon()).toString();
+    QString propAStr = ui->comboPairTokenA->itemData(ui->comboPairTokenA->currentIndex()).toString();
+    QString propBStr = ui->comboPairTokenB->itemData(ui->comboPairTokenB->currentIndex()).toString();
     if (propAStr.isEmpty() || propBStr.isEmpty()) {
         PrintToLog("QTERROR: Empty variable switching property markets.  PropA=%s, PropB=%s\n",propAStr.toStdString(),propBStr.toStdString());
         return;
@@ -299,8 +299,8 @@ void MetaDExDialog::FullRefresh()
 // Inverts the pair
 void MetaDExDialog::InvertPair()
 {
-    QString propAStr = ui->comboPairTokenA->itemData(ui->comboPairTokenA->currentApollon()).toString();
-    QString propBStr = ui->comboPairTokenB->itemData(ui->comboPairTokenB->currentApollon()).toString();
+    QString propAStr = ui->comboPairTokenA->itemData(ui->comboPairTokenA->currentIndex()).toString();
+    QString propBStr = ui->comboPairTokenB->itemData(ui->comboPairTokenB->currentIndex()).toString();
     QString currentSetPropA = ui->comboPairTokenA->currentText();
     QString currentSetPropB = ui->comboPairTokenB->currentText();
     if (propAStr.isEmpty() || propBStr.isEmpty()) {
@@ -316,17 +316,17 @@ void MetaDExDialog::InvertPair()
     if (ui->comboPairTokenA->count() > 1) {
         int xapA = ui->comboPairTokenA->findText(currentSetPropB);
         if (xapA != -1) {
-            ui->comboPairTokenA->setCurrentApollon(xapA);
+            ui->comboPairTokenA->setcurrentIndex(xapA);
         } else {
-            ui->comboPairTokenA->setCurrentApollon(0);
+            ui->comboPairTokenA->setcurrentIndex(0);
         }
     }
     if (ui->comboPairTokenB->count() > 2) {
         int xapB = ui->comboPairTokenB->findText(currentSetPropA);
         if (xapB != -1) {
-            ui->comboPairTokenB->setCurrentApollon(xapB);
+            ui->comboPairTokenB->setcurrentIndex(xapB);
         } else {
-            ui->comboPairTokenB->setCurrentApollon(1);
+            ui->comboPairTokenB->setcurrentIndex(1);
         }
     }
 
